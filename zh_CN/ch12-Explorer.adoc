@@ -1,0 +1,333 @@
+[[activitiExplorer]]
+
+== Activiti Explorer
+
+Activiti Explorer是一个web应用，包含在从Activiti网站上下载的Activiti中。Explorer不是一个完成的，最终用户可用的应用，而是用于实践与展示Activiti的功能。因此Explorer更像是一个示例，或者为在自己的应用中使用Activiti的用户提供灵感。另外，Explorer使用内存数据库，但也可以轻松切换至你自己的数据库（查看WEB-INF目录下的applicationContext文件）。
+
+登录应用后，将看到这些大图标，展示了主要功能。
+
+image::images/explorer.tabs.png[align="center"]
+    
+*  *Tasks*: 任务管理功能。在这里可以看到指派给你的运行中用户任务的表单，或你可以申领的组任务。Explorer可以关联内容，将工作分为子任务，将人作为不同角色引入，等等。Explorer也可以创建不关联至任何流程的独立任务。
+* *Process*: 展示已部署的流程定义，也可以启动新的流程实例。
+* *Reporting*: 生成报告以及浏览之前保存的报告。查看<<explorer.reporting,报告章节>>了解更多细节。
+* *Manage*: 只有当用户登陆为管理员权限时才可见。可以管理Activiti引擎：管理用户与组，执行与查看卡住的作业，查看数据库，以及部署新的流程定义。
+
+=== 配置 Configuration
+
+Activiti Explorer使用Spring Java配置启动Activiti引擎。可以修改WEB-INF/classes目录下的engine.properties文件，定义小部分参数。如果需要高级配置选项，可以修改同在WEB-INF/classes目录下的activiti-custom-context.xml文件，来定义Activiti流程引擎配置。该文件已经以注释形式提供了示例配置。
+
+=== 流程图 Process diagram
+
+Explorer包含了动态生成流程定义的总览的功能，使用link:$$http://raphaeljs.com/$$[Raphaël] JavaScript框架。这个流程图只能在流程定义XML中包含BPMN DI信息时才能生成。如果流程定义XML中没有BPMN DI信息，而部署中包含有流程定义图片，则会显示该图片。
+
+image::images/explorer.process.definition.image.png[align="center"]
+
+如果不希望使用JavaScript流程定义总览，可以在ui.properties文件中禁用
+
+[source,properties,linenums]      
+----
+activiti.ui.jsdiagram = false
+----
+
+另外，要在Explorer中显示流程图，也可以在任何你想要的地方引入流程图。下面的URL将基于流程定义id，显示流程定义图：
+      
+----
+http://localhost:8080/activiti-explorer/diagram-viewer/index.html?processDefinitionId=reviewSaledLead:1:36
+----
+
+也可以通过添加processInstanceId请求参数，显示流程实例的当前状态，像是这样：
+      
+----
+http://localhost:8080/activiti-explorer/diagram-viewer/index.html?processDefinitionId=reviewSaledLead:1:36&processInstanceId=41
+----
+
+
+=== 任务 Tasks
+
+image::images/explorer.tasks.png[align="center"]
+          
+*  *Inbox:* 展示指派给当前登录用户的任务。
+*  *My tasks:* 展示当前登录用户作为属主的任务。当创建独立任务时，当前用户自动成为该任务的属主。
+*  *Queued:* 展示你所在的不同组。这里的任务必须先进行申领，然后才能完成。
+*  *Involved:* 展示当前登陆用户作为下列角色之一的任务：(1)相关人员（也就是说候选用户或参与者），(2)办理人，或者(3)属主。
+*  *Archived* 包含过去（历史）的任务。
+
+=== 启动流程实例 Start process instances
+
+**Process definitions（流程定义）**页签可以查看Activiti引擎中部署的所有流程定义。可以使用右上角的按钮启动新的流程实例。如果流程定义了启动<<forms,表单>>，则会在启动流程实例前显示该表单。
+      
+image::images/explorer.process.definitions.png[align="center"]
+
+=== 我的实例 My instances
+
+**My instances**页签，展示你当前有未完成用户任务的所有流程实例。同时也显示该流程实例的当前活动，以及存储的流程变量。
+
+image::images/explorer.my.instances.png[align="center"]
+    
+
+=== 管理 Administration
+
+管理功能只有在登录用户是安全组__admin__的成员时才可用。当点击__Manage__图标时，可用下列页签：
+      
+*  *Database:* 展示数据库内容。当部署流程或排错时十分有用。
+
+image::images/explorer.database.png[align="center"]
+            
+
+*  *Deployments:* 展示引擎当前的部署，并查看部署的内容（流程定义，图片，业务规则，等等）。
+
+image::images/explorer.deployments.png[align="center"]
+
+点击__deployment__页签也可以上传新的部署。选择电脑中的一个业务存档或者一个bpmn20.xml文件，或者简单地拖放至特定区域，就可以部署新的业务流程。
+
+image::images/explorer.upload.deployment.png[align="center"]
+            
+*  *Jobs:* 在左侧展示当前的作业（定时器，等等），也可以手动执行它们（例如，在到时前触发定时器）。如果作业执行失败（例如邮件服务器无法连接），也会显示异常
+
+image::images/explorer.jobs.png[align="center"]
+            
+*  *Users and Groups:* 管理用户与组：创建、编辑与删除用户与组。将用户关联至组，以赋予更多权限，或使他们可以查看分派给特定组的任务。
+            
+image::images/explorer.users.png[align="center"]
+
+[[explorer.reporting]]
+
+
+=== 报告 Reporting
+
+Activiti Explorer提供了一些报告的例子，也可以很容易地为系统添加新的报告。报告功能组织在__'Reports'__页签下。
+
+image::images/explorer.reporting.png[align="center"]
+      
+**重要**：要使报告能工作，Explorer需要配置为不是none的历史级别。默认配置满足这个要求。
+
+报告页签目前有两个子页签：
+
+
+*  *Generate reports*: 展示系统已有的所有报告类型的列表。可以运行来生成报告。
+*  *Saved reports*: 展示之前保存的所有报告的列表。请注意这些是个人保存的报告，不能查看其他人保存的报告。
+
+用于创建报告中列表与图表的数据由流程生成。虽然初看有些奇怪，但使用流程生成报告数据有几个优点
+      
+*  流程可以直接访问Activiti引擎内部，并可以直接访问引擎使用的数据库。
+*  作业执行器可以用于任何其他流程。这意味着可以异步生成流程，或者同步地执行一些步骤。也意味着可以使用定时器，例如，在特定时间点生成报告。
+*  可以使用已有工具与已有概念创建新报告。并且，不需要新的概念、服务或应用。部署或上传新的报告与部署一个新流程是一样的。
+*  可以使用BPMN 2.0结构。这意味着所有的东西，比如并行步骤，基于数据做分支选择，或者甚至是生成过程中请求用户输入都可以使用。
+
+用于生成报告数据的流程定义需要是**'activiti-report'类型的**，这样才能在Explorer的已有报告列表中看到。“报告流程”可以简单，也可以任意复杂。唯一的要求，是流程要生成一个叫做**reportData**的变量，这个变量必须是一个表示JSON对象的字节数组。该变量存储在Activiti的历史表中（因此要求引擎必须启用历史），用于后续保存报告时获取。
+
+[[explorer.reporting.json]]
+
+
+==== 报告数据JSON （Report data JSON）
+
+报告流程必须生成一个__reportData__变量，这是一个代表了需要显示给用户的数据的JSON，要像下面这样：
+          
+[source,json,linenums]          
+----
+
+{
+  "title": "My Report",
+  "datasets": [
+    {
+      "type" : "lineChart",
+      "description" : "My first chart",
+      "xaxis" : "Year"
+      "yaxis" : "Total sales"
+      "data" : 
+      {
+        "2010" : 50,
+        "2011" : 33,
+        "2012" : 17,
+        "2013" : 87,
+      }
+    }
+  ]
+}                 
+----
+
+这个JSON将在Explorer运行时获取，并将用于生成图表或列表。JSON中的元素是：
+          
+* *title*: 整个报告的总标题
+* *datasets*: 与报告中各图表与列表对应的数据集的数组。
+* *type*: 每个数据集都有一个类型。这个类型将用于决定如何渲染数据。目前支持的值有：**pieChart，lineChart，barChart与list**。
+* *description*: 每个图表都可选一个描述，将显示在报告中。
+* **x与yaxis**: 只对__lineChart__类型可用。描述图表坐标轴名字的可选参数。
+* *data*: 实际的数据，是一个带有键值对元素的JSON对象。
+
+
+[[explorer.reporting.example]]
+
+
+==== 实例流程 Example process
+
+下面的例子展示了一个'process instance overview （流程实例总览）'报告。流程本身十分简单，只有一个使用JavaScript生成JSON数据集的脚本任务（除了启动与结束）。尽管Explorer中所有的例子都使用脚本，但也完全可以使用Java服务任务。运行流程的结果就是包含数据的__reportData__变量。
+
+**重要提示：**下面的例子只能在JDK 7+使用。原因是旧JDK版本中的JavaScript引擎（__Rhino__）不够先进，不能使用类似下面使用的结构撰写脚本。之后有一个兼容JDK 6+的例子。
+
+[source,xml,linenums]            
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn"
+    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+    xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema"
+    expressionLanguage="http://www.w3.org/1999/XPath" 
+    targetNamespace="activiti-report">
+
+    <process id="process-instance-overview-report" name="Process Instance Overview" isExecutable="true">
+    
+        <startEvent id="startevent1" name="Start" />
+        <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="generateDataset" />
+        
+        <scriptTask id="generateDataset" name="Execute script" scriptFormat="JavaScript" activiti:autoStoreVariables="false">
+          <script><![CDATA[
+          
+               importPackage(java.sql);
+               importPackage(java.lang);
+               importPackage(org.activiti.explorer.reporting);
+               
+               var result = ReportingUtil.executeSelectSqlQuery("SELECT PD.NAME_, PD.VERSION_ , count(*) FROM ACT_HI_PROCINST PI inner join ACT_RE_PROCDEF PD on PI.PROC_DEF_ID_ = PD.ID_ group by PROC_DEF_ID_");
+            
+               var reportData = {};
+               reportData.datasets = [];
+               
+               var dataset = {};
+               dataset.type = "pieChart";
+               dataset.description = "Process instance overview (" + new java.util.Date() + ")";
+               dataset.data = {};
+            
+               while (result.next()) { // process results one row at a time
+                 var name = result.getString(1);
+                 var version = result.getLong(2)
+                 var count = result.getLong(3);
+                 dataset.data[name + " (v" + version + ")"] = count;
+               }
+               reportData.datasets.push(dataset);
+               
+               execution.setVariable("reportData", new java.lang.String(JSON.stringify(reportData)).getBytes("UTF-8"));
+          ]]></script>
+        </scriptTask>
+        <sequenceFlow id="flow3" sourceRef="generateDataset" targetRef="theEnd" />
+        
+        <endEvent id="theEnd" />
+        
+    </process>
+
+</definitions>                   
+----
+
+除了流程XML顶端的标准的XML行，主要的区别是__targetNamespace__设置为**activiti-report**，为部署的流程定义添加了同名的类型。
+
+脚本的前几行是为了避免重复写包名而进行的引入。要关注的第一行是使用__ReportingUtil__查询Activiti数据库，其结果是生成了一个普通的__JDBC Resultset__。在查询下面的几行，JavaScript功能轻松地创建了要用的JSON。这个JSON按照<<explorer.reporting.json,要求>>生成。
+
+脚本的最后一行看起来有些奇怪。首先是使用JavaScript函数__JSON.stringify()__将JSON对象转换为字符串，然后将这个字符串保存为一个字节数组变量。原因是技术性的：字节数组没有大小限制，而字符串有。这就是为什么JavaScript字符串必须要转换为Java字符串，因为这样就可以转换为字节形式。
+
+兼容JDK 6（与更高）的相同流程看起来有点区别。不能使用原生的JSON功能，因此需要提供一些辅助类（__ReportData__与__Dataset__）：
+            
+            
+[source,xml,linenums]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn"
+    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+    xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema"
+    expressionLanguage="http://www.w3.org/1999/XPath" 
+    targetNamespace="activiti-report">
+
+    <process id="process-instance-overview-report" name="Process Instance Overview" isExecutable="true">
+    
+        <startEvent id="startevent1" name="Start" />
+        <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="generateDataset" />
+        
+        <scriptTask id="generateDataset" name="Execute script" scriptFormat="js" activiti:autoStoreVariables="false">
+          <script><![CDATA[
+          
+               importPackage(java.sql);
+               importPackage(java.lang);
+               importPackage(org.activiti.explorer.reporting);
+               
+               var result = ReportingUtil.executeSelectSqlQuery("SELECT PD.NAME_, PD.VERSION_ , count(*) FROM ACT_HI_PROCINST PI inner join ACT_RE_PROCDEF PD on PI.PROC_DEF_ID_ = PD.ID_ group by PROC_DEF_ID_");
+
+            
+               var reportData = new ReportData;
+               var dataset = reportData.newDataset();
+               dataset.type = "pieChart";
+               dataset.description = "Process instance overview (" + new java.util.Date() + ")"
+               
+               
+               while (result.next()) { // process results one row at a time
+                 var name = result.getString(1);
+                 var version = result.getLong(2);
+                 var count = result.getLong(3);
+                 dataset.add(name + " (v" + version + ")", count);
+               }
+               
+               execution.setVariable("reportData", reportData.toBytes());
+               
+          ]]></script>
+        </scriptTask>
+        <sequenceFlow id="flow3" sourceRef="generateDataset" targetRef="theEnd" />
+        
+        <endEvent id="theEnd" />
+        
+    </process>
+
+</definitions>
+----
+
+        
+[[explorer.reporting.start.form]]
+
+
+==== 报告启动表单 Report start forms
+
+报告通过普通流程生成，因此可以使用普通的表单功能。简单的为启动事件添加启动表单，这样Explorer就将在生成流程前为用户显示表单。
+            
+[source,xml,linenums]
+----
+<startEvent id="startevent1" name="Start">
+  <extensionElements>
+    <activiti:formProperty id="processDefinition" name="Select process definition" type="processDefinition" required="true" />
+      <activiti:formProperty id="chartType" name="Chart type" type="enum" required="true">
+        <activiti:value id="pieChart" name="Pie chart" />
+        <activiti:value id="barChart" name="Bar chart" />
+      </activiti:formProperty>
+  </extensionElements>
+</startEvent>                    
+----
+
+为用户渲染的是一个典型的表单：
+
+image::images/explorer.reporting.start.form.png[align="center"]
+
+表单的参数将在流程启动时提交，与普通执行变量一样，可以在生成数据的脚本中使用：
+     
+[source,javascript,linenums]       
+----
+ var processDefinition = execution.getVariable("processDefinition");
+----
+
+
+[[explorer.reporting.examples]]
+
+
+==== 示例流程 Example processes
+
+默认情况下，Explorer包含四个示例报告：
+
+*  **Employee productivity（雇员生产力）**：这个报告演示了折线图的使用，并使用了启动表单。这个报告中使用的脚本也比其他例子中的复杂，因为获取的数据，在存储至报告数据前，会由脚本进行处理。
+*  **Helpdesk - firstline vs escalated（帮助中心——一线对比升级）**：展示了饼图的使用，并结合了两个不同数据库查询的结果。
+*  **Process instance overview（流程实例总览）**：使用多个数据集的示例报告。这个报告包含有一个饼图，以及相同数据的列表视图，这样展示了如何使用多个数据集生成一个带有多个图表的页面。
+*  **Task duration（任务持续时间）**：另一个使用了启动表单的例子，并使用了相应的数据动态建立SQL查询。
+                    
+
+[[explorer.change.database]]
+
+
+=== 改变数据库 Changing the database
+
+要修改Explorer在演示配置中使用的数据库，需要修改++apps/apache-tomcat-6.x/webapps/activiti-explorer/WEB-INF/classes/db.properties++配置文件。并且，在classpath中放入合适的数据库驱动（Tomcat共享库，或放在++apps/apache-tomcat-6.x/webapps/activiti-explorer/WEB-INF/lib/++下）。
+

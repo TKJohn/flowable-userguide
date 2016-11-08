@@ -1,0 +1,116 @@
+
+== 开始
+
+[[demo.setup.one.minute.version]]
+
+=== 一分钟入门
+
+
+从link:$$http://www.activiti.org$$[Activiti website]下载Activiti Explorer的WAR文件后，按照以下步骤使用默认设置运行demo。你需要已经安装link:$$http://java.sun.com/javase/downloads/index.jsp$$[Java runtime]与link:$$http://tomcat.apache.org/download-70.cgi$$[Apache Tomcat]（事实上，鉴于我们只使用servlet功能，任何web容器都可以运行。但我们主要在Tomcat上进行测试）。
+
+* 将下载的activiti-explorer.war复制到Tomcat的webapps文件夹下。
+* 运行Tomcat的bin文件夹下的startup.bat或者startup.sh脚本启动Tomcat。
+* Tomcat启动后，打开浏览器访问link:$$http://localhost:8080/activiti-explorer$$[http://localhost:8080/activiti-explorer]。使用kermit/kermit登录。
+
+
+
+就是这样！Activiti Explorer应用默认使用H2内存数据库。如果你想使用其他数据库配置，请阅读<<activiti.setup,较长版>>。
+
+
+[[activiti.setup]]
+
+
+=== Activiti安装
+
+要安装Activiti, 你需要已经安装link:$$http://java.sun.com/javase/downloads/index.jsp$$[Java runtime]与link:$$http://tomcat.apache.org/download-70.cgi$$[Apache Tomcat]。同时确认 _$$JAVA_HOME$$_ 环境变量已经设置正确。该环境变量的设置方法取决于你的操作系统。
+
+要运行Activiti Explorer与REST web应用，将你从Activiti下载的WAR文件，复制到Tomcat安装目录下的 +webapps+ 文件夹中。Explorer 应用默认使用内存数据库，示例流程、用户与组。
+
+
+下表列出demo用户：
+
+[options="header"]
+|===============
+|用户账号|密码|安全角色
+|kermit|kermit|admin
+|gonzo|gonzo|manager
+|fozzie|fozzie|user
+|===============
+
+
+现在你可以访问如下web应用：
+
+[options="header"]
+|===============
+|Webapp名称|URL|说明
+|Activiti Explorer|link:$$http://localhost:8080/activiti-explorer$$[http://localhost:8080/activiti-explorer]|流程引擎的用户操作台。使用这个工具来启动新流程、分配任务、查看与接收任务等。这个工具同时可以管理Activiti引擎。
+|===============
+
+请注意Activiti Explorer示例配置只是用尽可能简单快捷的方式展现Activiti的能力与功能。这*并不*意味着只有这一种使用Activiti的方式。Activiti只是一个jar，它可以被嵌入到任何Java环境中：swing、Tomcat、JBoss、 WebSphere，等等。你也可以将Activiti作为典型的、独立运行的的BPM服务器。任何在Java里可以做的事情，都可以在Activiti中做！
+
+
+[[activiti.setup.database]]
+
+
+=== Activiti数据库配置
+
+就像在一分钟示例配置中介绍的，Activiti Explorer默认运行在H2内存数据库上。要让Activiti Explorer使用独立运行的H2数据库或其他数据库，需要修改Activiti Explorer web应用下，WEB-INF/classes目录中的db.properties。
+
+
+另外，请注意Activiti Explorer默认自动生成演示用户、组、流程定义与模型。要禁用这些设置，需要修改WEB-INF/classes目录下的engine.properties文件。要完全禁用示例设置，可以将所有设置项设为false。你也可以单独禁用或启用其中的某些设置。
+
+[source, properties, linenums]
+----
+# demo data properties
+create.demo.users=true
+create.demo.definitions=true
+create.demo.models=true
+create.demo.reports=true
+----
+
+[[getting.started.including.libs]]
+
+
+=== 引入Activiti jar与依赖
+
+
+我们建议使用link:$$http://maven.apache.org/$$[Maven](或者link:$$http://ant.apache.org/ivy/$$[Ivy])来引入Activiti的jar与依赖库，因为它简化了我们之间的依赖管理。参考link:$$http://www.activiti.org/community.html#maven.repository$$[]中的介绍来将必要的jar引入你的项目。
+
+
+如果不想使用Maven，你也可以自行将jar引入你的项目。从Activiti下载的zip包中的 +libs+ 文件夹，包含所有Activiti的jar（包括源码jar）。依赖并没有通过这种方式发布。Activiti引擎的依赖列表如下（使用++mvn dependency:tree++生成）：
+
+----
+org.activiti:activiti-engine:jar:5.17.0
++- org.activiti:activiti-bpmn-converter:jar:5.17.0:compile
+|  \- org.activiti:activiti-bpmn-model:jar:5.17.0:compile
+|     +- com.fasterxml.jackson.core:jackson-core:jar:2.2.3:compile
+|     \- com.fasterxml.jackson.core:jackson-databind:jar:2.2.3:compile
+|        \- com.fasterxml.jackson.core:jackson-annotations:jar:2.2.3:compile
++- org.activiti:activiti-process-validation:jar:5.17.0:compile
++- org.activiti:activiti-image-generator:jar:5.17.0:compile
++- org.apache.commons:commons-email:jar:1.2:compile
+|  +- javax.mail:mail:jar:1.4.1:compile
+|  \- javax.activation:activation:jar:1.1:compile
++- org.apache.commons:commons-lang3:jar:3.3.2:compile
++- org.mybatis:mybatis:jar:3.2.5:compile
++- org.springframework:spring-beans:jar:4.0.6.RELEASE:compile
+|  \- org.springframework:spring-core:jar:4.0.6.RELEASE:compile
++- joda-time:joda-time:jar:2.6:compile
++- org.slf4j:slf4j-api:jar:1.7.6:compile
++- org.slf4j:jcl-over-slf4j:jar:1.7.6:compile
+----
+
+注意：只有使用了<<bpmnEmailTask,邮件任务>>才必须引入邮件依赖jar。
+
+所有依赖可以在link:$$https://github.com/Activiti/Activiti$$[Activiti source code]的模块中使用++mvn dependency:copy-dependencies++下载。
+
+
+[[getting.started.next.steps]]
+
+=== 下一步
+
+使用<<activitiExplorer,Activiti Explorer>> web应用是一个熟悉Activiti概念与功能的好办法。然而，Activiti的主要目的是用来为你自己的应用添加强大的BPM与工作流功能。下面的章节会帮助你熟悉如何在你的环境中编程使用Activiti：
+
+* <<configuration,配置章节>>会教你如何设置Activiti，如何获得++ProcessEngine++类的实例，他是所有Activiti引擎功能的中心入口。
+* <<chapterApi,API章节>>会带你了解构成Activiti API的服务。这些服务用简便但强大的方式提供了Activiti引擎的功能，可以使用在任何Java环境下。
+* 对深入了解Activiti引擎中流程的编写格式，BPMN 2.0，感兴趣吗？请继续浏览<<bpmn20,BPMN 2.0章节>>。

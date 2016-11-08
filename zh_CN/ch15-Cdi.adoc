@@ -1,0 +1,323 @@
+[[cdiintegration]]
+
+== CDI集成 CDI integration
+
+activiti-cid模块平衡了Activiti的可配置性与cid的可扩展性。activiti-cdi最突出的特点是：
+   
+* 支持@BusinessProcessScoped bean（生命周期绑定至流程实例的Cdi bean），
+* 用于从流程中解析Cdi bean（包括EJB）的自定义El解析器，
+* 使用注解对流程实例进行声明式控制，
+* Activiti关联cdi事件总线，
+* 可以与Java EE，Java SE，以及Spring一起工作，
+* 支持单元测试。
+
+[source,xml,linenums]
+----
+<dependency>
+	<groupId>org.activiti</groupId>
+	<artifactId>activiti-cdi</artifactId>
+	<version>5.x</version>
+</dependency>
+----
+
+=== 设置activiti-cdi (Setting up activiti-cdi)
+
+Activiti cdi可以在不同环境中安装。在这个章节我们主要浏览配置选项。
+    
+
+==== 查找流程引擎 Looking up a Process Engine
+
+cid扩展需要能访问流程引擎，因此会在运行时查找++org.activiti.cdi.spi.ProcessEngineLookup++接口的实现。cdi模块提供了默认的名为++org.activiti.cdi.impl.LocalProcessEngineLookup++的实现，使用++ProcessEngines++-Utility类查找流程引擎，默认配置下使用 +$$ProcessEngines#NAME_DEFAULT$$+ 查找流程引擎。需要扩展这个类并设置一个名字。请注意：在classpath中需要有++activiti.cfg.xml++配置文件。
+
+Activiti cdi使用java.util.ServiceLoader SPI解析++org.activiti.cdi.spi.ProcessEngineLookup++实例。为了提供接口的自定义实现，需要在部署中添加名为++META-INF/services/org.activiti.cdi.spi.ProcessEngineLookup++的纯文本文件，在其中指定实现的全限定类名。
+
+[NOTE]
+====
+如果不提供自定义的++org.activiti.cdi.spi.ProcessEngineLookup++实现，则Activiti会使用默认的++LocalProcessEngineLookup++实现。在这种情况下，只需要在classpath中提供activiti.cfg.xml（参见下一章节）即可。
+====
+
+
+==== 配置流程引擎 Configuring the Process Engine
+
+配置方式取决于选用的流程引擎查找策略（上一章节）。这里，我们关注与LocalProcessEngineLookup一起使用的可用配置选项，需要在classpath中提供一个Spring activiti.cfg.xml文件。
+
+Activiti根据底层事务管理策略的不同，提供不同的ProcessEngineConfiguration实现。activiti-cdi模块不关注事务，也就意味着可以使用任何事务管理策略（甚至是Spring抽象事务）。按照约定，cdi模块提供两个自定义的ProcessEngineConfiguration实现：
+     	
+* ++org.activiti.cdi.CdiJtaProcessEngineConfiguration++: activiti JtaProcessEngineConfiguration的子类，可用于Activiti使用JTA管理事务的情况
+* ++org.activiti.cdi.CdiStandaloneProcessEngineConfiguration++: StandaloneProcessEngineConfiguration的子类，可用于Activiti使用简单JDBC事务的情况。
+
+下面是一个JBoss 7的activiti.cfg.xml文件示例：
+     
+[source,xml,linenums]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 查找JTA事务管理器 lookup the JTA-Transaction manager -->
+	<bean id="transactionManager" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:jboss/TransactionManager"></property>
+		<property name="resourceRef" value="true" />
+	</bean>
+
+	<!-- 流程定义配置 process engine configuration -->
+	<bean id="processEngineConfiguration"
+		class="org.activiti.cdi.CdiJtaProcessEngineConfiguration">
+		<!-- 查找默认的Jboss数据源 lookup the default Jboss datasource -->
+		<property name="dataSourceJndiName" value="java:jboss/datasources/ExampleDS" />
+		<property name="databaseType" value="h2" />
+		<property name="transactionManager" ref="transactionManager" />
+		<!-- 使用外部管理事务 using externally managed transactions -->
+		<property name="transactionsExternallyManaged" value="true" />
+		<property name="databaseSchemaUpdate" value="true" />
+	</bean>
+</beans>
+     	
+----
+
+这是Glassfish 3.1.1中的样子（假设已正确配置了名为jdbc/activiti的数据源）：
+
+[source,xml,linenums]     	
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 查找JTA事务管理器 lookup the JTA-Transaction manager -->
+	<bean id="transactionManager" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:appserver/TransactionManager"></property>
+		<property name="resourceRef" value="true" />
+	</bean>
+
+	<!-- 流程定义配置 process engine configuration -->
+	<bean id="processEngineConfiguration"
+		class="org.activiti.cdi.CdiJtaProcessEngineConfiguration">
+		<property name="dataSourceJndiName" value="jdbc/activiti" />
+		<property name="transactionManager" ref="transactionManager" />
+		<!-- 使用外部管理事务 using externally managed transactions -->
+		<property name="transactionsExternallyManaged" value="true" />
+		<property name="databaseSchemaUpdate" value="true" />
+	</bean>
+</beans>
+     	
+----
+
+请注意上面的配置需要"spring-context"模块：
+
+[source,xml,linenums]
+----
+<dependency>
+	<groupId>org.springframework</groupId>
+	<artifactId>spring-context</artifactId>
+	<version>3.0.3.RELEASE</version>
+</dependency>
+----
+
+Java SE环境中的配置与<<configuration,创建一个流程引擎>>章节中的示例一样，使用"StandaloneProcessEngineConfiguration"代替"CdiStandaloneProcessEngineConfiguration"。
+     	
+==== 部署流程 Deploying Processes
+
+可以使用标准activiti API（++RepositoryService++）部署流程。另外，activiti-cid也提供了自动部署流程的功能，使用classpath顶层的++processes.xml++文件提供流程列表。这是一个processes.xml文件的例子：
+
+[source,xml,linenums]
+----
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- 列表需要部署的流程 list the processes to be deployed -->
+<processes>
+	<process resource="diagrams/myProcess.bpmn20.xml" />
+	<process resource="diagrams/myOtherProcess.bpmn20.xml" />  
+</processes> 
+----
+
+     
+=== CDI的基于上下文的流程执行 Contextual Process Execution with CDI
+
+本章节我们将介绍Activiti cdi扩展使用的基于上下文的流程执行模型。BPMN业务流程通常是一个长期运行的交互动作，包含用户与系统的任务。在运行时，流程分割为独立工作单元的集合，由用户与/或应用逻辑操作。在activiti-cdi中，流程实例可以关联至一个cdi作用域，这个关联代表了一个工作单元。如果工作单元很复杂这就特别有用，例如若一个用户任务由多个不同表单的复杂顺序组成，并需要在交互过程中保持"非流程作用域（non-process-scoped）"状态。
+
+在默认配置中，流程实例关联至"broadest（广播）"活动作用域，一开始为会话，并在会话上下文未激活时退化为请求。
+
+==== 将一个会话关联至一个流程实例 Associating a Conversation with a Process Instance
+
+当解析@BusinessProcessScoped bean，或注入流程变量时，会依赖一个激活的cdi作用域与一个流程实例的已有关联。Activiti-cdi提供了++org.activiti.cdi.BusinessProcess++ bean用于控制该关联，特别是：
+
+* __startProcessBy(...)__方法，镜像了Activiti ++RuntimeService++服务暴露的对应方法，用于启动并关联一个业务流程，
+* ++resumeProcessById(String processInstanceId)++，用于将给定id关联至流程实例，
+* ++resumeTaskById(String taskId)++，用于将给定id关联至任务（以及扩展至相关的流程实例）。
+
+当完成了一个工作单元（例如一个用户任务）时，可以调用++completeTask()++方法，解除流程实例与会话/请求的关联。这将通知Activiti当前任务已完成，并使流程实例继续运行。
+
+请注意++BusinessProcess++ bean是一个++@Named++ bean，意味着可以使用表达式语言调用暴露的服务，例如在JSF页面中调用。下面的JSF2代码片段启动了一个新的会话，并将其关联至一个用户任务实例，其id作为请求参数传递（例如++pageName.jsf?taskId=XX++）：
+
+[source,xml,linenums]
+----
+<f:metadata>
+<f:viewParam name="taskId" />
+<f:event type="preRenderView" listener="#{businessProcess.startTask(taskId, true)}" />
+</f:metadata>
+----
+
+==== 声明式控制流程 Declaratively controlling the Process
+
+Activiti可以使用注解，声明式启动流程实例以及完成任务。++@org.activiti.cdi.annotation.StartProcess++注解可以通过"key"或"name"启动一个流程实例。请注意流程实例在注解的方法返回__之后__启动。例如：
+		
+[source,java,linenums]
+----
+@StartProcess("authorizeBusinessTripRequest")
+public String submitRequest(BusinessTripRequest request) {
+	// 进行操作 do some work
+	return "success";
+}			
+----
+
+取决于Activiti的配置，被注解的方法代码以及流程实例的启动将处于同一个事务中。++@org.activiti.cdi.annotation.CompleteTask++的使用方式相同：
+
+[source,java,linenums]
+----
+@CompleteTask(endConversation=false)
+public String authorizeBusinessTrip() {
+	// 进行操作 do some work
+	return "success";
+}
+----
+
+++@CompleteTask++注解提供了完成当前会话的能力。默认行为是在调用Activiti返回后结束回话。可以像上面的例子一样，禁用结束会话。
+
+==== 从流程中引用Bean (Referencing Beans from the Process)
+
+Activiti-cdi使用自定义解析器，将CDI bean暴露给Activiti El。因此可以像这样在流程中引用bean：
+
+[source,xml,linenums]
+----
+<userTask id="authorizeBusinessTrip" name="Authorize Business Trip"			 
+			activiti:assignee="#{authorizingManager.account.username}" />
+----
+
+其中"authorizingManager"可以是生产者方法提供的bean：
+
+[source,java,linenums]
+----
+@Inject @ProcessVariable Object businessTripRequesterUsername;
+
+@Produces
+@Named
+public Employee authorizingManager() {
+	TypedQuery<Employee> query = entityManager.createQuery("SELECT e FROM Employee e WHERE e.account.username='"
+		+ businessTripRequesterUsername + "'", Employee.class);
+	Employee employee = query.getSingleResult();
+	return employee.getManager();
+}
+
+----
+
+可以使用++activiti:expression="myEjb.method()"++扩展，在服务任务中调用一个EJB中的业务方法。请注意这需要在++MyEjb++类上使用++@Named++注解。
+
+==== 使用@BusinessProcessScoped bean (Working with @BusinessProcessScoped beans)
+
+使用activiti-cdi，可以将一个bean的生命周期绑定在一个流程实例上。因此，提供了名为BusinessProcessContext的自定义的上下文实现。BusinessProcessScoped bean的实例将作为流程变量存储在当前流程实例中。BusinessProcessScoped bean需要是可持久化（PassivationCapable，例如Serializable）的。下面是一个流程作用域bean的例子：
+
+[source,java,linenums]
+----
+@Named
+@BusinessProcessScoped
+public class BusinessTripRequest implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private String startDate;
+	private String endDate;
+	// ...
+}
+----
+
+有时希望在没有关联至流程实例的情况下使用流程作用域bean，例如在流程启动前。如果当前没有激活的流程实例，则BusinessProcessScoped bean的实例将临时存储在本地作用域（也就是会话或请求中，取决于上下文）。如果该作用域之后关联至一个业务流程实例，则会将bean实例刷入该流程实例。
+
+==== 注入流程变量 Injecting Process Variables
+
+可以注入流程变量。Activiti-CDI支持
+
+* 使用++@Inject \[additional qualifiers\] Type fieldName++类型安全地注入++@BusinessProcessScoped++ bean
+* 使用++@ProcessVariable(name?)++限定名不安全地注入其它流程变量：
+
+[source,java,linenums]
+----
+@Inject @ProcessVariable Object accountNumber;
+@Inject @ProcessVariable("accountNumber") Object account
+----
+
+要在EL中引用流程变量，有类似的选择：
+
+* ++@Named @BusinessProcessScoped++ bean可以直接引用，
+* 其它流程变量可以通过++ProcessVariables++ bean引用：
+
+
+----
+#{processVariables['accountNumber']}
+----
+
+==== 接收流程事件 Receiving Process Events
+
+<<experimental,[EXPERIMENTAL]>>
+
+Activiti可以关联至CDI事件总线。这样可以使用标准CDI事件机制获取流程事件。要为Activiti启用CDI事件支持，需要在配置中启用相应的处理监听器：
+
+[source,xml,linenums]
+----
+<property name="postBpmnParseHandlers">
+	<list>
+		<bean class="org.activiti.cdi.impl.event.CdiEventSupportBpmnParseHandler" />
+	</list>
+</property>
+----
+
+这样Activiti就被配置为使用CDI事件总线发布事件。下面介绍如何在CDI bean中接收流程事件。事件通知是类型安全的。流程事件的类型是++org.activiti.cdi.BusinessProcessEvent++。下面是一个简单的事件观察者方法的例子：
+
+[source,java,linenums]
+----
+public void onProcessEvent(@Observes BusinessProcessEvent businessProcessEvent) {
+	// 处理事件 handle event
+}
+----
+
+观察者将会被通知所有事件。如果需要限制观察者接收的事件，可以添加限定注解：
+		
+* ++@BusinessProcess++: 限制事件为特定的流程定义。例如：++@Observes @BusinessProcess("billingProcess") BusinessProcessEvent evt++
+* ++@StartActivity++: 使用特定的活动限制事件。例如：++@Observes @StartActivity("shipGoods") BusinessProcessEvent evt++将在进入id为"shipGoods"的活动时调用。
+* ++@EndActivity++: 使用特定的活动限制事件。例如：++@Observes @EndActivity("shipGoods") BusinessProcessEvent evt++将在离开id为"shipGoods"的活动时调用。
+* ++@TakeTransition++: 使用特定的路径限制事件。
+* ++@CreateTask++: 使用特定任务的创建限制事件。
+* ++@DeleteTask++: 使用特定任务的删除限制事件。
+* ++@AssignTask++: 使用特定任务的指派限制事件。
+* ++@CompleteTask++: 使用特定任务的完成限制事件。
+
+上面的限定名可以自由组合。例如，要接收离开"shipmentProcess"中的"shipGoods"活动时生成的所有事件，可以撰写下面的观察者方法：
+
+[source,java,linenums]
+----
+public void beforeShippingGoods(@Observes @BusinessProcess("shippingProcess") @EndActivity("shipGoods") BusinessProcessEvent evt) {
+	// 处理事件 handle event
+}	  	  	
+----
+
+在默认配置中，事件监听器将在上下文的相同事务中同步调用。CDI事务性观察者（CDI transactional observer，只能与JavaEE/EJB一起使用）可以在事件交给观察者方法时控制。使用事务性观察者，可以例如保证观察者只在触发事件的事务成功时才被通知：
+
+[source,java,linenums]
+----
+public void onShipmentSuceeded(@Observes(during=TransactionPhase.AFTER_SUCCESS) @BusinessProcess("shippingProcess") @EndActivity("shipGoods") BusinessProcessEvent evt) {
+	// 给客户发送邮件。 send email to customer.
+}	  	
+----
+
+
+==== 额外功能 Additional Features
+
+
+* 可以注入流程引擎与服务：++@Inject ProcessEngine, RepositoryService, TaskService++, ...
+* 可以注入当前的流程实例与任务：++@Inject ProcessInstance, Task++,
+* 可以注入当前的businessKey：++@Inject @BusinessKey String businessKey++,
+* 可以注入当前的流程实例id：+@Inject @ProcessInstanceId String pid++
+
+=== 已知限制 Known Limitations
+
+尽管activiti-cdi依靠SPI实现，并设计为“移动性扩展”，但只使用Weld进行了测试。
+	  	
+

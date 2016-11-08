@@ -1,0 +1,71 @@
+
+== 简介
+
+[[license]]
+
+=== 协议
+
+Activiti使用 link:$$http://www.apache.org/licenses/LICENSE-2.0.html$$[the Apache V2 license] 协议开源。
+Activiti Modeler（Web设计器）使用了另一个开源协议 link:$$http://opensource.org/licenses/LGPL-2.1$$[the LGPL 2.1 license] 。
+
+[[download]]
+
+=== 下载
+
+link:$$http://activiti.org/download.html$$[http://activiti.org/download.html]
+
+[[sources]]
+
+=== 源码
+
+Activiti的发布包里包含了大部分源码，这些源码是以jar压缩文件提供的。Activiti的源码可以通过以下链接获得：
+link:$$https://github.com/Activiti/Activiti$$[https://github.com/Activiti/Activiti]
+
+
+[[required.software]]
+
+=== 必要的软件
+
+==== JDK 6+
+
+Activiti需要JDK 6或以上版本。访问 link:$$http://www.oracle.com/technetwork/java/javase/downloads/index.html$$[Oracle Java SE downloads] 点击“下载JDK”按钮。这个页面上有安装文档。安装完成后，执行 +java -version+ 校验安装是否成功。能看到JDK的版本信息就说明安装成功了。
+
+
+==== Eclipse Indigo 和 Juno
+
+到 link:$$http://www.eclipse.org/downloads/$$[the Eclipse 下载页面]选择对应的Eclipse版本下载。把下载的文件解压，
+然后执行+eclipse+目录下的eclipse文件。手册后续有专门一章 <<eclipseDesignerInstallation,installing our eclipse designer plugin>>。
+
+
+[[reporting.problems]]
+
+=== 反馈问题
+
+每一个自重的开发者都应该先看看这个 link:$$http://www.catb.org/~esr/faqs/smart-questions.html$$[提问的智慧] 。
+
+
+看完提问的智慧，你可以在 link:$$http://forums.activiti.org/en/viewforum.php?f=3$$[用户论坛] 提问和评论，也可以在link:$$https://activiti.atlassian.net$$[我们的 JIRA 问题追踪系统]创建问题。
+
+[NOTE]
+====
+
+虽然Activiti托管在GitHub上，但是不建议使用GitHub的问题追踪系统。如果你想报告问题，不要创建GitHub问题（issue），应该使用link:$$https://activiti.atlassian.net$$[我们的JIRA]。
+
+====
+
+[[experimental]]
+
+=== 实验性功能
+
+标记*[EXPERIMENTAL]*的章节介绍的功能
+还不够稳定。
+
+
++.impl.+包下的类都是内部实现类，后续可能发生各种变化。但是，如果是在用户手册中作为配置参数介绍的类，它们是被官方支持的，可以认为是稳定的。
+
+
+[[internal]]
+
+=== 内部实现类
+
+在jar文件中，所有包名中包含+.impl.+的类（比如，++org.activiti.engine.impl.pvm.delegate++）都是实现类，这些类都是内部类。这些类和接口都不会保证稳定。（不同版本之间可能会有变化。谨慎使用。）

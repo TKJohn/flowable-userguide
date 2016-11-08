@@ -1,0 +1,171 @@
+[[chapter_ldap]]
+
+== 集成LDAP (LDAP integration)
+
+公司通常已经有了LDAP（Lightweight Directory Access Protocol，轻量级目录访问协议）系统形式的用户与组存储。从5.14版本开始，Activiti提供了一个立即可用的解决方案，可以简单配置Activiti与LDAP系统连接的方式。
+
+在Activiti 5.14版本以前，也可以为Activiti集成LDAP。然而，在5.14中大幅简化了配置。但配置LDAP的“老”方法仍然可用。实际上，简化配置只是在“老”基础上进行的包装。
+    
+
+[[ldap_usage]]
+
+
+=== 使用 Usage
+
+要在你的项目中添加LDAP集成代码，简单地在pom.xml中添加下列依赖：
+            
+[source,xml,linenums]            
+----
+<dependency>
+  <groupId>org.activiti</groupId>
+  <artifactId>activiti-ldap</artifactId>
+  <version>latest.version</version>
+</dependency>                    
+----
+
+
+[[ldap_usecases]]
+
+
+=== 用例 Use cases
+
+目前LDAP集成有两大使用场景：
+
+* 通过IdentityService进行认证。例如在使用Activiti Explorer，并需要通过LDAP登录时很有用。
+* 获取一个组中的用户。例如在查询一个特定用户可见的任务（也就是说，特定候选组的任务）时很重要。
+                
+
+[[ldap_configuration]]
+
+
+=== 配置 Configuration
+
+在Activiti中集成LDAP系统通过在流程引擎配置的++configurators++小节注入++org.activiti.ldap.LDAPConfigurator++完成。这个类高度可扩展：如果默认实现不能满足使用场景，可以轻松地覆盖方法，许多依赖的bean也是可插拔的。
+
+这是一个示例配置（请注意：当然，在编程式创建引擎时完全类似）。现在不需要太关注这些参数，我们会在下一章节详细介绍。
+
+[source,xml,linenums]            
+----
+    <bean id="processEngineConfiguration" class="...SomeProcessEngineConfigurationClass">
+        ...
+        <property name="configurators">
+          <list>
+              <bean class="org.activiti.ldap.LDAPConfigurator">
+              
+                <!-- 服务器连接参数 Server connection params -->
+                <property name="server" value="ldap://localhost" />
+                <property name="port" value="33389" />
+                <property name="user" value="uid=admin, ou=users, o=activiti" />
+                <property name="password" value="pass" />
+                
+                <!-- 查询参数 Query params -->
+                <property name="baseDn" value="o=activiti" />
+                <property name="queryUserByUserId" value="(&(objectClass=inetOrgPerson)(uid={0}))" />
+                <property name="queryUserByFullNameLike" value="(&(objectClass=inetOrgPerson)(|({0}=*{1}*)({2}=*{3}*)))" />
+                <property name="queryGroupsForUser" value="(&(objectClass=groupOfUniqueNames)(uniqueMember={0}))" />
+                
+                <!-- 属性配置 Attribute config -->
+                <property name="userIdAttribute" value="uid" />
+                <property name="userFirstNameAttribute" value="cn" />
+                <property name="userLastNameAttribute" value="sn" />
+                <property name="userEmailAttribute" value="mail" />
+                
+                
+                <property name="groupIdAttribute" value="cn" />
+                <property name="groupNameAttribute" value="cn" />
+                
+              </bean>
+          </list>
+        </property>
+    </bean>         
+----
+
+[[ldap_properties]]
+
+
+=== 参数 Properties
+
+可以为++org.activiti.ldap.LDAPConfigurator++设置下列参数：
+
+.LDAP配置参数
+[options="header"]
+|===============
+|参数名|描述|类型|默认值
+|server|LDAP系统的服务器。例如'ldap://localhost:33389'|String|
+|port|LDAP系统运行的端口|int|
+|user|连接LDAP系统的用户id|String|
+|password|连接LDAP系统的密码|String|
+|initialContextFactory|连接LDAP的InitialContextFactory的名字|String|com.sun.jndi.ldap.LdapCtxFactory
+|securityAuthentication|连接LDAP系统时使用的'java.naming.security.authentication'参数|String|simple
+|customConnectionParameters|用于设置没有专门setter的所有LDAP连接参数。例如 http://docs.oracle.com/javase/tutorial/jndi/ldap/jndi.html 中的自定义参数。这些参数用于配制连接池，指定安全选项，等等。当创建到LDAP系统的连接时，会提供所有设置的参数。|Map<String, String>|
+
+|baseDn|开始搜索用户与组的基础“区分名”（distinguished name，DN）|String|
+|userBaseDn|开始搜索用户的基础“区分名”（distinguished name，DN）。如果未提供，则使用baseDn（见上）|String|
+|groupBaseDn|开始搜索组的基础“区分名”（distinguished name，DN）。如果未提供，则使用baseDn（见上）|String|
+|searchTimeLimit|在LDAP中搜索时的超时时间，以毫秒计|long|一个小时
+|queryUserByUserId|使用userId搜索用户时执行的查询。例如：(&(objectClass=inetOrgPerson)(uid={0})) 。将返回LDAP中所有class为'inetOrgPerson'，并匹配'uid'属性的值的对象。在例子中，用户id使用{0}注入。如果对于特定的LDAP配置，只使用该查询不满足要求，则可以使用不同的LDAPQueryBuilder插件，提供比查询更高的自由度。|string|
+
+|queryUserByFullNameLike|使用全名搜索用户时执行的查询。例如：(& (objectClass=inetOrgPerson) (\|({0}=*{1}*)({2}=*{3}*)) ) 。将返回LDAP中所有class为'inetOrgPerson'，并匹配first name与last name的值的对象。请注意{0}注入为firstNameAttribute（在上面定义），{1}与{3}为搜索文本，{2}为lastNameAttribute。如果对于特定的LDAP配置，只使用该查询不满足要求，则可以使用不同的LDAPQueryBuilder插件，提供比查询更高的自由度。|string|
+
+|queryGroupsForUser|查找特定用户的组时执行的查询。例如：(&(objectClass=groupOfUniqueNames)(uniqueMember={0})) 。将返回class为'groupOfUniqueNames'，且提供的DN（匹配用户的DN）为'uniqueMember'的对象。在例子中，用户id使用{0}注入。如果对于特定的LDAP配置，只使用该查询不满足要求，则可以使用不同的LDAPQueryBuilder插件，提供比查询更高的自由度。|string|
+
+|userIdAttribute|匹配用户id的属性的名字。这个属性用于查找用户对象，并完成LDAP对象与Activiti用户对象间的映射。|string|
+|userFirstNameAttribute|匹配用户first name的属性的名字。这个属性用于查找用户对象，并完成LDAP对象与Activiti用户对象间的映射。|string|
+|userLastNameAttribute|匹配用户last name的属性的名字。这个属性用于查找用户对象，并完成LDAP对象与Activiti用户对象间的映射。|string|
+|groupIdAttribute|匹配组id的属性的名字。这个属性用于查找组对象，并完成LDAP对象与Activiti用户对象间的映射。|string|
+|groupNameAttribute|匹配组name的属性的名字。这个属性用于查找组对象，并完成LDAP对象与Activiti用户对象间的映射。|String|
+|groupTypeAttribute|匹配组type的属性的名字。这个属性用于查找组对象，并完成LDAP对象与Activiti用户对象间的映射。|String|
+
+|===============
+
+下面的参数用于自定义默认行为或引入组缓存：
+
+.高级参数
+[options="header"]
+|===============
+|参数名|描述|类型|默认值
+|ldapUserManagerFactory|如果默认实现不符合要求，设置一个自定义的LDAPUserManagerFactory实现。|LDAPUserManagerFactory的实例|
+|ldapGroupManagerFactory|如果默认实现不符合要求，设置一个自定义的LDAPGroupManagerFactory实现。|LDAPGroupManagerFactory的实例|
+|ldapMemberShipManagerFactory|如果默认实现不符合要求，设置一个自定义的LDAPMembershipManagerFactory实现。请注意很少出现这种情况，因为一般使用LDAP系统管理成员信息。|LDAPMembershipManagerFactory的实例|
+
+|ldapQueryBuilder|如果默认实现不符合要求，设置一个自定义的查询构建器。当在LDAP系统中使用LDAPUserManager或LDAPGroupManage进行实际查询时，会使用LDAPQueryBuilder的实例。默认实现使用在本实例中设置的参数，例如queryGroupsForUser与queryUserById|org.activiti.ldap.LDAPQueryBuilder的实例|
+
+|groupCacheSize|用于设置组缓存的大小。这是一个为用户缓存组的LRU缓存，可以避免每次需要查询用户所在组的时候都访问LDAP系统。
+
+ 如果值小于0则不会使用缓存。默认值为-1，因此不会进行缓存。|int|-1
+
+|groupCacheExpirationTime|设置组缓存的过期时间，以毫秒计。当获取了一个特定用户的组，且存在组缓存时，会将组存储在缓存中，持续本参数设置的时间。也就是说，如果在00:00获取了一个组，过期时间为30分钟，则00:30之后进行的获取该用户组操作都不会使用该缓存，而是会从LDAP系统中重新获取。同样的，在00:00 - 00:30间会从该缓存中获取。|long|一个小时
+
+|===============
+
+
+使用活动目录（Active Directory）时请注意：Activiti论坛的用户报告，在使用活动目录时，需要将'InitialDirContext'设置为Context.REFERRAL。可以通过customConnectionParameters map按上面介绍的方法传递。
+        
+
+[[lda-explorer]]
+
+
+=== 在Explorer中集成LDAP (Integrate LDAP in Explorer)
+
+      
+* 在++activiti-standalone-context.xml++中添加上面介绍的LDAP配置
+* 在WEB-INF/lib中添加activiti-ldap jar
+* 移除++demoDataGenerator++ bean，因为它会尝试添加用户（在集成LDAP时不允许）
+* 为++activiti-ui.context++中的++explorerApp++ bean添加下列配置：
+                        
+[source,xml,linenums]
+----
+<property name="adminGroups">
+  <list>
+    <value>admin</value>
+  </list>
+  </property>
+  <property name="userGroups">
+    <list>
+      <value>user</value>
+    </list>
+</property>                                            
+----
+
+直接使用你自己的值替换即可。需要使用的值是组的id（通过++groupIdAttribute++配置）。上面的配置将使'admin'组中的所有成员都成为Activiti Explorer的管理员用户，对于user组也类似。任何不匹配这些值的组都将成为'assignment'组，也就是说可以将任务指派给他们。
+                    

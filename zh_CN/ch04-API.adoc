@@ -1,0 +1,579 @@
+[[chapterApi]]
+
+== The Activiti API
+
+[[apiEngine]]
+
+
+=== 流程引擎API与服务 The Process Engine API and services
+
+引擎API是与Activiti交互的最常用手段。中心入口是++ProcessEngine++，像<<configuration,配置章节>>中介绍的一样，可以使用多种方式创建。使用ProcessEngine，可以获得包含工作流/BPM方法的多种服务。ProcessEngine与服务对象都是线程安全的，因此可以在整个服务器中保存一份引用。
+
+image::images/api.services.png[align="center"]
+
+[source,java,linenums]
+----
+ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+
+RuntimeService runtimeService = processEngine.getRuntimeService();
+RepositoryService repositoryService = processEngine.getRepositoryService();
+TaskService taskService = processEngine.getTaskService();
+ManagementService managementService = processEngine.getManagementService();
+IdentityService identityService = processEngine.getIdentityService();
+HistoryService historyService = processEngine.getHistoryService();
+FormService formService = processEngine.getFormService();
+----
+
+++ProcessEngines.getDefaultProcessEngine()++在第一次被调用时将初始化并构建流程引擎，在之后的调用都会返回相同的流程引擎。流程引擎的创建通过++ProcessEngines.init()++实现，关闭由++ProcessEngines.destroy()++实现。
+
+
+ProcessEngines会扫描所有++activiti.cfg.xml++与++activiti-context.xml++文件。对于所有的++activiti.cfg.xml++文件，流程引擎会以标准Activiti方式构建：++ProcessEngineConfiguration.createProcessEngineConfigurationFromInputStream(inputStream).buildProcessEngine()++。对于所有的++activiti-context.xml++文件，流程引擎会以Spring的方式构建：首先构建Spring应用上下文，然后从该上下文中获取流程引擎。
+
+所有的服务都是无状态的。这意味着你可以很容易的在集群环境的多个节点上运行Activiti，使用同一个数据库，而不用担心上一次调用实际在哪台机器上执行。不论在哪里执行，对任何服务的任何调用都是幂等（idempotent）的。
+
+**RepositoryService**很可能是使用Activiti引擎要用的第一个服务。这个服务提供了管理与控制++deployments++（部署）与++process definitions++（流程定义）的操作。在这里简单说明一下，流程定义是BPMN 2.0流程的Java等价副本，展现流程中每一步的结构与行为。++deployment++是Activiti引擎中的包装单元，一个部署中可以包含多个BPMN 2.0 xml文件，以及其他资源。开发者可以决定在一个部署中包含的内容，可以是单各流程的BPMN 2.0 xml文件，也可以包含多个流程及其相关资源（如'hr-processes'部署可以包含所有与人力资源流程相关的的东西）。++RepositoryService++可用于++deploy++（部署）这样的包。部署意味着将它上传至引擎，引擎将在储存至数据库之前检查与分析所有的流程。从这里开始，系统知道了这个部署，部署中包含的所有流程都可以启动。
+
+此外，这个服务还可以：
+
+* 查询引擎已知的部署与流程定义。
+* 暂停或激活部署中的某些流程，或整个部署。暂停意味着不能再对它进行操作，激活是其反操作。
+* 读取各种资源，比如部署中保存的文件，或者引擎自动生成的流程图。
+* 读取POJO版本的流程定义。使用它可以用Java而不是xml的方式检查流程。
+
+++RepositoryService++提供的是静态信息（也就是不会改变，至少不会经常改变的信息），而**RuntimeService**就完全相反。它可以启动流程定义的新流程实例。前面介绍过，++process definition++（流程定义）定义了流程中不同步骤的结构与行为。流程实例则是流程定义的实际执行。同一时刻，一个流程定义通常有多个运行中的实例。++RuntimeService++也用于读取与存储++process variables++（流程变量）。流程变量是给定流程持有的数据，可以在流程的许多构造中使用（例如排他网关exclusive gateway 经常使用流程变量决定流程下一步要选择的路径）。++RuntimeService++还可以用于查询流程实例与执行（execution）。执行代表了BPMN 2.0中的 +$$'token'$$+ 概念。通常执行是指向流程实例当前位置的指针。最后，++RuntimeService++还可以在流程实例等待外部触发时使用，以便流程可以继续运行。流程有许多++wait states++（暂停状态），++RuntimeService++服务提供了许多操作用于“通知”流程实例，告知已经接收到外部触发，使流程实例可以继续运行。
+
+
+对于像Activiti这样的BPM引擎来说，核心是需要人类用户实际操作的任务。所有任务相关的东西都组织在**TaskService**中，例如
+
+* 查询分派给用户或组的任务
+* 创建__standalone（独立运行）__任务。这是一种没有关联到流程实例的任务。
+* 决定任务的执行用户（assignee），或者将用户通过某种方式与任务关联。
+* 认领（claim）与完成（complete）任务。认领是指某人决定成为任务的执行用户，也即他将会完成这个任务。完成任务是指“做这个任务要求的工作”，通常是填写某种表单。
+
+**IdentityService**很简单。它用于管理（创建，更新，删除，查询……）组与用户。请重点注意，Activiti实际上在运行时并不做任何用户检查。例如任务可以分派给任何用户，而引擎并不会验证系统中是否存在该用户。这是因为Activiti有时要与LDAP、Active Directory等服务结合使用。
+
+**FormService**是可选服务。也就是说Activiti没有它也能很好地运行，而不必牺牲任何功能。这个服务引入了__start form（开始表单）__与__task form（任务表单）__的概念。 __开始表单__是在流程实例启动前显示的表单，而__任务表单__是用户完成任务时显示的表单。Activiti可以在BPMN 2.0流程定义中定义这些表单。表单服务通过简单的方式暴露这些数据。再次重申，表单不一定要嵌入流程定义，因此这个服务是可选的。
+
+**HistoryService**暴露所有Activiti引擎收集的历史数据。当执行流程时，引擎会保存许多数据（可以配置），例如流程实例启动时间，谁在执行哪个任务，完成任务花费的事件，每个流程实例的执行路径，等等。这个服务主要提供查询这些数据的能力。
+
+**ManagementService**通常在用Activiti编写用户应用时不需要使用。它可以用于读取数据库表与表原始数据的信息，也提供了对作业（job）的查询与管理操作。Activiti中很多地方都使用作业，例如定时器（timer），异步操作（asynchronous continuation），延时暂停/激活（delayed suspension/activation）等等。后续会详细介绍这些内容。
+
+参考link:$$http://activiti.org/javadocs/index.html$$[javadocs]了解服务操作与引擎API的更多信息。
+
+
+=== 异常策略 Exception strategy
+
+Activiti的异常基类是++org.activiti.engine.ActivitiException++，是未检查异常（unchecked exception）。在任何API操作时都可能会抛出这个异常，link:$$http://activiti.org/javadocs/index.html$$[javadoc]记录了每个方法可能发生的异常。例如，从++TaskService++中摘录：
+
+[source,java,linenums]
+----
+/**
+ * 当任务成功执行时调用。
+ * @param taskId 需要完成的任务id，不能为null。
+ * @throws ActivitiObjectNotFoundException 若给定id找不到任务。
+ */
+ void complete(String taskId);
+----
+
+在上例中，如果传递的id找不到任务，会抛出异常。并且，由于javadoc中**明确要求taskId不能为null，因此如果传递了++null++值，会抛出++ActivitiIllegalArgumentException++异常**。
+
+尽管我们想避免过大的异常层次结构，我们还是添加了下述在特定情况下抛出的异常子类。所有流程执行与API调用中发生的错误，如果不符合下面列出的异常，会统一抛出++ActivitiExceptions++。
+
+* ++ActivitiWrongDbException++: 当Activiti引擎检测到数据库表结构版本与引擎版本不匹配时抛出。
+* ++ActivitiOptimisticLockingException++: 当对同一数据实体的并发访问，导致数据存储发生乐观锁时抛出。
+* ++ActivitiClassLoadingException++: 当需要载入的类（如JavaDelegates, TaskListeners, ...）无法找到，或载入时发生错误时抛出。
+* ++ActivitiObjectNotFoundException++: 当请求或要操作的对象不存在时抛出。
+* ++ActivitiIllegalArgumentException++: 这个异常说明调用Activiti API时使用了不合法的参数。可能是引擎配置中的不合法值，或者是API调用传递的不合法参数，也可能是流程定义中的不合法值。
+* ++ActivitiTaskAlreadyClaimedException++: 当调用++taskService.claim(...)++，而该任务已经被认领时抛出。
+
+
+[[api.services]]
+
+
+=== 使用Activiti services(Working with the Activiti services)
+
+
+如前所述，与Activiti引擎交互的方式，是使用++org.activiti.engine.ProcessEngine++类实例暴露的服务。下面的示例假定你已经有可运行的Activiti环境，也就是说，你可以访问有效的++org.activiti.engine.ProcessEngine++。如果你只是简单地想尝试下面的代码，可以下载或克隆link:$$https://github.com/Activiti/activiti-unit-test-template$$[Activiti单元测试模板]，导入你的IDE，在++org.activiti.MyUnitTest++单元测试中增加一个++testUserguideCode()++方法。
+
+这段小教程的最终目标是生成一个业务流程，模拟公司中简单的请假流程：
+
+image::images/api.vacationRequest.png[align="center"]
+
+
+
+[[api.services.deployment]]
+
+
+==== 部署流程 Deploying the process
+
+所有有关“静态”数据（例如流程定义）的东西，都可以通过**RepositoryService**访问。从概念上说，所有这种静态数据，都是Activiti引擎“仓库（repository）”中的内容。
+
+在++src/test/resources/org/activiti/test++资源目录（如果没有使用单元测试模板，也可以是其他任何地方）下创建名为++VacationRequest.bpmn20.xml++的xml文件，写入下列内容。请注意这个章节不会解释例子中用到的xml的结构。如果需要，请先阅读<<bpmn20,BPMN 2.0章节 the BPMN 2.0 chapter>>了解这种结构。
+
+[source,xml,linenums]
+----
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions id="definitions"
+             targetNamespace="http://activiti.org/bpmn20"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:activiti="http://activiti.org/bpmn">
+
+  <process id="vacationRequest" name="Vacation request">
+
+    <startEvent id="request" activiti:initiator="employeeName">
+      <extensionElements>
+        <activiti:formProperty id="numberOfDays" name="Number of days" type="long" value="1" required="true"/>
+        <activiti:formProperty id="startDate" name="First day of holiday (dd-MM-yyy)" datePattern="dd-MM-yyyy hh:mm" type="date" required="true" />
+        <activiti:formProperty id="vacationMotivation" name="Motivation" type="string" />
+      </extensionElements>
+    </startEvent>
+    <sequenceFlow id="flow1" sourceRef="request" targetRef="handleRequest" />
+
+    <userTask id="handleRequest" name="Handle vacation request" >
+      <documentation>
+        ${employeeName} would like to take ${numberOfDays} day(s) of vacation (Motivation: ${vacationMotivation}).
+      </documentation>
+      <extensionElements>
+         <activiti:formProperty id="vacationApproved" name="Do you approve this vacation" type="enum" required="true">
+          <activiti:value id="true" name="Approve" />
+          <activiti:value id="false" name="Reject" />
+        </activiti:formProperty>
+        <activiti:formProperty id="managerMotivation" name="Motivation" type="string" />
+      </extensionElements>
+      <potentialOwner>
+        <resourceAssignmentExpression>
+          <formalExpression>management</formalExpression>
+        </resourceAssignmentExpression>
+      </potentialOwner>
+    </userTask>
+    <sequenceFlow id="flow2" sourceRef="handleRequest" targetRef="requestApprovedDecision" />
+
+    <exclusiveGateway id="requestApprovedDecision" name="Request approved?" />
+    <sequenceFlow id="flow3" sourceRef="requestApprovedDecision" targetRef="sendApprovalMail">
+      <conditionExpression xsi:type="tFormalExpression">${vacationApproved == 'true'}</conditionExpression>
+    </sequenceFlow>
+
+    <task id="sendApprovalMail" name="Send confirmation e-mail" />
+    <sequenceFlow id="flow4" sourceRef="sendApprovalMail" targetRef="theEnd1" />
+    <endEvent id="theEnd1" />
+
+    <sequenceFlow id="flow5" sourceRef="requestApprovedDecision" targetRef="adjustVacationRequestTask">
+      <conditionExpression xsi:type="tFormalExpression">${vacationApproved == 'false'}</conditionExpression>
+    </sequenceFlow>
+
+    <userTask id="adjustVacationRequestTask" name="Adjust vacation request">
+      <documentation>
+        Your manager has disapproved your vacation request for ${numberOfDays} days.
+        Reason: ${managerMotivation}
+      </documentation>
+      <extensionElements>
+        <activiti:formProperty id="numberOfDays" name="Number of days" value="${numberOfDays}" type="long" required="true"/>
+        <activiti:formProperty id="startDate" name="First day of holiday (dd-MM-yyy)" value="${startDate}" datePattern="dd-MM-yyyy hh:mm" type="date" required="true" />
+        <activiti:formProperty id="vacationMotivation" name="Motivation" value="${vacationMotivation}" type="string" />
+        <activiti:formProperty id="resendRequest" name="Resend vacation request to manager?" type="enum" required="true">
+          <activiti:value id="true" name="Yes" />
+          <activiti:value id="false" name="No" />
+        </activiti:formProperty>
+      </extensionElements>
+      <humanPerformer>
+        <resourceAssignmentExpression>
+          <formalExpression>${employeeName}</formalExpression>
+        </resourceAssignmentExpression>
+      </humanPerformer>
+    </userTask>
+    <sequenceFlow id="flow6" sourceRef="adjustVacationRequestTask" targetRef="resendRequestDecision" />
+
+    <exclusiveGateway id="resendRequestDecision" name="Resend request?" />
+    <sequenceFlow id="flow7" sourceRef="resendRequestDecision" targetRef="handleRequest">
+      <conditionExpression xsi:type="tFormalExpression">${resendRequest == 'true'}</conditionExpression>
+    </sequenceFlow>
+
+     <sequenceFlow id="flow8" sourceRef="resendRequestDecision" targetRef="theEnd2">
+      <conditionExpression xsi:type="tFormalExpression">${resendRequest == 'false'}</conditionExpression>
+    </sequenceFlow>
+    <endEvent id="theEnd2" />
+
+  </process>
+
+</definitions>
+----
+
+你必须首先部署（deploy）流程，以使Activiti引擎可以识别它。部署意味着引擎会将BPMN 2.0 xml文件解析为可执行的东西，并为部署中包含的每个流程定义创建新的数据库记录。这样，引擎重启后，仍能获取已部署的流程：
+
+[source,java,linenums]
+----
+ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+RepositoryService repositoryService = processEngine.getRepositoryService();
+repositoryService.createDeployment()
+  .addClasspathResource("org/activiti/test/VacationRequest.bpmn20.xml")
+  .deploy();
+
+Log.info("Number of process definitions: " + repositoryService.createProcessDefinitionQuery().count());
+----
+
+
+在<<chDeployment,部署章节>>阅读更多部署相关信息。
+
+
+[[api.services.start.processinstance]]
+
+
+==== 启动流程实例 Starting a process instance
+
+
+向Activiti引擎部署流程定义后，可以用它启动流程实例。每个流程定义都可以有多个流程实例。流程定义就像是“蓝图”，而流程实例在运行时执行它。
+
+所有与流程运行时状态相关的东西都可以在**RuntimeService**中找到。启动流程实例有多种不同的方法。在下列代码片段中，使用流程定义xml中定义的key启动流程实例。在启动流程实例时，我们也设置了一些流程变量（process variables），因为第一个用户任务（user task）的描述（description）中的表达式（expression）需要用到它们。流程变量的使用很普遍，因为它们为流程定义的流程实例赋予了意义。流程变量使每个流程实例与其他实例不同。
+
+[source,java,linenums]
+----
+Map<String, Object> variables = new HashMap<String, Object>();
+variables.put("employeeName", "Kermit");
+variables.put("numberOfDays", new Integer(4));
+variables.put("vacationMotivation", "I'm really tired!");
+
+RuntimeService runtimeService = processEngine.getRuntimeService();
+ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("vacationRequest", variables);
+
+// Verify that we started a new process instance
+Log.info("Number of process instances: " + runtimeService.createProcessInstanceQuery().count());
+
+----
+
+
+[[api.services.tasks]]
+
+
+==== 完成任务 Completing tasks
+
+
+流程启动时，第一步是一个用户任务。这个步骤必须由系统用户操作。一般会提供“待办任务”列出所有需要该用户处理的任务。下面的代码片段展示如何进行这种列表的查询：
+
+[source,java,linenums]
+----
+// 获取management组的所有任务
+TaskService taskService = processEngine.getTaskService();
+List<Task> tasks = taskService.createTaskQuery().taskCandidateGroup("management").list();
+for (Task task : tasks) {
+  Log.info("Task available: " + task.getName());
+}
+----
+
+我们需要结束这个任务才能使流程实例继续运行。对于Activiti引擎来说，就是++complete（完成）++这个任务。下面的代码片段展示了如何操作：
+
+[source,java,linenums]
+----
+Task task = tasks.get(0);
+
+Map<String, Object> taskVariables = new HashMap<String, Object>();
+taskVariables.put("vacationApproved", "false");
+taskVariables.put("managerMotivation", "We have a tight deadline!");
+taskService.complete(task.getId(), taskVariables);
+----
+
+
+现在流程实例会继续向下一步进行。在这个例子里，下一步允许雇员填写一个表单，用来修改提交的请假申请。雇员可以重新提交请假申请，这会使流程从开始任务重新开始运行。
+
+
+[[api.services.suspend]]
+
+
+==== 暂停与激活流程 Suspending and activating a process
+
+
+可以暂停流程定义。当流程定义暂停后，不能再创建新的流程实例（会抛出异常）。使用++RepositoryService++暂停流程定义：
+
+[source,java,linenums]
+----
+repositoryService.suspendProcessDefinitionByKey("vacationRequest");
+try {
+  runtimeService.startProcessInstanceByKey("vacationRequest");
+} catch (ActivitiException e) {
+  e.printStackTrace();
+}
+----
+
+
+要重新激活流程定义，可以调用++repositoryService.activateProcessDefinitionXXX++方法。
+
+也可以暂停流程实例。当流程实例暂停后，不能进行流程操作（例如完成任务会抛出异常），作业（如定时器）也不会执行。可以调用++runtimeService.suspendProcessInstance++暂停流程实例。调用++runtimeService.activateProcessInstanceXXX++重新激活流程实例。
+
+[[api.services]]
+
+
+==== 扩展阅读 Further reading
+
+
+在前面的章节，我们大致介绍了Acvtiviti的功能。我们会在未来扩展这些内容，覆盖更多的Activiti API。当然，与其他开源项目一样，最好的学习方法是研究代码与阅读Javadocs！
+
+
+[[queryAPI]]
+
+
+=== 查询API (Query API)
+
+
+从引擎中查询数据有两种方式：查询API与原生(native)查询。查询API可以使用链式API，通过编程方式进行类型安全的查询。你可以在查询中增加各种条件（所有条件都用做AND逻辑），也可以明确指定排序。下面是示例代码：
+
+[source,java,linenums]
+----
+List<Task> tasks = taskService.createTaskQuery()
+    .taskAssignee("kermit")
+    .processVariableValueEquals("orderId", "0815")
+    .orderByDueDate().asc()
+    .list();
+----
+
+有时你需要更强力的查询，例如使用OR操作符查询，或者使用查询API不能满足查询条件要求。我们为这种需求提供了原生查询，可以自己写SQL查询。返回类型由使用的查询对象决定，数据也会映射到正确的对象中，如Task, ProcessInstance, Execution....查询会在数据库中进行，因此你需要使用数据库中定义的表名与列名。这需要了解内部数据结构，因此建议小心使用原生查询。数据库表名可以通过API读取，这样可以将依赖关系减到最小。
+
+[source,java,linenums]
+----
+List<Task> tasks = taskService.createNativeTaskQuery()
+  .sql("SELECT count(*) FROM " + managementService.getTableName(Task.class) + " T WHERE T.NAME_ = #{taskName}")
+  .parameter("taskName", "gonzoTask")
+  .list();
+
+long count = taskService.createNativeTaskQuery()
+  .sql("SELECT count(*) FROM " + managementService.getTableName(Task.class) + " T1, "
+    + managementService.getTableName(VariableInstanceEntity.class) + " V1 WHERE V1.TASK_ID_ = T1.ID_")
+  .count();
+----
+
+[[apiVariables]]
+
+=== 变量 Variables
+
+流程实例按步骤执行时，需要同时也使用一些数据。在Activiti中，这些数据称作__variables(变量)__，并会存储在数据库中。变量可以用在表达式中（例如在排他网关中用于选择正确的出口路径），用在java服务任务（java service task）中用于调用外部服务（例如为服务调用提供输入或结果存储），等等。
+
+流程实例可以拥有变量（称作__process variables，流程变量__），__执行(executions)__——流程当前活动节点的指针，以及用户任务也可以拥有变量。流程实例可以持有任意数量的变量，每个变量都存储在__ACT_RU_VARIABLE__数据库表的一行中。
+
+任何__startProcessInstanceXXX__方法都有一个可选参数，用于在流程实例创建并启动时设置变量。例如，在__RuntimeService__中：
+
+[source,java,linenums]
+----
+ProcessInstance startProcessInstanceByKey(String processDefinitionKey, Map<String, Object> variables);
+----
+
+也可以在流程执行中加入变量。例如(_RuntimeService_):
+
+[source,java,linenums]
+----
+void setVariable(String executionId, String variableName, Object value);
+void setVariableLocal(String executionId, String variableName, Object value);
+void setVariables(String executionId, Map<String, ? extends Object> variables);
+void setVariablesLocal(String executionId, Map<String, ? extends Object> variables);
+----
+
+请注意可以为给定执行（请记住流程实例由一颗执行的树tree of executions组成）设置__local__（局部）变量。局部变量将只在该执行中可见，而对执行树的上层则不可见。这可以用于 数据不应该在流程实例级别传播，或者变量在流程实例的不同路径中有不同的值（例如使用并行路径时）的情况。
+
+像下面展示的，可以读取变量。请注意__TaskService__中有类似的方法。这意味着任务与执行一样，可以持有局部变量，其生存期为任务持续的时间。
+
+[source,java,linenums]
+----
+Map<String, Object> getVariables(String executionId);
+Map<String, Object> getVariablesLocal(String executionId);
+Map<String, Object> getVariables(String executionId, Collection<String> variableNames);
+Map<String, Object> getVariablesLocal(String executionId, Collection<String> variableNames);
+Object getVariable(String executionId, String variableName);
+<T> T getVariable(String executionId, String variableName, Class<T> variableClass);
+----
+
+变量通常用于<<bpmnJavaServiceTask, Java代理（Java delegates）>>, <<apiExpressions, 表达式（expressions）>>, 执行（execution），任务监听器（tasklisteners），脚本（scripts）等等。在这些结构中，提供了当前的__execution__或__task__对象，可用于变量的设置、读取。简单示例如下：
+
+[source,java,linenums]
+----
+execution.getVariables();
+execution.getVariables(Collection<String> variableNames);
+execution.getVariable(String variableName);
+
+execution.setVariables(Map<String, object> variables);
+execution.setVariable(String variableName, Object value);
+----
+
+请注意也可以使用上例中方法的__local__（局部变量）版本。
+
+由于历史（与向后兼容的）原因，当调用上述任何方法时，引擎实际上会从数据库中取出**所有**变量。也就是说，如果你有10个变量，使用__getVariable("myVariable")__获取其中的一个，实际上其他9个变量也会从数据库取出并缓存。这并不坏，因为后续的调用可以不必再读取数据库。比如，你的流程定义包含三个连续的服务任务service task（因此它们在同一个数据库事务里），在第一个服务任务里通过一次调用获取全部变量，也许比在每个服务任务里分别获取需要的变量要好。请注意对读取与设置变量**都是这样**。
+
+当然，如果使用大量变量，或者你希望精细控制数据库查询与流量，上述做法并不合适。从Activiti 5.17版本起，引入了可以更精细控制的方法。这个方法有一个可选的参数，告诉引擎是否需要在幕后将所有变量读取并缓存：
+
+[source,java,linenums]
+----
+Map<String, Object> getVariables(Collection<String> variableNames, boolean fetchAllVariables);
+Object getVariable(String variableName, boolean fetchAllVariables);
+void setVariable(String variableName, Object value, boolean fetchAllVariables);
+----
+
+当__fetchAllVariables__参数为__true__时，行为与上面描述的完全一样：读取或设置一个变量时，所有的变量都将被读取并缓存。
+
+而在参数值为__false__时，会使用明确的查询，其他变量不会被读取或缓存。只有指定的变量的值会被缓存，用于后续使用。
+
+
+[[apiExpressions]]
+
+
+=== 表达式 Expressions
+
+Activiti使用UEL进行表达式解析。UEL代表__Unified Expression Language__，是EE6规范的一部分（查看link:$$http://docs.oracle.com/javaee/6/tutorial/doc/gjddd.html$$[EE6规范]了解更多信息）。为了在所有环境上支持UEL标准的所有最新特性，我们使用JUEL的修改版本。
+
+表达式可以用于例如<<bpmnJavaServiceTaskXML,Java服务任务 Java Service tasks>>, <<executionListeners,执行监听器 Execution Listeners>>, <<taskListeners,任务监听器 Task Listeners>> 与 <<conditionalSequenceFlowXml,条件流 Conditional sequence flows>>。尽管有值表达式与方法表达式两种表达式，通过Activiti的抽象，使它们都可以在需要++expression++（表达式）的地方使用。
+
+* **值表达式 Value expression**: 解析为一个值。默认情况下，所有流程变量都可以使用。（若使用Spring）所有的Spring bean也可以用在表达式里。例如：
+
+----
+${myVar}
+${myBean.myProperty}
+----
+
+
+* **方法表达式 Method expression**: 注入一个方法，可以带或不带参数。**当注入不带参数的方法时，要确保在方法名后添加空括号（以避免与值表达式混淆）。**传递的参数可以是字面值（literal value），也可以是表达式，它们会被自动解析。例如：
+
+----
+${printer.print()}
+${myBean.addNewOrder('orderName')}
+${myBean.doSomething(myVar, execution)}
+----
+
+请注意，表达式支持解析（包括比较）原始类型（primitive）、bean、list、array（数组）与map。
+
+除了所有流程变量外，还有一些默认对象可在表达式中使用：
+
+* ++execution++: 持有进行中执行（execution）额外信息的++DelegateExecution++。
+* ++task++: 持有当前任务（task）额外信息的++DelegateTask++。**请注意：只在任务监听器的表达式中可用。**
+* ++authenticatedUserId++: 当前已验证的用户id。如果没有已验证的用户，该变量不可用。
+
+更多实际使用例子，请查看<<springExpressions,Spring中的表达式 Expressions in Spring>>, <<bpmnJavaServiceTaskXML,Java服务任务 Java Service tasks>>, <<executionListeners,执行监听器 Execution Listeners>>,  <<taskListeners,任务监听器Task Listeners>>或者<<conditionalSequenceFlowXml,条件流 Conditional sequence flows>>.
+
+
+[[apiUnitTesting]]
+
+
+=== 单元测试 Unit testing
+
+业务流程是软件项目的必要组成部分，也需要使用测试一般应用逻辑的方法，也就是单元测试，对它们进行测试。Activiti是嵌入式的Java引擎，因此为业务流程编写单元测试就与编写一般的单元测试一样简单。
+
+Activiti支持JUnit版本3与4的单元测试风格。按照JUnit 3的风格，必须扩展（extended）++org.activiti.engine.test.ActivitiTestCase++。它通过保护（protected）成员变量提供对ProcessEngine与服务的访问。在测试的++setup()++中，processEngine会默认使用classpath中的++activiti.cfg.xml++资源初始化。如果要指定不同的配置文件，请覆盖__getConfigurationResource()__方法。当使用相同的配置资源时，流程引擎会静态缓存，用于多个单元测试。
+
+通过扩展++ActivitiTestCase++，你可以使用++org.activiti.engine.test.Deployment++注解测试方法。在测试运行前，会部署与测试类在同一个包下的格式为++testClassName.testMethod.bpmn20.xml++的资源文件。在测试结束时，会删除这个部署，包括所有相关的流程实例，任务，等等。也可以使用++Deployment++注解显式指定,资源位置。查看该类以获得更多信息。
+
+综上所述，JUnit 3风格的测试看起来类似：
+
+[source,java,linenums]
+----
+public class MyBusinessProcessTest extends ActivitiTestCase {
+
+  @Deployment
+  public void testSimpleProcess() {
+    runtimeService.startProcessInstanceByKey("simpleProcess");
+
+    Task task = taskService.createTaskQuery().singleResult();
+    assertEquals("My Task", task.getName());
+
+    taskService.complete(task.getId());
+    assertEquals(0, runtimeService.createProcessInstanceQuery().count());
+  }
+}
+----
+
+要使用JUnit 4的风格书写单元测试并达成同样的功能，必须使用++org.activiti.engine.test.ActivitiRule++ Rule。这样能够通过它的getter获得流程引擎与服务。对于++ActivitiTestCase++（上例），包含++Rule++就可以使用++org.activiti.engine.test.Deployment++注解（参见上例解释其用途及配置），并且会自动在classpath中寻找默认配置文件。当使用相同的配置资源时，流程引擎会静态缓存，用于多个单元测试。
+
+下面的代码片段展示了JUnit 4风格的测试与++ActivitiRule++的用法。
+
+[source,java,linenums]
+----
+public class MyBusinessProcessTest {
+
+  @Rule
+  public ActivitiRule activitiRule = new ActivitiRule();
+
+  @Test
+  @Deployment
+  public void ruleUsageExample() {
+    RuntimeService runtimeService = activitiRule.getRuntimeService();
+    runtimeService.startProcessInstanceByKey("ruleUsage");
+
+    TaskService taskService = activitiRule.getTaskService();
+    Task task = taskService.createTaskQuery().singleResult();
+    assertEquals("My Task", task.getName());
+
+    taskService.complete(task.getId());
+    assertEquals(0, runtimeService.createProcessInstanceQuery().count());
+  }
+}
+----
+
+[[apiDebuggingUnitTest]]
+
+
+=== Debug单元测试(Debugging unit tests)
+
+当使用H2内存数据库进行单元测试时，下面的介绍可以让你在debug过程中容易地检查Activiti数据库中的数据。截图来自Eclipse，但原理应该与其他IDE相似。
+
+假设我们的单元测试的某处放置了__breakpoint__（断点）。在Eclipse里可以通过在代码左侧条上双击实现：
+
+image::images/api.test.debug.breakpoint.png[align="center"]
+
+如果我们在__debug__模式（在测试类中右键，选择“Run as”，然后选择“JUnit test”）下运行单元测试，测试进程会在断点处暂停，这样我们就可以在右上窗口中查看测试中的变量。
+
+image::images/api.test.debug.view.png[align="center"]
+
+要检查Activiti的数据，打开__Display__窗口（如果没有找到这个窗口，打开 Window->Show View->Other，然后选择__Display__），并键入（可以使用代码补全）++org.h2.tools.Server.createWebServer("-web").start()++
+
+image::images/api.test.debug.start.h2.server.png[align="center"]
+
+选中刚键入的行并右键点击。然后选择'Display'（或者用快捷方式执行）
+
+image::images/api.test.debug.start.h2.server.2.png[align="center"]
+
+现在打开浏览器并访问link:$$http://localhost:8082$$[http://localhost:8082]，填入内存数据库的JDBC URL（默认为++jdbc:h2:mem:activiti++），然后点击connect按钮。
+
+image::images/api.test.debug.h2.login.png[align="center"]
+
+现在你可以看到Activiti的数据，可以用来理解你的单元测试执行流程的方式是什么，以及为什么这样。
+
+image::images/api.test.debug.h2.tables.png[align="center"]
+
+
+
+[[apiProcessEngineInWebApp]]
+
+
+=== Web应用中的流程引擎 The process engine in a web application
+
+++ProcessEngine++是线程安全的类，可以很容易地在多个线程间共享。在web应用中，这意味着可以在容器启动时创建引擎，并在容器关闭时关闭引擎。
+
+下面的代码片段展示了如何在纯Servlet环境中，简单的通过++ServletContextListener++初始化与销毁流程引擎。
+
+[source,java,linenums]
+----
+public class ProcessEnginesServletContextListener implements ServletContextListener {
+
+  public void contextInitialized(ServletContextEvent servletContextEvent) {
+    ProcessEngines.init();
+  }
+
+  public void contextDestroyed(ServletContextEvent servletContextEvent) {
+    ProcessEngines.destroy();
+  }
+
+}
+----
+
+++contextInitialized++方法委托给++ProcessEngines.init()++。它会在classpath中查找++activiti.cfg.xml++资源文件，并为每个配置分别创建++ProcessEngine++（例如多个jar都包含配置文件）。如果在classpath中有多个这样的资源文件，请确保它们都使用不同的名字。需要使用流程引擎时，可以获取通过
+
+[source,java,linenums]
+----
+ProcessEngines.getDefaultProcessEngine()
+----
+
+或者
+
+[source,java,linenums]
+----
+ProcessEngines.getProcessEngine("myName");
+----
+
+当然，就像<<configuration,配置章节 configuration section>>中介绍的，还可以使用各种不同的方式创建流程引擎。
+
+
+context-listener的++contextDestroyed++方法委托给++ProcessEngines.destroy()++。它会妥善关闭所有已初始化的流程引擎。

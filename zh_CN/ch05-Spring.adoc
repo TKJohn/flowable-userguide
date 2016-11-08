@@ -1,0 +1,859 @@
+[[springintegration]]
+
+== 集成Spring (Spring integration)
+
+尽管完全可以脱离Spring使用Activiti，我们仍提供了很多非常好的集成特性，将在这一章节介绍。
+
+=== ProcessEngineFactoryBean
+
+++ProcessEngine++可以被配置为普通的Spring bean。入口是++org.activiti.spring.ProcessEngineFactoryBean++类。这个bean处理流程引擎配置，并创建流程引擎。这意味着在Spring中，创建与设置参数与<<configuration,配置章节 configuration section>>中介绍的一样。集成Spring的配置与引擎bean为：
+
+[source,xml,linenums]
+----
+<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+    ...
+</bean>
+
+<bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+  <property name="processEngineConfiguration" ref="processEngineConfiguration" />
+</bean>
+
+----
+
+请注意++processEngineConfiguration++ bean现在使用++org.activiti.spring.SpringProcessEngineConfiguration++类。
+
+
+=== 事务 Transactions
+
+我们会一步一步地解释(Activiti)发行版里，Spring示例中的++SpringTransactionIntegrationTest++。下面是我们示例中使用的Spring配置文件（SpringTransactionIntegrationTest-context.xml）。下面的小节包含了dataSource（数据源），transactionManager（事务管理器），processEngine（流程引擎）与Activiti引擎服务。
+
+
+将DataSource传递给++SpringProcessEngineConfiguration++（使用“dataSource”参数）时，Activiti会在内部使用++org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy++对得到的数据源进行包装（wrap）。这是为了保证从数据源获取的SQL连接与Spring的事务可以协同工作。也就是说不需要在Spring配置中对数据源进行代理（proxy）。尽管仍然可以将++TransactionAwareDataSourceProxy++传递给++SpringProcessEngineConfiguration++——在这种情况下，不会再进行包装。
+
+**请确保如果自行在Spring配置中声明了++TransactionAwareDataSourceProxy++，不会将它用在已经配置Spring事务的资源上（例如DataSourceTransactionManager与JPATransactionManager就需要未代理的数据源）。**
+
+[source,xml,linenums]
+----
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.springframework.org/schema/tx      http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+  <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+    <property name="driverClass" value="org.h2.Driver" />
+    <property name="url" value="jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000" />
+    <property name="username" value="sa" />
+    <property name="password" value="" />
+  </bean>
+
+  <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSource" />
+  </bean>
+
+  <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+    <property name="dataSource" ref="dataSource" />
+    <property name="transactionManager" ref="transactionManager" />
+    <property name="databaseSchemaUpdate" value="true" />
+    <property name="jobExecutorActivate" value="false" />
+  </bean>
+
+  <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+    <property name="processEngineConfiguration" ref="processEngineConfiguration" />
+  </bean>
+
+  <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />
+  <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />
+  <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />
+  <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />
+  <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />
+
+...
+----
+
+
+这个Spring配置文件的余下部分包含了在这个示例中要用到的bean与配置：
+
+[source,xml,linenums]
+----
+<beans>
+  ...
+  <tx:annotation-driven transaction-manager="transactionManager"/>
+
+  <bean id="userBean" class="org.activiti.spring.test.UserBean">
+    <property name="runtimeService" ref="runtimeService" />
+  </bean>
+
+  <bean id="printer" class="org.activiti.spring.test.Printer" />
+
+</beans>
+----
+
+使用任何Spring的方式创建应用上下文（application context）。在这个例子中，可以使用classpath中的XML资源配置来创建Spring应用上下文：
+
+[source,java,linenums]
+----
+ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+	"org/activiti/examples/spring/SpringTransactionIntegrationTest-context.xml");
+----
+
+或者在单元测试中：
+
+[source,java,linenums]
+----
+@ContextConfiguration("classpath:org/activiti/spring/test/transaction/SpringTransactionIntegrationTest-context.xml")
+----
+
+
+现在就可以获取服务bean，并反射调用(invoke)它们的方法。ProcessEngineFactoryBean会为服务加上额外的拦截器(interceptor)，为Activiti服务方法设置Propagation.REQUIRED事务语义(transaction semantics)。因此，我们可以像这样使用repositoryService部署流程：
+
+[source,java,linenums]
+----
+RepositoryService repositoryService =
+  (RepositoryService) applicationContext.getBean("repositoryService");
+String deploymentId = repositoryService
+  .createDeployment()
+  .addClasspathResource("org/activiti/spring/test/hello.bpmn20.xml")
+  .deploy()
+  .getId();
+
+----
+
+还有另一种方法也可以使用。在这个例子中，userBean.hello()方法被Spring事务包围，Activiti服务方法的调用会加入这个事务。
+
+[source,java,linenums]
+----
+UserBean userBean = (UserBean) applicationContext.getBean("userBean");
+userBean.hello();
+----
+
+UserBean看起来像这样。请记着在上面的Spring bean配置中，我们已经将repositoryService注入了userBean。
+
+[source,java,linenums]
+----
+public class UserBean {
+
+  /** 已经由Spring注入 */
+  private RuntimeService runtimeService;
+
+  @Transactional
+  public void hello() {
+    // 这里可以在你的领域模型（domain model）中进行事务操作，
+    // 它会与Activiti RuntimeService的startProcessInstanceByKey
+    // 合并在同一个事务里
+    runtimeService.startProcessInstanceByKey("helloProcess");
+  }
+
+  public void setRuntimeService(RuntimeService runtimeService) {
+    this.runtimeService = runtimeService;
+  }
+}
+----
+
+[[springExpressions]]
+
+
+=== 表达式 Expressions
+
+当使用ProcessEngineFactoryBean时，默认BPMN流程中所有的<<apiExpressions,表达式 expressions>>都可以“看见”所有的Spring bean。通过可以配置的map，可以限制表达式能使用的bean，甚至可以完全禁止表达式使用bean。下面的例子只暴露了一个bean（printer），可以使用“printer”作为key访问。**要完全禁止表达式使用bean，可以将SpringProcessEngineConfiguration的‘beans’参数设为空list。如果不设置‘beans’参数，则上下文中的所有bean都将可以使用。**
+
+[source,xml,linenums]
+----
+<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+  ...
+  <property name="beans">
+    <map>
+      <entry key="printer" value-ref="printer" />
+    </map>
+  </property>
+</bean>
+
+<bean id="printer" class="org.activiti.examples.spring.Printer" />
+----
+
+现在可以在表达式中使用这个暴露的bean了：例如，SpringTransactionIntegrationTest ++hello.bpmn20.xml++展示了如何通过UEL方法表达式(method expression)注入Spring bean：
+
+
+[source,xml,linenums]
+----
+<definitions id="definitions">
+
+  <process id="helloProcess">
+
+    <startEvent id="start" />
+    <sequenceFlow id="flow1" sourceRef="start" targetRef="print" />
+
+    <serviceTask id="print" activiti:expression="#{printer.printMessage()}" />
+    <sequenceFlow id="flow2" sourceRef="print" targetRef="end" />
+
+    <endEvent id="end" />
+
+  </process>
+
+</definitions>
+----
+
+其中++Printer++为：
+
+[source,java,linenums]
+----
+public class Printer {
+
+  public void printMessage() {
+    System.out.println("hello world");
+  }
+}
+----
+
+Spring bean配置（上面已经展示过）为：
+
+[source,xml,linenums]
+----
+<beans>
+  ...
+
+  <bean id="printer" class="org.activiti.examples.spring.Printer" />
+
+</beans>
+----
+
+
+
+=== 自动部署资源 Automatic resource deployment
+
+集成Spring还提供了部署资源的特殊方式。在流程引擎配置中，可以指定一组资源。当流程引擎被创建时，这些资源都会被扫描并部署。有过滤器用于阻止重复部署。只有当资源确实发生变化时，才会重新部署至Activiti数据库。在Spring容器经常重启（例如测试时）的时候，这很有用。
+
+这里有个例子：
+
+[source,xml,linenums]
+----
+<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+  ...
+  <property name="deploymentResources"
+    value="classpath*:/org/activiti/spring/test/autodeployment/autodeploy.*.bpmn20.xml" />
+</bean>
+
+<bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+  <property name="processEngineConfiguration" ref="processEngineConfiguration" />
+</bean>
+----
+
+默认情况下，这个配置会将符合这个过滤器的所有资源组织在一起，作为Activiti引擎的一个部署。重复检测过滤器将作用于整个部署，避免重复地部署未改变资源。有时这不是你想要的。例如，如果用这种方式部署了一组资源，即使只有其中的一个资源发生了改变，整个部署都会被认为已经改变，因此这个部署中所有的所有流程定义都会被重新部署。这将导致每个流程定义都会刷新版本号（流程定义id会变化），即使实际上只有一个流程发生了变化。
+
+可以使用++SpringProcessEngineConfiguration++中的额外参数+deploymentMode+，定制部署的选择方式。这个参数定义了在一组符合过滤器的资源中，组织部署的方式。默认这个参数有3个可用值：
+
+* ++default++: 将所有资源组织在一个部署中，整体用于重复检测过滤。这是默认值，在未设置这个参数时也会用这个值。
+* ++single-resource++: 为每个资源创建一个单独的部署，并用于重复检测过滤。当你希望单独部署每一个流程定义，并且在它发生变化时创建新的流程定义版本，应该使用这个值。
+* ++resource-parent-folder++: 为同一个目录下的资源创建一个单独的部署，并用于重复检测过滤。这个参数值可以为大多数资源创建独立的部署。同时仍可以通过将部分资源放在同一个目录下，将它们组织在一起。这里有一个将++deploymentMode++设置为++single-resource++的例子：
+
+
+[source,xml,linenums]
+----
+<bean id="processEngineConfiguration"
+    class="org.activiti.spring.SpringProcessEngineConfiguration">
+  ...
+  <property name="deploymentResources" value="classpath*:/activiti/*.bpmn" />
+  <property name="deploymentMode" value="single-resource" />
+</bean>
+----
+
+如果上述++deploymentMode++的参数值不能满足要求，还可以自定义组织部署的行为。创建++SpringProcessEngineConfiguration++的子类，并覆盖++getAutoDeploymentStrategy(String deploymentMode)++方法。这个方法决定了对于给定的++deploymentMode++参数值，使用何种部署策略。
+
+
+[[springUnitTest]]
+
+
+=== 单元测试 Unit testing
+
+与Spring集成后，业务流程可以非常简单地使用标准的 <<apiUnitTesting,Activiti测试工具 Activiti testing facilities>>进行测试。下面的例子展示了如何通过典型的基于Spring的单元测试，对业务流程进行测试：
+
+[source,java,linenums]
+----
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:org/activiti/spring/test/junit4/springTypicalUsageTest-context.xml")
+public class MyBusinessProcessTest {
+
+  @Autowired
+  private RuntimeService runtimeService;
+
+  @Autowired
+  private TaskService taskService;
+
+  @Autowired
+  @Rule
+  public ActivitiRule activitiSpringRule;
+
+  @Test
+  @Deployment
+  public void simpleProcessTest() {
+    runtimeService.startProcessInstanceByKey("simpleProcess");
+    Task task = taskService.createTaskQuery().singleResult();
+    assertEquals("My Task", task.getName());
+
+    taskService.complete(task.getId());
+    assertEquals(0, runtimeService.createProcessInstanceQuery().count());
+
+  }
+}
+----
+
+请注意要让这个例子可以正常工作，需要在Spring配置中定义__org.activiti.engine.test.ActivitiRule__ bean（在上面的例子中通过auto-wiring注入）。
+
+[source,xml,linenums]
+----
+<bean id="activitiRule" class="org.activiti.engine.test.ActivitiRule">
+  <property name="processEngine" ref="processEngine" />
+</bean>
+
+----
+
+
+
+=== 通过Hibernate 4.2.x使用JPA (JPA with Hibernate 4.2.x)
+
+要在Activiti引擎的服务任务或者监听器逻辑中使用Hibernate 4.2.x JPA，需要添加Spring ORM的额外依赖。对Hibernate 4.1.x或更低则不需要。需要添加的依赖为：
+
+[source,xml,linenums]
+----
+<dependency>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-orm</artifactId>
+  <version>${org.springframework.version}</version>
+</dependency>
+----
+
+
+[[springSpringBoot]]
+
+
+=== Spring Boot
+
+Spring Boot是一个应用框架，按照link:$$http://projects.spring.io/spring-boot/$$[官网]的介绍，可以__轻松地创建独立运行的，生产级别的，基于Spring的应用，并且可以“直接运行”。坚持使用Spring框架与第三方库，使你可以轻松地开始使用。大多数Spring Boot应用只需要很少的Spring配置__。
+
+要获得更多关于Spring Boot的信息，请查阅link:$$http://projects.spring.io/spring-boot/$$[http://projects.spring.io/spring-boot/]
+
+Activiti与Spring Boot的集成目前只是试验性的。我们已经与Spring的提交者共同开发，但为时尚早。我们欢迎试用并提供反馈。
+
+==== 兼容性 Compatibility
+
+Spring Boot需要JDK 7运行时环境。可以通过调整配置，在JDK6下运行。请查阅Spring Boot的文档。
+
+==== 开始 Getting started
+
+Spring Boot提倡约定大于配置。要开始工作，简单地在你的项目中添加__spring-boot-starters-basic__依赖。例如在Maven中：
+
+
+[source,xml,linenums]
+----
+<dependency>
+	<groupId>org.activiti</groupId>
+	<artifactId>activiti-spring-boot-starter-basic</artifactId>
+	<version>${activiti.version}</version>
+</dependency>
+----
+
+就这么简单。这个依赖会自动向classpath添加正确的Activiti与Spring依赖。现在你可以编写Spring Boot应用了：
+
+[source,java,,linenums]
+----
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ComponentScan
+@EnableAutoConfiguration
+public class MyApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+
+}
+----
+
+Activiti需要数据库存储数据。如果你运行上面的代码，会得到提示性的异常信息，指出需要在classpath中添加数据库驱动依赖。现在添加H2数据库依赖：
+
+[source,xml,linenums]
+----
+<dependency>
+	<groupId>com.h2database</groupId>
+	<artifactId>h2</artifactId>
+	<version>1.4.183</version>
+</dependency>
+----
+
+应用这次可以启动了。你会看到类似这样的输出：
+
+----
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v1.1.6.RELEASE)
+
+MyApplication                            : Starting MyApplication on ...
+s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@33cb5951: startup date [Wed Dec 17 15:24:34 CET 2014]; root of context hierarchy
+a.s.b.AbstractProcessEngineConfiguration : No process definitions were found using the specified path (classpath:/processes/**.bpmn20.xml).
+o.activiti.engine.impl.db.DbSqlSession   : performing create on engine with resource org/activiti/db/create/activiti.h2.create.engine.sql
+o.activiti.engine.impl.db.DbSqlSession   : performing create on history with resource org/activiti/db/create/activiti.h2.create.history.sql
+o.activiti.engine.impl.db.DbSqlSession   : performing create on identity with resource org/activiti/db/create/activiti.h2.create.identity.sql
+o.a.engine.impl.ProcessEngineImpl        : ProcessEngine default created
+o.a.e.i.a.DefaultAsyncJobExecutor        : Starting up the default async job executor [org.activiti.spring.SpringAsyncExecutor].
+o.a.e.i.a.AcquireTimerJobsRunnable       : {} starting to acquire async jobs due
+o.a.e.i.a.AcquireAsyncJobsDueRunnable    : {} starting to acquire async jobs due
+o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+MyApplication                            : Started MyApplication in 2.019 seconds (JVM running for 2.294)
+----
+
+只是在classpath中添加依赖，并使用__@EnableAutoConfiguration__注解，就会在幕后发生很多事情：
+
+* 自动创建了内存数据库（因为classpath中有H2驱动），并传递给Activiti流程引擎配置
+* 创建并暴露了Activiti ProcessEngine bean
+* 所有的Activiti服务都暴露为Spring bean
+* 创建了Spring Job Executor
+
+并且，__processes__目录下的任何BPMN 2.0流程定义都会被自动部署。创建__processes__目录，并在其中创建示例流程定义（命名为__one-task-process.bpmn20.xml__）:
+
+[source,xml,linenums]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+        xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+        xmlns:activiti="http://activiti.org/bpmn"
+        targetNamespace="Examples">
+
+    <process id="oneTaskProcess" name="The One Task Process">
+        <startEvent id="theStart" />
+        <sequenceFlow id="flow1" sourceRef="theStart" targetRef="theTask" />
+        <userTask id="theTask" name="my task" />
+        <sequenceFlow id="flow2" sourceRef="theTask" targetRef="theEnd" />
+        <endEvent id="theEnd" />
+    </process>
+
+</definitions>
+----
+
+然后添加下列代码，以测试部署是否生效。__CommandLineRunner__是一个特殊的Spring bean，在应用启动时执行：
+
+[source,java,linenums]
+----
+@Configuration
+@ComponentScan
+@EnableAutoConfiguration
+public class MyApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+
+    @Bean
+    public CommandLineRunner init(final RepositoryService repositoryService,
+                                  final RuntimeService runtimeService,
+                                  final TaskService taskService) {
+
+        return new CommandLineRunner() {
+            @Override
+            public void run(String... strings) throws Exception {
+                System.out.println("Number of process definitions : " 
+                	+ repositoryService.createProcessDefinitionQuery().count());
+                System.out.println("Number of tasks : " + taskService.createTaskQuery().count());
+                runtimeService.startProcessInstanceByKey("oneTaskProcess");
+                System.out.println("Number of tasks after process start: " + taskService.createTaskQuery().count());
+            }
+        };
+
+    }
+
+}
+----
+
+会得到这样的输出：
+
+----
+Number of process definitions : 1
+Number of tasks : 0
+Number of tasks after process start : 1
+----
+
+
+==== 更换数据源与连接池 Changing the database and connection pool
+
+上面也提到过，Spring Boot的约定大于配置。默认情况下，如果classpath中只有H2，就会创建内存数据库，并传递给Activiti流程引擎配置。
+
+可以简单地通过提供Datasource bean来覆盖默认配置，来更换数据源。我们在这里使用__DataSourceBuilder__类，这是Spring Boot的辅助类。如果classpath中有Tomcat, HikariCP 或者 Commons DBCP，就会（按照这个顺序，先是Tomcat）选择一个（作为连接池）。例如，要切换到MySQL数据库：
+
+[source,java,linenums]
+----
+@Bean
+public DataSource database() {
+    return DataSourceBuilder.create()
+        .url("jdbc:mysql://127.0.0.1:3306/activiti-spring-boot?characterEncoding=UTF-8")
+        .username("alfresco")
+        .password("alfresco")
+        .driverClassName("com.mysql.jdbc.Driver")
+        .build();
+}
+----
+
+从Maven依赖中移除H2，并为classpath添加MySQL驱动与Tomcat连接池：
+
+[source,xml,linenums]
+----
+<dependency>
+	<groupId>mysql</groupId>
+	<artifactId>mysql-connector-java</artifactId>
+	<version>5.1.34</version>
+</dependency>
+<dependency>
+	<groupId>org.apache.tomcat</groupId>
+	<artifactId>tomcat-jdbc</artifactId>
+	<version>8.0.15</version>
+</dependency>
+----
+
+应用这次启动后，可以看到使用了MySQL作为数据库（也使用了Tomcat连接池框架）：
+
+----
+org.activiti.engine.impl.db.DbSqlSession   : performing create on engine with resource org/activiti/db/create/activiti.mysql.create.engine.sql
+org.activiti.engine.impl.db.DbSqlSession   : performing create on history with resource org/activiti/db/create/activiti.mysql.create.history.sql
+org.activiti.engine.impl.db.DbSqlSession   : performing create on identity with resource org/activiti/db/create/activiti.mysql.create.identity.sql
+----
+
+多次重启应用，会发现任务的数量增加了（H2内存数据库在关闭后会丢失，而MySQL不会）。
+
+==== REST支持 (REST support)
+
+通常在嵌入的Activiti引擎之上，需要提供REST API（用于与公司的不同服务交互）。Spring Boot让这变得很容易。在classpath中添加下列依赖：
+
+[source,xml,linenums]
+----
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-web</artifactId>
+	<version>${spring.boot.version}</version>
+</dependency>
+----
+
+创建一个新的Spring服务类，并创建两个方法：一个用于启动流程，另一个用于获得给定任务办理人的任务列表。在这里我们简单地包装了Activiti调用，但很明显在实际使用场景中会比这复杂得多。
+
+[source,java,linenums]
+----
+@Service
+public class MyService {
+
+    @Autowired
+    private RuntimeService runtimeService;
+
+    @Autowired
+    private TaskService taskService;
+
+	@Transactional
+    public void startProcess() {
+        runtimeService.startProcessInstanceByKey("oneTaskProcess");
+    }
+
+	@Transactional
+    public List<Task> getTasks(String assignee) {
+        return taskService.createTaskQuery().taskAssignee(assignee).list();
+    }
+
+}
+----
+
+现在可以用__@RestController__来注解类，以创建REST端点（endpoint）。在这里我们简单地委派给了上面定义的服务。
+
+[source,java,linenums]
+----
+@RestController
+public class MyRestController {
+
+    @Autowired
+    private MyService myService;
+
+    @RequestMapping(value="/process", method= RequestMethod.POST)
+    public void startProcessInstance() {
+        myService.startProcess();
+    }
+
+    @RequestMapping(value="/tasks", method= RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public List<TaskRepresentation> getTasks(@RequestParam String assignee) {
+        List<Task> tasks = myService.getTasks(assignee);
+        List<TaskRepresentation> dtos = new ArrayList<TaskRepresentation>();
+        for (Task task : tasks) {
+            dtos.add(new TaskRepresentation(task.getId(), task.getName()));
+        }
+        return dtos;
+    }
+
+    static class TaskRepresentation {
+
+        private String id;
+        private String name;
+
+        public TaskRepresentation(String id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+        
+         public String getId() {
+            return id;
+        }
+        public void setId(String id) {
+            this.id = id;
+        }
+        public String getName() {
+            return name;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
+
+}
+----
+
+自动组件扫描(_@ComponentScan_)会找到我们添加在应用类上的__@Service__与__@RestController__。再次运行应用类，现在可以与REST API交互了。例如使用cURL：
+
+----
+curl http://localhost:8080/tasks?assignee=kermit
+[]
+
+curl -X POST  http://localhost:8080/process
+curl http://localhost:8080/tasks?assignee=kermit
+[{"id":"10004","name":"my task"}]
+----
+
+
+==== JPA支持 (JPA support)
+
+要为Spring Boot中的Activiti添加JPA支持，增加下列依赖：
+
+[source,xml,linenums]
+----
+<dependency>
+	<groupId>org.activiti</groupId>
+	<artifactId>activiti-spring-boot-starter-jpa</artifactId>
+	<version>${activiti.version}</version>
+</dependency>
+----
+
+这会加入Spring的配置，以及JPA用的bean。默认使用Hibernate作为JPA提供者。
+
+创建一个简单的实体类：
+
+[source,java,linenums]
+----
+@Entity
+class Person {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    private String username;
+
+    private String firstName;
+
+    private String lastName;
+
+    private Date birthDate;
+
+    public Person() {
+    }
+
+    public Person(String username, String firstName, String lastName, Date birthDate) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+}
+----
+
+默认情况下，如果没有使用内存数据库，不会自动创建数据库表。在classpath中创建__application.properties_文件并加入下列参数：
+
+----
+spring.jpa.hibernate.ddl-auto=update
+----
+
+添加下列类：
+
+[source,java,linenums]
+----
+public interface PersonRepository extends JpaRepository<Person, Long> {
+
+    Person findByUsername(String username);
+
+}
+----
+
+这是一个Spring存储(repository)，提供了直接可用的增删改查。我们添加了通过username查找Person的方法。Spring会基于约定自动实现它（也就是使用names属性）。
+
+现在进一步增强我们的服务：
+
+* 在类上添加__@Transactional__。请注意，通过上面添加的JPA依赖，之前使用的DataSourceTransactionManager会自动替换为JpaTransactionManager。
+* __startProcess__增加了任务办理人参数，用于查找Person，并将Person JPA对象作为流程变量存入流程实例。
+* 添加了创建示例用户的方法。CommandLineRunner使用它打桩数据库。
+
+[source,java,linenums]
+----
+@Service
+@Transactional
+public class MyService {
+
+    @Autowired
+    private RuntimeService runtimeService;
+
+    @Autowired
+    private TaskService taskService;
+
+    @Autowired
+    private PersonRepository personRepository;
+
+    public void startProcess(String assignee) {
+
+        Person person = personRepository.findByUsername(assignee);
+
+        Map<String, Object> variables = new HashMap<String, Object>();
+        variables.put("person", person);
+        runtimeService.startProcessInstanceByKey("oneTaskProcess", variables);
+    }
+
+    public List<Task> getTasks(String assignee) {
+        return taskService.createTaskQuery().taskAssignee(assignee).list();
+    }
+
+    public void createDemoUsers() {
+		 if (personRepository.findAll().size() == 0) {
+            personRepository.save(new Person("jbarrez", "Joram", "Barrez", new Date()));
+            personRepository.save(new Person("trademakers", "Tijs", "Rademakers", new Date()));
+        }
+    }
+
+}
+----
+
+CommandLineRunner现在为：
+
+[source,java,linenums]
+----
+@Bean
+public CommandLineRunner init(final MyService myService) {
+
+	return new CommandLineRunner() {
+    	public void run(String... strings) throws Exception {
+        	myService.createDemoUsers();
+        }
+    };
+
+}
+----
+
+RestController也有小改动（只展示新方法），以配合上面的改动。HTTP POST现在有了body，存有办理人用户名：
+
+----
+@RestController
+public class MyRestController {
+
+    @Autowired
+    private MyService myService;
+
+    @RequestMapping(value="/process", method= RequestMethod.POST)
+    public void startProcessInstance(@RequestBody StartProcessRepresentation startProcessRepresentation) {
+        myService.startProcess(startProcessRepresentation.getAssignee());
+    }
+
+   ...
+
+    static class StartProcessRepresentation {
+
+        private String assignee;
+
+        public String getAssignee() {
+            return assignee;
+        }
+
+        public void setAssignee(String assignee) {
+            this.assignee = assignee;
+        }
+    }
+----
+
+最后，为了试用Spring-JPA-Activiti集成，我们在流程定义中，将Person JPA对象的id指派为任务办理人：
+
+[source,xml,linenums]
+----
+<userTask id="theTask" name="my task" activiti:assignee="${person.id}"/>
+----
+
+现在可以通过在POST body中提供用户名，启动一个新的流程实例：
+
+----
+curl -H "Content-Type: application/json" -d '{"assignee" : "jbarrez"}' http://localhost:8080/process
+----
+
+也可以使用Person id获取任务列表：
+
+----
+curl http://localhost:8080/tasks?assignee=1
+
+[{"id":"12505","name":"my task"}]
+----
+
+==== 扩展阅读 Further Reading
+
+很明显还有很多Spring　Boot相关的内容还没有提及，例如简单的JTA集成，构建能在主流应用服务器上运行的war文件。还有很多关于Spring Boot集成的内容：
+
+* Actuator支持
+* Spring Integration支持
+* Rest API集成：启动Spring应用中嵌入的Activiti Rest API
+* Spring Security支持
+
+目前这些领域都是初版，未来会不断演进。

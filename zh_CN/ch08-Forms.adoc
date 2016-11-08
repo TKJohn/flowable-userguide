@@ -1,0 +1,195 @@
+[[forms]]
+
+== 表单 Forms
+
+Activiti提供了一个方便灵活的方法，为你的业务流程的人工步骤添加表单。我们支持两种使用表单的方式：表单参数的内置表单渲染，以及外部表单渲染。
+
+
+[[formProperties]]
+
+
+=== 表单参数 Form properties
+
+所有与业务流程相关的信息，要么包含在流程变量里，要么可以通过流程变量引用。Activiti支持将复杂的Java对象，以++Serializable++对象的方式存储为流程变量，而JPA实体或者整个XML文档将存储为++String++。
+
+启动流程与完成用户任务是人参与流程的地方。与人交流需要使用某些用户界面技术渲染表单。为了简化多用户界面技术，流程定义可以包含转换逻辑，将流程变量中的复杂的Java对象转换为**'参数'**的++Map<String,String>++。
+
+然后任何用户界面技术，都可以使用暴露这些参数信息的Activiti API方法，在这些参数的基础上构建表单。这些参数可以提供对流程变量的专门（也更受限）视图。用于显示表单的参数是**FormData**的返回值。例如
+
+[source,java,linenums]
+----
+StartFormData FormService.getStartFormData(String processDefinitionId)
+----
+
+或者
+
+[source,java,linenums]
+----
+TaskFormdata FormService.getTaskFormData(String taskId)
+----
+
+默认情况下，内建表单引擎能够“看到”参数与流程变量。因此如果任务表单参数1对1匹配流程变量，则不需要专门声明。例如，对于下列声明：
+
+[source,xml,linenums]
+----
+<startEvent id="start" />
+----
+
+当执行到达startEvent时，所有流程变量都可用。然而
+
+[source,java,linenums]
+----
+formService.getStartFormData(String processDefinitionId).getFormProperties()
+----
+
+将为空，因为并未指定映射。
+
+在上面的例子中，所有提交的参数将被存储为流程变量。这意味着简单地在表单中添加输入框，就可以存储新变量。
+
+参数从流程变量衍生出来，但不是必须存储为流程变量。例如，流程变量可以是类地址的JPA实体。而用户界面技术使用的++StreetName++表单参数，可以通过++#{address.street}++表达式连接。
+
+类似的，表单中用户需要提交的参数可以存储为流程变量，也可以作为某个流程变量的嵌套参数，使用UEL值表达式，如++#{address.street}++。
+
+提交的参数的默认行为，是存储为流程变量，除非使用++formProperty++声明指定。
+
+流程也可以在表单参数与流程变量之间进行转换。
+
+例如：
+
+[source,xml,linenums]
+----
+<userTask id="task">
+  <extensionElements>
+    <activiti:formProperty id="room" />
+    <activiti:formProperty id="duration" type="long"/>
+    <activiti:formProperty id="speaker" variable="SpeakerName" writable="false" />
+    <activiti:formProperty id="street" expression="#{address.street}" required="true" />
+  </extensionElements>
+</userTask>
+----
+
+* ++room++表单参数将作为String，映射为++room++流程变量
+* ++duration++表单参数将作为java.lang.Long，映射为++duration++流程变量
+* ++speaker++表单参数将被映射为++SpeakerName++流程变量。将只在TaskFormData对象中可用。若提交了speaker参数，将抛出ActivitiException。类似的，使用++readable="false"++属性，可以将参数从FormData中排除，但仍然可以在提交时处理。
+* ++street++表单参数将作为String，映射为++address++流程变量的Java bean参数++street++。如果在提交时没有提供这个字段，required="true"将抛出异常。
+
+也可以提供类型元数据，作为++StartFormData FormService.getStartFormData(String processDefinitionId)++与++TaskFormdata FormService.getTaskFormData(String taskId)++方法返回的FormData的一部分
+
+我们支持下列表单参数类型：
+
+* +string+ (org.activiti.engine.impl.form.StringFormType
+* +long+ (org.activiti.engine.impl.form.LongFormType)
+* +enum+ (org.activiti.engine.impl.form.EnumFormType)
+* +date+ (org.activiti.engine.impl.form.DateFormType)
+* +boolean+ (org.activiti.engine.impl.form.BooleanFormType)
+
+对每个声明的表单参数，下列++FormProperty++信息都可以通过++List<FormProperty> formService.getStartFormData(String processDefinitionId).getFormProperties()++与++List<FormProperty> formService.getTaskFormData(String taskId).getFormProperties()++方法获取
+
+
+[source,java,linenums]
+----
+public interface FormProperty {
+  /**
+   * 在{@link FormService#submitStartFormData(String, java.util.Map)}
+   * 或{@link FormService#submitTaskFormData(String, java.util.Map)}
+   * 中提交参数时使用的key
+   *
+   * the key used to submit the property in {@link FormService#submitStartFormData(String, java.util.Map)}
+   * or {@link FormService#submitTaskFormData(String, java.util.Map)} */
+  String getId();
+
+  /** 显示标签 the display label */
+  String getName();
+
+  /** 在本接口中定义的类型，例如{@link #TYPE_STRING}
+   * one of the types defined in this interface like e.g. {@link #TYPE_STRING} */
+  FormType getType();
+
+  /** 这个参数需要显示的可选项
+   * optional value that should be used to display in this property */
+  String getValue();
+
+  /** 这个参数是否需要读取用于在表单中显示，并可通过
+   * {@link FormService#getStartFormData(String)}
+   * 与{@link FormService#getTaskFormData(String)}
+   * 方法访问。
+   *
+   * is this property read to be displayed in the form and made accessible with the methods
+   * {@link FormService#getStartFormData(String)} and {@link FormService#getTaskFormData(String)}. */
+  boolean isReadable();
+
+  /** 用户提交表单时是否可以包含这个参数？ is this property expected when a user submits the form? */
+  boolean isWritable();
+
+  /** 输入框中是否必填这个参数 is this property a required input field */
+  boolean isRequired();
+}
+----
+
+例如：
+
+[source,xml,linenums]
+----
+<startEvent id="start">
+  <extensionElements>
+    <activiti:formProperty id="speaker"
+      name="Speaker"
+      variable="SpeakerName"
+      type="string" />
+
+    <activiti:formProperty id="start"
+      type="date"
+      datePattern="dd-MMM-yyyy" />
+
+    <activiti:formProperty id="direction" type="enum">
+      <activiti:value id="left" name="Go Left" />
+      <activiti:value id="right" name="Go Right" />
+      <activiti:value id="up" name="Go Up" />
+      <activiti:value id="down" name="Go Down" />
+    </activiti:formProperty>
+
+  </extensionElements>
+</startEvent>
+----
+
+所有这些信息都可以通过API获取。类型名可以通过++formProperty.getType().getName()++获取，日期格式可以通过++formProperty.getType().getInformation("datePattern")++获取，枚举值可以通过++formProperty.getType().getInformation("values")++获取。
+
+Activiti Explorer支持表单参数，并会按照表单定义渲染表单。下面的XML代码片段
+
+[source,xml,linenums]
+----
+<startEvent>
+  <extensionElements>
+    <activiti:formProperty id="numberOfDays" name="Number of days" value="${numberOfDays}" type="long" required="true"/>
+    <activiti:formProperty id="startDate" name="First day of holiday (dd-MM-yyy)" value="${startDate}" datePattern="dd-MM-yyyy hh:mm" type="date" required="true" />
+    <activiti:formProperty id="vacationMotivation" name="Motivation" value="${vacationMotivation}" type="string" />
+  </extensionElements>
+</userTask>
+
+----
+
+当使用Activiti Explorer时，将会渲染为流程启动表单
+
+image::images/forms.explorer.png[align="center"]
+
+
+
+[[externalFormRendering]]
+
+
+=== 外部表单渲染 External form rendering
+
+API也支持使用在Activiti引擎之外渲染的，你自己的任务表单。下面的步骤解释了在自行渲染任务表单时，可以使用的钩子。
+
+本质上，渲染表单所需的所有数据，都组装在这两个方法之一中：++StartFormData FormService.getStartFormData(String processDefinitionId)++与++TaskFormdata FormService.getTaskFormData(String taskId)++。
+
+提交表单参数可以通过++ProcessInstance FormService.submitStartFormData(String processDefinitionId, Map<String,String> properties)++与++void FormService.submitTaskFormData(String taskId, Map<String,String> properties)++完成。
+
+要了解表单参数如何映射为流程变量，查看<<formProperties>>
+
+可以将任何表单模板资源，放在部署的业务存档中（如果希望将它们按版本与流程存储在一起）。作为部署中的资源，可以使用++String ProcessDefinition.getDeploymentId()++与++InputStream RepositoryService.getResourceAsStream(String deploymentId, String resourceName);+获取。这就是你的模板定义文件，可以用于在你的应用中渲染/显示表单。
+
+除了任务表单，也可以为任何目的，使用访问部署资源的能力。
+
+++<userTask activiti:formKey="..."++属性，由API通过++String FormService.getStartFormData(String processDefinitionId).getFormKey()++与++String FormService.getTaskFormData(String taskId).getFormKey()++暴露。可以用它保存部署中模板的全名（如++org/activiti/example/form/my-custom-form.xml++），但并非必须。例如，也可以在表单参数中保存普通的key，并用算法或变换得到实际需要使用的模板。在你需要使用不同的用户界面技术，渲染不同的表单时很有用。例如，一个表单在普通屏幕尺寸的Web应用中使用，另一个表单在手机小屏幕中使用，甚至可以为IM表单或邮件表单提供模板。
+
