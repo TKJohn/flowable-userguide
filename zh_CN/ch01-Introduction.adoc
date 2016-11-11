@@ -1,22 +1,24 @@
 
-== 简介
+== 简介 Introduction
+
 
 [[license]]
 
-=== 协议
+=== 协议 License
+
 
 Flowable使用 link:$$http://www.apache.org/licenses/LICENSE-2.0.html$$[the Apache V2 license] 协议开源。
 
 [[download]]
 
-=== 下载
+=== 下载 Download
 
 link:$$http://flowable.org/downloads.html$$[http://flowable.org/downloads.html]
 
 
 [[sources]]
 
-=== 源码
+=== 源码 Sources
 
 Flowable的发布包里包含了大部分源码，这些源码是以jar压缩文件提供的。Flowable的源码可以通过以下链接获得：
   link:$$https://github.com/Flowable/Flowable$$[https://github.com/Flowable/Flowable]
@@ -25,7 +27,7 @@ Flowable的发布包里包含了大部分源码，这些源码是以jar压缩文
 
 [[required.software]]
 
-=== 必要的软件
+=== 必要的软件 Required software
 
 ==== JDK 7+
 
@@ -41,7 +43,7 @@ Flowable需要JDK 7或以上版本。访问 link:$$http://www.oracle.com/technet
 
 [[reporting.problems]]
 
-=== 反馈问题
+=== 反馈问题 Reporting problems
 
 每一个自重的开发者都应该先看看这个 link:$$http://www.catb.org/~esr/faqs/smart-questions.html$$[提问的智慧] 。
 
@@ -50,7 +52,7 @@ Flowable需要JDK 7或以上版本。访问 link:$$http://www.oracle.com/technet
 
 [[experimental]]
 
-=== 实验性功能
+=== 实验性功能 Experimental features
 
 标记*[EXPERIMENTAL]*的章节介绍的功能
 还不够稳定。
@@ -61,6 +63,6 @@ Flowable需要JDK 7或以上版本。访问 link:$$http://www.oracle.com/technet
 
 [[internal]]
 
-=== 内部实现类
+=== 内部实现类 Internal implementation classes
 
 在jar文件中，所有包名中包含++.impl.++的类（比如，++org.activiti.engine.impl.db++）都是实现类，这些类都是内部类。这些类和接口都不会保证稳定。（不同版本之间可能会有变化。谨慎使用。）
