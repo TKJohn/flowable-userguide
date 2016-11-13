@@ -1,20 +1,20 @@
-[[activitiDesigner]]
+[[flowableDesigner]]
 
 == Eclipse Designer
 
-Activiti提供了名为Activiti Eclipse Designer的Eclipse插件，可以用于图形化地建模、测试与部署BPMN 2.0流程。
+Flowable提供了名为Flowable Eclipse Designer的Eclipse插件，可以用于图形化地建模、测试与部署BPMN 2.0流程。
 
 [[eclipseDesignerInstallation]]
 
 
 === 安装 Installation
 
-下面的安装指导在link:$$http://www.eclipse.org/downloads/$$[Eclipse Kepler与Indigo]进行了验证。请注意**不**支持Eclipse Helios。
+下面的安装指导在link:$$http://www.eclipse.org/downloads/$$[Eclipse Mars与Neon]进行了验证。
 
 选择**Help -> Install New Software**。在下图面板中，点击__Add__按钮，并填写下列字段：
 
-* *Name:*Activiti BPMN 2.0 designer
-* *Location:*http://activiti.org/designer/update/
+* **Name:** Flowable BPMN 2.0 designer
+* **Location:** http://flowable.org/designer/update/
 
 image::images/designer.add.update.site.png[align="center"]
 
@@ -23,32 +23,32 @@ image::images/designer.add.update.site.png[align="center"]
 [[eclipseDesignerEditorFeatures]]
 
 
-=== Activiti Designer编辑器功能 Activiti Designer editor features
+=== Flowable Designer编辑器功能 Flowable Designer editor features
 
-* 创建Activiti项目与流程图（diagram）。
+* 创建Flowable项目与流程图（diagram）。
 
 image::images/designer.create.activiti.project.png[align="center"]
 
-* Activiti Designer在创建新的Activiti流程图时，会创建一个.bpmn文件。当使用Activiti Diagram Editor（Activiti流程图编辑器）视图打开时，将提供图形化的模型画布与画板。这个文件也可以使用XML编辑器打开，将显示流程定义的BPMN 2.0 XML元素。因此Activiti Designer只用一个文件，既是流程图，也是BPMN 2.0 XML。请注意在Activiti 5.9版本中，还不支持使用.bpmn扩展名作为流程定义的部署包。因此Activiti Designer的"create deployment artifacts（创建部署包）"功能，将生成一个BAR文件，与一个包含.bpmn文件内容的.bpmn20.xml文件。也可以方便的自己重命名。请注意，也可以使用Activiti Diagram Editor打开.bpmn20.xml文件。
+* Flowable Designer在创建新的Flowable流程图时，会创建一个.bpmn文件。当使用Flowable Diagram Editor（Flowable流程图编辑器）视图打开时，将提供图形化的模型画布与画板。这个文件也可以使用XML编辑器打开，将显示流程定义的BPMN 2.0 XML元素。因此Flowable Designer只用一个文件，既是流程图，也是BPMN 2.0 XML。请注意在Flowable 5.9版本中，还不支持使用.bpmn扩展名作为流程定义的部署包。因此Flowable Designer的"create deployment artifacts（创建部署包）"功能，将生成一个BAR文件，与一个包含.bpmn文件内容的.bpmn20.xml文件。也可以方便的自己重命名。请注意，也可以使用Flowable Diagram Editor打开.bpmn20.xml文件。
 
 image::images/designer.bpmn.file.png[align="center"]
 
 
-* 可以将BPMN 2.0 XML文件导入Activiti Designer，会自动创建流程图。只需要将BPMN 2.0 XML文件复制到项目中，并使用Activiti Diagram Editor视图打开它。Activiti Designer使用文件中的BPMN DI信息来创建流程图。如果BPMN 2.0 XML文件中没有BPMN DI信息，则不会创建流程图。
+* 可以将BPMN 2.0 XML文件导入Flowable Designer，会自动创建流程图。只需要将BPMN 2.0 XML文件复制到项目中，并使用Flowable Diagram Editor视图打开它。Flowable Designer使用文件中的BPMN DI信息来创建流程图。如果BPMN 2.0 XML文件中没有BPMN DI信息，则不会创建流程图。
 
 image::images/designer.open.importedfile.png[align="center"]
 
-* 要进行部署，可以使用Activiti Designer创建BAR文件，或JAR文件。在包浏览器中的Activiti项目上点击右键，在弹出菜单的下方选择__Create deployment artifacts（创建部署包）__选项。要了解关于Designer部署功能的更多信息，请查看<<eclipseDesignerDeployment,部署>>章节。
+* 要进行部署，可以使用Flowable Designer创建BAR文件，或JAR文件。在包浏览器中的Flowable项目上点击右键，在弹出菜单的下方选择__Create deployment artifacts（创建部署包）__选项。要了解关于Designer部署功能的更多信息，请查看<<eclipseDesignerDeployment,部署>>章节。
 
 image::images/designer.create.deployment.png[align="center"]
 
 
-* 生成单元测试（在包浏览器中的BPMN 2.0 XML文件上点击右键，选择__generate unit test 生成单元测试__）。将创建一个单元测试及运行在嵌入式H2数据库上的Activiti配置。这样就可以运行单元测试，来测试你的流程定义。
+* 生成单元测试（在包浏览器中的BPMN 2.0 XML文件上点击右键，选择__generate unit test 生成单元测试__）。将创建一个单元测试及运行在嵌入式H2数据库上的Flowable配置。这样就可以运行单元测试，来测试你的流程定义。
 
 image::images/designer.unittest.generate.png[align="center"]
 
 
-* Activiti项目可以生成为Maven项目。要配置依赖，需要运行__mvn eclipse:eclipse__。请注意在流程设计时，不需要Maven依赖。只在运行单元测试时才需要依赖。
+* Flowable项目可以生成为Maven项目。要配置依赖，需要运行__mvn eclipse:eclipse__。请注意在流程设计时，不需要Maven依赖。只在运行单元测试时才需要依赖。
 
 image::images/designer.project.maven.png[align="center"]
 
@@ -56,11 +56,10 @@ image::images/designer.project.maven.png[align="center"]
 [[eclipseDesignerBPMNFeatures]]
 
 
-=== Activiti Designer BPMN功能 Activiti Designer BPMN features
+=== Flowable Designer BPMN功能 Flowable Designer BPMN features
 
 
-
-* 支持空启动事件，错误启动事件，定时器启动事件，空结束事件，错误结束事件，顺序流，并行网关，排他网关，包容网关，事件网关，嵌入式子流程，事件子流程，调用活动，泳池，泳道，脚本任务，用户任务，服务任务，邮件任务，手动任务，业务规则任务，接收任务，定时器边界事件，错误边界事件，信号边界事件，定时器捕获事件，信号捕获事件，信号抛出事件，空抛出事件，与四个Alfresco特有元素（用户，脚本，邮件任务与启动事件）。
+* 支持空启动事件，错误启动事件，定时器启动事件，空结束事件，错误结束事件，顺序流，并行网关，排他网关，包容网关，事件网关，嵌入式子流程，事件子流程，调用活动，泳池，泳道，脚本任务，用户任务，服务任务，邮件任务，手动任务，业务规则任务，接收任务，定时器边界事件，错误边界事件，信号边界事件，定时器捕获事件，信号捕获事件，信号抛出事件，空抛出事件，与四个Flowable特殊元素（用户，脚本，邮件任务与启动事件）。
 
 image::images/designer.model.process.png[align="center"]
 
@@ -76,7 +75,7 @@ image::images/designer.model.quick.new.png[align="center"]
 
 image::images/designer.servicetask.property.png[align="center"]
 
-* 支持泳池与泳道。但因为Activiti将不同的泳池认作不同的流程定义，因此最好只使用一个泳池。如果使用多个泳池，要小心不要在泳池间画顺序流，否则会在Activiti引擎中部署流程时发生错误。可以在一个泳池中添加任意多的泳道。
+* 支持泳池与泳道。但因为Flowable将不同的泳池认作不同的流程定义，因此最好只使用一个泳池。如果使用多个泳池，要小心不要在泳池间画顺序流，否则会在Flowable引擎中部署流程时发生错误。可以在一个泳池中添加任意多的泳道。
 
 image::images/designer.model.poolandlanes.png[align="center"]
 
@@ -92,16 +91,16 @@ image::images/designer.model.eventsubprocess.png[align="center"]
 
 image::images/designer.embeddedprocess.canvas.png[align="center"]
 
-* 支持在任务与嵌入式子流程上的定时器边界事件。然而，在Activiti Designer中，在用户任务或嵌入式子流程上使用定时器边界事件最合理。
+* 支持在任务与嵌入式子流程上的定时器边界事件。然而，在Flowable Designer中，在用户任务或嵌入式子流程上使用定时器边界事件最合理。
 
 image::images/designer.timerboundary.canvas.png[align="center"]
 
 
-* 支持额外的Activiti扩展，例如邮件任务，用户任务的候选人配置，或脚本任务配置。
+* 支持额外的Flowable扩展，例如邮件任务，用户任务的候选人配置，或脚本任务配置。
 
 image::images/designer.mailtask.property.png[align="center"]
 
-* 支持Activiti执行与任务监听器。也可以为执行监听器添加字段扩展。
+* 支持Flowable执行与任务监听器。也可以为执行监听器添加字段扩展。
 
 image::images/designer.listener.configuration.png[align="center"]
 
@@ -113,32 +112,32 @@ image::images/designer.sequence.condition.png[align="center"]
 [[eclipseDesignerDeployment]]
 
 
-=== Activiti Designer部署功能 Activiti Designer deployment features
+=== Flowable Designer部署功能 Flowable Designer deployment features
 
-在Activiti引擎上部署流程定义与任务表单并不困难。需要有一个包含有流程定义BPMN 2.0 XML文件的BAR文件，与可选的用于在Activiti Explorer中查看的任务表单和流程图片。在Activiti Designer中，创建BAR文件十分简单。在完成流程实现后，只要在包浏览器中的Activiti项目上点击右键，在弹出菜单下方选择**Create deployment artifacts（创建部署包）**选项。
+在Flowable引擎上部署流程定义与任务表单并不困难。需要有一个包含有流程定义BPMN 2.0 XML文件的BAR文件，与可选的用于在Flowable应用中查看的任务表单和流程图片。在Flowable Designer中，创建BAR文件十分简单。在完成流程实现后，只要在包浏览器中的Flowable项目上点击右键，在弹出菜单下方选择**Create deployment artifacts（创建部署包）**选项。
 
 image::images/designer.create.deployment.png[align="center"]
 
-然后就会创建一个部署目录，包含BAR文件，与可能的JAR文件。其中JAR文件包含Activiti项目中的Java类。
+然后就会创建一个部署目录，包含BAR文件，与可能的JAR文件。其中JAR文件包含Flowable项目中的Java类。
 
 image::images/designer.deployment.dir.png[align="center"]
 
-这样就可以在Activiti Explorer的部署页签中，将这个文件上传至Activiti引擎。
+这样就可以在Flowable应用的部署页签中，将这个文件上传至Flowable引擎。
 
-如果项目包含Java类，部署时要多做一些工作。在这种情况下，Activiti Designer的**Create deployment artifacts（创建部署包）**操作也会创建包含编译后类的JAR文件。这个JAR文件必须部署在Activiti Tomcat安装目录的activiti-XXX/WEB-INF/lib目录下。这将为Activiti引擎的classpath添加这些类。
+如果项目包含Java类，部署时要多做一些工作。在这种情况下，Flowable Designer的**Create deployment artifacts（创建部署包）**操作也会创建包含编译后类的JAR文件。这个JAR文件必须部署在Flowable Tomcat安装目录的flowable-XXX/WEB-INF/lib目录下。这将为Flowable引擎的classpath添加这些类。
 
 
 [[eclipseDesignerExtending]]
 
 
-=== 扩展Activiti Designer (Extending Activiti Designer)
+=== 扩展Flowable Designer (Extending Flowable Designer)
 
-可以扩展Activiti Designer提供的默认功能。这段文档介绍了可以使用哪些扩展，如何使用，并提供了一些例子。在建模业务流程时，如果默认功能不能满足需要，需要额外的功能，或有领域专门需求的时候，扩展Activiti Designer就很有用。扩展Activiti Designer分为两个不同领域，扩展画板与扩展输出格式。两种方式都需要专门的方法，与不同的技术知识。
+可以扩展Flowable Designer提供的默认功能。这段文档介绍了可以使用哪些扩展，如何使用，并提供了一些例子。在建模业务流程时，如果默认功能不能满足需要，需要额外的功能，或有领域专门需求的时候，扩展Flowable Designer就很有用。扩展Flowable Designer分为两个不同领域，扩展画板与扩展输出格式。两种方式都需要专门的方法，与不同的技术知识。
 
 
 [NOTE]
 ====
-扩展Activiti Designer需要专业知识，更确切地说，Java编程的知识。取决于你想要创建的扩展类型，你可能需要熟悉Maven，Eclipse，OSGi，Eclipse扩展与SWT。
+扩展Flowable Designer需要专业知识，更确切地说，Java编程的知识。取决于你想要创建的扩展类型，你可能需要熟悉Maven，Eclipse，OSGi，Eclipse扩展与SWT。
 ====
 
 
@@ -147,14 +146,14 @@ image::images/designer.deployment.dir.png[align="center"]
 
 ==== 自定义画板 Customizing the palette
 
-可以自定义为用户建模流程提供的画板。画板是形状的集合，显示在画布的右侧，可以将形状拖放至画布中的流程图上。在默认画板中可以看到，默认形状进行了分组（被称为“抽屉 drawer”），如事件，网关，等等。Activiti Designer提供了两种选择，用于自定义画板中的抽屉与形状：
+可以自定义为用户建模流程提供的画板。画板是形状的集合，显示在画布的右侧，可以将形状拖放至画布中的流程图上。在默认画板中可以看到，默认形状进行了分组（被称为“抽屉 drawer”），如事件，网关，等等。Flowable Designer提供了两种选择，用于自定义画板中的抽屉与形状：
 
 * 将你自己的形状/节点添加到已有或新建的抽屉
-* 禁用Activiti Designer提供的部分或全部BPMN 2.0默认形状，除了连线与选择工具
+* 禁用Flowable Designer提供的部分或全部BPMN 2.0默认形状，除了连线与选择工具
 
-要自定义画板，需要创建一个JAR文件，并加入Activiti Designer安装目录（后面介绍<<eclipseDesignerApplyingExtension,如何做>>）。这个JAR文件叫做__扩展（extension）__。通过编写扩展中包含的类，就能让Activiti Designer知道你需要自定义什么。要做到这个，你的类需要实现特定的接口。有一个集成类库，包含这些接口以及需要加入classpath的用于扩展的基类。
+要自定义画板，需要创建一个JAR文件，并加入Flowable Designer安装目录（后面介绍<<eclipseDesignerApplyingExtension,如何做>>）。这个JAR文件叫做__扩展（extension）__。通过编写扩展中包含的类，就能让Flowable Designer知道你需要自定义什么。要做到这个，你的类需要实现特定的接口。有一个集成类库，包含这些接口以及需要加入classpath的用于扩展的基类。
 
-可以在下列地方找到代码示例：Activiti源码的++projects/designer++目录下的++examples/money-tasks++目录。
+可以在下列地方找到代码示例：Flowable源码的++projects/designer++目录下的++examples/money-tasks++目录。
 
 
 [NOTE]
@@ -190,22 +189,21 @@ image::images/designer.deployment.dir.png[align="center"]
 
 可以看到，这只是一个基础的pom.xml文件，为项目定义了一个++groupId++，++artifactId++与++version++。我们会创建一个定制项，包含一个money业务的自定义节点。
 
-在++pom.xml++文件中添加这些依赖，将集成库添加至项目依赖：
+在++pom.xml++文件中为项目添加这些集成库依赖：
 [source,xml,linenums]
 ----
 <dependencies>
   <dependency>
-    <groupId>org.activiti.designer</groupId>
-    <artifactId>org.activiti.designer.integration</artifactId>
-    <version>5.12.0</version> <!-- Use the current Activiti Designer version -->
+    <groupId>org.flowable.designer</groupId>
+    <artifactId>org.flowable.designer.integration</artifactId>
+    <version>5.12.0</version> <!-- Use the current Flowable Designer version -->
     <scope>compile</scope>
   </dependency>
 </dependencies>
 ...
 <repositories>
   <repository>
-      <id>Activiti</id>
-      <url>https://maven.alfresco.com/nexus/content/groups/public/</url>
+      <id>Flowable</id>
    </repository>
 </repositories>
 ----
@@ -238,7 +236,7 @@ image::images/designer.deployment.dir.png[align="center"]
             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
           </manifest>
           <manifestEntries>
-            <ActivitiDesigner-Extension-Name>Acme Money</ActivitiDesigner-Extension-Name>
+            <FlowableDesigner-Extension-Name>Acme Money</FlowableDesigner-Extension-Name>
           </manifestEntries>
         </archive>
       </configuration>
@@ -248,7 +246,7 @@ image::images/designer.deployment.dir.png[align="center"]
 ----
 
 
-扩展的名字使用++ActivitiDesigner-Extension-Name++参数描述。现在只剩下让Eclipse按照++pom.xml++的指导设置项目。因此打开命令行，并转到Eclipse工作空间中你项目的根目录。然后执行下列Maven命令：
+扩展的名字使用++FlowableDesigner-Extension-Name++参数描述。现在只剩下让Eclipse按照++pom.xml++的指导设置项目。因此打开命令行，并转到Eclipse工作空间中你项目的根目录。然后执行下列Maven命令：
 
 ----
 mvn eclipse:eclipse
@@ -262,34 +260,34 @@ mvn eclipse:eclipse
 当然也可以使用link:$$http://www.eclipse.org/m2e$$[m2eclipse]插件，并简单地在项目的上下文菜单（右键点击）中启用Maven依赖管理。然后在项目的上下文菜单中选择++Maven++ > ++Update project configuration（更新项目配置）++。这也将配置源代码目录。
 ====
 
-这就完成了配置。现在可以开始为Activiti Designer创建自定义项了！
+这就完成了配置。现在可以开始为Flowable Designer创建自定义项了！
 
 [[eclipseDesignerApplyingExtension]]
 
 
-===== 在Activiti Designer中应用你的扩展 Applying your extension to Activiti Designer
+===== 在Flowable Designer中应用你的扩展 Applying your extension to Flowable Designer
 
-你也许想知道如何将你的扩展加入Activiti Designer，以便应用你的自定义项。需要这些步骤：
+你也许想知道如何将你的扩展加入Flowable Designer，以便应用你的自定义项。需要这些步骤：
 
-* 创建扩展JAR（例如，使用Maven构建时，在项目中运行mvn install）后，需要将扩展传递至Activiti Designer安装的计算机；
-* 将扩展存储在硬盘上，方便记忆的位置。__请注意：__必须保存在Activiti Designer的Eclipse工作空间之外——将扩展保存在工作空间内，会导致弹出错误消息弹框，扩展将不可用；
-* 启动Activiti Designer，从菜单中，选择++Window++ > ++Preferences++
+* 创建扩展JAR（例如，使用Maven构建时，在项目中运行mvn install）后，需要将扩展传递至Flowable Designer安装的计算机；
+* 将扩展存储在硬盘上，方便记忆的位置。__请注意：__必须保存在Flowable Designer的Eclipse工作空间之外——将扩展保存在工作空间内，会导致弹出错误消息弹框，扩展将不可用；
+* 启动Flowable Designer，从菜单中，选择++Window++ > ++Preferences++
 * 在Preferences界面，键入++user++作为关键字。将可以看到在Eclipse中++Java++段落内，++User Libraries++的选项。
 
 image::images/designer.preferences.userlibraries.png[align="center"]
 
 
-* 选择++User Libraries++选项，将在右侧显示树形界面，可以添加库。应该可以看到一个默认组，可以用于添加Activiti Designer的扩展（根据Eclipse安装不同，也可能看到几个其他的）。
+* 选择++User Libraries++选项，将在右侧显示树形界面，可以添加库。应该可以看到一个默认组，可以用于添加Flowable Designer的扩展（根据Eclipse安装不同，也可能看到几个其他的）。
 
 image::images/designer.preferences.userlibraries.activiti.empty.png[align="center"]
 
 
-* 选择++Activiti Designer Extensions++组，并点击++Add JARs...++按钮。跳转至存储扩展的目录，并选择希望添加的扩展文件。完成后，配置界面会将扩展作为++Activiti Designer Extensions++组的成员进行显示，像下面这样。
+* 选择++Flowable Designer Extensions++组，并点击++Add JARs...++按钮。跳转至存储扩展的目录，并选择希望添加的扩展文件。完成后，配置界面会将扩展作为++Flowable Designer Extensions++组的成员进行显示，像下面这样。
 
 image::images/designer.preferences.userlibraries.activiti.moneytasks.png[align="center"]
 
 
-* 点击++OK++按钮保存并关闭配置对话框。++Activiti Designer Extensions++会自动添加至你创建的新Activiti项目。可以在导航条或包管理器的项目树下的用户库条目中看到。如果工作空间中已经有了Activiti项目，也可以看到组中显示了新扩展，像下面这样。
+* 点击++OK++按钮保存并关闭配置对话框。++Flowable Designer Extensions++会自动添加至你创建的新Flowable项目。可以在导航条或包管理器的项目树下的用户库条目中看到。如果工作空间中已经有了Flowable项目，也可以看到组中显示了新扩展，像下面这样。
 
 image::images/designer.userlibraries.project.png[align="center"]
 
@@ -298,7 +296,7 @@ image::images/designer.userlibraries.project.png[align="center"]
 
 ===== 为画板添加图形 Adding shapes to the palette
 
-项目配置完后，可以很轻松的为画板添加图形。每个添加的图形都表现为JAR中的一个类。请注意这些类并不是Activiti引擎运行时会使用的类。在扩展中可以为每个图形描述Activiti Designer可用的参数。在这些图形中，也可以定义运行时特性，并将由引擎在流程实例到达该节点时使用。运行时特性可以使用任何Activiti对普通++ServiceTask++支持的选项。查看<<eclipseDesignerConfiguringRuntime,这个章节>>了解更多信息。
+项目配置完后，可以很轻松的为画板添加图形。每个添加的图形都表现为JAR中的一个类。请注意这些类并不是Flowable引擎运行时会使用的类。在扩展中可以为每个图形描述Flowable Designer可用的参数。在这些图形中，也可以定义运行时特性，并将由引擎在流程实例到达该节点时使用。运行时特性可以使用任何Flowable对普通++ServiceTask++支持的选项。查看<<eclipseDesignerConfiguringRuntime,这个章节>>了解更多信息。
 
 图形的类是简单的Java类，加上一些注解。这个类需要实现++CustomServiceTask++接口，但不应该直接实现这个接口，而应该扩展++AbstractCustomServiceTask++基类（目前必须直接扩展这个类，而不能在中间使用abstract类）。在这个类的Javadoc中，可以看到其默认提供的，与需要覆盖的方法介绍。覆盖可以实现很多功能，例如为画板及画布中的图形提供图标（两个可以不一样），或者指定你希望节点实现的基图形（活动，时间，网关）。
 
@@ -383,7 +381,7 @@ public class AcmeMoneyTask extends AbstractCustomServiceTask {
 }
 ----
 
-如果使用这个图形扩展Activiti Designer，画板与相应的图形将像是这样：
+如果使用这个图形扩展Flowable Designer，画板与相应的图形将像是这样：
 
 image::images/designer.palette.add.money.png[align="center"]
 
@@ -402,7 +400,7 @@ image::images/designer.palette.add.money.help.png[align="center"]
 
 ====== 配置自定义服务任务的运行时执行 Configuring runtime execution of Custom Service Tasks
 
-当设置好字段，并将扩展应用至Designer后，用户就可以在建模流程时，配置服务任务的这些参数。在大多数情况下，会希望在Activiti执行流程时，使用这些用户配置参数。要做到这一点，必须告诉Activiti，当流程到达你++CustomServiceTask++时，需要使用哪个类。
+当设置好字段，并将扩展应用至Designer后，用户就可以在建模流程时，配置服务任务的这些参数。在大多数情况下，会希望在Flowable执行流程时，使用这些用户配置参数。要做到这一点，必须告诉Flowable，当流程到达你++CustomServiceTask++时，需要使用哪个类。
 
 有一个特别的注解，++@Runtime++，用于指定++CustomServiceTask++的运行时特性。这里有些如何使用的例子：
 
@@ -412,24 +410,24 @@ image::images/designer.palette.add.money.help.png[align="center"]
 @Runtime(javaDelegateClass = "org.acme.runtime.AcmeMoneyJavaDelegation")
 ----
 
-使用时，++CustomServiceTask++将会表现为流程建模BPMN中的一个普通的++ServiceTask++。Activiti提供了<<bpmnJavaServiceTask,多种方法>>定义++ServiceTask++的运行时特性。因此，++@Runtime++可以使用Activiti提供的三个属性中的一个：
+使用时，++CustomServiceTask++将会表现为流程建模BPMN中的一个普通的++ServiceTask++。Flowable提供了<<bpmnJavaServiceTask,多种方法>>定义++ServiceTask++的运行时特性。因此，++@Runtime++可以使用Flowable提供的三个属性中的一个：
 
 * ++javaDelegateClass++在BPMN输出中映射为++activiti:class++。指定一个实现了++JavaDelegate++的类的全限定类名。
 * ++expression++在BPMN输出中映射为++activiti:expression++。指定一个需要执行的方法的表达式，例如一个Spring Bean中的方法。当使用这个选项时，__不应__在字段上指定任何++@Property++注解。下面有更详细的说明。
 * ++javaDelegateExpression++在BPMN输出中映射为++activiti:delegateExpression++。指定一个实现了++JavaDelegate++的类的表达式。
 
-如果在类中为Activiti提供了可以注入的成员，就可以将用户的参数至注入到运行时类中。名字需要与++CustomServiceTask++的成员名一致。查看用户手册的<<serviceTaskFieldInjection,这个部分>>了解更多信息。请注意从Designer的5.11.0版本开始，可以为动态字段值使用++Expression++接口。这意味着Activiti Designer中参数的值必须要是表达式，并且这个表达式将在之后注入++JavaDelegate++实现类的++Expression++参数中。
+如果在类中为Flowable提供了可以注入的成员，就可以将用户的参数至注入到运行时类中。名字需要与++CustomServiceTask++的成员名一致。查看用户手册的<<serviceTaskFieldInjection,这个部分>>了解更多信息。请注意从Designer的5.11.0版本开始，可以为动态字段值使用++Expression++接口。这意味着Flowable Designer中参数的值必须要是表达式，并且这个表达式将在之后注入++JavaDelegate++实现类的++Expression++参数中。
 
 
 [NOTE]
 ====
 
-可以在++CustomServiceTask++的成员上使用++@Property++注解，但如果使用++@Runtime++的++expression++属性，则++@Property++注解将不会生效。原因是指定的表达式将被Activiti尝试解析为__方法__，而不是类。因此，不会有对类的注入。如果在++@Runtime++注解中使用++expression++，则注解为++@Property++的成员将被Designer忽略。Designer不会将它们渲染为节点参数页面的可编辑字段，也不会为这些参数在流程的BPMN中生成输出。
+可以在++CustomServiceTask++的成员上使用++@Property++注解，但如果使用++@Runtime++的++expression++属性，则++@Property++注解将不会生效。原因是指定的表达式将被Flowable尝试解析为__方法__，而不是类。因此，不会有对类的注入。如果在++@Runtime++注解中使用++expression++，则注解为++@Property++的成员将被Designer忽略。Designer不会将它们渲染为节点参数页面的可编辑字段，也不会为这些参数在流程的BPMN中生成输出。
 ====
 
 [NOTE]
 ====
-请注意不应该在你的扩展JAR中包括运行时类，因为它与Activiti库是分离的。Activiti需要在运行时能够找到它们，因此需要将其放在Activiti引擎的clsspath中。
+请注意不应该在你的扩展JAR中包括运行时类，因为它与Flowable库是分离的。Flowable需要在运行时能够找到它们，因此需要将其放在Flowable引擎的clsspath中。
 ====
 
 Designer代码树中的示例项目包含了配置++@Runtime++的不同选项的例子。可以从查看money-tasks项目开始。引用代理类的示例在money-delegates项目中。
@@ -530,7 +528,7 @@ image::images/designer.property.date.picker.png[align="center"]
 
 创建一个如下所示的数据表格控件。数据表格可以让用户输入任意行数据，并为每一行输入固定列数的值（每一组行列的组合代表一个单元格）。用户可以添加与删除行。
 
-这个参数类型需要注解的类成员同时使用++@DataGridProperty++注解（例如如下所示）。可以使用这个额外的注解，指定数据表格的细节属性。需要用++itemClass++属性引用另一个类，来决定表格中有哪些列。Activiti Designer期望其成员类型为++List++。按照约定，可以将++itemClass++属性的类用作其泛型类型。如果，例如，在表格中编辑一个杂货清单，用++GroceryListItem++类定义表格的列。在++CustomServiceTask++中，可以这样引用它：
+这个参数类型需要注解的类成员同时使用++@DataGridProperty++注解（例如如下所示）。可以使用这个额外的注解，指定数据表格的细节属性。需要用++itemClass++属性引用另一个类，来决定表格中有哪些列。Flowable Designer期望其成员类型为++List++。按照约定，可以将++itemClass++属性的类用作其泛型类型。如果，例如，在表格中编辑一个杂货清单，用++GroceryListItem++类定义表格的列。在++CustomServiceTask++中，可以这样引用它：
 
 [source,java,linenums]
 ----
@@ -612,28 +610,28 @@ image::images/designer.palette.disable.all.png[align="center"]
 
 ==== 验证流程图与输出为自定义格式 Validating diagrams and exporting to custom output formats
 
-除了自定义画板，也可以为Activiti Designer创建扩展，来进行流程图验证，以及将流程图的信息保存为Eclipse工作空间中的自定义资源。可以通过内建的扩展点实现 ，这个章节将介绍如何做。
+除了自定义画板，也可以为Flowable Designer创建扩展，来进行流程图验证，以及将流程图的信息保存为Eclipse工作空间中的自定义资源。可以通过内建的扩展点实现 ，这个章节将介绍如何做。
 
 [NOTE]
 ====
 保存功能最近正在重构。我们仍在开发验证功能。下面的文档记录的是旧的情况，并将在新功能可用后更新。
 ====
 
-Activiti Designer可以编写用于验证流程图的扩展。默认情况已经可以在工具中验证BPMN结构，但你也可以添加自己的，如果希望验证额外的条目，例如建模约定，或者++CustomServiceTask++中的参数值。这些扩展被称作++Process Validators++。
+Flowable Designer可以编写用于验证流程图的扩展。默认情况已经可以在工具中验证BPMN结构，但你也可以添加自己的，如果希望验证额外的条目，例如建模约定，或者++CustomServiceTask++中的参数值。这些扩展被称作++Process Validators++。
 
-也可以在Activiti Designer保存流程图时，发布为其它格式。这些扩展被称作++Export Marshallers++，将在每次用户进行保存操作时，由Activiti Designer自动调用。这个行为可以在Eclipse配置对话框中，为每一种扩展检测出的格式，分别启用或禁用。Designer会根据用户的配置，确保在保存流程图时，调用你的++ExportMarshaller++。
+也可以在Flowable Designer保存流程图时，发布为其它格式。这些扩展被称作++Export Marshallers++，将在每次用户进行保存操作时，由Flowable Designer自动调用。这个行为可以在Eclipse配置对话框中，为每一种扩展检测出的格式，分别启用或禁用。Designer会根据用户的配置，确保在保存流程图时，调用你的++ExportMarshaller++。
 
-通常，会想要将++ProcessValidator++与++ExportMarshaller++一起使用。例如有一些++CustomServiceTask++，带有一些希望在流程中使用的参数。然而，在生成流程前，希望验证其中一些值。联合使用++ProcessValidator++与++ExportMarshaller++是最佳的方式，Activiti Designer也允许你无缝拼接扩展。
+通常，会想要将++ProcessValidator++与++ExportMarshaller++一起使用。例如有一些++CustomServiceTask++，带有一些希望在流程中使用的参数。然而，在生成流程前，希望验证其中一些值。联合使用++ProcessValidator++与++ExportMarshaller++是最佳的方式，Flowable Designer也允许你无缝拼接扩展。
 
-要创建一个++ProcessValidator++或++ExportMarshaller++，需要创建与扩展画板不同的扩展类型。原因很简单：你的代码会需访问比集成库中提供的更多的API。特别是，会需要使用Eclipse的类。因此从一开始，就需要创建一个Eclipse插件（可以使用Eclipse的PDE支持完成），并将其打包为自定义Eclipse产品或特性。解释开发Eclipse插件的所有细节，已经不是本用户手册的范畴，因此下面的介绍仅限于扩展Activiti Designer的功能。
+要创建一个++ProcessValidator++或++ExportMarshaller++，需要创建与扩展画板不同的扩展类型。原因很简单：你的代码会需访问比集成库中提供的更多的API。特别是，会需要使用Eclipse的类。因此从一开始，就需要创建一个Eclipse插件（可以使用Eclipse的PDE支持完成），并将其打包为自定义Eclipse产品或特性。解释开发Eclipse插件的所有细节，已经不是本用户手册的范畴，因此下面的介绍仅限于扩展Flowable Designer的功能。
 
 扩展包需要依赖下列库：
 
 * org.eclipse.core.runtime
 * org.eclipse.core.resources
-* org.activiti.designer.eclipse
-* org.activiti.designer.libs
-* org.activiti.designer.util
+* org.flowable.designer.eclipse
+* org.flowable.designer.libs
+* org.flowable.designer.util
 
 可选的，如果希望在扩展中使用，可以通过Designer使用org.apache.commons.lang包。
 
