@@ -14,7 +14,7 @@
 
 因为数据库为过去与当前进行中的实例都保存历史实体，因此你可能希望查询这些表，以减少访问运行时流程实例数据，并提高运行时执行性能。
 
-之后，这些信息将在Activiti Explorer中暴露。并且，也将用于生成报告。
+之后，这些信息将在Flowable应用中展示。并且，也将用于生成报告。
 
 
 [[historyQuery]]
@@ -24,7 +24,7 @@
 
 可以使用API查询全部5种历史实体，HistoryService暴露的++createHistoricProcessInstanceQuery()++、++createHistoricVariableInstanceQuery()++、++createHistoricActivityInstanceQuery()++、++createHistoricDetailQuery()++与++createHistoricTaskInstanceQuery()++方法。
 
-下面是一些例子，展示了历史查询API的一些用法。关于各用法的全部描述可以在link:$$http://activiti.org/javadocs/index.html$$[javadoc]中找到，在++org.activiti.engine.history++包中。
+下面是一些例子，展示了历史查询API的一些用法。关于各用法的全部描述可以在link:$$http://flowable.org/javadocs/index.html$$[javadoc]中找到，在++org.activiti.engine.history++包中。
 
 [[historyQueryProcessInstance]]
 
@@ -158,7 +158,7 @@ historyService.createHistoricTaskInstanceQuery()
 
 === 历史配置 History configuration
 
-可以使用org.activiti.engine.impl.history.HistoryLevel枚举（或在5.11版本前，++ProcessEngineConfiguration++中定义的__HISTORY__常量），以编程方式配置历史级别：
+可以使用org.activiti.engine.impl.history.HistoryLevel枚举（或在早期版本中，++ProcessEngineConfiguration++中定义的__HISTORY__常量），以编程方式配置历史级别：
 
 [source,java,linenums]
 ----
@@ -185,7 +185,7 @@ ProcessEngine processEngine = ProcessEngineConfiguration
 * ++audit（审计）++：默认级别。将存档所有流程实例，活动实例，并保持变量值以及所有提交的表单参数持续同步，以保证表单的所有用户操作都可追踪、可审计。
 * ++full（完全）++：历史存档的最高级别，因此也最慢。这个级别存储所有++audit++级别存储的信息，加上所有其他可用细节，主要是流程变量的更新。
 
-**在Activiti 5.11版本以前，历史级别保存在数据库中（+$$ACT_GE_PROPERTY$$+ 表，参数名为++historyLevel++）。从5.11开始，这个值不再使用，并从数据库中忽略/删除。现在历史可以在2个引擎的启动间切换，而不会由于前一个引擎启动修改了级别，而抛出异常。**
+**在Flowable 5.11版本以前，历史级别保存在数据库中（+$$ACT_GE_PROPERTY$$+ 表，参数名为++historyLevel++）。从5.11开始，这个值不再使用，并从数据库中忽略/删除。现在历史可以在2个引擎的启动间切换，而不会由于前一个引擎启动修改了级别，而抛出异常。**
 
 [[historyFormAuditPurposes]]
 
