@@ -2,7 +2,7 @@
 
 == 集成Spring (Spring integration)
 
-尽管完全可以脱离Spring使用Activiti，我们仍提供了很多非常好的集成特性，将在这一章节介绍。
+尽管完全可以脱离Spring使用Flowable，我们仍提供了很多非常好的集成特性，并将在这一章节介绍。
 
 === ProcessEngineFactoryBean
 
@@ -25,12 +25,12 @@
 
 === 事务 Transactions
 
-我们会一步一步地解释(Activiti)发行版里，Spring示例中的++SpringTransactionIntegrationTest++。下面是我们示例中使用的Spring配置文件（SpringTransactionIntegrationTest-context.xml）。下面的小节包含了dataSource（数据源），transactionManager（事务管理器），processEngine（流程引擎）与Activiti引擎服务。
+我们会一步一步地解释(Flowable)发行版里，Spring示例中的++SpringTransactionIntegrationTest++。下面是我们示例中使用的Spring配置文件（SpringTransactionIntegrationTest-context.xml）。下面的小节包含了dataSource(数据源)，transactionManager(事务管理器)，processEngine(流程引擎)与Flowable引擎服务。
 
 
-将DataSource传递给++SpringProcessEngineConfiguration++（使用“dataSource”参数）时，Activiti会在内部使用++org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy++对得到的数据源进行包装（wrap）。这是为了保证从数据源获取的SQL连接与Spring的事务可以协同工作。也就是说不需要在Spring配置中对数据源进行代理（proxy）。尽管仍然可以将++TransactionAwareDataSourceProxy++传递给++SpringProcessEngineConfiguration++——在这种情况下，不会再进行包装。
+将DataSource传递给++SpringProcessEngineConfiguration++（使用“dataSource”参数）时，Flowable会在内部使用++org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy++对得到的数据源进行包装（wrap）。这是为了保证从数据源获取的SQL连接与Spring的事务可以协同工作。也就是说不需要在Spring配置中对数据源进行代理（proxy）。尽管仍然可以将++TransactionAwareDataSourceProxy++传递给++SpringProcessEngineConfiguration++——在这种情况下，不会再进行包装。
 
-**请确保如果自行在Spring配置中声明了++TransactionAwareDataSourceProxy++，不会将它用在已经配置Spring事务的资源上（例如DataSourceTransactionManager与JPATransactionManager就需要未代理的数据源）。**
+**请确保如果自行在Spring配置中声明了++TransactionAwareDataSourceProxy++，则不要将它用在已经配置Spring事务的资源上（例如DataSourceTransactionManager与JPATransactionManager需要的是未代理的数据源）。**
 
 [source,xml,linenums]
 ----
@@ -57,7 +57,7 @@
     <property name="dataSource" ref="dataSource" />
     <property name="transactionManager" ref="transactionManager" />
     <property name="databaseSchemaUpdate" value="true" />
-    <property name="jobExecutorActivate" value="false" />
+    <property name="asyncExecutorActivate" value="false" />
   </bean>
 
   <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
@@ -91,7 +91,7 @@
 </beans>
 ----
 
-使用任何Spring的方式创建应用上下文（application context）。在这个例子中，可以使用classpath中的XML资源配置来创建Spring应用上下文：
+可以使用任何Spring的方式创建应用上下文(application context)。在这个例子中，可以使用classpath中的XML资源配置来创建Spring应用上下文：
 
 [source,java,linenums]
 ----
@@ -107,7 +107,7 @@ ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationC
 ----
 
 
-现在就可以获取服务bean，并反射调用(invoke)它们的方法。ProcessEngineFactoryBean会为服务加上额外的拦截器(interceptor)，为Activiti服务方法设置Propagation.REQUIRED事务语义(transaction semantics)。因此，我们可以像这样使用repositoryService部署流程：
+现在就可以获取服务bean，并反射调用(invoke)它们的方法。ProcessEngineFactoryBean会为服务加上额外的拦截器(interceptor)，为Flowable服务方法设置Propagation.REQUIRED事务语义(transaction semantics)。因此，我们可以像这样使用repositoryService部署流程：
 
 [source,java,linenums]
 ----
@@ -121,7 +121,7 @@ String deploymentId = repositoryService
 
 ----
 
-还有另一种方法也可以使用。在这个例子中，userBean.hello()方法被Spring事务包围，Activiti服务方法的调用会加入这个事务。
+还有另一种方法也可以使用。在这个例子中，userBean.hello()方法被Spring事务包围，Flowable服务方法的调用会加入这个事务。
 
 [source,java,linenums]
 ----
@@ -129,7 +129,7 @@ UserBean userBean = (UserBean) applicationContext.getBean("userBean");
 userBean.hello();
 ----
 
-UserBean看起来像这样。请记着在上面的Spring bean配置中，我们已经将repositoryService注入了userBean。
+UserBean看起来像下面这样。请记着在上面的Spring bean配置中，我们已经将repositoryService注入了userBean。
 
 [source,java,linenums]
 ----
@@ -141,7 +141,7 @@ public class UserBean {
   @Transactional
   public void hello() {
     // 这里可以在你的领域模型（domain model）中进行事务操作，
-    // 它会与Activiti RuntimeService的startProcessInstanceByKey
+    // 它会与Flowable RuntimeService的startProcessInstanceByKey
     // 合并在同一个事务里
     runtimeService.startProcessInstanceByKey("helloProcess");
   }
@@ -223,7 +223,7 @@ Spring bean配置（上面已经展示过）为：
 
 === 自动部署资源 Automatic resource deployment
 
-集成Spring还提供了部署资源的特殊方式。在流程引擎配置中，可以指定一组资源。当流程引擎被创建时，这些资源都会被扫描并部署。有过滤器用于阻止重复部署。只有当资源确实发生变化时，才会重新部署至Activiti数据库。在Spring容器经常重启（例如测试时）的时候，这很有用。
+集成Spring还提供了部署资源的特殊方式。在流程引擎配置中，可以指定一组资源。当流程引擎被创建时，这些资源都会被扫描并部署。有过滤器用于阻止重复部署。只有当资源确实发生变化时，才会重新部署至Flowable数据库。在Spring容器经常重启（例如测试时）的时候，这很有用。
 
 这里有个例子：
 
@@ -240,7 +240,7 @@ Spring bean配置（上面已经展示过）为：
 </bean>
 ----
 
-默认情况下，这个配置会将符合这个过滤器的所有资源组织在一起，作为Activiti引擎的一个部署。重复检测过滤器将作用于整个部署，避免重复地部署未改变资源。有时这不是你想要的。例如，如果用这种方式部署了一组资源，即使只有其中的一个资源发生了改变，整个部署都会被认为已经改变，因此这个部署中所有的所有流程定义都会被重新部署。这将导致每个流程定义都会刷新版本号（流程定义id会变化），即使实际上只有一个流程发生了变化。
+默认情况下，这个配置会将符合这个过滤器的所有资源组织在一起，作为Flowable引擎的一个部署。重复检测过滤器将作用于整个部署，避免重复地部署未改变资源。有时这不是你想要的。例如，如果用这种方式部署了一组资源，即使只有其中的一个资源发生了改变，整个部署都会被认为已经改变，因此这个部署中所有的所有流程定义都会被重新部署。这将导致每个流程定义都会刷新版本号（流程定义id会变化），即使实际上只有一个流程发生了变化。
 
 可以使用++SpringProcessEngineConfiguration++中的额外参数+deploymentMode+，定制部署的选择方式。这个参数定义了在一组符合过滤器的资源中，组织部署的方式。默认这个参数有3个可用值：
 
@@ -267,7 +267,7 @@ Spring bean配置（上面已经展示过）为：
 
 === 单元测试 Unit testing
 
-与Spring集成后，业务流程可以非常简单地使用标准的 <<apiUnitTesting,Activiti测试工具 Activiti testing facilities>>进行测试。下面的例子展示了如何通过典型的基于Spring的单元测试，对业务流程进行测试：
+与Spring集成后，业务流程可以非常简单地使用标准的 <<apiUnitTesting,Flowable测试工具 Flowable testing facilities>>进行测试。下面的例子展示了如何通过典型的基于Spring的单元测试，对业务流程进行测试：
 
 [source,java,linenums]
 ----
@@ -313,7 +313,7 @@ public class MyBusinessProcessTest {
 
 === 通过Hibernate 4.2.x使用JPA (JPA with Hibernate 4.2.x)
 
-要在Activiti引擎的服务任务或者监听器逻辑中使用Hibernate 4.2.x JPA，需要添加Spring ORM的额外依赖。对Hibernate 4.1.x或更低则不需要。需要添加的依赖为：
+要在Flowable引擎的服务任务或者监听器逻辑中使用Hibernate 4.2.x JPA，需要添加Spring ORM的额外依赖。对Hibernate 4.1.x或更低则不需要。需要添加的依赖为：
 
 [source,xml,linenums]
 ----
@@ -334,7 +334,7 @@ Spring Boot是一个应用框架，按照link:$$http://projects.spring.io/spring
 
 要获得更多关于Spring Boot的信息，请查阅link:$$http://projects.spring.io/spring-boot/$$[http://projects.spring.io/spring-boot/]
 
-Activiti与Spring Boot的集成目前只是试验性的。我们已经与Spring的提交者共同开发，但为时尚早。我们欢迎试用并提供反馈。
+Flowable与Spring Boot的集成目前只是试验性的。我们已经与Spring的提交者共同开发，但为时尚早。我们欢迎试用并提供反馈。
 
 ==== 兼容性 Compatibility
 
@@ -348,13 +348,13 @@ Spring Boot提倡约定大于配置。要开始工作，简单地在你的项目
 [source,xml,linenums]
 ----
 <dependency>
-	<groupId>org.activiti</groupId>
-	<artifactId>activiti-spring-boot-starter-basic</artifactId>
-	<version>${activiti.version}</version>
+	<groupId>org.flowable</groupId>
+	<artifactId>flowable-spring-boot-starter-basic</artifactId>
+	<version>${flowable.version}</version>
 </dependency>
 ----
 
-就这么简单。这个依赖会自动向classpath添加正确的Activiti与Spring依赖。现在你可以编写Spring Boot应用了：
+就这么简单。这个依赖会自动向classpath添加正确的Flowable与Spring依赖。现在你可以编写Spring Boot应用了：
 
 [source,java,,linenums]
 ----
@@ -375,7 +375,7 @@ public class MyApplication {
 }
 ----
 
-Activiti需要数据库存储数据。如果你运行上面的代码，会得到提示性的异常信息，指出需要在classpath中添加数据库驱动依赖。现在添加H2数据库依赖：
+Flowable需要数据库存储数据。如果你运行上面的代码，会得到提示性的异常信息，指出需要在classpath中添加数据库驱动依赖。现在添加H2数据库依赖：
 
 [source,xml,linenums]
 ----
@@ -413,9 +413,9 @@ MyApplication                            : Started MyApplication in 2.019 second
 
 只是在classpath中添加依赖，并使用__@EnableAutoConfiguration__注解，就会在幕后发生很多事情：
 
-* 自动创建了内存数据库（因为classpath中有H2驱动），并传递给Activiti流程引擎配置
-* 创建并暴露了Activiti ProcessEngine bean
-* 所有的Activiti服务都暴露为Spring bean
+* 自动创建了内存数据库（因为classpath中有H2驱动），并传递给Flowable流程引擎配置
+* 创建并暴露了Flowable ProcessEngine bean
+* 所有的Flowable服务都暴露为Spring bean
 * 创建了Spring Job Executor
 
 并且，__processes__目录下的任何BPMN 2.0流程定义都会被自动部署。创建__processes__目录，并在其中创建示例流程定义（命名为__one-task-process.bpmn20.xml__）:
@@ -484,7 +484,7 @@ Number of tasks after process start : 1
 
 ==== 更换数据源与连接池 Changing the database and connection pool
 
-上面也提到过，Spring Boot的约定大于配置。默认情况下，如果classpath中只有H2，就会创建内存数据库，并传递给Activiti流程引擎配置。
+上面也提到过，Spring Boot的约定大于配置。默认情况下，如果classpath中只有H2，就会创建内存数据库，并传递给Flowable流程引擎配置。
 
 可以简单地通过提供Datasource bean来覆盖默认配置，来更换数据源。我们在这里使用__DataSourceBuilder__类，这是Spring Boot的辅助类。如果classpath中有Tomcat, HikariCP 或者 Commons DBCP，就会（按照这个顺序，先是Tomcat）选择一个（作为连接池）。例如，要切换到MySQL数据库：
 
@@ -493,9 +493,9 @@ Number of tasks after process start : 1
 @Bean
 public DataSource database() {
     return DataSourceBuilder.create()
-        .url("jdbc:mysql://127.0.0.1:3306/activiti-spring-boot?characterEncoding=UTF-8")
-        .username("alfresco")
-        .password("alfresco")
+        .url("jdbc:mysql://127.0.0.1:3306/flowable-spring-boot?characterEncoding=UTF-8")
+        .username("flowable")
+        .password("flowable")
         .driverClassName("com.mysql.jdbc.Driver")
         .build();
 }
@@ -529,7 +529,7 @@ org.activiti.engine.impl.db.DbSqlSession   : performing create on identity with 
 
 ==== REST支持 (REST support)
 
-通常在嵌入的Activiti引擎之上，需要提供REST API（用于与公司的不同服务交互）。Spring Boot让这变得很容易。在classpath中添加下列依赖：
+通常在嵌入的Flowable引擎之上，需要提供REST API（用于与公司的不同服务交互）。Spring Boot让这变得很容易。在classpath中添加下列依赖：
 
 [source,xml,linenums]
 ----
@@ -540,7 +540,7 @@ org.activiti.engine.impl.db.DbSqlSession   : performing create on identity with 
 </dependency>
 ----
 
-创建一个新的Spring服务类，并创建两个方法：一个用于启动流程，另一个用于获得给定任务办理人的任务列表。在这里我们简单地包装了Activiti调用，但很明显在实际使用场景中会比这复杂得多。
+创建一个新的Spring服务类，并创建两个方法：一个用于启动流程，另一个用于获得给定任务办理人的任务列表。在这里我们简单地包装了Flowable调用，但很明显在实际使用场景中会比这复杂得多。
 
 [source,java,linenums]
 ----
@@ -633,14 +633,14 @@ curl http://localhost:8080/tasks?assignee=kermit
 
 ==== JPA支持 (JPA support)
 
-要为Spring Boot中的Activiti添加JPA支持，增加下列依赖：
+要为Spring Boot中的Flowable添加JPA支持，增加下列依赖：
 
 [source,xml,linenums]
 ----
 <dependency>
-	<groupId>org.activiti</groupId>
-	<artifactId>activiti-spring-boot-starter-jpa</artifactId>
-	<version>${activiti.version}</version>
+	<groupId>org.flowable</groupId>
+	<artifactId>flowable-spring-boot-starter-jpa</artifactId>
+	<version>${flowable.version}</version>
 </dependency>
 ----
 
@@ -717,7 +717,7 @@ class Person {
 }
 ----
 
-默认情况下，如果没有使用内存数据库，不会自动创建数据库表。在classpath中创建__application.properties_文件并加入下列参数：
+默认情况下，如果没有使用内存数据库，不会自动创建数据库表。在classpath中创建__application.properties__文件并加入下列参数：
 
 ----
 spring.jpa.hibernate.ddl-auto=update
@@ -826,7 +826,7 @@ public class MyRestController {
     }
 ----
 
-最后，为了试用Spring-JPA-Activiti集成，我们在流程定义中，将Person JPA对象的id指派为任务办理人：
+最后，为了试用Spring-JPA-Flowable集成，我们在流程定义中，将Person JPA对象的id指派为任务办理人：
 
 [source,xml,linenums]
 ----
@@ -849,11 +849,11 @@ curl http://localhost:8080/tasks?assignee=1
 
 ==== 扩展阅读 Further Reading
 
-很明显还有很多Spring　Boot相关的内容还没有提及，例如简单的JTA集成，构建能在主流应用服务器上运行的war文件。还有很多关于Spring Boot集成的内容：
+很明显还有很多Spring　Boot相关的内容还没有提及，如简单的JTA集成、构建能在主流应用服务器上运行的war文件，等等：
 
 * Actuator支持
 * Spring Integration支持
-* Rest API集成：启动Spring应用中嵌入的Activiti Rest API
+* Rest API集成：启动Spring应用中嵌入的Flowable Rest API
 * Spring Security支持
 
 目前这些领域都是初版，未来会不断演进。
