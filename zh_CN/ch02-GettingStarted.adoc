@@ -3,11 +3,11 @@
 
 === Flowable是什么？ What is Flowable?
 
-Flowable是一个使用Java编写的轻量级业务流程引擎。Flowable流程引擎让你可以部署BPMN 2.0流程定义（用于定义流程的行业XML标准），创建这些流程定义的流程实例，进行查询，访问运行中或历史的流程实例与相关数据，等等很多。这个章节将使用在你自己的开发环境中可以使用的例子，逐步介绍各种概念与API，
+Flowable是一个使用Java编写的轻量级业务流程引擎。Flowable流程引擎让你可以部署BPMN 2.0流程定义（用于定义流程的行业XML标准）、创建这些流程定义的流程实例、进行查询、访问运行中或历史的流程实例与相关数据，等等。这个章节将用一个可以在你自己的开发环境中使用的例子，逐步介绍各种概念与API。
 
 Flowable可以十分灵活地加入你的应用/服务/构架。可以将jar形式发布的Flowable库加入应用或服务，来__嵌入__引擎。以jar形式发布使Flowable可以轻易加入任何Java环境：Java SE；Tomcat、Jetty或Spring之类的servlet容器；Jboss或Websphere之类的Java EE服务器，等等。另外，也可以使用Flowable REST API通过HTTP通信。也有Flowable Application，提供了直接可用的UI，可以使用流程与任务。
 
-所有设置Flowable方法的共同点是核心引擎，其可被看做是一组服务的集合，暴露了管理与执行业务流程的API。下面的各种教程都以设置与使用核心引擎的介绍开始。后续章节都建立在之前章节中获取的知识之上。
+所有设置Flowable方法的共同点是核心引擎，其可被看做是一组服务的集合，并暴露了管理与执行业务流程的API。下面的各种教程都以设置与使用核心引擎的介绍开始。后续章节都建立在之前章节中获取的知识之上。
 
 * <<getting.started.command.line,第一节>>展示了以最简单的方式运行Flowable的方法：只使用Java SE的标准Java main方法。这里也会介绍许多核心概念与API。
 * <<getting.started.rest,Flowable REST API章节>>展示了如何通过REST运行及使用相同的API。
@@ -235,15 +235,15 @@ image::images/getting.started.bpmn.process.png[align="center"]
 </definitions>
 ----
 
-第2至11行看起来挺吓人，但是所有的流程定义中都是一样的。这是一种__样板文件__，需要与BPMN 2.0标准规范完全一致。
+第2至11行看起来挺吓人，但其实在所有的流程定义中都是一样的。这是一种__样板文件__，需要与BPMN 2.0标准规范完全一致。
 
-每一个步骤，或者在BPMN 2.0术语中称作**'活动(activity)'**，都有一个__id__属性，为其提供一个在XML文件中唯一的标识符。所有的__活动__都可选有一个名字，可以提高流程图的可读性。
+每一个步骤，或者在BPMN 2.0术语中称作**'活动(activity)'**，都有一个__id__属性，为其提供一个在XML文件中唯一的标识符。所有的__活动__都可选有一个名字，以提高流程图的可读性。
 
 __活动__之间使用**顺序流(sequence flow)**连接，在流程图中是一个有向箭头。在执行流程实例时，执行(execution)会从__启动事件__沿着__顺序流__流向下一个__活动__。
 
-离开__排他网关(带有X的菱形)__的__顺序流__很特别：都以__表达式(expression)__的形式定义了__条件(condition)__ （见第25至32行）。当流程实例的执行到达这个__网关__时，会计算__条件__，并使用第一个计算为__true__的顺序liu。这就是__排他__的含义（只选择一个），当然如果需要不同的路由策略，可以使用其他类型的网关。
+离开__排他网关(带有X的菱形)__的__顺序流__很特别：都以__表达式(expression)__的形式定义了__条件(condition)__ （见第25至32行）。当流程实例的执行到达这个__网关__时，会计算__条件__，并使用第一个计算为__true__的顺序流。这就是__排他__的含义（只选择一个）。当然如果需要不同的路由策略，可以使用其他类型的网关。
 
-这里用作条件的__表达式__格式为__${approved}__，这是__${approved == true}__的简写。变量'approved'被称作**流程变量(process variable)**。__流程变量__是一个持久化数据，与流程实例存储在一起，并可以在流程实例的生命周期中使用。在这个例子里，我们需要在特定的地方（当提交经理用户任务时，或者以Flowable的术语来说，__完成(complete)__时）设置这个__流程变量__，因为这不是流程实例启动时就能获取的数据。
+这里用作条件的__表达式__格式为__${approved}__，这是__${approved == true}__的简写。变量'approved'被称作**流程变量(process variable)**。__流程变量__是一个持久化数据，与流程实例存储在一起，并可以在流程实例的生命周期中使用。在这个例子里，我们需要在特定的地方（当经理用户任务提交时，或者以Flowable的术语来说，__完成(complete)__时）设置这个__流程变量__，因为这不是流程实例启动时就能获取的数据。
 
 现在我们已经有了流程BPMN 2.0 XML文件，下来需要将它**'部署(deploy)'**到引擎中。__部署__一个流程定义意味着：
 
@@ -423,7 +423,7 @@ image::images/getting.started.console.logging4.png[align="center"]
 
 选择使用Flowable这样的流程引擎的原因之一，是它可以自动存储所有流程实例的**审计数据**或**历史数据**。这些数据可以用于创建报告，深入展现公司运行的情况，瓶颈在哪里，等等。
 
-例如，假设我们希望显示流程实例已经执行的时间。我们可以从__ProcessEngine__获取__HistoryService__，并创建__历史活动(historical activities)__的查询。在下面的代码片段中，可以看到我们添加了一些额外的过滤：
+例如，如果希望显示流程实例已经执行的时间，就可以从__ProcessEngine__获取__HistoryService__，并创建__历史活动(historical activities)__的查询。在下面的代码片段中，可以看到我们添加了一些额外的过滤：
 
 * 只选择一个特定流程实例的活动
 * 只选择已完成的活动
@@ -464,15 +464,15 @@ externalSystemCall took 1 milliseconds
 [[getting.started.rest]]
 === 开始使用Flowable REST API (Getting started with the Flowable REST API)
 
-这个章节展示了与<<getting.started.command.line,前一章节>>相同的例子：部署一个流程定义，启动一个流程实例，获取任务列表并完成一个任务。如果还没有阅读上一章节，最好快速浏览以了解所做的事情。
+这个章节展示了与<<getting.started.command.line,上一章节>>相同的例子：部署一个流程定义，启动一个流程实例，获取任务列表并完成一个任务。最好先快速浏览上一章节以了解所做的事情。
 
-这一次，使用Flowable REST API代替Java API。你会很快意识到REST API与Java API紧密关联，以及只要了解一个，就能很快学会另一个。
+这一次，使用Flowable REST API代替Java API。你很快就会意识到REST API与Java API紧密关联。只要了解一个，就能很快学会另一个。
 
 可以在<<restApiChapter, REST API章节>>找到Flowable REST API的完整细节。
 
 ==== 安装REST应用 Setting up the REST application
 
-从flowable.org网站下载.zip文件后，可以在__wars__目录下找到REST应用。要运行这个war文件，需要一个servlet容器，例如link:$$http://tomcat.apache.org//$$[Tomcat]、link:$$http://www.eclipse.org/jetty//$$[Jetty]等。
+从flowable.org网站下载.zip文件后，可以在__wars__目录下找到REST应用。要运行这个war文件，需要一个servlet容器，例如link:$$http://tomcat.apache.org/$$[Tomcat]、link:$$http://www.eclipse.org/jetty/$$[Jetty]等。
 
 使用Tomcat的步骤如下：
 
@@ -483,7 +483,7 @@ externalSystemCall took 1 milliseconds
 
 在服务启动过程中，会显示一些Flowable日志信息。在最后显示的一条类似'__INFO [main] org.apache.catalina.startup.Catalina.start Server startup in xyz ms__'的消息标志着服务器已经启动，可以接受请求。请注意默认情况下，使用H2内存数据库，这意味着数据在服务器重启后会丢失。
 
-在下面的章节中，我们使用cURL展示各种REST调用。所有的REST调用默认都使用__基本认证__保护，所有的调用都使用用户'kermit'与密码'kermit'。
+在下面的章节中，我们使用cURL展示各种REST调用。所有的REST调用默认都使用__基本认证__保护，所有的调用的用户都是 'kermit'，密码为'kermit'。
 
 在启动后，通过执行下列命令验证应用运行正常：
 
