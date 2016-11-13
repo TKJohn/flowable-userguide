@@ -5,7 +5,7 @@
 === 创建ProcessEngine Creating a ProcessEngine
 
 
-Activiti流程引擎通过名为++activiti.cfg.xml++的XML文件进行配置。请注意这种方式与<<springintegration,使用Spring创建流程引擎>>**不**一样。
+Flowable流程引擎通过名为++activiti.cfg.xml++的XML文件进行配置。请注意这种方式与<<springintegration,使用Spring创建流程引擎>>**不**一样。
 
 获取++ProcessEngine++，最简单的方式是使用++org.activiti.engine.ProcessEngines++类：
 
@@ -31,8 +31,6 @@ ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine()
 
     <property name="databaseSchemaUpdate" value="true" />
 
-    <property name="jobExecutorActivate" value="false" />
-    <property name="asyncExecutorEnabled" value="true" />
     <property name="asyncExecutorActivate" value="false" />
 
     <property name="mailServerHost" value="mail.my-corp.com" />
@@ -42,17 +40,18 @@ ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine()
 </beans>
 ----
 
-请注意这个配置XML文件实际上是一个Spring配置文件。**但这并不意味着Activiti只能用于Spring环境！**我们只是简单利用Spring内部的解析与依赖注入功能来构造引擎。
+请注意这个配置XML文件实际上是一个Spring配置文件。**但这并不意味着Flowable只能用于Spring环境！**我们只是简单利用Spring内部的解析与依赖注入功能来构造引擎。
 
 也可以通过编程方式使用配置文件，来构造ProcessEngineConfiguration对象。也可以使用不同的bean id(例如第3行)。
 
 [source,java,linenums]
 ----
-ProcessEngineConfiguration.createProcessEngineConfigurationFromResourceDefault();
-ProcessEngineConfiguration.createProcessEngineConfigurationFromResource(String resource);
-ProcessEngineConfiguration.createProcessEngineConfigurationFromResource(String resource, String beanName);
-ProcessEngineConfiguration.createProcessEngineConfigurationFromInputStream(InputStream inputStream);
-ProcessEngineConfiguration.createProcessEngineConfigurationFromInputStream(InputStream inputStream, String beanName);
+ProcessEngineConfiguration.
+  createProcessEngineConfigurationFromResourceDefault();
+  createProcessEngineConfigurationFromResource(String resource);
+  createProcessEngineConfigurationFromResource(String resource, String beanName);
+  createProcessEngineConfigurationFromInputStream(InputStream inputStream);
+  createProcessEngineConfigurationFromInputStream(InputStream inputStream, String beanName);
 ----
 
 
@@ -94,8 +93,8 @@ ProcessEngine processEngine = ProcessEngineConfiguration.createStandaloneInMemPr
 
 这个bean被用于构建++ProcessEngine++。有多个类可以用于定义++processEngineConfiguration++。这些类用于不同的环境，并各自设置一些默认值。最佳实践是选择（最）匹配你环境的类，以便减少配置引擎需要的参数。下面列出目前可以使用的类（后续版本会提供更多）：[[configurationClasses]]
 
-* *org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration*：流程引擎独立运行。Activiti自行处理事务。在默认情况下，数据库检查只在引擎启动时进行（如果Activiti表结构不存在或表结构版本不对，会抛出异常）。
-* *org.activiti.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration*：这是一个便于使用单元测试的类。Activiti自行处理事务。默认使用H2内存数据库。数据库会在引擎启动时创建，并在引擎关闭时删除。使用这个类时，很可能不需要更多的配置（除了使用任务执行器或邮件功能等时）。
+* *org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration*：流程引擎独立运行。Flowable自行处理事务。在默认情况下，数据库检查只在引擎启动时进行（如果Flowable表结构不存在或表结构版本不对，会抛出异常）。
+* *org.activiti.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration*：这是一个便于使用单元测试的类。Flowable自行处理事务。默认使用H2内存数据库。数据库会在引擎启动时创建，并在引擎关闭时删除。使用这个类时，很可能不需要更多的配置（除了使用任务执行器或邮件功能等时）。
 * *org.activiti.spring.SpringProcessEngineConfiguration*：在流程引擎处于Spring环境时使用。查看<<springintegration,Spring集成章节>>获得更多信息。
 * *org.activiti.engine.impl.cfg.JtaProcessEngineConfiguration*：用于引擎独立运行，并使用JTA事务的情况。
 
@@ -105,7 +104,7 @@ ProcessEngine processEngine = ProcessEngineConfiguration.createStandaloneInMemPr
 === 数据库配置 Database configuration
 
 
-有两种方式配置Activiti引擎使用的数据库。第一种方式是定义数据库的JDBC参数：
+有两种方式配置Flowable引擎使用的数据库。第一种方式是定义数据库的JDBC参数：
 
 * *jdbcUrl*: 数据库的JDBC URL。
 * *jdbcDriver*: 特定数据库类型的驱动实现。
@@ -129,8 +128,7 @@ ProcessEngine processEngine = ProcessEngineConfiguration.createStandaloneInMemPr
 <property name="jdbcPassword" value="" />
 ----
 
-
-也可以使用++javax.sql.DataSource++的实现（例如来自link:$$http://commons.apache.org/dbcp/$$[Apache Commons]的DBCP）：
+我们的跑分显示MyBatis连接池在处理大量并发请求时，并不是最经济或最具弹性的。因此，建议使用++javax.sql.DataSource++的实现，并将其注入到流程引擎配置中（例如DBCP、CP30、Hikari、Tomcat连接池，等等）：
 
 [source,xml,linenums]
 ----
@@ -150,11 +148,11 @@ ProcessEngine processEngine = ProcessEngineConfiguration.createStandaloneInMemPr
 ----
 
 
-请注意Activiti发布时不包括用于定义数据源的库。需要自行把库（例如来自DBCP）放在你的classpath中。
+请注意Flowable发布时不包括用于定义数据源的库。需要自行把库放在你的classpath中。
 
 无论使用JDBC还是数据源方式配置，下列参数都可以使用：
 
-* *databaseType*: 通常不需要专门设置这个参数，因为它可以从数据库连接信息中自动分析得出。只有在自动检测失败时才需要设置。可用值：{h2, mysql, oracle, postgres, mssql, db2}。**不使用默认的H2数据库时需要设置这个参数。**这个选项会决定创建、删除与查询时使用的脚本。查看<<supporteddatabases,“支持的数据库”章节>>了解我们支持哪些类型的数据库。
+* *databaseType*: 通常不需要专门设置这个参数，因为它可以从数据库连接信息中自动分析得出。只有在自动检测失败时才需要设置。可用值：{h2, mysql, oracle, postgres, mssql, db2}。这个选项会决定创建、删除与查询时使用的脚本。查看<<supporteddatabases,“支持的数据库”章节>>了解我们支持哪些类型的数据库。
 * *databaseSchemaUpdate*: 用于设置流程引擎启动关闭时使用的数据库表结构控制策略。
 ** +false+ (默认): 当引擎启动时，检查数据库表结构的版本是否匹配库文件版本。版本不匹配时抛出异常。
 ** ++true++: 构建引擎时，检查并在需要时更新表结构。表结构不存在则会创建。
@@ -166,72 +164,9 @@ ProcessEngine processEngine = ProcessEngineConfiguration.createStandaloneInMemPr
 === JNDI数据源配置 JNDI Datasource Configuration
 
 
-默认情况下，Activiti的数据库配置保存在每个web应用WEB-INF/classes目录下的db.properties文件中。有时这样并不合适，因为这需要用户修改Activiti源码中的db.properties文件并重新编译war包，或者在部署后解开war包并修改db.properties文件。
+默认情况下，Flowable的数据库配置保存在每个web应用WEB-INF/classes目录下的db.properties文件中。有时这样并不合适，因为这需要用户修改Flowable源码中的db.properties文件并重新编译war包，或者在部署后解开war包并修改db.properties文件。
 
-通过使用JNDI（Java Naming and Directory Interface，Java命名和目录接口）获取数据库连接，连接完全由Servlet容器管理，配置也可以在war部署之外进行管理。同时也比db.properties提供了更多控制连接的参数。
-
-
-[[jndi_usage]]
-
-==== 使用 Usage
-
-
-要将Activiti Explorer与Activiti Rest web应用从db.properties配置切换至JNDI数据源配置，请打开Spring主配置文件(activiti-webapp-explorer2/src/main/webapp/WEB-INF/activiti-standalone-context.xml与activiti-webapp-rest2/src/main/resources/activiti-context.xml)，并删除名为"dbProperties" 与"dataSource"的bean。然后增加下列bean：
-
-[source,xml,linenums]
-----
-<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-    <property name="jndiName" value="java:comp/env/jdbc/activitiDB"/>
-</bean>
-
-----
-
-接下来我们需要新增context.xml文件，其中包含默认的H2配置。也可以用你自己的的JNDI配置覆盖它。对于Activiti Explorer，用下列文件替换activiti-webapp-explorer2/src/main/webapp/META-INF/context.xml：
-
-[source,xml,linenums]
-----
-<Context antiJARLocking="true" path="/activiti-explorer2">
-    <Resource auth="Container"
-              name="jdbc/activitiDB"
-              type="javax.sql.DataSource"
-              scope="Shareable"
-              description="JDBC DataSource"
-              url="jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000"
-              driverClassName="org.h2.Driver"
-              username="sa"
-              password=""
-              defaultAutoCommit="false"
-              initialSize="5"
-              maxWait="5000"
-              maxActive="120"
-              maxIdle="5"/>
-</Context>
-----
-
-对于Activiti REST web应用，新增activiti-webapp-rest2/src/main/webapp/META-INF/context.xml文件，包含下列配置：
-
-[source,xml,linenums]
-----
-<?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" path="/activiti-rest2">
-    <Resource auth="Container"
-              name="jdbc/activitiDB"
-              type="javax.sql.DataSource"
-              scope="Shareable"
-              description="JDBC DataSource"
-              url="jdbc:h2:mem:activiti;DB_CLOSE_DELAY=-1"
-              driverClassName="org.h2.Driver"
-              username="sa"
-              password=""
-              defaultAutoCommit="false"
-              initialSize="5"
-              maxWait="5000"
-              maxActive="120"
-              maxIdle="5"/>
-</Context>
-----
-
-可选步骤，可以删除Activiti Explorer与Activiti REST web应用中无用的db.properties文件。
+通过使用JNDI（Java Naming and Directory Interface，Java命名和目录接口）获取数据库连接时，连接就完全由Servlet容器管理，并可以在war部署之外管理配置。同时也提供了比db.properties中更多的控制连接的参数。
 
 
 [[jndi_configuration]]
@@ -241,12 +176,12 @@ ProcessEngine processEngine = ProcessEngineConfiguration.createStandaloneInMemPr
 
 根据你使用的servlet容器应用不同，配置JNDI数据源的方式也不同。下面的介绍用于Tomcat，对于其他容器应用，请参考对应的文档。
 
-Tomcat的JNDI资源配置在$CATALINA_BASE/conf/[enginename]/[hostname]/[warname].xml (对于Activiti Explorer通常会是$CATALINA_BASE/conf/Catalina/localhost/activiti-explorer.xml)。当应用第一次部署时，默认会从Activiti war包中复制context.xml。所以如果存在这个文件则需要替换。例如，如果需要将JNDI资源修改为应用连接MySQL而不是H2，按照下列修改文件：
+Tomcat的JNDI资源配置在$CATALINA_BASE/conf/[enginename]/[hostname]/[warname].xml (对于Flowable UI通常会是$CATALINA_BASE/conf/Catalina/localhost/activiti-app.xml)。当应用第一次部署时，默认会从Flowable war包中复制context.xml。所以如果存在这个文件则需要替换。例如，如果需要将JNDI资源修改为应用连接MySQL而不是H2，按照下列修改文件：
 
 [source,xml,linenums]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
-    <Context antiJARLocking="true" path="/activiti-explorer2">
+    <Context antiJARLocking="true" path="/activiti-app">
         <Resource auth="Container"
             name="jdbc/activitiDB"
             type="javax.sql.DataSource"
@@ -263,18 +198,25 @@ Tomcat的JNDI资源配置在$CATALINA_BASE/conf/[enginename]/[hostname]/[warname
         </Context>
 ----
 
+==== JNDI参数 JNDI properties
+
+要配置JNDI数据源，在Flowable UI的配置文件中使用下列参数：
+
+* datasource.jndi.name: 数据源的JNDI名
+* datasource.jndi.resourceRef: 设置是否在J2EE容器中查找。也就是说，如果JNDI名中没有包含"java:comp/env/"前缀，是否需要添加它。默认为"true"。
+
 
 [[supporteddatabases]]
 
 
 === 支持的数据库 Supported databases
 
-下面列出Activiti指定的数据库类型（区分大小写！）。
+下面列出Flowable用于引用数据库的类型（区分大小写！）。
 
 [[databaseTypes]]
 [options="header"]
 |===============
-|Activiti数据库类型|示例JDBC URL|备注
+|Flowable数据库类型|示例JDBC URL|备注
 |h2|jdbc:h2:tcp://localhost/activiti|默认配置的数据库
 |mysql|jdbc:mysql://localhost:3306/activiti?autoReconnect=true|已使用mysql-connector-java数据库驱动测试
 |oracle|jdbc:oracle:thin:@localhost:1521:xe|
@@ -290,12 +232,12 @@ Tomcat的JNDI资源配置在$CATALINA_BASE/conf/[enginename]/[hostname]/[warname
 
 在你的数据库中创建标的最简单方法是：
 
-* 在classpath中增加activiti-engine jar
+* 在classpath中增加flowable-engine jar
 * 增加合适的数据库驱动
-* 在classpath中增加Activiti配置文件(__activiti.cfg.xml__)，指向你的数据库(参考<<databaseConfiguration,数据库配置>>)
+* 在classpath中增加Flowable配置文件(__activiti.cfg.xml__)，指向你的数据库(参考<<databaseConfiguration,数据库配置>>)
 * 执行__DbSchemaCreate__类的main方法
 
-然而，通常只有数据库管理员可以在数据库中执行DDL语句，在生产环境中这也是最明智的选择。DDL的SQL脚本可以在Activiti下载页面或Activiti发布目录中找到，位于++database++子目录。引擎jar (__activiti-engine-x.jar__)的__org/activiti/db/create__包中也有一份(__drop__目录存放删除脚本)。SQL文件的格式为：
+然而，通常只有数据库管理员可以在数据库中执行DDL语句，在生产环境中这也是最明智的选择。DDL的SQL脚本可以在Flowable下载页面或Flowable发布目录中找到，位于++database++子目录。引擎jar (__flowable-engine-x.jar__)的__org/activiti/db/create__包中也有一份(__drop__目录存放删除脚本)。SQL文件的格式为：
 
 ----
 activiti.{db}.{create|drop}.{type}.sql
@@ -316,7 +258,7 @@ __db__为<<supporteddatabases,支持的数据库>>，而__type__为
 * *5.6.4+:* 支持毫秒精度。可以使用DDL文件（默认的包含__mysql__的文件）。可以使用自动创建/升级。
 
 
-请注意在Activiti表已经创建/升级后，更新MySQL数据库，则需要手工修改列类型！
+请注意在Flowable表已经创建/升级后，再升级MySQL数据库，则需要手工修改列类型！
 
 
 [[database.tables.explained]]
@@ -324,10 +266,10 @@ __db__为<<supporteddatabases,支持的数据库>>，而__type__为
 
 === 数据库表名说明 Database table names explained
 
-Activiti的所有数据库表都以**ACT_**开头。第二部分是说明表用途的两字符标示符。服务API的命名也大略符合这个规则。
+Flowable的所有数据库表都以**ACT_**开头。第二部分是说明表用途的两字符标示符。服务API的命名也大略符合这个规则。
 
 * *ACT_RE_**: 'RE'代表++repository++。带有这个前缀的表包含“静态”信息，例如流程定义与流程资源（图片、规则等）。
-* *ACT_RU_**: 'RU'代表++runtime++。这些表存储运行时信息，例如流程实例（process instance）、用户任务（user task）、变量（variable）、作业（job）等。Activiti只在流程实例运行中保存运行时数据，并在流程实例结束时删除记录。这样保证运行时表小和快。
+* *ACT_RU_**: 'RU'代表++runtime++。这些表存储运行时信息，例如流程实例（process instance）、用户任务（user task）、变量（variable）、作业（job）等。Flowable只在流程实例运行中保存运行时数据，并在流程实例结束时删除记录。这样保证运行时表小和快。
 * *ACT_ID_**: 'ID'代表++identity++。这些表包含身份信息，例如用户、组等。
 * *ACT_HI_**: 'HI'代表++history++。这些表存储历史数据，例如已完成的流程实例、变量、任务等。
 * *ACT_GE_**: 通用数据。用于不同场景下。
@@ -341,7 +283,7 @@ Activiti的所有数据库表都以**ACT_**开头。第二部分是说明表用�
 在升级前，请确保你已经（使用数据库的备份功能）备份了数据库。
 
 
-默认情况下，每次流程引擎创建时会进行版本检查，通常是在你的应用或者Activiti web应用启动的时候。如果Activiti库发现库版本与Activiti数据库表版本不同，会抛出异常。
+默认情况下，每次流程引擎创建时会进行版本检查，通常是在你的应用或者Flowable web应用启动的时候。如果Flowable库发现库版本与Flowable数据库表版本不同，会抛出异常。
 
 
 要进行升级，首先需要将下列配置参数放入你的activiti.cfg.xml配置文件：
@@ -359,17 +301,17 @@ Activiti的所有数据库表都以**ACT_**开头。第二部分是说明表用�
 </beans>
 ----
 
-**同时，在classpath中加上合适的数据库驱动。**升级你应用中的Activiti库，或者启动一个新版本的Activiti，并将它指向旧版本的数据库。将++databaseSchemaUpdate++设置为++true++。当Activiti发现库与数据库表结构不同步时，会自动将数据库表结构升级至新版本。
+**同时，在classpath中加上合适的数据库驱动。**升级你应用中的Flowable库，或者启动一个新版本的Flowable，并将它指向旧版本的数据库。将++databaseSchemaUpdate++设置为++true++。当Flowable发现库与数据库表结构不同步时，会自动将数据库表结构升级至新版本。
 
-**你还可以直接运行升级DDL语句**，也可以从Activiti下载页面获取升级数据库脚本并运行。
+**你还可以直接运行升级DDL语句**，也可以从Flowable下载页面获取升级数据库脚本并运行。
 
 [[jobExecutorConfiguration]]
 
-=== 作业执行器与异步执行器（从5.17.0版本起） Job Executor and Async Executor (since version 5.17.0)
+=== 作业执行器（从6.0.0版本起） Job Executor (since version 6.0.0)
 
-从5.17.0版本开始，在作业执行器之外，Activiti还提供了异步执行器。Activiti引擎可以通过它，以性能更好，也对数据库更友好的方式执行异步作业。
+在Flowable 6中唯一可用的作业执行器，是Flowable 5中的异步执行器。因为它为Flowable引擎提供了性能更好，对数据库也更友好的执行异步作业的方式。Flowable 5中的作业执行器已经移除。可以在用户手册的高级章节找到更多信息。
 
-此外，如果在Java EE 7下运行，容器还可以使用符合JSR-236标准的++ManagedJobExecutor++与++ManagedAsyncJobExecutor++来管理线程。要启用这个功能，需要在配置中如下加入线程工厂：
+此外，如果在Java EE 7下运行，容器还可以使用符合JSR-236标准的++ManagedJobExecutor++来管理线程。要启用这个功能，需要在配置中如下加入线程工厂：
 
 [source,xml,linenums]
 ----
@@ -377,48 +319,33 @@ Activiti的所有数据库表都以**ACT_**开头。第二部分是说明表用�
    <property name="jndiName" value="java:jboss/ee/concurrency/factory/default" />
 </bean>
 
-<bean id="customJobExecutor" class="org.activiti.engine.impl.jobexecutor.ManagedJobExecutor">
+<bean id="customJobExecutor" class="org.activiti.engine.impl.jobexecutor.ManagedAsyncExecutor">
    <!-- ... -->
    <property name="threadFactory" ref="threadFactory" />
    <!-- ... -->
 </bean>
 ----
 
-如果没有设置线程工厂，上述两个managedxx类都会退化为默认实现（非managed版本）。
+如果没有设置线程工厂，ManagedJobExecutor实现会退化为默认实现（非managed版本）。
 
 === 启用作业执行器 Job executor activation
 
-++JobExecutor++是管理一组线程的组件，这些线程用于触发定时器（包括后续的异步消息）。在单元测试场景下，使用多线程会很笨重。因此API提供++ManagementService.createJobQuery++用于查询，以及++ManagementService.executeJob++用于执行作业。这样作业的执行就可以在单元测试内部控制。为了避免作业执行器的干扰，可以将它关闭。
+++AsyncExecutor++是管理线程池的组件，用于触发定时器与其他异步任务。也可以使用其他实现（例如使用消息队列，参见用户手册的高级章节）。
 
-默认情况下，++JobExecutor++在流程引擎启动时激活。当你不希望++JobExecutor++随流程引擎启动时，设置：
-
-[source,xml,linenums]
-----
-<property name="jobExecutorActivate" value="false" />
-----
-
-
-=== 启用异步执行器 Async executor activation
-
-++AsyncExecutor++是管理线程池的组件，这个线程池用于触发定时器与异步任务。
-
-默认情况下，由于历史原因，当使用++JobExecutor++时，++AsyncExecutor++不生效。然而我们建议使用新的++AsyncExecutor++代替++JobExecutor++，通过定义两个参数实现
+默认情况下，++AsyncExecutor++并未激活，也不会启动。要使异步执行器与Flowable引擎一同启动，进行如下配置。
 
 [source,xml,linenums]
 ----
-<property name="asyncExecutorEnabled" value="true" />
 <property name="asyncExecutorActivate" value="true" />
 ----
 
-asyncExecutorEnabled参数用于启用异步执行器，代替老的作业执行器。
-第二个参数asyncExecutorActivate命令Activiti引擎在启动时启动异步执行器线程池。
+asyncExecutorActivate这个参数使Flowable引擎在启动时启动异步执行器。
 
 [[mailServerConfiguration]]
 
-
 === 配置邮件服务器 Mail server configuration
 
-配置邮件服务器是可选的。Activiti支持在业务流程中发送电子邮件。发送电子邮件需要配置有效的SMTP邮件服务器。查看<<bpmnEmailTaskServerConfiguration,电子邮件任务>>了解配置选项。
+配置邮件服务器是可选的。Flowable支持在业务流程中发送电子邮件。发送电子邮件需要配置有效的SMTP邮件服务器。查看<<bpmnEmailTaskServerConfiguration,电子邮件任务>>了解配置选项。
 
 
 [[historyConfiguration]]
@@ -474,12 +401,11 @@ asyncExecutorEnabled参数用于启用异步执行器，代替老的作业执行
 
 
 === 日志 Logging
+所有的日志（Flowable、Spring、MyBatis等）都通过SLF4J路由，并允许你自行选择日志实现。
 
-自Activiti 5.12版本起，使用SLF4J作为日志框架，替代了之前使用的java.util.logging。所有日志(activiti, spring, mybatis, ...)通过SLF4J路由，并允许你自行选择日志实现。
+**默认情况下，Flowable引擎依赖不提供SFL4J绑定jar。你需要自行将其加入你的项目，以便使用所选的日志框架。**如果没有加入实现jar，SLF4J会使用NOP-logger。这时除了一条警告外，不会记录任何日志。可以从link:$$http://www.slf4j.org/codes.html#StaticLoggerBinder$$[http://www.slf4j.org/codes.html#StaticLoggerBinder]了解关于绑定的更多信息。
 
-**默认情况下，Activiti引擎依赖不会提供SFL4J绑定jar。你需要自行将其加入你的项目，以便使用所选的日志框架。**如果没有加入实现jar，SLF4J会使用NOP-logger。这时除了一条警告外，任何日志都不会记录。可以从link:$$http://www.slf4j.org/codes.html#StaticLoggerBinder$$[http://www.slf4j.org/codes.html#StaticLoggerBinder]获取关于绑定的更多信息。
-
-使用Maven可以添加类似这样（这里使用log4j）的依赖，请注意你还需要加上版本：
+可以像这样（这里使用Log4j）使用Maven添加依赖，请注意你还需要加上版本：
 
 [source,xml,linenums]
 ----
@@ -490,7 +416,7 @@ asyncExecutorEnabled参数用于启用异步执行器，代替老的作业执行
 ----
 
 
-activiti-explorer与activiti-rest web应用配置为使用Log4j绑定。所有的activiti-*模块运行测试时也会使用Log4j。
+Flowable-UI与Flowable-rest web应用配置为使用Log4j绑定。运行所有flowable-*模块的测试时也会使用Log4j。
 
 
 **重要提示：当使用classpath中带有commons-logging的容器时：**为了将spring的日志路由至SLF4j，需要使用桥接（参考link:$$http://www.slf4j.org/legacy.html#jclOverSLF4J$$[http://www.slf4j.org/legacy.html#jclOverSLF4J]）。如果你的容器提供了commons-logging实现，请按照link:$$http://www.slf4j.org/codes.html#release$$[http://www.slf4j.org/codes.html#release]页面的指示来保证稳定性。
@@ -511,7 +437,7 @@ activiti-explorer与activiti-rest web应用配置为使用Log4j绑定。所有�
 
 === 映射诊断上下文 Mapped Diagnostic Contexts
 
-从5.13版本开始，Activiti支持SLF4J的映射诊断上下文特性。与需要日志记录的信息一起，下列基本信息也会传递给底层日志记录器：
+Flowable支持SLF4J的映射诊断上下文特性。下列基本信息会与需要日志记录的信息一起，传递给底层日志记录器：
 
 * processDefinition Id 作为 mdcProcessDefinitionID
 * processInstance Id 作为 mdcProcessInstanceID
@@ -521,18 +447,19 @@ activiti-explorer与activiti-rest web应用配置为使用Log4j绑定。所有�
 
 [source,properties,linenums]
 ----
- log4j.appender.consoleAppender.layout.ConversionPattern=ProcessDefinitionId=%X{mdcProcessDefinitionID} executionId=%X{mdcExecutionId} mdcProcessInstanceID=%X{mdcProcessInstanceID} mdcBusinessKey=%X{mdcBusinessKey} %m%n
+ log4j.appender.consoleAppender.layout.ConversionPattern=ProcessDefinitionId=%X{mdcProcessDefinitionID}
+ executionId=%X{mdcExecutionId} mdcProcessInstanceID=%X{mdcProcessInstanceID} mdcBusinessKey=%X{mdcBusinessKey} %m%n
 ----
 
-在系统任务很关键的情况下这很有用，可以通过例如日志分析器进行日志的严格检查。
 
+在日志中包含的信息需要例如通过日志分析器进行实时监测时，十分有用。
 
 [[eventDispatcher]]
 
 
 === 事件处理器 Event handlers
 
-Activiti 5.15引入了事件机制。它可以让你在引擎中发生多种事件的时候得到通知。查看<<eventDispatcherEventTypes,所有支持的事件类型>>了解可用的事件。
+Flowable引擎中的事件机制可以让你在引擎中发生多种事件的时候得到通知。查看<<eventDispatcherEventTypes,所有支持的事件类型>>了解可用的事件。
 
 可以只为特定种类的事件注册监听器，而不是在任何类型的事件发送时都被通知。可以<<eventDispatcherConfiguration,通过配置>>增加引擎全局的事件监听器，<<eventDispatcherConfigurationRuntime,在运行时通过API>>增加引擎全局的事件监听器，也可以 <<eventDispatcherConfigurationProcessDefinition,在BPMN XML文件为个别流程定义>>增加事件监听器。.
 
@@ -578,7 +505,7 @@ public class MyEventListener implements ActivitiEventListener {
 
 ++isFailOnException()++方法决定了当事件分发后，++onEvent(..)++方法抛出异常时的行为。若返回++false++，忽略异常；返回++true++，异常不会被忽略而会被上抛，使当前执行的命令失败。如果事件是API调用（或其他事务操作，例如作业执行）的一部分，事务将被回滚。如果事件监听器中并不是重要的业务操作，建议返回++false++。
 
-Activiti提供了少量基础实现，以简化常用的事件监听器用例。它们可以被用作监听器的示例或基类：
+Flowable提供了少量基础实现，以简化常用的事件监听器用例。它们可以被用作监听器的示例或基类：
 
 * *org.activiti.engine.delegate.event.BaseEntityEventListener*: 事件监听器基类，可用来监听实体（entity）相关事件，特定或所有实体的事件都可以。它隐藏了类型检测，提供了4个需要覆盖的方法：++onCreate(..)++, ++onUpdate(..)++与++onDelete(..)++在实体创建、更新及删除时调用；对所有其他实体相关事件，++onEntityEvent(..)++会被调用。
 
@@ -708,7 +635,7 @@ void addEventListener(ActivitiEventListener listenerToAdd, ActivitiEventType... 
 <<experimental, [试验功能] >>
 
 
-处理分发的事件的另一个方法，是抛出BPMN事件。请牢记在心，只有特定种类的Activiti事件类型，抛出BPMN事件才合理。例如，在流程实例被删除时抛出BPMN事件，会导致错误。下面的代码片段展示了如何在流程实例中抛出信号，向外部流程（全局）抛出信号，在流程实例中抛出消息事件，以及在流程实例中抛出错误事件。这里不使用++class++或++delegateExpression++，而要使用++throwEvent++属性，以及一个附加属性，用于指定需要抛出的事件类型。
+处理分发的事件的另一个方法，是抛出BPMN事件。请牢记在心，只有特定种类的Flowable事件类型，抛出BPMN事件才合理。例如，在流程实例被删除时抛出BPMN事件，会导致错误。下面的代码片段展示了如何在流程实例中抛出信号，向外部流程（全局）抛出信号，在流程实例中抛出消息事件，以及在流程实例中抛出错误事件。这里不使用++class++或++delegateExpression++，而要使用++throwEvent++属性，以及一个附加属性，用于指定需要抛出的事件类型。
 
 [source,xml,linenums]
 ----
@@ -747,7 +674,7 @@ void addEventListener(ActivitiEventListener listenerToAdd, ActivitiEventType... 
 </process>
 ----
 
-如果需要使用额外的逻辑判断是否需要抛出BPMN事件，可以扩展Activiti提供的监听器类。通过在你的子类中覆盖++isValidEvent(ActivitiEvent event)++，可以阻止抛出BPMN事件。相关的类为++org.activiti.engine.test.api.event.SignalThrowingEventListenerTest++, ++org.activiti.engine.impl.bpmn.helper.MessageThrowingEventListener++与++org.activiti.engine.impl.bpmn.helper.ErrorThrowingEventListener++.
+如果需要使用额外的逻辑判断是否需要抛出BPMN事件，可以扩展Flowable提供的监听器类。通过在你的子类中覆盖++isValidEvent(ActivitiEvent event)++，可以阻止抛出BPMN事件。相关的类为++org.activiti.engine.test.api.event.SignalThrowingEventListenerTest++, ++org.activiti.engine.impl.bpmn.helper.MessageThrowingEventListener++与++org.activiti.engine.impl.bpmn.helper.ErrorThrowingEventListener++.
 
 
 ===== 关于流程定义监听器的说明 Notes on listeners on a process-definition
@@ -771,8 +698,8 @@ void addEventListener(ActivitiEventListener listenerToAdd, ActivitiEventType... 
  * 将给定事件分发给所有注册监听器。
  * @param event 要分发的事件。
  *
- * @throws ActivitiException 当分发事件发生异常，或者{@link ActivitiEventDispatcher}被禁用。
- * @throws ActivitiIllegalArgumentException 当给定事件不可分发
+ * @throws FlowableException 当分发事件发生异常，或者{@link ActivitiEventDispatcher}被禁用。
+ * @throws FlowableIllegalArgumentException 当给定事件不可分发
  */
  void dispatchEvent(ActivitiEvent event);
 ----
@@ -791,36 +718,41 @@ void addEventListener(ActivitiEventListener listenerToAdd, ActivitiEventType... 
 |Event name|Description|Event classes
 |ENGINE_CREATED|本监听器附着的流程引擎已经创建，并可以响应API调用。|+org.activiti...ActivitiEvent+
 |ENGINE_CLOSED|本监听器附着的流程引擎已经关闭，不能再对该引擎的进行API调用。|+org.activiti...ActivitiEvent+
-|ENTITY_CREATED|新的实体已经创建。该实体包含在本事件里。|+org.activiti...ActivitiEntityEvent+
-|ENTITY_INITIALIZED|新的实体已经创建并完全初始化。如果任何子实体作为该实体的一部分被创建，本事件会在子实体创建/初始化后触发，与 +$$ENTITY_CREATE$$+ 事件相反。|+org.activiti...ActivitiEntityEvent+
-|ENTITY_UPDATED|实体已经更新。该实体包含在本事件里。|+org.activiti...ActivitiEntityEvent+
-|ENTITY_DELETED|实体已经删除。该实体包含在本事件里。|+org.activiti...ActivitiEntityEvent+
-|ENTITY_SUSPENDED|实体已经挂起。该实体包含在本事件里。会为ProcessDefinitions（流程定义）, ProcessInstances（流程实例）与Tasks（任务）分发本事件。|+org.activiti...ActivitiEntityEvent+
-|ENTITY_ACTIVATED|实体已被激活。该实体包含在本事件里。会为ProcessDefinitions, ProcessInstances与Tasks分发本事件。|+org.activiti...ActivitiEntityEvent+
-|JOB_EXECUTION_SUCCESS|作业已经成功执行。该作业包含在本事件里。|+org.activiti...ActivitiEntityEvent+
-|JOB_EXECUTION_FAILURE|作业执行失败。该作业与异常包含在本事件里。|+org.activiti...ActivitiEntityEvent+ and +org.activiti...ActivitiExceptionEvent+
-|JOB_RETRIES_DECREMENTED|作业重试次数已经由于执行失败而减少。该作业包含在本事件里。|+org.activiti...ActivitiEntityEvent+
-|TIMER_FIRED|定时器已经被触发。|+org.activiti...ActivitiEntityEvent+
-|JOB_CANCELED|作业已经被取消。该作业包含在本事件里。作业会由于API调用取消，任务完成导致关联的边界定时器取消，也会由于新流程定义的部署而取消。|+org.activiti...ActivitiEntityEvent+
-|ACTIVITY_STARTED|节点开始执行|+org.activiti...ActivitiActivityEvent+
-|ACTIVITY_COMPLETED|节点成功完成|+org.activiti...ActivitiActivityEvent+
-|ACTIVITY_CANCELLED|节点将要取消。节点的取消有三个原因（MessageEventSubscriptionEntity, SignalEventSubscriptionEntity, TimerEntity）。|+org.activiti...ActivitiActivityCancelledEvent+
-|ACTIVITY_SIGNALED|节点收到了一个信号|+org.activiti...ActivitiSignalEvent+
-|ACTIVITY_MESSAGE_RECEIVED|节点收到了一个消息。事件在节点接收消息前分发。消息接收后，会为该节点分发 +$$ACTIVITY_SIGNAL$$+ 或 +$$ACTIVITY_STARTED$$+ 事件，取决于其类型（边界事件，或子流程启动事件）。|+org.activiti...ActivitiMessageEvent+
-|ACTIVITY_ERROR_RECEIVED|节点收到了错误事件。在节点实际处理错误前分发。该事件的++activityId++含有处理错误的节点的引用。如果错误被成功传递，后续会为节点发送 +$$ACTIVITY_SIGNALLED$$+ 或 +$$ACTIVITY_COMPLETE$$+ 消息。|+org.activiti...ActivitiErrorEvent+
-|UNCAUGHT_BPMN_ERROR|抛出了未捕获的BPMN错误。流程没有该错误的处理器。该事件的++activityId++为空。|+org.activiti...ActivitiErrorEvent+
-|ACTIVITY_COMPENSATE|节点将要被补偿。该事件包含将要执行补偿的节点id。|+org.activiti...ActivitiActivityEvent+
-|VARIABLE_CREATED|创建了流程变量。本事件包含变量名、取值与关联的执行和任务（若有）。|+org.activiti...ActivitiVariableEvent+
-|VARIABLE_UPDATED|更新了已有变量。本事件包含变量名、取值与关联的执行和任务（若有）。|+org.activiti...ActivitiVariableEvent+
-|VARIABLE_DELETED|删除了已有变量。本事件包含变量名、最后取值与关联的执行和任务（若有）。|+org.activiti...ActivitiVariableEvent+
-|TASK_ASSIGNED|任务分派给了用户。该任务包含在本事件里。|+org.activiti...ActivitiEntityEvent+
-|TASK_CREATED|任务已经创建。本事件在 +$$ENTITY_CREATE$$+ 事件之后分发。若该任务是流程的一部分，本事件会在任务监听器执行前触发。|+org.activiti...ActivitiEntityEvent+
-|TASK_COMPLETED|任务已经结束。本事件在 +$$ENTITY_DELETE$$+ 事件前分发。若该任务是流程的一部分，本事件会在流程前进之前触发，并且会跟随一个 +$$ACTIVITY_COMPLETE$$+ 事件，指向代表该任务的节点。|+org.activiti...ActivitiEntityEvent+
-|PROCESS_COMPLETED|流程完成。在最后一个节点的 +$$ACTIVITY_COMPLETED $$+ 事件后分发。当流程实例没有任何路径可以继续时，流程结束。|+org.activiti...ActivitiEntityEvent+
-|PROCESS_CANCELLED|流程已经被取消。在流程实例从运行时删除前分发。流程实例使用API调用++RuntimeService.deleteProcessInstance++取消。|+org.activiti...ActivitiCancelledEvent+
-|MEMBERSHIP_CREATED|用户加入了一个组。本事件包含了相关的用户和组的id。|+org.activiti...ActivitiMembershipEvent+
-|MEMBERSHIP_DELETED|用户从一个组中移出。本事件包含了相关的用户和组的id。|+org.activiti...ActivitiMembershipEvent+
-|MEMBERSHIPS_DELETED|组的所有用户将被移出。本事件在用户移出前抛出，因此关联关系仍然可以访问。因为性能原因，不会再为每个被移出的用户抛出 +$$MEMBERSHIP_DELETED$$+ 事件。|+org.activiti...ActivitiMembershipEvent+
+|ENTITY_CREATED|新的实体已经创建。该实体包含在本事件里。|+org.activiti...FlowableEntityEvent+
+|ENTITY_INITIALIZED|新的实体已经创建并完全初始化。如果任何子实体作为该实体的一部分被创建，本事件会在子实体创建/初始化后触发，与 +$$ENTITY_CREATE$$+ 事件相反。|+org.activiti...FlowableEntityEvent+
+|ENTITY_UPDATED|实体已经更新。该实体包含在本事件里。|+org.activiti...FlowableEntityEvent+
+|ENTITY_DELETED|实体已经删除。该实体包含在本事件里。|+org.activiti...FlowableEntityEvent+
+|ENTITY_SUSPENDED|实体已经挂起。该实体包含在本事件里。会为ProcessDefinitions（流程定义）, ProcessInstances（流程实例）与Tasks（任务）分发本事件。|+org.activiti...FlowableEntityEvent+
+|ENTITY_ACTIVATED|实体已被激活。该实体包含在本事件里。会为ProcessDefinitions, ProcessInstances与Tasks分发本事件。|+org.activiti...FlowableEntityEvent+
+|JOB_EXECUTION_SUCCESS|作业已经成功执行。该作业包含在本事件里。|+org.activiti...FlowableEntityEvent+
+|JOB_EXECUTION_FAILURE|作业执行失败。该作业与异常包含在本事件里。|+org.activiti...FlowableEntityEvent+ and +org.activiti...FlowableExceptionEvent+
+|JOB_RETRIES_DECREMENTED|作业重试次数已经由于执行失败而减少。该作业包含在本事件里。|+org.activiti...FlowableEntityEvent+
+|TIMER_SCHEDULED|已创建一个定时作业，并预计在未来时间点执行。|+org.activiti...ActivitiEntityEvent+
+|TIMER_FIRED|定时器已经被触发。|+org.activiti...FlowableEntityEvent+
+|JOB_CANCELED|作业已经被取消。该作业包含在本事件里。作业会由于API调用取消，任务完成导致关联的边界定时器取消，也会由于新流程定义的部署而取消。|+org.activiti...FlowableEntityEvent+
+|ACTIVITY_STARTED|节点开始执行|+org.activiti...FlowableActivityEvent+
+|ACTIVITY_COMPLETED|节点成功完成|+org.activiti...FlowableActivityEvent+
+|ACTIVITY_CANCELLED|节点将要取消。节点的取消有三个原因（MessageEventSubscriptionEntity, SignalEventSubscriptionEntity, TimerEntity）。|+org.activiti...FlowableActivityCancelledEvent+
+|ACTIVITY_SIGNALED|节点收到了一个信号|+org.activiti...FlowableSignalEvent+
+|ACTIVITY_MESSAGE_RECEIVED|节点收到了一个消息。事件在节点接收消息前分发。消息接收后，会为该节点分发 +$$ACTIVITY_SIGNAL$$+ 或 +$$ACTIVITY_STARTED$$+ 事件，取决于其类型（边界事件，或子流程启动事件）。|+org.activiti...FlowableMessageEvent+
+|ACTIVITY_MESSAGE_WAITING|一个活动已经创建了一个消息事件订阅，并正在等待接收消息。|+org.activiti...ActivitiMessageEvent+
+|ACTIVITY_MESSAGE_CANCELLED|一个活动已经取消了一个消息事件订阅，因此接收这个消息不会再触发该活动。|+org.activiti...ActivitiMessageEvent+
+|ACTIVITY_ERROR_RECEIVED|节点收到了错误事件。在节点实际处理错误前分发。该事件的++activityId++含有处理错误的节点的引用。如果错误被成功传递，后续会为节点发送 +$$ACTIVITY_SIGNALLED$$+ 或 +$$ACTIVITY_COMPLETE$$+ 消息。|+org.activiti...FlowableErrorEvent+
+|UNCAUGHT_BPMN_ERROR|抛出了未捕获的BPMN错误。流程没有该错误的处理器。该事件的++activityId++为空。|+org.activiti...FlowableErrorEvent+
+|ACTIVITY_COMPENSATE|节点将要被补偿。该事件包含将要执行补偿的节点id。|+org.activiti...FlowableActivityEvent+
+|VARIABLE_CREATED|创建了流程变量。本事件包含变量名、取值与关联的执行和任务（若有）。|+org.activiti...FlowableVariableEvent+
+|VARIABLE_UPDATED|更新了已有变量。本事件包含变量名、取值与关联的执行和任务（若有）。|+org.activiti...FlowableVariableEvent+
+|VARIABLE_DELETED|删除了已有变量。本事件包含变量名、最后取值与关联的执行和任务（若有）。|+org.activiti...FlowableVariableEvent+
+|TASK_ASSIGNED|任务分派给了用户。该任务包含在本事件里。|+org.activiti...FlowableEntityEvent+
+|TASK_CREATED|任务已经创建。本事件在 +$$ENTITY_CREATE$$+ 事件之后分发。若该任务是流程的一部分，本事件会在任务监听器执行前触发。|+org.activiti...FlowableEntityEvent+
+|TASK_COMPLETED|任务已经结束。本事件在 +$$ENTITY_DELETE$$+ 事件前分发。若该任务是流程的一部分，本事件会在流程前进之前触发，并且会跟随一个 +$$ACTIVITY_COMPLETE$$+ 事件，指向代表该任务的节点。|+org.activiti...FlowableEntityEvent+
+|PROCESS_CREATED|已经创建了一个流程实例。已经设置所有的基础参数，但还未设置变量。|+org.activiti...ActivitiEntityEvent+
+|PROCESS_STARTED|已经启动了一个流程实例。在启动之前创建的流程时分发。PROCESS_STARTED事件在相关的ENTITY_INITIALIZED事件，以及设置变量之后分发。|+org.activiti...ActivitiEntityEvent+
+|PROCESS_COMPLETED|已经完成了一个流程实例。在最后一个节点的 +$$ACTIVITY_COMPLETED $$+ 事件后分发。当流程实例没有任何路径可以继续时，流程结束。|+org.activiti...FlowableEntityEvent+
+|PROCESS_CANCELLED|流程已经被取消。在流程实例从运行时删除前分发。流程实例使用API调用++RuntimeService.deleteProcessInstance++取消。|+org.activiti...FlowableCancelledEvent+
+|MEMBERSHIP_CREATED|用户加入了一个组。本事件包含了相关的用户和组的id。|+org.activiti...FlowableMembershipEvent+
+|MEMBERSHIP_DELETED|用户从一个组中移出。本事件包含了相关的用户和组的id。|+org.activiti...FlowableMembershipEvent+
+|MEMBERSHIPS_DELETED|组的所有用户将被移出。本事件在用户移出前抛出，因此关联关系仍然可以访问。因为性能原因，不会再为每个被移出的用户抛出 +$$MEMBERSHIP_DELETED$$+ 事件。|+org.activiti...FlowableMembershipEvent+
 
 |===============
 
