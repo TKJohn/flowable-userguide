@@ -332,14 +332,14 @@ Flowable的所有数据库表都以**ACT_**开头。第二部分是说明表用�
 
 ++AsyncExecutor++是管理线程池的组件，用于触发定时器与其他异步任务。也可以使用其他实现（例如使用消息队列，参见用户手册的高级章节）。
 
-默认情况下，++AsyncExecutor++并未激活，也不会启动。要使异步执行器与Flowable引擎一同启动，进行如下配置。
+默认情况下，++AsyncExecutor++并未激活，也不会启动。用如下配置使异步执行器与Flowable引擎一同启动：
 
 [source,xml,linenums]
 ----
 <property name="asyncExecutorActivate" value="true" />
 ----
 
-asyncExecutorActivate这个参数使Flowable引擎在启动时启动异步执行器。
+asyncExecutorActivate这个参数使Flowable引擎在启动同时启动异步执行器。
 
 [[mailServerConfiguration]]
 
@@ -403,7 +403,7 @@ asyncExecutorActivate这个参数使Flowable引擎在启动时启动异步执行
 === 日志 Logging
 所有的日志（Flowable、Spring、MyBatis等）都通过SLF4J路由，并允许你自行选择日志实现。
 
-**默认情况下，Flowable引擎依赖不提供SFL4J绑定jar。你需要自行将其加入你的项目，以便使用所选的日志框架。**如果没有加入实现jar，SLF4J会使用NOP-logger。这时除了一条警告外，不会记录任何日志。可以从link:$$http://www.slf4j.org/codes.html#StaticLoggerBinder$$[http://www.slf4j.org/codes.html#StaticLoggerBinder]了解关于绑定的更多信息。
+**默认情况下，Flowable引擎依赖中不提供SFL4J绑定jar。你需要自行将其加入你的项目，以便使用所选的日志框架。**如果没有加入实现jar，SLF4J会使用NOP-logger。这时除了一条警告外，不会记录任何日志。可以从link:$$http://www.slf4j.org/codes.html#StaticLoggerBinder$$[http://www.slf4j.org/codes.html#StaticLoggerBinder]了解关于绑定的更多信息。
 
 可以像这样（这里使用Log4j）使用Maven添加依赖，请注意你还需要加上版本：
 
@@ -452,7 +452,7 @@ Flowable支持SLF4J的映射诊断上下文特性。下列基本信息会与需�
 ----
 
 
-在日志中包含的信息需要例如通过日志分析器进行实时监测时，十分有用。
+在日志中包含的信息需要通过例如日志分析器进行实时监测时，十分有用。
 
 [[eventDispatcher]]
 
@@ -461,7 +461,7 @@ Flowable支持SLF4J的映射诊断上下文特性。下列基本信息会与需�
 
 Flowable引擎中的事件机制可以让你在引擎中发生多种事件的时候得到通知。查看<<eventDispatcherEventTypes,所有支持的事件类型>>了解可用的事件。
 
-可以只为特定种类的事件注册监听器，而不是在任何类型的事件发送时都被通知。可以<<eventDispatcherConfiguration,通过配置>>增加引擎全局的事件监听器，<<eventDispatcherConfigurationRuntime,在运行时通过API>>增加引擎全局的事件监听器，也可以 <<eventDispatcherConfigurationProcessDefinition,在BPMN XML文件为个别流程定义>>增加事件监听器。.
+可以只为特定种类的事件注册监听器，而不是在任何类型的事件发送时都被通知。可以<<eventDispatcherConfiguration,通过配置>>增加引擎全局的事件监听器，<<eventDispatcherConfigurationRuntime,在运行时通过API>>增加引擎全局的事件监听器，也可以<<eventDispatcherConfigurationProcessDefinition,在BPMN XML文件为个别流程定义>>增加事件监听器。
 
 
 所有被分发的事件都是++org.activiti.engine.delegate.event.ActivitiEvent++的子类。事件（在可用时）提供++type++, +executionId+, ++processInstanceId++与++processDefinitionId++。部分事件含有关于发生事件的上下文信息。关于事件包含的附加信息，请参阅<<eventDispatcherEventTypes,所有支持的事件类型>>。
@@ -471,7 +471,7 @@ Flowable引擎中的事件机制可以让你在引擎中发生多种事件的时
 
 ==== 事件监听器实现 Event listener implementation
 
-对事件监听器的唯一要求，是要实现++org.activiti.engine.delegate.event.ActivitiEventListener++接口。下面是一个监听器实现的例子，它将接收的所有事件打印至标准输出，并对作业执行相关的事件特别处理。：
+对事件监听器的唯一要求，是要实现++org.activiti.engine.delegate.event.ActivitiEventListener++接口。下面是一个监听器实现的例子，它将接收的所有事件打印至标准输出，并对作业执行相关的事件特别处理：
 
 [source,java,linenums]
 ----
@@ -626,7 +626,7 @@ void addEventListener(ActivitiEventListener listenerToAdd, ActivitiEventType... 
 </process>
 ----
 
-++entityType++可用的值有：++attachment++（附件）, ++comment++（备注）, ++execution++（执行）, ++identity-link++（认证关系）, ++job++（作业）, ++process-instance++（流程实例）, ++process-definition++（流程定义）, ++task++（任务）。
+++entityType++可用的值有：++attachment++（附件）, ++comment++（备注）, ++execution++（执行）, ++identity-link++（身份关联）, ++job++（作业）, ++process-instance++（流程实例）, ++process-definition++（流程定义）, ++task++（任务）。
 
 
 
@@ -680,7 +680,7 @@ void addEventListener(ActivitiEventListener listenerToAdd, ActivitiEventType... 
 ===== 关于流程定义监听器的说明 Notes on listeners on a process-definition
 
 * 事件监听器只能作为++extensionElements++的子元素，声明在++process++元素上。不能在个别节点（activity）上定义（事件）监听器。
-* ++delegateExpression++中的表达式，与其他表达式（例如在网关中的）不一样，不可以访问执行上下文。只能够引用在流程引擎配置中++beans++参数定义的bean，或是使用spring（且没有定义beans参数）时，引用任何实现了监听器接口的spring bean。
+* ++delegateExpression++中的表达式，与其他表达式（例如在网关中的）不一样，不可以访问执行上下文。只能够引用在流程引擎配置中++beans++参数定义的bean；或是在使用spring（且没有定义beans参数）时，引用任何实现了监听器接口的spring bean。
 * 使用监听器的++class++属性时，只会创建唯一一个该类的实例。请确保监听器实现不依赖于成员变量，或确保多线程/上下文的使用安全。
 * 如果++events++属性使用了不合法的事件类型，或者使用了不合法的++throwEvent++值，会在流程定义部署时抛出异常（导致部署失败）。如果++class++或++delegateExecution++指定了不合法的值（不存在的类，不存在的bean引用，或者代理类没有实现监听器接口），在流程启动（或该流程定义的第一个有效事件分发给这个监听器）时，会抛出异常。请确保引用的类在classpath中，并且保证表达式能够解析为有效的实例。
 
@@ -757,7 +757,7 @@ void addEventListener(ActivitiEventListener listenerToAdd, ActivitiEventType... 
 |===============
 
 
-引擎中所有的 +$$ENTITY_\*$$+ 事件都与实体关联。下表列出每个实体分发的实体事件：
+引擎中所有的 +$$ENTITY_*$$+ 事件都与实体关联。下表列出每个实体分发的实体事件：
 
 
 * *+$$ENTITY_CREATED, ENTITY_INITIALIZED, ENTITY_DELETED$$+*: Attachment（附件）, Comment（备注）, Deployment（部署）, Execution（执行）, Group（组）, IdentityLink（身份关联）, Job（作业）, Model（模型）, ProcessDefinition（流程定义）, ProcessInstance（流程实例）, Task（任务）, User（用户）.
@@ -771,8 +771,8 @@ void addEventListener(ActivitiEventListener listenerToAdd, ActivitiEventType... 
 ==== 附加信息 Additional remarks
 
 
-**监听器只会被通知所在引擎分发的事件。**因此如果你使用不同的引擎，在同一个数据库上运行，只有该监听器注册的引擎生成的事件，会分发给该监听器。其他引擎生成的事件不会分发给这个监听器，不论这些引擎是否运行在同一个JVM下。
+**监听器只会被通知其所在引擎分发的事件。**因此如果在同一个数据库上运行不同的引擎，则只有该监听器注册的引擎生成的事件，才会分发给该监听器。其他引擎生成的事件不会分发给这个监听器，而不论这些引擎是否运行在同一个JVM下。
 
-某些事件类型（与实体相关）暴露了目标实体。按照事件类型的不同，有时实体不能被更新（例如实体已经被删除）。如果可能的话，请使用事件暴露的++EngineServices++安全操作引擎。即使这样，更新、操作事件中暴露的实体仍然需要小心。
+某些事件类型（与实体相关）暴露了目标实体。按照事件类型的不同，有时实体不能被更新（例如实体删除事件）。如果可能的话，请使用事件暴露的++EngineServices++安全操作引擎。即使这样，更新、操作事件中暴露的实体仍然需要小心。
 
 历史不会分发实体事件，因为它们都有对应的运行时实体分发事件。
