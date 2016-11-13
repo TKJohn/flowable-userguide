@@ -2333,13 +2333,13 @@ List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 [[bpmnUserTaskUserCustomIdentityLinkAssignmentExtension]]
 
 
-===== 自定义身份联系类型（试验特性） Custom identity link types (Experimental)
+===== 自定义身份关联类型（试验特性） Custom identity link types (Experimental)
 
 <<experimental,[EXPERIMENTAL]>>
 
 在<<bpmnUserTaskAssignment,用户指派>>中定义过，BPMN标准支持单个指派用户即**hunamPerformer**，或者一组用户构成**potentialOwners**潜在用户池。另外，Activiti为用户任务定义了<<bpmnUserTaskUserAssignmentExtension,扩展属性元素>>，代表任务的**办理人**或者**候选用户**。
 
-Activiti支持的身份联系类型有：
+Activiti支持的身份关联类型有：
 
 [source,java,linenums]
 ----
@@ -2355,7 +2355,7 @@ public class IdentityLinkType {
 
 BPMN标准与Activiti示例身份认证是**用户**与**组**。在前一章节提到过，Activiti的身份管理实现并不适用于生产环境，而需要在支持的认证概要下扩展。
 
-如果需要添加额外的联系类型，可按照下列语法，使用自定义资源作为扩展元素：
+如果需要添加额外的关联类型，可按照下列语法，使用自定义资源作为扩展元素：
 
 [source,xml,linenums]
 ----
@@ -2370,7 +2370,7 @@ BPMN标准与Activiti示例身份认证是**用户**与**组**。在前一章节
 </userTask>
 ----
 
-自定义联系表达式添加至__TaskDefinition__类：
+自定义关联表达式添加至__TaskDefinition__类：
 
 [source,java,linenums]
 ----
@@ -2403,7 +2403,7 @@ public void addCustomGroupIdentityLinkExpression(String identityLinkType,
 
 并将会在运行时，由__UserTaskActivityBehavior handleAssignments__方法填写。
 
-最后，需要扩展__IdentityLinkType__类，以支持自定义身份联系类型：
+最后，需要扩展__IdentityLinkType__类，以支持自定义身份关联类型：
 
 [source,java,linenums]
 ----
@@ -4995,7 +4995,7 @@ Activiti如何解决这个问题呢？Activiti使用乐观锁，基于数据进�
 processDefinitions = repositoryService.createProcessDefinitionQuery().startableByUser("userxxx").list();
 ----
 
-也可以获取给定流程定义中，所有定义为潜在启动者的身份联系
+也可以获取给定流程定义中，所有定义为潜在启动者的身份关联
 
 [source,java,linenums]
 ----
