@@ -1,21 +1,23 @@
 
+[[restApiChapter]]
+
 == REST API
 
-=== Activiti REST一般原则 General Activiti REST principles
+=== Flowable REST一般原则 General Flowable REST principles
 
 ==== 安装与认证 Installation and Authentication
 
-Activiti在引擎中包含了REST API，可以通过在servlet容器如Apache Tomcat中，部署activiti-rest.war文件来安装。但是也可以在其他的web应用中使用，只要在你的应用中包含这些servlet与其映射，并在classpath中添加所有activiti-rest依赖即可。
+Flowable在引擎中包含了REST API，可以通过在servlet容器如Apache Tomcat中，部署flowable-rest.war文件来安装。但是也可以在其他的web应用中使用，只要在你的应用中包含这些servlet与其映射，并在classpath中添加所有flowable-rest依赖即可。
 
-默认情况下Activiti引擎连接至一个H2内存数据库。可以修改WEB-INF/classes文件夹下的db.properties文件中的数据库设置。REST API使用JSON格式 (http://www.json.org) ，基于Spring MVC (http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html) 构建。
+默认情况下Flowable引擎连接至一个H2内存数据库。可以修改WEB-INF/classes文件夹下的db.properties文件中的数据库设置。REST API使用JSON格式 (http://www.json.org) ，基于Spring MVC (http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html) 构建。
 
-默认情况下，所有REST资源都需要有一个有效的的Activiti已认证用户，使用基础HTTP访问认证，因此在请求时，可以在HTTP头添加++Authorization: Basic ...==++，也可以在请求url中包含用户名与密码（例如++http://username:password@localhost...++）。
+默认情况下，所有REST资源都需要有一个有效的的Flowable已认证用户，使用基础HTTP访问认证，因此在请求时，可以在HTTP头添加++Authorization: Basic ...==++，也可以在请求url中包含用户名与密码（例如++http://username:password@localhost...++）。
 
 **建议使用基础认证时，同时使用HTTPS。**
 
 ==== 配置 Configuration
 
-Activiti REST web应用使用Spring Java Configuration来启动Activiti引擎、定义基础认证安全使用Spring security，以及为特定的变量处理定义变量转换。可以修改WEB-INF/classes目录下的engine.properties文件，定义少量参数。如果需要高级配置选项，可以在activiti-custom-context.xml文件中覆盖默认的Spring bean，这个文件也在WEB-INF/classes目录下。该文件中已经以注释形式提供了示例配置。也可以在这里通过定义一个新的命名为restResponsefactory的Spring bean，覆盖默认的RestResponseFactory，并使用自定义实现类。
+Flowable REST web应用使用Spring Java Configuration来启动Flowable引擎、定义基础认证安全使用Spring security，以及为特定的变量处理定义变量转换。可以修改WEB-INF/classes目录下的engine.properties文件，定义少量参数。如果需要高级配置选项，可以在activiti-custom-context.xml文件中覆盖默认的Spring bean，这个文件也在WEB-INF/classes目录下。该文件中已经以注释形式提供了示例配置。也可以在这里通过定义一个新的命名为restResponsefactory的Spring bean，覆盖默认的RestResponseFactory，并使用自定义实现类。
 
 [[restUsageInTomcat]]
 
@@ -24,7 +26,9 @@ Activiti REST web应用使用Spring Java Configuration来启动Activiti引擎、
 
 由于link:$$http://tomcat.apache.org/tomcat-7.0-doc/security-howto.html$$[Tomcat中的默认安全参数]，**默认不能使用已转义斜线符（++%2F++与++%5C++）（返回400结果）。**这可能会影响部署资源与其数据URL，因为URL可能隐含已转义斜线符。
 
-**当发现非预期的400结果时，设置下列系统参数 +$$-Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true.$$+ **
+当发现非预期的400结果时，设置下列系统参数
+
+__-Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true__
 
 最佳实践是（post/put JSON时），在下面描述的HTTP请求中，永远将**Accept**与**Content-Type**头设置为**application/json**。
 
@@ -83,7 +87,7 @@ HTTP响应的media-type总是++application/json++，除非请求的是二进制�
 
 ===== Rest URL查询参数 Rest URL query parameters
 
-作为查询字符串添加在URL中的参数（例如++http://host/activiti-rest/service/deployments?name=Deployment++中的name参数）可以使用下列类型，也会在相应的REST-API文档中提到：
+作为查询字符串添加在URL中的参数（例如++http://host/flowable-rest/service/deployments?name=Deployment++中的name参数）可以使用下列类型，也会在相应的REST-API文档中提到：
 
 .URL查询参数类型
 [options="header"]
@@ -120,7 +124,7 @@ HTTP响应的media-type总是++application/json++，除非请求的是二进制�
 
 ===== 分页与排序 Paging and sorting
 
-分页与排序参数可以作为查询字符串加入URL中（例如++http://host/activiti-rest/service/deployments?sort=name++中的name参数）。
+分页与排序参数可以作为查询字符串加入URL中（例如++http://host/flowable-rest/service/deployments?sort=name++中的name参数）。
 
 .查询变量参数
 [options="header"]
@@ -269,7 +273,7 @@ GET repository/deployments
   "data": [
     {
       "id": "10",
-      "name": "activiti-examples.bar",
+      "name": "flowable-examples.bar",
       "deploymentTime": "2010-10-13T14:54:26.750+02:00",
       "category": "examples",
       "url": "http://localhost:8081/service/repository/deployments/10",
@@ -314,7 +318,7 @@ GET repository/deployments/{deploymentId}
 ----
 {
   "id": "10",
-  "name": "activiti-examples.bar",
+  "name": "flowable-examples.bar",
   "deploymentTime": "2010-10-13T14:54:26.750+02:00",
   "category": "examples",
   "url": "http://localhost:8081/service/repository/deployments/10",
@@ -350,7 +354,7 @@ POST repository/deployments
 ----
 {
   "id": "10",
-  "name": "activiti-examples.bar",
+  "name": "flowable-examples.bar",
   "deploymentTime": "2010-10-13T14:54:26.750+02:00",
   "category": null,
   "url": "http://localhost:8081/service/repository/deployments/10",
@@ -413,15 +417,15 @@ GET repository/deployments/{deploymentId}/resources
 [
   {
     "id": "diagrams/my-process.bpmn20.xml",
-    "url": "http://localhost:8081/activiti-rest/service/repository/deployments/10/resources/diagrams%2Fmy-process.bpmn20.xml",
-    "dataUrl": "http://localhost:8081/activiti-rest/service/repository/deployments/10/resourcedata/diagrams%2Fmy-process.bpmn20.xml",
+    "url": "http://localhost:8081/flowable-rest/service/repository/deployments/10/resources/diagrams%2Fmy-process.bpmn20.xml",
+    "dataUrl": "http://localhost:8081/flowable-rest/service/repository/deployments/10/resourcedata/diagrams%2Fmy-process.bpmn20.xml",
     "mediaType": "text/xml",
     "type": "processDefinition"
   },
   {
     "id": "image.png",
-    "url": "http://localhost:8081/activiti-rest/service/repository/deployments/10/resources/image.png",
-    "dataUrl": "http://localhost:8081/activiti-rest/service/repository/deployments/10/resourcedata/image.png",
+    "url": "http://localhost:8081/flowable-rest/service/repository/deployments/10/resources/image.png",
+    "dataUrl": "http://localhost:8081/flowable-rest/service/repository/deployments/10/resourcedata/image.png",
     "mediaType": "image/png",
     "type": "resource"
   }
@@ -470,8 +474,8 @@ GET repository/deployments/{deploymentId}/resources/{resourceId}
 ----
 {
   "id": "diagrams/my-process.bpmn20.xml",
-  "url": "http://localhost:8081/activiti-rest/service/repository/deployments/10/resources/diagrams%2Fmy-process.bpmn20.xml",
-  "dataUrl": "http://localhost:8081/activiti-rest/service/repository/deployments/10/resourcedata/diagrams%2Fmy-process.bpmn20.xml",
+  "url": "http://localhost:8081/flowable-rest/service/repository/deployments/10/resources/diagrams%2Fmy-process.bpmn20.xml",
+  "dataUrl": "http://localhost:8081/flowable-rest/service/repository/deployments/10/resourcedata/diagrams%2Fmy-process.bpmn20.xml",
   "mediaType": "text/xml",
   "type": "processDefinition"
 }
@@ -1558,6 +1562,8 @@ POST runtime/process-instances
 }
 ----
 
+请注意这个json也接受__transientVariables__参数，与__variables__参数使用相同的结构。
+
 请求体中只能使用++processDefinitionId++、++processDefinitionKey++与++message++中的一个。++businessKey++、++variables++与++tenantId++参数是可选的。如果省略了++tenantId++，则将使用默认租户。关于变量格式的更多信息可以在<<restVariables,REST变量章节>>找到。请注意提供的变量范围将被忽略，流程变量总是++local++的。
 
 
@@ -2170,7 +2176,7 @@ POST runtime/process-instances/{processInstanceId}/variables
 |400|代表缺少要创建的变量的名字。状态消息提供了额外信息。
 |404|代表未找到请求的流程实例。
 |409|代表流程实例中已经有给定名字的变量。改用PUT方法更新任务变量。
-|415|代表序列化数据中包含了一个运行Activiti引擎的JVM中不存在的类的对象，因此不能反序列化。
+|415|代表序列化数据中包含了一个运行Flowable引擎的JVM中不存在的类的对象，因此不能反序列化。
 
 |===============
 
@@ -2216,7 +2222,7 @@ PUT runtime/process-instances/{processInstanceId}/variables
 |200|代表已更新变量，并已返回结果。
 |400|代表缺少要更新的变量的名字。状态消息提供了额外信息。
 |404|代表未找到请求的流程实例，或者流程实例中没有给定名字的变量。
-|415|代表序列化数据中包含了一个运行Activiti引擎的JVM中不存在的类的对象，因此不能反序列化。
+|415|代表序列化数据中包含了一个运行Flowable引擎的JVM中不存在的类的对象，因此不能反序列化。
 
 |===============
 
@@ -2291,6 +2297,21 @@ PUT runtime/executions/{executionId}
 ----
 {
   "action":"signal"
+}
+----
+
+下面的结构接受__variables__与__transientVariables__。
+
+[source,json,linenums]
+----
+{
+  "action":"signal",
+  "variables" : [
+    {
+      "name": "myVar",
+      "value": "someValue"
+    }
+  ]
 }
 ----
 
@@ -2824,7 +2845,7 @@ POST runtime/executions/{executionId}/variables
 |400|代表缺少要创建的变量的名字。状态消息提供了额外信息。
 |404|代表未找到请求的执行。
 |409|代表执行已包含了给定名字的变量（只在使用POST方法时抛出）。改用PUT方法更新变量。
-|415|代表序列化数据中包含了一个运行Activiti引擎的JVM中不存在的类的对象，因此不能反序列化。
+|415|代表序列化数据中包含了一个运行Flowable引擎的JVM中不存在的类的对象，因此不能反序列化。
 |===============
 
 
@@ -2871,7 +2892,7 @@ PUT runtime/executions/{executionId}/variables/{variableName}
 |200|代表已更新变量，并已返回结果。
 |400|代表缺少要更新的变量的名字。状态消息提供了额外信息。
 |404|代表未找到请求的执行，或者执行中没有给定名字的变量。
-|415|代表序列化数据中包含了一个运行Activiti引擎的JVM中不存在的类的对象，因此不能反序列化。
+|415|代表序列化数据中包含了一个运行Flowable引擎的JVM中不存在的类的对象，因此不能反序列化。
 
 |===============
 
@@ -2990,6 +3011,8 @@ GET runtime/tasks
 |tenantIdLike|否|String|只返回tenantId like给定值的任务。
 |withoutTenantId|否|Boolean|如果值为++true++，则只返回未设置tenantId的任务。如果值为++false++，则忽略++withoutTenantId++参数。
 |candidateOrAssigned|否|String|选择已被申领，或已指派给用户，或等待用户（候选用户或组）申领的任务。
+|category|否|string|选择给定分类的任务。请注意这指的是任务分类，而不是流程定义的分类（BPMN XML的命名空间）。
+
 
 |===============
 
@@ -3184,6 +3207,9 @@ POST runtime/tasks/{taskId}
 ----
 
 完成任务。可以使用++variables++参数传递可选的变量数组。可以在<<restVariables,REST变量章节>>找到关于变量格式的更多信息。请注意提供的变量范围将被忽略，变量将设置在父范围中，除非一个本地范围中存在该变量。这种情况下将会覆盖。与++TaskService.completeTask(taskId, variables)++调用的行为相同。
+
+
+请注意这个json也接受__transientVariables__参数，与__variables__参数使用相同的结构。
 
 **申领一个任务 - JSON 体:**
 
@@ -3516,7 +3542,7 @@ POST runtime/tasks/{taskId}/variables
 |400|代表缺少要创建的变量名，或者尝试为独立任务（未关联至流程）创建++global++变量。状态消息提供了额外信息。
 |404|代表未找到请求的任务。
 |409|代表任务中已有给定名字的变量。改用PUT方法更新任务变量。
-|415|代表序列化数据中包含了一个运行Activiti引擎的JVM中不存在的类的对象，因此不能反序列化。
+|415|代表序列化数据中包含了一个运行Flowable引擎的JVM中不存在的类的对象，因此不能反序列化。
 
 |===============
 
@@ -3630,7 +3656,7 @@ PUT runtime/tasks/{taskId}/variables/{variableName}
 |200|代表已更新变量，并已返回结果。
 |400|代表缺少要创建的变量名，或者尝试为独立任务（未关联至流程）创建++global++变量。状态消息提供了额外信息。
 |404|代表未找到请求的任务，或者任务在给定范围中没有给定名字的变量。
-|415|代表序列化数据中包含了一个运行Activiti引擎的JVM中不存在的类的对象，因此不能反序列化。
+|415|代表序列化数据中包含了一个运行Flowable引擎的JVM中不存在的类的对象，因此不能反序列化。
 
 |===============
 
@@ -3727,13 +3753,13 @@ GET runtime/tasks/{taskId}/identitylinks
     "userId" : "kermit",
     "groupId" : null,
     "type" : "candidate",
-    "url" : "http://localhost:8081/activiti-rest/service/runtime/tasks/100/identitylinks/users/kermit/candidate"
+    "url" : "http://localhost:8081/flowable-rest/service/runtime/tasks/100/identitylinks/users/kermit/candidate"
   },
   {
     "userId" : null,
     "groupId" : "sales",
     "type" : "candidate",
-    "url" : "http://localhost:8081/activiti-rest/service/runtime/tasks/100/identitylinks/groups/sales/candidate"
+    "url" : "http://localhost:8081/flowable-rest/service/runtime/tasks/100/identitylinks/groups/sales/candidate"
   },
 
   ...
@@ -3791,7 +3817,7 @@ GET runtime/tasks/{taskId}/identitylinks/{family}/{identityId}/{type}
   "userId" : null,
   "groupId" : "sales",
   "type" : "candidate",
-  "url" : "http://localhost:8081/activiti-rest/service/runtime/tasks/100/identitylinks/groups/sales/candidate"
+  "url" : "http://localhost:8081/flowable-rest/service/runtime/tasks/100/identitylinks/groups/sales/candidate"
 }
 ----
 
@@ -3852,7 +3878,7 @@ POST runtime/tasks/{taskId}/identitylinks
   "userId" : null,
   "groupId" : "sales",
   "type" : "candidate",
-  "url" : "http://localhost:8081/activiti-rest/service/runtime/tasks/100/identitylinks/groups/sales/candidate"
+  "url" : "http://localhost:8081/flowable-rest/service/runtime/tasks/100/identitylinks/groups/sales/candidate"
 }
 ----
 
@@ -3921,8 +3947,8 @@ POST runtime/tasks/{taskId}/comments
 ----
 {
   "id" : "123",
-  "taskUrl" : "http://localhost:8081/activiti-rest/service/runtime/tasks/101/comments/123",
-  "processInstanceUrl" : "http://localhost:8081/activiti-rest/service/history/historic-process-instances/100/comments/123",
+  "taskUrl" : "http://localhost:8081/flowable-rest/service/runtime/tasks/101/comments/123",
+  "processInstanceUrl" : "http://localhost:8081/flowable-rest/service/history/historic-process-instances/100/comments/123",
   "message" : "This is a comment on the task.",
   "author" : "kermit",
   "time" : "2014-07-13T13:13:52.232+08:00",
@@ -3965,8 +3991,8 @@ GET runtime/tasks/{taskId}/comments
 [
   {
     "id" : "123",
-    "taskUrl" : "http://localhost:8081/activiti-rest/service/runtime/tasks/101/comments/123",
-    "processInstanceUrl" : "http://localhost:8081/activiti-rest/service/history/historic-process-instances/100/comments/123",
+    "taskUrl" : "http://localhost:8081/flowable-rest/service/runtime/tasks/101/comments/123",
+    "processInstanceUrl" : "http://localhost:8081/flowable-rest/service/history/historic-process-instances/100/comments/123",
     "message" : "This is a comment on the task.",
     "author" : "kermit",
     "time" : "2014-07-13T13:13:52.232+08:00",
@@ -3975,8 +4001,8 @@ GET runtime/tasks/{taskId}/comments
   },
   {
     "id" : "456",
-    "taskUrl" : "http://localhost:8081/activiti-rest/service/runtime/tasks/101/comments/456",
-    "processInstanceUrl" : "http://localhost:8081/activiti-rest/service/history/historic-process-instances/100/comments/456",
+    "taskUrl" : "http://localhost:8081/flowable-rest/service/runtime/tasks/101/comments/456",
+    "processInstanceUrl" : "http://localhost:8081/flowable-rest/service/history/historic-process-instances/100/comments/456",
     "message" : "This is another comment on the task.",
     "author" : "gonzo",
     "time" : "2014-07-13T13:13:52.232+08:00",
@@ -4021,8 +4047,8 @@ GET runtime/tasks/{taskId}/comments/{commentId}
 ----
 {
   "id" : "123",
-  "taskUrl" : "http://localhost:8081/activiti-rest/service/runtime/tasks/101/comments/123",
-  "processInstanceUrl" : "http://localhost:8081/activiti-rest/service/history/historic-process-instances/100/comments/123",
+  "taskUrl" : "http://localhost:8081/flowable-rest/service/runtime/tasks/101/comments/123",
+  "processInstanceUrl" : "http://localhost:8081/flowable-rest/service/history/historic-process-instances/100/comments/123",
   "message" : "This is a comment on the task.",
   "author" : "kermit",
   "time" : "2014-07-13T13:13:52.232+08:00",
@@ -4179,7 +4205,7 @@ POST runtime/tasks/{taskId}/attachments
   "name":"Simple attachment",
   "description":"Simple attachment description",
   "type":"simpleType",
-  "externalUrl":"http://activiti.org"
+  "externalUrl":"http://flowable.org"
 }
 ----
 
@@ -4197,7 +4223,7 @@ POST runtime/tasks/{taskId}/attachments
   "type":"simpleType",
   "taskUrl":"http://localhost:8182/runtime/tasks/2",
   "processInstanceUrl":null,
-  "externalUrl":"http://activiti.org",
+  "externalUrl":"http://flowable.org",
   "contentUrl":null
 }
 ----
@@ -4294,7 +4320,7 @@ GET runtime/tasks/{taskId}/attachments
     "type":"simpleType",
     "taskUrl":"http://localhost:8182/runtime/tasks/2",
     "processInstanceUrl":null,
-    "externalUrl":"http://activiti.org",
+    "externalUrl":"http://flowable.org",
     "contentUrl":null
   },
   {
@@ -4358,7 +4384,7 @@ GET runtime/tasks/{taskId}/attachments/{attachmentId}
 ----
 
 
-*  ++externalUrl - contentUrl:++ 如果附件为外部资源，则++externalUrl++中包含外部内容的URL。如果附件内容保存在Activiti引擎中，则++contentUrl++中将包含可以流式获取二进制内容的URL。
+*  ++externalUrl - contentUrl:++ 如果附件为外部资源，则++externalUrl++中包含外部内容的URL。如果附件内容保存在Flowable引擎中，则++contentUrl++中将包含可以流式获取二进制内容的URL。
 *  ++type:++ 可以是任意值。如果包含了合法格式的media-type（例如application/xml、text/plain），则二进制内容的HTTP响应的content-type将设置为给定值。
 
 .获取一个任务的一个附件 - 响应码
@@ -4384,7 +4410,7 @@ GET runtime/tasks/{taskId}/attachment/{attachmentId}/content
 |===============
 |参数|必填|值|描述
 |taskId|是|String|要获取附件数据的任务的id。
-|attachmentId|是|String|附件的id。如果附件指向外部URL而不是保存在Activiti内部，则将返回++404++。
+|attachmentId|是|String|附件的id。如果附件指向外部URL而不是保存在Flowable内部，则将返回++404++。
 
 |===============
 
@@ -4754,8 +4780,8 @@ POST history/historic-process-instances/{processInstanceId}/comments
 ----
 {
   "id" : "123",
-  "taskUrl" : "http://localhost:8081/activiti-rest/service/runtime/tasks/101/comments/123",
-  "processInstanceUrl" : "http://localhost:8081/activiti-rest/service/history/historic-process-instances/100/comments/123",
+  "taskUrl" : "http://localhost:8081/flowable-rest/service/runtime/tasks/101/comments/123",
+  "processInstanceUrl" : "http://localhost:8081/flowable-rest/service/history/historic-process-instances/100/comments/123",
   "message" : "This is a comment on the task.",
   "author" : "kermit",
   "time" : "2014-07-13T13:13:52.232+08:00",
@@ -4800,7 +4826,7 @@ GET history/historic-process-instances/{processInstanceId}/comments
 [
   {
     "id" : "123",
-    "processInstanceUrl" : "http://localhost:8081/activiti-rest/service/history/historic-process-instances/100/comments/123",
+    "processInstanceUrl" : "http://localhost:8081/flowable-rest/service/history/historic-process-instances/100/comments/123",
     "message" : "This is a comment on the task.",
     "author" : "kermit",
     "time" : "2014-07-13T13:13:52.232+08:00",
@@ -4808,7 +4834,7 @@ GET history/historic-process-instances/{processInstanceId}/comments
   },
   {
     "id" : "456",
-    "processInstanceUrl" : "http://localhost:8081/activiti-rest/service/history/historic-process-instances/100/comments/456",
+    "processInstanceUrl" : "http://localhost:8081/flowable-rest/service/history/historic-process-instances/100/comments/456",
     "message" : "This is another comment.",
     "author" : "gonzo",
     "time" : "2014-07-14T15:16:52.232+08:00",
@@ -4851,7 +4877,7 @@ GET history/historic-process-instances/{processInstanceId}/comments/{commentId}
 ----
 {
   "id" : "123",
-  "processInstanceUrl" : "http://localhost:8081/activiti-rest/service/history/historic-process-instances/100/comments/456",
+  "processInstanceUrl" : "http://localhost:8081/flowable-rest/service/history/historic-process-instances/100/comments/456",
   "message" : "This is another comment.",
   "author" : "gonzo",
   "time" : "2014-07-14T15:16:52.232+08:00",
@@ -4976,6 +5002,7 @@ GET history/historic-task-instances
 |taskDescription|否|String|历史任务实例的任务描述。
 |taskDescriptionLike|否|String|历史任务实例的任务描述'like'操作。
 |taskDefinitionKey|否|String|历史任务实例从流程定义得到的任务标识符。
+|taskCategory|否|String|选择给定分类的任务。请注意这指的是任务的分类，而不是流程定义的分类(BPMN XML中的命名空间)。
 |taskDeleteReason|否|String|历史任务实例的任务删除原因。
 |taskDeleteReasonLike|否|String|历史任务实例的任务删除原因'like'操作。
 |taskAssignee|否|String|历史任务实例的办理人。
@@ -6376,7 +6403,7 @@ GET identity/users/{userId}
    "firstName":"Fred",
    "lastName":"McDonald",
    "url":"http://localhost:8182/identity/users/testuser",
-   "email":"no-reply@activiti.org"
+   "email":"no-reply@flowable.org"
 }
 ----
 
@@ -6429,7 +6456,7 @@ GET identity/users
          "firstName":"Tijs",
          "lastName":"Barrez",
          "url":"http://localhost:8182/identity/users/anotherUser",
-         "email":"no-reply@alfresco.org"
+         "email":"no-reply@flowable.org"
       },
       {
          "id":"kermit",
@@ -6443,7 +6470,7 @@ GET identity/users
          "firstName":"Fred",
          "lastName":"McDonald",
          "url":"http://localhost:8182/identity/users/testuser",
-         "email":"no-reply@activiti.org"
+         "email":"no-reply@flowable.org"
       }
    ],
    "total":3,
@@ -6478,7 +6505,7 @@ PUT identity/users/{userId}
 {
   "firstName":"Tijs",
   "lastName":"Barrez",
-  "email":"no-reply@alfresco.org",
+  "email":"no-reply@flowable.org",
   "password":"pass123"
 }
 ----
@@ -6513,7 +6540,7 @@ POST identity/users
   "id":"tijs",
   "firstName":"Tijs",
   "lastName":"Barrez",
-  "email":"no-reply@alfresco.org",
+  "email":"no-reply@flowable.org",
   "password":"pass123"
 }
 ----
