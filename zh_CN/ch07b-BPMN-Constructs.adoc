@@ -2,7 +2,7 @@
 
 == BPMN 2.0 结构 BPMN 2.0 Constructs
 
-本章节包含了Activiti支持的BPMN 2.0结构，以及对BPMN标准的自定义扩展。
+本章节包含了Flowable支持的BPMN 2.0结构，以及对BPMN标准的自定义扩展。
 
 [[bpmnCustomExtensions]]
 
@@ -10,9 +10,9 @@
 === 自定义扩展 Custom extensions
 
 
-BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不需要因为依赖专利解决方案，而被供应商“绑架”。Activiti之类的开源框架，也可以提供与大型供应商的解决方案相同（经常是更好;-）的实现。有了BPMN 2.0标准，从大型供应商解决方案向Activiti的转变，就变得简单平滑。
+BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不需要因为依赖专利解决方案，而被供应商“绑架”。Flowable之类的开源框架，也可以提供与大型供应商的解决方案相同（经常是更好;-）的实现。有了BPMN 2.0标准，从大型供应商解决方案向Flowable的转变，就变得简单平滑。
 
-然而标准的缺点，是它通常是不同公司（不同观点）大量讨论与妥协的结果。作为阅读BPMN 2.0 XML流程定义的开发者，有时会觉得某些结构或做事方法太笨重了。Activiti将开发者的感受放在最高优先，因此引入了一些**'Activiti BPMN extensions（扩展）'**。这些“扩展”并不在BPMN 2.0规格中，有些是新结构，有些是对特定结构的简化。
+然而标准的缺点，是它通常是不同公司（不同观点）大量讨论与妥协的结果。作为阅读BPMN 2.0 XML流程定义的开发者，有时会觉得某些结构或做事方法太笨重了。Flowable将开发者的感受放在最高优先，因此引入了一些**'Flowable BPMN extensions（扩展）'**。这些“扩展”并不在BPMN 2.0规格中，有些是新结构，有些是对特定结构的简化。
 
 尽管BPMN 2.0规格明确指出可以支持自定义扩展，我们仍做了如下保证：
 
@@ -260,9 +260,11 @@ image::images/bpmn.signal.event.catch.png[align="center"]
 image::images/bpmn.signal.event.warning.1.png[align="center"]
 
 
-Activiti不支持上面流程中描述的模式。理想情况是，在执行"do something"任务时抛出的错误，由错误边界事件捕获，并通过信号抛出事件传播至执行的并行分支，最终中断"do something in parallel"任务。到目前为止Activiti会按照预期效果执行。**然而，由于信号的广播效应，它也会被传播至所有其他订阅了这个信号事件的流程实例。**这可能并我们希望的效果。
+Flowable不支持上面流程中描述的模式。理想情况是，在执行"do something"任务时抛出的错误，由错误边界事件捕获，并通过信号抛出事件传播至执行的并行分支，最终中断"do something in parallel"任务。到目前为止Flowable会按照预期效果执行。**然而，由于信号的广播效应，它也会被传播至所有其他订阅了这个信号事件的流程实例。**这可能并我们希望的效果。
 
 **请注意：**信号事件与特定的流程实例无关，而是会广播给所有流程实例。如果你需要只为某一特定的流程实例传递信号，则需要使用++signalEventReceived(String signalName, String executionId)++手动建立关联，并使用适当的的<<bpmnSignalEventDefinitionQuery,查询机制 query mechanisms>>。
+
+Flowable提供了解决的方法。可以在信号事件上添加__scope__属性，并将其设置为__processInstance__。
 
 
 [[bpmnMessageEventDefinition]]
@@ -309,7 +311,7 @@ Activiti不支持上面流程中描述的模式。理想情况是，在执行"do
 ===== 抛出消息事件 Throwing a Message Event
 
 
-作为可嵌入的流程引擎，Activiti不关心实际接收消息。因为这可能与环境相关，并需要进行平台定义的操作，例如连接至JMS（Java Messaging Service，Java消息服务）队列（Queue）/主题（Topic），或者处理Webservice或者REST请求。因此接收消息需要作为应用的一部分，或者是流程引擎所嵌入的基础框架中的一部分，由你自行实现。
+作为可嵌入的流程引擎，Flowable不关心实际接收消息。因为这可能与环境相关，并需要进行平台定义的操作，例如连接至JMS（Java Messaging Service，Java消息服务）队列（Queue）/主题（Topic），或者处理Webservice或者REST请求。因此接收消息需要作为应用的一部分，或者是流程引擎所嵌入的基础框架中的一部分，由你自行实现。
 
 在应用中接收到消息后，需要决定如何处理它。如果这个消息需要启动新的流程实例，可以选择下面由runtime服务提供的方法中的一种：
 
@@ -384,7 +386,7 @@ image::images/bpmn.start.message.event.example.1.png[align="center"]
 
 启动事件“随时捕获”：概念上，事件（随时）等候，直到特定的触发器被触发。
 
-在启动事件中，可以使用下列Activiti专用参数：
+在启动事件中，可以使用下列Flowable专用参数：
 
 * *initiator*: 指明保存认证用户（authenticated user）id用的变量名。在流程启动时，该id会使用这个变量名被保存。例如：
 
@@ -406,7 +408,7 @@ try {
 
 ----
 
-这段代码在集成在Activiti Explorer应用中。因此可以与<<forms,表单>>一起使用。
+这段代码在集成在Flowable应用中。因此可以与<<forms,表单>>一起使用。
 
 
 [[bpmnNoneStartEvent]]
@@ -545,8 +547,8 @@ image::images/bpmn.clock.start.event.png[align="center"]
 
 当**部署**具有一个或多个消息启动事件的流程定义时，会考虑下列因素：
 
-* 消息启动事件的名字，在给定流程定义中，必须是唯一的。一个流程定义不得包含多个同名的消息启动事件。如果流程定义中有两个或多个消息启动事件引用同一个消息，也即两个或多个消息启动事件引用了具有相同消息名字的消息，则Activiti在部署这个流程定义时，会抛出异常。
-* 消息启动事件的名字，在所有已部署的流程定义中，必须是唯一的。如果流程定义中，一个或多个消息启动事件，引用了已经部署的另一流程定义中消息启动事件的消息名，则Activiti在部署这个流程定义时，会抛出异常。
+* 消息启动事件的名字，在给定流程定义中，必须是唯一的。一个流程定义不得包含多个同名的消息启动事件。如果流程定义中有两个或多个消息启动事件引用同一个消息，也即两个或多个消息启动事件引用了具有相同消息名字的消息，则Flowable在部署这个流程定义时，会抛出异常。
+* 消息启动事件的名字，在所有已部署的流程定义中，必须是唯一的。如果流程定义中，一个或多个消息启动事件，引用了已经部署的另一流程定义中消息启动事件的消息名，则Flowable在部署这个流程定义时，会抛出异常。
 * 流程版本：在部署流程定义的新版本时，会取消上一版本的消息订阅。即使新版本中并没有这个消息事件，仍然如此（取消上版本的消息订阅）。
 
 当**启动**流程实例时，可以使用下列++RuntimeService++中的方法，触发消息启动事件：
@@ -809,7 +811,7 @@ __errorRef__属性可以引用在流程外定义的__error__元素：
 ...
 ----
 
-__error__的**errorCode**用于查找匹配的错误捕获边界事件。如果__errorRef__不匹配任何已定义的__error__，则该__errorRef__会用做__errorCode__的快捷方式。这个快捷方式是Activiti特有的。下面的代码片段在功能上是相同的。
+__error__的**errorCode**用于查找匹配的错误捕获边界事件。如果__errorRef__不匹配任何已定义的__error__，则该__errorRef__会用做__errorCode__的快捷方式。这个快捷方式是Flowable特有的。下面的代码片段在功能上是相同的。
 
 [source,xml,linenums]
 ----
@@ -994,7 +996,7 @@ image::images/bpmn.non.interrupting.boundary.timer.event.png[align="center"]
 ===== 边界事件的已知问题 Known issue with boundary events
 
 
-所有类型的边界事件，都有一个关于并发的已知问题。不能在边界事件上附加多个出口顺序流（查看问题link:$$https://activiti.atlassian.net/browse/ACT-47$$[ACT-47]）。这个问题的解决方案，是使用一条出口顺序流，指向并行网关。
+所有类型的边界事件，都有一个关于并发的已知问题：不能在边界事件上附加多个出口顺序流。这个问题的解决方案，是使用一条出口顺序流，指向并行网关。
 
 image::images/bpmn.known.issue.boundary.event.png[align="center"]
 
@@ -1501,7 +1503,7 @@ image::images/bpmn.intermediate.none.event.png[align="center"]
 
 <<bpmnSignalEventDefinition,信号>>__抛出__中间事件，抛出已定义信号的信号事件。
 
-在Activiti中，信号会广播至所有的激活的处理器（也就是说，所有的捕获信号事件）。信号可以同步或异步地发布。
+在Flowable中，信号会广播至所有的激活的处理器（也就是说，所有的捕获信号事件）。信号可以同步或异步地发布。
 
 * 在默认配置中，信号**同步地**传递。这意味着抛出（信号的）流程实例会等待，直到信号传递至所有的捕获（信号的）流程实例。所有的捕获流程实例也会在与抛出流程实例相同的事务中，也就是说如果收到通知的流程实例中，有一个实例产生了技术错误（抛出异常），则所有相关的实例都会失败。
 * 信号也可以**异步地**传递。这是由到达抛出信号事件时，激活的是哪一个（发送）处理器来决定的。对于每个激活的处理器，JobExecutor会为其存储并传递一个异步通知消息，asynchronous notification message（作业 Job）。
@@ -1572,7 +1574,7 @@ image::images/bpmn.intermediate.signal.throw.event.png[align="center"]
 * 抛出补偿时，活动关联的补偿处理器执行的次数，与活动成功完成的次数相同。
 * 如果为当前范围抛出了补偿，则当前范围中所有的活动都会被补偿，包括并行分支上的活动。
 * 补偿分层触发：如果将要被补偿的活动是一个子流程，则该子流程中所有的活动都会触发补偿。如果该子流程有嵌套的活动，则会递归地抛出补偿。然而，补偿不会传播至流程的**上层**：如果子流程中触发了补偿，该补偿不会传播至子流程范围外的活动。BPMN规范指出，补偿为“与子流程在相同级别”的活动触发。
-* 在Activiti中，补偿按照执行的相反顺序运行。这意味着最后完成的活动会第一个补偿，等等。
+* 在Flowable中，补偿按照执行的相反顺序运行。这意味着最后完成的活动会第一个补偿，等等。
 * 补偿抛出中间事件，可用于补偿已经成功完成的事务子流程。
 
 **请注意：**如果抛出补偿的范围中有一个子流程，而该子流程包含有关联了补偿处理器的活动，则当抛出补偿时，只有当该子流程成功完成的情况，补偿才会传播至该子流程。如果子流程内嵌套的部分活动已经完成，并附加了补偿处理器，则如果包含这些活动的子流程还没有完成，这些补偿处理器不会执行。参考下面的例子：
@@ -1590,7 +1592,7 @@ image::images/bpmn.throw.compensation.example1.png[align="center"]
 **目前的限制：**
 
 * 目前不支持++waitForCompletion="false"++。当补偿抛出中间事件触发补偿时，只有在补偿成功完成时，才会离开该事件。
-* 补偿现在由并行执行来运行。该并行执行按照补偿活动完成的逆序启动。Activiti的后续版本可能会添加选项，使补偿可以按（活动完成的）顺序运行。
+* 补偿现在由并行执行来运行。该并行执行按照补偿活动完成的逆序启动。Flowable的后续版本可能会添加选项，使补偿可以按（活动完成的）顺序运行。
 * 补偿不会传播至调用活动（call activity）生成的子流程。
 
 
@@ -1724,7 +1726,7 @@ image::images/bpmn.conditional.sequence.flow.png[align="center"]
 ----
 
 
-Activiti发行版中包含了下列示例流程，展示值表达式与方法表达式的使用（参见__org.activiti.examples.bpmn.expression__）。
+Flowable发行版中包含了下列示例流程，展示值表达式与方法表达式的使用（参见__org.activiti.examples.bpmn.expression__）。
 
 image::images/bpmn.uel-expression.on.seq.flow.png[align="center"]
 
@@ -2068,7 +2070,7 @@ assertEquals("Ship Order", task.getName());
 请注意基于事件的网关，其出口顺序流与一般的顺序流不同。这些顺序流从不实际**被执行**。相反，它们允许流程引擎决定，当执行到达一个基于事件的网关时，需要订阅什么事件。基于下列约束：
 
 * 一个基于事件的网关，必须有两条或更多的出口顺序流。
-* 基于事件的网关，只能连接至++intermediateCatchEvent（捕获中间事件）++类型的元素（Activiti不支持基于事件的网关后，连接接收任务，Receive Task）。
+* 基于事件的网关，只能连接至++intermediateCatchEvent（捕获中间事件）++类型的元素（Flowable不支持基于事件的网关后，连接接收任务，Receive Task）。
 * 连接至基于事件的网关的++intermediateCatchEvent++，必须只有一个入口顺序流。
 
 
@@ -2215,7 +2217,7 @@ task.getDescription()
 
 每个任务都有一个字段，标志该任务的到期日期。可以使用查询API，查询在给定日期前或后到期的任务。
 
-有一个Activiti的扩展，可以在任务定义中指定表达式，以在任务创建时，设定初始到期日期。该表达式**必须解析为++java.util.Date++，++java.util.String (ISO8601格式)++，ISO8601时间长度（例如PT50M），或者++null++**。例如，可以使用在流程里前一个表单中输入的日期，或者由前一个服务任务计算出的日期。如果使用的是时间长度，则到期日期基于当前时间加上给定长度计算。例如当dueDate使用“PT30M”时，任务在从现在起30分钟后到期。
+有一个Flowable的扩展，可以在任务定义中指定表达式，以在任务创建时，设定初始到期日期。该表达式**必须解析为++java.util.Date++，++java.util.String (ISO8601格式)++，ISO8601时间长度（例如PT50M），或者++null++**。例如，可以使用在流程里前一个表单中输入的日期，或者由前一个服务任务计算出的日期。如果使用的是时间长度，则到期日期基于当前时间加上给定长度计算。例如当dueDate使用“PT30M”时，任务在从现在起30分钟后到期。
 
 [source,xml,linenums]
 ----
@@ -2248,7 +2250,7 @@ task.getDescription()
   </userTask>
 ----
 
-**只有一个**用户可被指定为任务的__humanPerformer__。在Activiti术语中，这个用户被称作**办理人（assignee）**。拥有办理人的任务，在其他人的任务列表中不可见，而可以在该办理人的**个人任务列表**中看到。
+**只有一个**用户可被指定为任务的__humanPerformer__。在Flowable术语中，这个用户被称作**办理人（assignee）**。拥有办理人的任务，在其他人的任务列表中不可见，而可以在该办理人的**个人任务列表**中看到。
 
 特定用户办理的任务，可以通过TaskService如下获取：
 
@@ -2281,7 +2283,7 @@ List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
  List<Task> tasks = taskService.createTaskQuery().taskCandidateUser("kermit");
 ----
 
-将获取所有kermit作为**候选用户**的任务，也就是说，表达式含有__user(kermit)__的任务，也将获取所有**指派给kermit为其成员的组**的任务（例如__group(management)__，如果kermit是这个组的成员，并且使用Activiti身份组件）。组会在运行时解析，并可通过<<apiEngine,IdentityService（身份服务）>>管理。
+将获取所有kermit作为**候选用户**的任务，也就是说，表达式含有__user(kermit)__的任务，也将获取所有**指派给kermit为其成员的组**的任务（例如__group(management)__，如果kermit是这个组的成员，并且使用Flowable身份组件）。组会在运行时解析，并可通过<<apiEngine,IdentityService（身份服务）>>管理。
 
 如果并未指定给定字符串是用户还是组，引擎默认其为组。因此下列代码与__声明了group(accountancy)__一样。
 
@@ -2294,7 +2296,7 @@ List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 [[bpmnUserTaskUserAssignmentExtension]]
 
 
-===== 用于任务指派的Activiti扩展 Activiti extensions for task assignment
+===== 用于任务指派的Flowable扩展 Flowable extensions for task assignment
 
 很明显，当指派关系不复杂时，这种用户与组的指派方式十分笨重。为避免这种复杂性，可以在用户任务上使用<<bpmnCustomExtensions,自定义扩展>>。
 
@@ -2327,7 +2329,7 @@ List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 
 * __candidateUsers__与__candidateGroups__可以定义在同一个用户任务上。
 
-请注意：尽管Activiti提供了身份管理组件，通过<<apiEngine,IdentityService>>暴露，但并不会检查给定的用户是否在身份组件中存在。这样Activiti在嵌入应用时，可以与已有的身份管理解决方案集成。
+请注意：尽管Flowable提供了身份管理组件，通过<<apiEngine,IdentityService>>暴露，但并不会检查给定的用户是否在身份组件中存在。这样Flowable在嵌入应用时，可以与已有的身份管理解决方案集成。
 
 
 [[bpmnUserTaskUserCustomIdentityLinkAssignmentExtension]]
@@ -2337,14 +2339,14 @@ List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 
 <<experimental,[EXPERIMENTAL]>>
 
-在<<bpmnUserTaskAssignment,用户指派>>中定义过，BPMN标准支持单个指派用户即**hunamPerformer**，或者一组用户构成**potentialOwners**潜在用户池。另外，Activiti为用户任务定义了<<bpmnUserTaskUserAssignmentExtension,扩展属性元素>>，代表任务的**办理人**或者**候选用户**。
+在<<bpmnUserTaskAssignment,用户指派>>中定义过，BPMN标准支持单个指派用户即**hunamPerformer**，或者一组用户构成**potentialOwners**潜在用户池。另外，Flowable为用户任务定义了<<bpmnUserTaskUserAssignmentExtension,扩展属性元素>>，代表任务的**办理人**或者**候选用户**。
 
-Activiti支持的身份关联类型有：
+Flowable支持的身份关联类型有：
 
 [source,java,linenums]
 ----
 public class IdentityLinkType {
-  /* Activiti原生角色 Activiti native roles */
+  /* Flowable原生角色 Flowable native roles */
   public static final String ASSIGNEE = "assignee";
   public static final String CANDIDATE = "candidate";
   public static final String OWNER = "owner";
@@ -2353,7 +2355,7 @@ public class IdentityLinkType {
 }
 ----
 
-BPMN标准与Activiti示例身份认证是**用户**与**组**。在前一章节提到过，Activiti的身份管理实现并不适用于生产环境，而需要在支持的认证概要下扩展。
+BPMN标准与Flowable示例身份认证是**用户**与**组**。在前一章节提到过，Flowable的身份管理实现并不适用于生产环境，而需要在支持的认证概要下扩展。
 
 如果需要添加额外的关联类型，可按照下列语法，使用自定义资源作为扩展元素：
 
@@ -2530,7 +2532,7 @@ image::images/bpmn.scripttask.png[align="center"]
 </scriptTask>
 ----
 
-**scriptFormat**属性的值，必须是兼容link:$$http://jcp.org/en/jsr/detail?id=223$$[JSR-223]（Java平台脚本）的名字。默认情况下，JavaScript包含在每一个JDK中，因此不需要添加任何jar。如果想使用其它（兼容JSR-223的）脚本引擎，需要在classpath中添加相应的jar，并使用适当的名字。例如，Activiti单元测试经常使用Groovy，因为其语法与Java十分相似。
+**scriptFormat**属性的值，必须是兼容link:$$http://jcp.org/en/jsr/detail?id=223$$[JSR-223]（Java平台脚本）的名字。默认情况下，JavaScript包含在每一个JDK中，因此不需要添加任何jar。如果想使用其它（兼容JSR-223的）脚本引擎，需要在classpath中添加相应的jar，并使用适当的名字。例如，Flowable单元测试经常使用Groovy，因为其语法与Java十分相似。
 
 请注意Groovy脚本引擎与groovy-all jar捆绑在一起。在2.0版本以前，脚本引擎是Groovy jar的一部分。因此，现在必须添加如下依赖：
 
@@ -2561,7 +2563,7 @@ image::images/bpmn.scripttask.png[align="center"]
 </script>
 ----
 
-也可以简单地调用__execution.setVariable("variableName", variableValue)__，在脚本中设置流程变量。默认情况下，变量不会自动储存（**请注意，在Activiti 5.12以前是这样的！**）。可以将++scriptTask++的++autoStoreVariables++参数设置为++true++，以自动保存任何在脚本中定义的变量（例如上例中的__sum__）。然而，**最佳实践不是这么做，而是直接调用execution.setVariable()**，因为在JDK近期的一些版本中，某些脚本语言不能自动保存变量。查看link:$$http://www.jorambarrez.be/blog/2013/03/25/bug-on-jdk-1-7-0_17-when-using-scripttask-in-activiti/$$[这个链接]了解更多信息。
+也可以简单地调用__execution.setVariable("variableName", variableValue)__，在脚本中设置流程变量。默认情况下，变量不会自动储存（**请注意，在一些早期版本中是这样的！**）。可以将++scriptTask++的++autoStoreVariables++参数设置为++true++，以自动保存任何在脚本中定义的变量（例如上例中的__sum__）。然而，**最佳实践不是这么做，而是直接调用execution.setVariable()**，因为在JDK近期的一些版本中，某些脚本语言不能自动保存变量。查看link:$$http://www.jorambarrez.be/blog/2013/03/25/bug-on-jdk-1-7-0_17-when-using-scripttask-in-activiti/$$[这个链接]了解更多信息。
 
 [source,xml,linenums]
 ----
@@ -2700,7 +2702,7 @@ image::images/bpmn.java.service.task.png[align="center"]
 
 要实现可以在流程执行中调用的类，需要实现__org.activiti.engine.delegate.JavaDelegate__接口，并在__execute__方法中提供所需逻辑。当流程执行到达该活动时，会执行方法中定义的逻辑，并按照BPMN 2.0的默认方法离开活动。
 
-让我们创建一个Java类的示例，可用于将流程变量String改为大写。这个类需要实现__org.activiti.engine.delegate.JavaDelegate__接口，因此需要实现__execute(DelegateExecution)__方法。这个方法就是引擎将调用的方法，需要实现业务逻辑。可以通过link:$$http://activiti.org/javadocs/org/activiti/engine/delegate/DelegateExecution.html$$[DelegateExecution]接口（点击链接获取该接口操作的详细Javadoc）访问流程实例信息，如流程变量等。
+让我们创建一个Java类的示例，可用于将流程变量String改为大写。这个类需要实现__org.activiti.engine.delegate.JavaDelegate__接口，因此需要实现__execute(DelegateExecution)__方法。这个方法就是引擎将调用的方法，需要实现业务逻辑。可以通过link:$$http://flowable.org/javadocs/org/activiti/engine/delegate/DelegateExecution.html$$[DelegateExecution]接口（点击链接获取该接口操作的详细Javadoc）访问流程实例信息，如流程变量等。
 
 [source,java,linenums]
 ----
@@ -2717,7 +2719,7 @@ public class ToUppercase implements JavaDelegate {
 
 请注意：**只会为serviceTask上定义的Java类创建一个实例**。所有流程实例共享同一个类实例，用于调用__execute(DelegateExecution)__。这意味着该类不能有任何成员变量，并需要是线程安全的，因为它可能会在不同线程中同时执行。这也影响了<<serviceTaskFieldInjection,字段注入>>的使用方法。（译者注：原文可能较老，不正确。5.21中，activiti:class指定的类，会在流程实例启动时，为每个活动，分别进行实例化。不过，当该活动在流程中重复执行，或者为多实例时，使用的都会是同一个类实例。）
 
-在流程定义中（如通过++activiti:class++）引用的类，**不会在部署时实例化**。只有当流程执行第一次到达该类使用的地方时，才会创建该类的实例。如果找不到这个类，会抛出++ActivitiException++。这是因为部署时的环境（更准确的说__classpath__），与实际运行的环境经常不一样。例如当使用__ant__或者Activiti Explorer中业务存档上传的方式部署的流程，其classpath中并没有流程引用的类。
+在流程定义中（如通过++activiti:class++）引用的类，**不会在部署时实例化**。只有当流程执行第一次到达该类使用的地方时，才会创建该类的实例。如果找不到这个类，会抛出++ActivitiException++。这是因为部署时的环境（更准确的说__classpath__），与实际运行的环境经常不一样。例如当使用__ant__或者Flowable应用中业务存档上传的方式部署的流程，其classpath中并没有流程引用的类。
 
 <<internal,[内部：非公有实现类]>>也可以使用实现了__org.activiti.engine.impl.pvm.delegate.ActivityBehavior__接口的类。该实现可以访问更强大的__ActivityExecution__，可以例如影响流程的控制流程。请注意这并不是很好的实践，需要避免这么使用。因此，建议只有在高级使用场景下，并且你确知在做什么的时候，才使用__ActivityBehavior__接口。
 
@@ -2832,7 +2834,7 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 
 ===== 字段注入与线程安全 Field injection and thread safety
 
-总的来说，在服务任务中使用Java代理与字段注入是线程安全的。然而，有些情况下不能保证线程安全，取决于设置，或Activiti运行所在的环境。
+总的来说，在服务任务中使用Java代理与字段注入是线程安全的。然而，有些情况下不能保证线程安全，取决于设置，或Flowable运行所在的环境。
 
 当使用__activiti:class__属性时，使用字段注入总是线程安全的（译者注：仍不完全安全，如对于多实例服务任务，使用的是同一个类实例）。对于引用了某个类的每一个服务任务，都会实例化新的实例，并且在创建实例时注入一次字段。在不同的任务或流程定义中多次使用同一个类没有问题。
 
@@ -2868,7 +2870,7 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 * 重写Java代理，以使用表达式，并将所需数据通过方法参数传递给代理。
 * 或者，在每次代理表达式解析时，返回代理类的新实例。这意味着这个bean的scope（范围）必须是**prototype（原型）**（例如在代理类上加上@Scope(SCOPE_PROTOTYPE)注解）。
 
-在Activiti 5.21版本中，可以通过配置流程引擎配置，禁用在代理表达式上使用字段注入。需要设置__delegateExpressionFieldInjectionMode__参数（取__org.activiti.engine.imp.cfg.DelegateExpressionFieldInjectionMode__枚举中的值）。
+在Flowable 5.22版本中，可以通过配置流程引擎配置，禁用在代理表达式上使用字段注入。需要设置__delegateExpressionFieldInjectionMode__参数（取__org.activiti.engine.imp.cfg.DelegateExpressionFieldInjectionMode__枚举中的值）。
 
 可使用下列选项：
 
@@ -2876,8 +2878,8 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 * **COMPATIBILITY（兼容）**：在这个模式下，行为与5.21版本之前完全一样：可以在代理表达式中使用字段注入，如果代理类中没有定义该字段，会抛出异常。这是最不线程安全的模式，但可以保证历史版本兼容性，也可以在代理表达式只在一个任务中使用的时候（因此不会产生并发竞争条件），安全使用。
 * **MIXED（混合）**：可以在使用代理表达式时注入，但当代理中没有定义字段时，不会抛出异常。这样可以在部分代理中使用注入（例如不是单例时），而在部分代理中不使用注入。
 
-* **Activiti 5.x版本的默认模式为COMPATIBILITY（兼容）**。
-* **Activiti 6.x版本的默认模式为MIXED（混合）**。
+* **Flowable 5.x版本的默认模式为COMPATIBILITY（兼容）**。
+* **Flowable 6.x版本的默认模式为MIXED（混合）**。
 
 例如，假设使用__MIXED__模式，并使用Spring集成，在Spring配置中定义了如下bean：
 
@@ -3000,8 +3002,8 @@ __INSTANCE_COUNT__总是__1__，因为是单例模式。在这个代理中，没
 （技术提示：__getFieldExpression__直接读取BpmnModel，并在方法执行时创建表达式，因此是线程安全的）。
 
 
-* 在Activiti 5.x版本中，（由于架构缺陷）不能在__ExecutionListener__或__TaskListener__中使用DelegateHelper。要保证监听器的线程安全，仍需使用表达式，或确保每次解析代理表达式时，都创建新实例。
-* 在Activiti 6.x版本中，在__ExecutionListener__或__TaskListener__中可以使用DelegateHelper。例如在6.x版本中，下列代码可以使用**DelegateHelper**：
+* 在Flowable 5.x版本中，（由于架构缺陷）不能在__ExecutionListener__或__TaskListener__中使用DelegateHelper。要保证监听器的线程安全，仍需使用表达式，或确保每次解析代理表达式时，都创建新实例。
+* 在Flowable 6.x版本中，在__ExecutionListener__或__TaskListener__中可以使用DelegateHelper。例如在6.x版本中，下列代码可以使用**DelegateHelper**：
 
 [source,xml,linenums]
 ----
@@ -3059,7 +3061,7 @@ public class TestExecutionListener implements ExecutionListener {
 
 ===== 处理异常 Handling exceptions
 
-当执行自定义逻辑时，通常需要捕获特定的业务异常，并在流程中处理。Activiti提供了不同的方法。
+当执行自定义逻辑时，通常需要捕获特定的业务异常，并在流程中处理。Flowable提供了不同的方法。
 
 
 [[serviceTaskBpmnErrors]]
@@ -3122,7 +3124,7 @@ public class ThrowBpmnErrorDelegate implements JavaDelegate {
 
 ----
 
-上面的代码中，Activiti会将任何直接或间接的++SomeException++的子类，转换为带有给定错误代码的BPMN错误。当未指定++includeChildExceptions++时，视为“false”。
+上面的代码中，Flowable会将任何直接或间接的++SomeException++的子类，转换为带有给定错误代码的BPMN错误。当未指定++includeChildExceptions++时，视为“false”。
 
 最普通的是默认映射。默认映射是一个没有类的映射，可以匹配任何Java异常：
 
@@ -3185,9 +3187,9 @@ public class ThrowsExceptionBehavior implements ActivityBehavior {
 [[serviceTaskCallActivitiService]]
 
 
-===== 在JavaDelegate中使用Activiti服务 Using an Activiti service from within a JavaDelegate
+===== 在JavaDelegate中使用Flowable服务 Using a Flowable service from within a JavaDelegate
 
-有的时候，需要在Java服务任务中使用Activiti服务（例如当调用活动不符合需求时，通过RuntimeService启动流程实例）。__org.activiti.engine.delegate.DelegateExecution__可以方便地通过__org.activiti.engine.EngineServices__接口使用这些服务：
+有的时候，需要在Java服务任务中使用Flowable服务（例如当调用活动不符合需求时，通过RuntimeService启动流程实例）。__org.activiti.engine.delegate.DelegateExecution__可以方便地通过__org.activiti.engine.EngineServices__接口使用这些服务：
 
 [source,java,linenums]
 ----
@@ -3201,7 +3203,7 @@ public class StartProcessInstanceTestDelegate implements JavaDelegate {
 }
 ----
 
-通过这个接口可以访问所有Activiti服务API。
+通过这个接口可以访问所有Flowable服务API。
 
 使用这些API调用造成的所有数据变更，都处在当前事务中。在具有依赖注入的环境，如Spring或CDI中，使用或不使用激活JTA的数据源，也都可以使用。例如，下面的代码片段与上面的代码具有相同功能，但RuntimeService是通过注入而不是通过__org.activiti.engine.EngineServices__接口获得的。
 
@@ -3260,7 +3262,7 @@ image::images/bpmn.web.service.task.png[align="center"]
 	namespace="http://webservice.activiti.org/" />
 ----
 
-上面的声明告知Activiti导入定义，但并不创建条目定义（item definition）与消息。假设我们需要调用一个名为'prettyPrint'的方法，我们需要为请求与回复消息，创建相应的消息与条目定义：
+上面的声明告知Flowable导入定义，但并不创建条目定义（item definition）与消息。假设我们需要调用一个名为'prettyPrint'的方法，我们需要为请求与回复消息，创建相应的消息与条目定义：
 
 [source,xml,linenums]
 ----
@@ -3344,7 +3346,7 @@ image::images/bpmn.web.service.task.png[align="center"]
 </dataInputAssociation>
 ----
 
-另一方面，也可以使用简化方法。'sourceRef'元素是一个Activiti变量名，而'targetRef'是条目定义的参数。在下面的例子里，将'PrefixVariable'变量的值关联至'prefix'字段，并将'SuffixVariable'变量的值关联至'suffix'字段。
+另一方面，也可以使用简化方法。'sourceRef'元素是一个Flowable变量名，而'targetRef'是条目定义的参数。在下面的例子里，将'PrefixVariable'变量的值关联至'prefix'字段，并将'SuffixVariable'变量的值关联至'suffix'字段。
 
 [source,xml,linenums]
 ----
@@ -3379,7 +3381,7 @@ image::images/bpmn.web.service.task.png[align="center"]
 </dataOutputAssociation>
 ----
 
-另一方面，也可以使用简化方法。'sourceRef'是条目定义的参数，而'targetRef'元素是一个Activiti变量名。这种方法很直接，与数据输入关联类似：
+另一方面，也可以使用简化方法。'sourceRef'是条目定义的参数，而'targetRef'元素是一个Flowable变量名。这种方法很直接，与数据输入关联类似：
 
 [source,xml,linenums]
 ----
@@ -3399,7 +3401,7 @@ image::images/bpmn.web.service.task.png[align="center"]
 
 ===== 描述 Description
 
-业务规则任务用于同步执行一条或多条规则。Activiti使用名为Drools Expert的Drools规则引擎执行业务规则。目前，业务规则中包含的.drl文件，必须与定义了业务规则服务并执行规则的流程定义，一起部署。这意味着流程中使用的所有.drl文件都需要打包在流程BAR文件中，与任务表单类似。要了解为Drools Expert创建业务规则的更多信息，请访问位于link:$$http://www.jboss.org/drools/documentation$$[JBoss Drools]的Drools文档。
+业务规则任务用于同步执行一条或多条规则。Flowable使用名为Drools Expert的Drools规则引擎执行业务规则。目前，业务规则中包含的.drl文件，必须与定义了业务规则服务并执行规则的流程定义，一起部署。这意味着流程中使用的所有.drl文件都需要打包在流程BAR文件中，与任务表单类似。要了解为Drools Expert创建业务规则的更多信息，请访问位于link:$$http://www.jboss.org/drools/documentation$$[JBoss Drools]的Drools文档。
 
 如果想要插入自己的规则任务实现，例如，希望通过不同方法使用Drools，或者想使用完全不同的规则引擎，则可以使用BusinessRuleTask的class或expression属性。这样它会与link:$$#bpmnJavaServiceTask$$[服务任务]的行为完全相同。
 
@@ -3475,7 +3477,7 @@ image::images/bpmn.business.rule.task.png[align="center"]
 
 ==== 邮件任务 Email Task
 
-Activiti可以通过自动邮件服务任务，增强业务流程。可以向一个或多个收信人发送邮件，支持cc，bcc，HTML内容，等等。请注意邮件任务**不是**BPMN 2.0规范的“官方”任务（因此也没有专用图标）。因此，在Activiti中，邮件任务实现为一种特殊的服务任务。
+Flowable可以通过自动邮件服务任务，增强业务流程。可以向一个或多个收信人发送邮件，支持cc，bcc，HTML内容，等等。请注意邮件任务**不是**BPMN 2.0规范的“官方”任务（因此也没有专用图标）。因此，在Flowable中，邮件任务实现为一种特殊的服务任务。
 
 
 [[bpmnEmailTaskServerConfiguration]]
@@ -3483,14 +3485,14 @@ Activiti可以通过自动邮件服务任务，增强业务流程。可以向一
 
 ===== 邮件服务器配置 Mail server configuration
 
-Activiti引擎通过支持SMTP的外部邮件服务器发送邮件。要发送邮件，引擎需要了解如何连接邮件服务器。可以在__activiti.cfg.xml__配置文件中设置下面的参数：
+Flowable引擎通过支持SMTP的外部邮件服务器发送邮件。要发送邮件，引擎需要了解如何连接邮件服务器。可以在__activiti.cfg.xml__配置文件中设置下面的参数：
 
 [options="header"]
 |===============
 |参数|必填?|描述
 |mailServerHost|否|邮件服务器的主机名（如mail.mycorp.com）。默认为++localhost++
 |mailServerPort|是，如果不使用默认端口|邮件服务器的SMTP端口。默认值为__25__
-|mailServerDefaultFrom|否|若用户没有提供地址，默认使用的邮件发件人地址。默认为__activiti@activiti.org__
+|mailServerDefaultFrom|否|若用户没有提供地址，默认使用的邮件发件人地址。默认为__flowable@flowable.org__
 |mailServerUsername|若服务器需要|部分邮件服务器发信时需要进行认证。默认为空。
 |mailServerPassword|若服务器需要|部分邮件服务器发信时需要进行认证。默认为空。
 |mailServerUseSSL|若服务器需要|部分邮件服务器要求ssl通信。默认设置为false。
@@ -3579,7 +3581,7 @@ image::images/email.task.result.png[align="center"]
 ==== Mule任务 Mule Task
 
 
-Mule任务可以向Mule发送消息，增强Activiti的集成特性。请注意Mule任务**不是**BPMN 2.0规范的“官方”任务（因此也没有专用图标）。因此，在Activiti中，Mule任务实现为一种特殊的服务任务。
+Mule任务可以向Mule发送消息，增强Flowable的集成特性。请注意Mule任务**不是**BPMN 2.0规范的“官方”任务（因此也没有专用图标）。因此，在Flowable中，Mule任务实现为一种特殊的服务任务。
 
 [[bpmnMuleTaskUsage]]
 
@@ -3635,7 +3637,7 @@ Mule任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数�
 
 ==== Camel任务 Camel Task
 
-Camel任务可以向Mule发送与接收消息，增强Activiti的集成特性。请注意Camel任务**不是**BPMN 2.0规范的“官方”任务（因此也没有专用图标）。因此，在Activiti中，Camel任务实现为一种特殊的服务任务。还请注意要使用Camel任务功能，需要在项目中包含Activiti Camel模块。
+Camel任务可以向Mule发送与接收消息，增强Flowable的集成特性。请注意Camel任务**不是**BPMN 2.0规范的“官方”任务（因此也没有专用图标）。因此，在Flowable中，Camel任务实现为一种特殊的服务任务。还请注意要使用Camel任务功能，需要在项目中包含Flowable Camel模块。
 
 [[bpmnCamelTaskUsage]]
 
@@ -3649,7 +3651,7 @@ Camel任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，通过将服
 <serviceTask id="sendCamel" activiti:type="camel">
 ----
 
-流程定义本身只需要在服务任务上定义Camel类型。集成逻辑都通过Camel容器代理。默认情况下Activiti引擎在Spring容器中查找camelContext bean。camelContext bean定义了由Camel容器装载的Camel路由。在下面的例子中，路由通过给定的Java包装载，但也可以自行在Spring配置中直接定义路由。
+流程定义本身只需要在服务任务上定义Camel类型。集成逻辑都通过Camel容器代理。默认情况下Flowable引擎在Spring容器中查找camelContext bean。camelContext bean定义了由Camel容器装载的Camel路由。在下面的例子中，路由通过给定的Java包装载，但也可以自行在Spring配置中直接定义路由。
 
 [source,xml,linenums]
 ----
@@ -3660,7 +3662,7 @@ Camel任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，通过将服
 </camelContext>
 ----
 
-可以在link:$$http://camel.apache.org/$$[Camel网站]找到关于Camel路由的更多文档。这篇文档中只通过几个小例子展示基本概念。在第一个例子中，在Activiti工作流中进行最简单的Camel调用。叫做SimpleCamelCall。
+可以在link:$$http://camel.apache.org/$$[Camel网站]找到关于Camel路由的更多文档。这篇文档中只通过几个小例子展示基本概念。在第一个例子中，在Flowable工作流中进行最简单的Camel调用。叫做SimpleCamelCall。
 
 如果想要定义多个Camel上下文bean，并且/或想使用不同的bean名字，可以在Camel任务定义中像这样覆盖：
 
@@ -3734,7 +3736,7 @@ public class SimpleCamelCallRoute extends RouteBuilder {
 
 ===== 连通性测试 Ping Pong example
 
-示例已经可以工作，但实际上Camel与Activiti之间并没有通信，因此没有太多价值。在这个例子里，将试着从Camel接收与发送消息。将发送一个字符串，Camel在其上连接一些东西，并返回作为结果。发送部分比较普通，以变量的格式将信息发送给Camel服务。这是我们的调用代码：
+示例已经可以工作，但实际上Camel与Flowable之间并没有通信，因此没有太多价值。在这个例子里，将试着从Camel接收与发送消息。将发送一个字符串，Camel在其上连接一些东西，并返回作为结果。发送部分比较普通，以变量的格式将信息发送给Camel服务。这是我们的调用代码：
 
 [source,java,linenums]
 ----
@@ -3792,7 +3794,7 @@ public void configure() throws Exception {
 
 在这个路由中，字符串"world"会在结尾连接上名为“input”的参数，结果作为消息体。可以通过Java服务任务检查"camelBody"变量，并复制到“outputMap”，并可通过测试用例检查。既然这个例子使用默认行为，就让我们看看还有什么其他选择。在每个Camel路由的开始处，流程实例id会复制为名为"PROCESS_ID_PROPERTY"的Camel参数。之后会用于将流程实例与Camel路由相关联，也可以在Camel路由中使用。
 
-Activiti中有已经可以使用三种不同的行为。可以通过修改路由URL中特定的部分，覆写行为。这里有个在URL中重载已有行为的例子：
+Flowable中有已经可以使用三种不同的行为。可以通过修改路由URL中特定的部分，覆写行为。这里有个在URL中重载已有行为的例子：
 
 [source,java,linenums]
 ----
@@ -3805,33 +3807,33 @@ from("activiti:asyncCamelProcess:serviceTaskAsync2?copyVariablesToProperties=tru
 [options="header"]
 |===============
 |行为|Url中|描述
-|CamelBehaviorDefaultImpl|copyVariablesToProperties|将Activiti变量复制为Camel参数
-|CamelBehaviorCamelBodyImpl|copyCamelBodyToBody|只将名为"camelBody"的Activiti变量复制为Camel消息体
-|CamelBehaviorBodyAsMapImpl|copyVariablesToBodyAsMap|将一个map中的所有Activiti变量复制为Camel消息体
+|CamelBehaviorDefaultImpl|copyVariablesToProperties|将Flowable变量复制为Camel参数
+|CamelBehaviorCamelBodyImpl|copyCamelBodyToBody|只将名为"camelBody"的Flowable变量复制为Camel消息体
+|CamelBehaviorBodyAsMapImpl|copyVariablesToBodyAsMap|将一个map中的所有Flowable变量复制为Camel消息体
 
 |===============
 
-上表解释了Activiti变量如何传递给Camel。下表解释了Camel变量如何返回至Activiti。只能在路由URL中配置。
+上表解释了Flowable变量如何传递给Camel。下表解释了Camel变量如何返回至Flowable。只能在路由URL中配置。
 
 [options="header"]
 |===============
 |Url|描述
-|Default|如果Camel消息体是一个map，则将其中每一对象复制为Activiti变量；否则将整个Camel消息体复制为"camelBody" Activiti变量
-|copyVariablesFromProperties|将Camel参数以同名复制为Activiti变量
+|Default|如果Camel消息体是一个map，则将其中每一对象复制为Flowable变量；否则将整个Camel消息体复制为"camelBody" Flowable变量
+|copyVariablesFromProperties|将Camel参数以同名复制为Flowable变量
 |copyCamelBodyToBodyAsString|与default相同，但如果Camel消息体不是map，则首先将其转换为字符串，然后再复制为"camelBody"
-|copyVariablesFromHeader|额外将Camel头复制为Activiti的同名变量
+|copyVariablesFromHeader|额外将Camel头复制为Flowable的同名变量
 
 |===============
 
 ===== 返回变量 Returning back the variables
 
-上面提到的传递变量，不论是从Camel到Activiti还是反过来，都只用于变量传递的开始侧。要特别注意，由于Activiti的非阻塞行为，Activiti不会自动向Camel返回变量。因此，提供了特殊的语法。可以在Camel路由URL中，以++var.return.someVariableName++的格式，使用一个或多个参数。与这些参数同名，但没有++var.return++部分的变量，会被认为是输出变量，因此将会以相同的名字复制回Camel参数。例如在如下路由中：
+上面提到的传递变量，不论是从Camel到Flowable还是反过来，都只用于变量传递的开始侧。要特别注意，由于Flowable的非阻塞行为，Flowable不会自动向Camel返回变量。因此，提供了特殊的语法。可以在Camel路由URL中，以++var.return.someVariableName++的格式，使用一个或多个参数。与这些参数同名，但没有++var.return++部分的变量，会被认为是输出变量，因此将会以相同的名字复制回Camel参数。例如在如下路由中：
 
 ----
 from("direct:start").to("activiti:process?var.return.exampleVar").to("mock:result");
 ----
 
-名为++exampleVar++的Activiti变量，将被认为是输出变量，因此会以同名复制回Camel参数。
+名为++exampleVar++的Flowable变量，将被认为是输出变量，因此会以同名复制回Camel参数。
 
 
 [[bpmnCamelTaskAsyncPingPong]]
@@ -3839,21 +3841,21 @@ from("direct:start").to("activiti:process?var.return.exampleVar").to("mock:resul
 
 ===== 异步连通性测试 Asynchronous Ping Pong example
 
-上面的例子都是同步的。工作流停止，直到Camel路由结束并返回。有时，需要Activiti工作流继续运行。为了这个目的，Camel服务任务的异步功能就很有用。可以通过将Camel服务任务的异步参数设置为true，启用这个功能。
+上面的例子都是同步的。工作流停止，直到Camel路由结束并返回。有时，需要Flowable工作流继续运行。为了这个目的，Camel服务任务的异步功能就很有用。可以通过将Camel服务任务的异步参数设置为true，启用这个功能。
 
 [source,xml,linenums]
 ----
 <serviceTask id="serviceAsyncPing" activiti:type="camel" activiti:async="true"/>
 ----
 
-设置这个特性后，Camel路由会由Activiti作业执行器异步启动。如果定义了Camel路由队列，Activiti流程会继续执行Camel服务任务之后的活动。Camel路由会与流程执行完全异步地执行。如果需要在流程定义的某处等待Camel服务任务的响应，可以使用接收任务（receive task）。
+设置这个特性后，Camel路由会由Flowable作业执行器异步启动。如果定义了Camel路由队列，Flowable流程会继续执行Camel服务任务之后的活动。Camel路由会与流程执行完全异步地执行。如果需要在流程定义的某处等待Camel服务任务的响应，可以使用接收任务（receive task）。
 
 [source,xml,linenums]
 ----
 <receiveTask id="receiveAsyncPing" name="Wait State" />
 ----
 
-流程实例会等待，直到接收到信号，例如来自Camel。在Camel中，可以通过向合适的Activiti终端发送消息，来为流程实例发送信号。
+流程实例会等待，直到接收到信号，例如来自Camel。在Camel中，可以通过向合适的Flowable终端发送消息，来为流程实例发送信号。
 
 [source,java,linenums]
 ----
@@ -3872,7 +3874,7 @@ from("direct:start").to("activiti:process?var.return.exampleVar").to("mock:resul
 
 ===== 从Camel路由实例化工作流 Instantiate workflow from Camel route
 
-上面的所有例子，都是先启动Activiti工作流，然后在工作流中启动Camel路由。也可以反过来。可以在已经启动的Camel路由中实例化工作流。与为接收任务发送消息很类似，除了最后一部分。这是一个简单的路由：
+上面的所有例子，都是先启动Flowable工作流，然后在工作流中启动Camel路由。也可以反过来。可以在已经启动的Camel路由中实例化工作流。与为接收任务发送消息很类似，除了最后一部分。这是一个简单的路由：
 
 [source,java,linenums]
 ----
@@ -4126,7 +4128,7 @@ public class ExampleExecutionListenerOne implements ExecutionListener {
 <activiti:executionListener event="start" delegateExpression="${myExecutionListenerBean}" />
 ----
 
-在Activiti 5.12中，我们也引入了新的执行监听器类型，org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener。这个脚本执行监听器，可以为一个执行监听器事件执行一段脚本逻辑。
+较早之前，我们也引入了新的执行监听器类型，org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener。这个脚本执行监听器，可以为一个执行监听器事件执行一段脚本逻辑。
 
 [source,xml,linenums]
 ----
@@ -4141,7 +4143,7 @@ public class ExampleExecutionListenerOne implements ExecutionListener {
   </activiti:field>
   <activiti:field name="language" stringValue="groovy" />
   <activiti:field name="resultVariable" stringValue="myVar" />
-<activiti:executionListener>
+</activiti:executionListener>
 ----
 
 
@@ -4217,7 +4219,7 @@ public void testExecutionListenerFieldInjection() {
 
 __任务监听器__用于在特定的任务相关事件发生时，执行自定义的Java逻辑或表达式。
 
-任务监听器只能在流程定义中作为<<bpmnUserTask,用户任务>>的子元素。请注意，任务监听器是一个Activiti自定义结构，因此也需要作为__BPMN 2.0 extensionElements__，放在__activiti__命名空间下。
+任务监听器只能在流程定义中作为<<bpmnUserTask,用户任务>>的子元素。请注意，任务监听器是一个Flowable自定义结构，因此也需要作为__BPMN 2.0 extensionElements__，放在__activiti__命名空间下。
 
 
 [source,xml,linenums]
@@ -4249,7 +4251,7 @@ public class MyTaskCreateListener implements TaskListener {
 }
 ----
 
-也可以使用<<serviceTaskFieldInjection,字段注入>>，为代理类传递流程变量或执行。请注意代理类的实例在流程部署时创建（与Activiti中其它的代理类一样），这意味着该实例会在所有流程实例执行中共享。
+也可以使用<<serviceTaskFieldInjection,字段注入>>，为代理类传递流程变量或执行。请注意代理类的实例在流程部署时创建（与Flowable中其它的代理类一样），这意味着该实例会在所有流程实例执行中共享。
 
 * **expression**：（不能与__class__属性一起使用）：指定在事件发生时要执行的表达式。可以为被调用的对象传递++DelegateTask++对象与事件名（使用++task.eventName++）作为参数。
 
@@ -4265,7 +4267,7 @@ public class MyTaskCreateListener implements TaskListener {
 <activiti:taskListener event="create" delegateExpression="${myTaskListenerBean}" />
 ----
 
-* 在Activiti 5.12中，我们也引入了新的执行监听器类型，org.activiti.engine.impl.bpmn.listener.ScriptTaskListener。这个脚本任务监听器，可以为一个任务监听器事件执行一段脚本逻辑。
+* 较早之前，我们也引入了新的执行监听器类型，org.activiti.engine.impl.bpmn.listener.ScriptTaskListener。这个脚本任务监听器，可以为一个任务监听器事件执行一段脚本逻辑。
 
 [source,xml,linenums]
 ----
@@ -4280,7 +4282,7 @@ public class MyTaskCreateListener implements TaskListener {
   </activiti:field>
   <activiti:field name="language" stringValue="groovy" />
   <activiti:field name="resultVariable" stringValue="myVar" />
-<activiti:taskListener>
+</activiti:taskListener>
 ----
 
 
@@ -4321,7 +4323,7 @@ __多实例__是一个普通活动，加上定义（被称作“__多实例__特
 
 另外，每个创建的执行，都有执行本地变量（也就是说，对其他执行不可见，也不存储在流程实例级别）：
 
-* **loopCounter**：代表给定实例在__foreach循环中的index__。可以通过Activiti的**elementIndexVariable**属性为loopCounter变量重命名。
+* **loopCounter**：代表给定实例在__foreach循环中的index__。可以通过Flowable的**elementIndexVariable**属性为loopCounter变量重命名。
 
 
 [[bpmnMultiInstanceGraphicalNotation]]
@@ -4383,7 +4385,7 @@ image::images/bpmn.multi.instance.png[align="center"]
 
 假设变量++assigneeList++包含++[kermit, gonzo, fozzie]++。在上面的代码中，会并行创建三个用户任务。每一个执行都有一个名为++assignee++的流程变量，含有集合中的一个值，并在这个例子中被用于指派用户任务。
 
-++loopDataInputRef++与++inputDataItem++的缺点是 1)名字很难记 2)由于BPMN 2.0概要的限制，不能使用表达式。Activiti通过在++multiInstanceCharacteristics++上提供**collection**与**elementVariable**属性解决了这些问题：
+++loopDataInputRef++与++inputDataItem++的缺点是 1)名字很难记 2)由于BPMN 2.0概要的限制，不能使用表达式。Flowable通过在++multiInstanceCharacteristics++上提供**collection**与**elementVariable**属性解决了这些问题：
 
 [source,xml,linenums]
 ----
@@ -4424,8 +4426,6 @@ image::images/bpmn.multi.instance.boundary.event.png[align="center"]
 [[bpmnCompensationHandlers]]
 
 ===== 多实例与执行监听器 Multi instance and execution listeners
-
-（Activiti 5.18及以上版本可用）
 
 有一个关于执行监听器与多实例一起使用的警告。以下面的BPMN 2.0 XML代码片段为例，其定义在__multiInstanceLoopCharacteristics__ XML元素的相同级别：
 
@@ -4539,7 +4539,7 @@ __子流程__是包含其他的活动、网关、事件等的活动。其本身�
 
 使用子流程也要注意以下几点：
 
-* 子流程只能有**一个空启动事件**，而不允许有其他类型的启动事件。请注意BPMN 2.0规范允许省略子流程的启动与结束事件，然而当前的Activiti实现并不支持省略。
+* 子流程只能有**一个空启动事件**，而不允许有其他类型的启动事件。请注意BPMN 2.0规范允许省略子流程的启动与结束事件，然而当前的Flowable实现并不支持省略。
 * **顺序流不能跨越子流程边界。**
 
 
@@ -4600,8 +4600,8 @@ image::images/bpmn.subprocess.with.boundary.timer.png[align="center"]
 
 **目前的限制：**
 
-* Activiti只支持中断事件子流程。
-* Activiti只支持错误启动事件与消息启动事件触发事件子流程。
+* Flowable只支持中断事件子流程。
+* Flowable只支持错误启动事件与消息启动事件触发事件子流程。
 
 
 [[bpmnEventSubprocessGraphicalNotation]]
@@ -4706,9 +4706,9 @@ image::images/bpmn.transaction.subprocess.example.1.png[align="center"]
 
 **目前的限制：**
 
-* BPMN规范要求，流程引擎响应底层事务协议提交的事务。例如在底层协议中发生了取消事件，则取消事务。作为可嵌入的引擎，Activiti当前不支持这点。（查看下面关于一致性的段落，了解其后果。）
+* BPMN规范要求，流程引擎响应底层事务协议提交的事务。例如在底层协议中发生了取消事件，则取消事务。作为可嵌入的引擎，Flowable当前不支持这点。（查看下面关于一致性的段落，了解其后果。）
 
-**基于ACID事务与乐观锁（optimistic concurrency）的一致性：**BPMN事务在如下情况保证一致性：所有活动都成功完成；或若部分活动不能执行，则所有已完成活动都被补偿。两种方法都可以得到一致性状态。然而，认识到这一点很重要：Activiti中，BPMN事务的一致性模型，位与流程执行的一致性模型之上。Activiti以事务的方式执行流程。通过乐观锁标记处理并发。在Activiti中，BPMN的错误、取消与补偿事件，都建立在相同的ACID事务与乐观锁之上。例如，只有在实际到达时，取消结束事件才能触发补偿。如果由于服务任务抛出了未检查异常，导致其未实际到达；或者，由于底层ACID事务中的其他操作，将事务设置为rollback-only（回滚）状态，导致补偿处理器的操作不能提交；或者，当两个并行执行到达一个取消结束事件时，补偿会被两次触发，并由于乐观锁异常而失败。所有这些都是想说明，当在Activiti中实现BPMN事务时，与实施“普通”流程与子流程，需要遵守相同的规则。因此要有效地保证一致性，需要将乐观锁、事务执行模型纳入考虑范围，以实现流程。
+**基于ACID事务与乐观锁（optimistic concurrency）的一致性：**BPMN事务在如下情况保证一致性：所有活动都成功完成；或若部分活动不能执行，则所有已完成活动都被补偿。两种方法都可以得到一致性状态。然而，认识到这一点很重要：Flowable中，BPMN事务的一致性模型，位与流程执行的一致性模型之上。Flowable以事务的方式执行流程。通过乐观锁标记处理并发。在Flowable中，BPMN的错误、取消与补偿事件，都建立在相同的ACID事务与乐观锁之上。例如，只有在实际到达时，取消结束事件才能触发补偿。如果由于服务任务抛出了未检查异常，导致其未实际到达；或者，由于底层ACID事务中的其他操作，将事务设置为rollback-only（回滚）状态，导致补偿处理器的操作不能提交；或者，当两个并行执行到达一个取消结束事件时，补偿会被两次触发，并由于乐观锁异常而失败。所有这些都是想说明，当在Flowable中实现BPMN事务时，与实施“普通”流程与子流程，需要遵守相同的规则。因此要有效地保证一致性，需要将乐观锁、事务执行模型纳入考虑范围，以实现流程。
 
 [[bpmnEventSubprocessGraphicalNotation]]
 
@@ -4802,7 +4802,7 @@ image::images/bpmn.collapsed.call.activity.png[align="center"]
 </callActivity>
 ----
 
-使用Activiti扩展，作为BPMN标准元素__dataInputAssociation__与__dataOutputAssociation__的扩展。它们需要按照BPMN 2.0标准的方式声明流程变量。
+使用Flowable扩展，作为BPMN标准元素__dataInputAssociation__与__dataOutputAssociation__的扩展。它们需要按照BPMN 2.0标准的方式声明流程变量。
 
 也可以在这里使用表达式：
 
@@ -4817,6 +4817,22 @@ image::images/bpmn.collapsed.call.activity.png[align="center"]
 ----
 
 因此最终 z = y+5 = x+5+5
+
+调用活动元素也可以在启动的子流程实例上使用一个自定义Flowable属性扩展，'businessKey'，来设置其businessKey。
+
+----
+<callActivity id="callSubProcess" calledElement="checkCreditProcess" activiti:businessKey="${myVariable}">
+...
+</callActivity>
+----
+
+将'inheritBusinessKey'属性设置为true，会将子流程的businessKey值设置为调用流程的businessKey的值。
+
+----
+<callActivity id="callSubProcess" calledElement="checkCreditProcess" activiti:inheritBusinessKey="true">
+...
+</callActivity>
+----
 
 
 [[bpmnCallActivityExample]]
@@ -4864,17 +4880,17 @@ image::images/bpmn.call.activity.sub.process.png[align="center"]
 
 ==== 异步延续 Asynchronous Continuations
 
-Activiti以事务方式执行流程，并可按照你的需求配置。让我们从Activiti一般如何为事务划分范围开始介绍。如果Activiti被触发（也就是说，启动流程，完成任务，为执行发送信号），Activiti将沿流程继续，直到到达每个执行路径的等待状态。更具体地说，它以深度优先方式搜索流程图，并在每个执行分支都到达等待状态时返回。等待状态是“之后”再执行的任务，意味着Activiti将当前执行持久化，并等待再次触发。触发可以来自外部来源，例如用户任务或消息接受任务，也可以来自Activiti自身，例如定时器事件。以下面的图片说明：
+Flowable以事务方式执行流程，并可按照你的需求配置。让我们从Flowable一般如何为事务划分范围开始介绍。如果Flowable被触发（也就是说，启动流程，完成任务，为执行发送信号），Flowable将沿流程继续，直到到达每个执行路径的等待状态。更具体地说，它以深度优先方式搜索流程图，并在每个执行分支都到达等待状态时返回。等待状态是“之后”再执行的任务，意味着Flowable将当前执行持久化，并等待再次触发。触发可以来自外部来源，例如用户任务或消息接受任务，也可以来自Flowable自身，例如定时器事件。以下面的图片说明：
 
 image::images/activiti.async.example.no.async.PNG[align="center"]
 
-这是一个BPMN流程的片段，有一个用户任务，一个服务任务，与一个定时器事件。完成用户任务与验证地址（validate address）在同一个工作单元内，因此需要原子性地（atomically）成功或失败。这意味着如果服务任务抛出了异常，我们会想要回滚当前事务，以便执行返回到用户任务，而用户任务仍然存在于数据库中。这也是Activit的默认行为。在（1）中，应用或客户端线程完成任务。在相同的线程中，Activiti执行服务并继续，直到到达等待状态，在这个例子中，是定时器事件（2）。然后将控制权返回至调用者（3），同时提交事务（如果事务由Activiti开启）。
+这是一个BPMN流程的片段，有一个用户任务，一个服务任务，与一个定时器事件。完成用户任务与验证地址（validate address）在同一个工作单元内，因此需要原子性地（atomically）成功或失败。这意味着如果服务任务抛出了异常，我们会想要回滚当前事务，以便执行返回到用户任务，而用户任务仍然存在于数据库中。这也是Activit的默认行为。在（1）中，应用或客户端线程完成任务。在相同的线程中，Flowable执行服务并继续，直到到达等待状态，在这个例子中，是定时器事件（2）。然后将控制权返回至调用者（3），同时提交事务（如果事务由Flowable开启）。
 
 在有的情况下，这不是我们想要的。有时我们需要在流程中，自定义地控制事务边界，以便为工作的逻辑单元划分范围。这就需要使用异步延续。考虑下面的流程（片段）：
 
 image::images/activiti.async.example.async.PNG[align="center"]
 
-这次我们完成用户任务，生成发票，并将发票发送给客户。这次发票的生成不再是同一个工作单元的一部分，因此我们不希望当发票生成失败时，回滚用户任务。因此我们希望Activiti做的，是完成用户任务（1），提交事务，并将控制权返回给调用程序。然后我们希望在后台线程中，异步地生成发票。这个后台线程就是Activiti作业执行器（事实上是一个线程池），它周期性地将作业保存至数据库。因此在幕后，当到达"generate invoice（生成发票）"任务时，会为Activiti创建“消息”作业，以继续流程，并将其持久化到数据库中。这个作业之后会被作业执行器选中并执行。我们也会为本地的作业执行器进行提示，告知其有新作业到来，以提升性能。
+这次我们完成用户任务，生成发票，并将发票发送给客户。这次发票的生成不再是同一个工作单元的一部分，因此我们不希望当发票生成失败时，回滚用户任务。因此我们希望Flowable做的，是完成用户任务（1），提交事务，并将控制权返回给调用程序。然后我们希望在后台线程中，异步地生成发票。这个后台线程就是Flowable作业执行器（事实上是一个线程池），它周期性地将作业保存至数据库。因此在幕后，当到达"generate invoice（生成发票）"任务时，会为Flowable创建“消息”作业，以继续流程，并将其持久化到数据库中。这个作业之后会被作业执行器选中并执行。我们也会为本地的作业执行器进行提示，告知其有新作业到来，以提升性能。
 
 要使用这个特性，可以使用__activiti:async="true"__扩展。因此，服务任务会像是这样：
 
@@ -4893,7 +4909,7 @@ image::images/activiti.async.example.async.PNG[align="center"]
 
 ==== 失败重试 Fail Retry
 
-默认配置下，如果作业执行中有任何异常，Activiti将3次重试执行作业。对异步任务作业也是这样。有时需要更灵活的配置。可以配置两个参数：
+默认配置下，如果作业执行中有任何异常，Flowable将3次重试执行作业。对异步任务作业也是这样。有时需要更灵活的配置。可以配置两个参数：
 
 * 重试的次数
 * 重试的间隔
@@ -4917,7 +4933,7 @@ image::images/activiti.async.example.async.PNG[align="center"]
 
 ==== 排他作业 Exclusive Jobs
 
-从Activiti 5.9开始，JobExecutor确保同一个流程实例的作业永远不会并发执行。为什么这样？
+从近期版本开始，JobExecutor确保同一个流程实例的作业永远不会并发执行。为什么这样？
 
 
 ===== 为什么排他作业？ Why exclusive Jobs?
@@ -4930,19 +4946,19 @@ image::images/bpmn.why.exclusive.jobs.png[align="center"]
 
 为什么这是问题呢？这是因为服务任务配置为使用一步延续，有可能所有相应的作业都同时被作业执行器处理，并代理至不同的工作线程。结果是服务执行的事务，与到达并行合并的3个独立执行所在的事务，会发生重叠。如果这样，每一个独立事务都“看”不到，其他事物并发地到达了同样的并行合并，并因此判断需要等待其他事务。然而，如果每个事务都判断需要等待其他事务，在并行合并后不会有继续流程的事务，而流程实例也就会永远保持这个状态。
 
-Activiti如何解决这个问题呢？Activiti使用乐观锁，基于数据进行判断，而数据可能不是当前值（因为其他事务可能在我们提交前修改了这个数据，我们确保会在每个事务中都增加同一个数据库记录行的版本号）。这样，无论哪个事务第一个提交，都将成功，而其他的会抛出乐观锁异常并失败。这解决了上面流程中讨论的问题：如果多个执行并发到达并行合并，它们都判断需要等待，增加其父执行（流程实例）的版本号，并尝试提交。无论哪个执行第一个提交，都可以成功提交，而其他的将会抛出乐观锁异常并失败。因为这些执行由作业触发，Activiti会在等待给定时间后，重试执行相同的作业，期望这一次通过这个同步的网关。
+Flowable如何解决这个问题呢？Flowable使用乐观锁，基于数据进行判断，而数据可能不是当前值（因为其他事务可能在我们提交前修改了这个数据，我们确保会在每个事务中都增加同一个数据库记录行的版本号）。这样，无论哪个事务第一个提交，都将成功，而其他的会抛出乐观锁异常并失败。这解决了上面流程中讨论的问题：如果多个执行并发到达并行合并，它们都判断需要等待，增加其父执行（流程实例）的版本号，并尝试提交。无论哪个执行第一个提交，都可以成功提交，而其他的将会抛出乐观锁异常并失败。因为这些执行由作业触发，Flowable会在等待给定时间后，重试执行相同的作业，期望这一次通过这个同步的网关。
 
-这是好的解决方案么？我们已经看到，乐观锁使Activiti能够避免不一致。它确保了我们不会“在合并网关卡住”，意味着：要么所有的执行都通过网关，要么数据库中的作业能确保可以重试通过它。然而，尽管这是一个持久化与一致性角度的完美解决方案，仍然不一定总是更高层次的理想行为：
+这是好的解决方案么？我们已经看到，乐观锁使Flowable能够避免不一致。它确保了我们不会“在合并网关卡住”，意味着：要么所有的执行都通过网关，要么数据库中的作业能确保可以重试通过它。然而，尽管这是一个持久化与一致性角度的完美解决方案，仍然不一定总是更高层次的理想行为：
 
-* Activiti只会为同一个作业，重试一个固定的最大次数（默认配置为'3'次）。在这之后，作业仍然保存在数据库中，但不会再重试。这意味着需要手动操作来触发作业。
-* 如果一个作业有非事务性的副作用，将不会由于事务失败而回滚。例如，如果"book concert tickets（预定音乐会门票）"服务与Activiti不在同一个事务中，则如果重试执行作业，将预定多张票。
+* Flowable只会为同一个作业，重试一个固定的最大次数（默认配置为'3'次）。在这之后，作业仍然保存在数据库中，但不会再重试。这意味着需要手动操作来触发作业。
+* 如果一个作业有非事务性的副作用，将不会由于事务失败而回滚。例如，如果"book concert tickets（预定音乐会门票）"服务与Flowable不在同一个事务中，则如果重试执行作业，将预定多张票。
 
 
 ===== 什么是排他作业？ What are exclusive jobs?
 
 排他作业不能与同一个流程实例中的其他排他作业同时执行。考虑上面展示的流程：如果我们将服务任务都声明为排他的，则JobExecutor将确保相关的作业都不会并发执行。相反，它将确保不论何时从特定流程实例中获取了排他作业，都将从同一个流程实例中获取所有其他的排他作业，并将它们代理至同一个工作线程。这保证了作业的顺序执行。
 
-如何启用这个特性？从Activiti 5.9起，排他作业成为默认配置。所有异步延续与定时器事件，都因此默认成为排他的。另外，如果希望作业成为非排他的，可以使用++activiti:exclusive="false"++配置。例如，下面的服务任务是异步，但非排他的。
+如何启用这个特性？从近期版本开始，排他作业成为默认配置。所有异步延续与定时器事件，都因此默认成为排他的。另外，如果希望作业成为非排他的，可以使用++activiti:exclusive="false"++配置。例如，下面的服务任务是异步，但非排他的。
 
 [source,xml,linenums]
 ----
@@ -4952,7 +4968,7 @@ Activiti如何解决这个问题呢？Activiti使用乐观锁，基于数据进�
 这是好的解决方案么？有很多人问我们这是否是好的解决方案。他们的顾虑是，这将阻止并行“操作”，因此会有性能问题。再一次，需要考虑以下两点：
 
 * 如果你是专家，并且知道你在做什么（并理解“为什么排他作业？”章节的内容），可以关掉排他。除此之外，对大多数用户来说，异步延续与定时器能够正常工作才更直观。
-* 事实上不会有性能问题。只有在重负载下才会有性能问题。重负载意味着作业执行器的所有的工作线程都一直忙碌。对于排他作业，Activiti会简单的根据负载不同进行分配。排他作业意味着同一个流程实例的作业，都将在同一个线程中顺序执行。但是请想一下：有多于一个流程实例。而其他流程实例的作业将被代理至其他线程，并将并发执行。这意味着Activiti不会并发执行同一个流程实例的排他作业，但仍然并发执行多个实例。从总吞吐量角度来看，可以期望大多数场景下都将导致独立的实例更快地完成。此外，执行同一个流程实例中下一个作业所需的数据，将已经在执行集群节点中缓存。如果作业与节点没有这种关系，则数据可能需要重新从数据库中获取。
+* 事实上不会有性能问题。只有在重负载下才会有性能问题。重负载意味着作业执行器的所有的工作线程都一直忙碌。对于排他作业，Flowable会简单的根据负载不同进行分配。排他作业意味着同一个流程实例的作业，都将在同一个线程中顺序执行。但是请想一下：有多于一个流程实例。而其他流程实例的作业将被代理至其他线程，并将并发执行。这意味着Flowable不会并发执行同一个流程实例的排他作业，但仍然并发执行多个实例。从总吞吐量角度来看，可以期望大多数场景下都将导致独立的实例更快地完成。此外，执行同一个流程实例中下一个作业所需的数据，将已经在执行集群节点中缓存。如果作业与节点没有这种关系，则数据可能需要重新从数据库中获取。
 
 
 [[security]]
@@ -4960,7 +4976,7 @@ Activiti如何解决这个问题呢？Activiti使用乐观锁，基于数据进�
 
 === 流程启动认证 Process Initiation Authorization
 
-默认情况下，任何人都可以启动已部署流程定义的新流程实例。流程启动认证功能可以定义用户与组，这样Web客户端可以选择性的限制能够启动新流程实例的用户。请注意Activiti引擎**不会**用任何方式验证认证定义。这个功能只是为了开发人员可以简化Web客户端认证规则的实现。语法与为用户任务指派用户的语法类似。可以使用<activiti:potentialStarter>标签，将用户或组指派为流程的潜在启动者。这里有一个例子：
+默认情况下，任何人都可以启动已部署流程定义的新流程实例。流程启动认证功能可以定义用户与组，这样Web客户端可以选择性的限制能够启动新流程实例的用户。请注意Flowable引擎**不会**用任何方式验证认证定义。这个功能只是为了开发人员可以简化Web客户端认证规则的实现。语法与为用户任务指派用户的语法类似。可以使用<activiti:potentialStarter>标签，将用户或组指派为流程的潜在启动者。这里有一个例子：
 
 [source,xml,linenums]
 ----
@@ -5024,7 +5040,7 @@ List<Group> authorizedGroups =  identityService().createGroupQuery().potentialSt
 
 <<experimental,[EXPERIMENTAL]>>
 
-BPMN提供了将数据对象定义为流程或子流程元素的一部分的可能性。根据BPMN规范，可以包含复杂的XML结构，并可以从XSD定义中引入。作为Activiti支持的第一批数据对象，支持下列XSD类型：
+BPMN提供了将数据对象定义为流程或子流程元素的一部分的可能性。根据BPMN规范，可以包含复杂的XML结构，并可以从XSD定义中引入。作为Flowable支持的第一批数据对象，支持下列XSD类型：
 
 [source,xml,linenums]
 ----
@@ -5036,7 +5052,7 @@ BPMN提供了将数据对象定义为流程或子流程元素的一部分的可�
 <dataObject id="dObj6" name="LongTest" itemSubjectRef="xsd:long"/>
 ----
 
-数据对象的定义，将使用'name'属性值作为新变量的名字，自动转换为流程变量。另外，Activiti也提供了扩展元素，用于为变量设置默认值。下面的BPMN代码片段提供了示例：
+数据对象的定义，将使用'name'属性值作为新变量的名字，自动转换为流程变量。另外，Flowable也提供了扩展元素，用于为变量设置默认值。下面的BPMN代码片段提供了示例：
 
 [source,xml,linenums]
 ----
