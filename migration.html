@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.5">
+<title>Activiti Migraton Guide : Activiti v5 to Activiti v6</title>
+<style>
+
+/* normalize.css */
+
+button,hr,input{overflow:visible}audio,canvas,progress,video{display:inline-block}progress,sub,sup{vertical-align:baseline}html{font-family:sans-serif;line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0} menu,article,aside,details,footer,header,nav,section{display:block}h1{font-size:2em;margin:.67em 0}figcaption,figure,main{display:block}figure{margin:1em 40px}hr{box-sizing:content-box;height:0}code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em}a{background-color:transparent;-webkit-text-decoration-skip:objects}a:active,a:hover{outline-width:0}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:bolder}dfn{font-style:italic}mark{background-color:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}audio:not([controls]){display:none;height:0}img{border-style:none}svg:not(:root){overflow:hidden}button,input,optgroup,select,textarea{font-family:sans-serif;font-size:100%;line-height:1.15;margin:0}button,input{}button,select{text-transform:none}[type=submit], [type=reset],button,html [type=button]{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:ButtonText dotted 1px}fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-cancel-button,[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}[hidden],template{display:none}/*# sourceMappingURL=normalize.min.css.map */
+
+/* tocbot 2.1.4 */
+
+.toc{overflow-y:auto}.toc>ul{overflow:hidden;position:relative}.toc-list{margin:0;padding-left:10px}a.toc-link{color:currentColor;height:100%}.is-collapsible{max-height:1000px;overflow:hidden;transition:all 300ms ease-in-out}.is-collapsed{max-height:0}.is-position-fixed{position:fixed !important;top:0}.is-active-link{font-weight:700}.toc-link::before{background-color:#f9f9fb;content:' ';display:inline-block;height:inherit;left:8px;margin-top:-1px;position:absolute;width:2px}.is-active-link::before{background-color:#54BC4B}
+
+
+/* Activiti Specific */
+
+body {
+  color: #494d55;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  background: #f9f9f9;
+  font-family: "Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
+  font color: #484848
+}
+
+.page-wrapper {
+  min-height: 100%;
+  /* equal to footer height */
+  margin-bottom: -50px;
+}
+
+.page-wrapper:after {
+  content: "";
+  display: block;
+  height: 50px;
+}
+
+#header {
+  position:fixed;
+  top:0px;
+  z-index:100000;
+  width:100%;
+}
+
+#header > h1 {
+    background: #a0cc47;
+    color: #f9f9f9;
+    border-bottom: 2px solid #042944;
+    padding: 20px 0 20px 20px;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0;
+}
+
+#header > h1:before {
+  background:url('images/logo.png');
+  background-size: 337px 54px; background-repeat: no-repeat;
+  width: 337px;
+  height: 54px;
+  display:inline-block;
+  content:'';
+  margin-right: 30px;
+}
+
+#author {
+  margin-left: 25%;
+  font-size: 40px;
+}
+
+#content {
+  margin: 129px 0 0 27%;
+  padding: 10px 40px 0 20px;
+  padding-right: 40px;
+  line-height: 1.7;
+  width: 65%;
+  overflow-x: auto;
+}
+
+h2, h3, h4 {
+  color: #00345a;
+}
+
+h2 {
+  font-size: 26px;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-weight: bold;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d7d7d7;
+}
+
+h3 {
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-weight: bold;
+  padding-bottom: 10px;
+  /*border-bottom: 1px solid #d7d7d7;*/
+}
+
+.sect1, .sect2 {
+  margin-bottom: 20px;
+}
+
+.clear
+{
+  clear: both;
+}
+
+.note, .listingblock{
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-bottom: 14px;
+  background-color: #f7f7f9;
+  border: 1px solid #e1e1e8;
+  border-radius: 4px;
+  color: #808080;
+}
+
+table.tableblock {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 20px;
+  background-color: transparent;
+  border-spacing: 0;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  table-layout: fixed;
+}
+
+table.tableblock>caption+thead>tr:first-child>td, table.tableblock>caption+thead>tr:first-child>th, table.tableblock>colgroup+thead>tr:first-child>td, table.tableblock>colgroup+thead>tr:first-child>th, table.tableblock>thead:first-child>tr:first-child>td, table.tableblock>thead:first-child>tr:first-child>th {
+    border-top: 0;
+}
+
+table.tableblock > thead > tr > th {
+    border-bottom-color: #8bd6d8;
+}
+
+table.tableblock>thead>tr>th {
+    vertical-align: bottom;
+    border-bottom: 1px solid #ddd;
+}
+
+table.tableblock>tbody>tr>td, table.tableblock>tbody>tr>th, table.tableblock>tfoot>tr>td, table.tableblock>tfoot>tr>th, table.tableblock>thead>tr>td, table.tableblock>thead>tr>th {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+}
+
+th {
+    text-align: left;
+}
+
+table.tableblock > tbody > tr:nth-of-type(odd) {
+    background-color: #f5f5f5;
+}
+
+table.tableblock > tbody > tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
+
+td > p {
+  margin:0;
+}
+
+td.content {
+  white-space: normal;
+}
+
+pre, td, th {
+   white-space: pre-wrap;
+   white-space: -moz-pre-wrap;
+   white-space: -pre-wrap;
+   white-space: -o-pre-wrap;
+   word-wrap: break-word;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  color: #007387;
+}
+
+a:hover {
+  color: #004c59;
+}
+
+#toc-parent {
+  width: 25%;
+  float: left;
+  height: 100%;
+  overflow-y: auto;
+  position: fixed;
+  padding: 10px;
+  border-right: 1px solid #ccc;
+}
+
+#generated-toc {
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+}
+
+.toc-link {
+  text-decoration: none;
+}
+
+.toc-list {
+  margin: 0 20px 0 10px;
+}
+
+.toc-list-item {
+  padding: 4px 0 4px 0;
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<style>
+.listingblock .pygments .hll { background-color: #ffffcc }
+.listingblock .pygments, .listingblock .pygments code { background: #f8f8f8; }
+.listingblock .pygments .tok-c { color: #408080; font-style: italic } /* Comment */
+.listingblock .pygments .tok-err { border: 1px solid #FF0000 } /* Error */
+.listingblock .pygments .tok-k { color: #008000; font-weight: bold } /* Keyword */
+.listingblock .pygments .tok-o { color: #666666 } /* Operator */
+.listingblock .pygments .tok-cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.listingblock .pygments .tok-cp { color: #BC7A00 } /* Comment.Preproc */
+.listingblock .pygments .tok-c1 { color: #408080; font-style: italic } /* Comment.Single */
+.listingblock .pygments .tok-cs { color: #408080; font-style: italic } /* Comment.Special */
+.listingblock .pygments .tok-gd { color: #A00000 } /* Generic.Deleted */
+.listingblock .pygments .tok-ge { font-style: italic } /* Generic.Emph */
+.listingblock .pygments .tok-gr { color: #FF0000 } /* Generic.Error */
+.listingblock .pygments .tok-gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.listingblock .pygments .tok-gi { color: #00A000 } /* Generic.Inserted */
+.listingblock .pygments .tok-go { color: #888888 } /* Generic.Output */
+.listingblock .pygments .tok-gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.listingblock .pygments .tok-gs { font-weight: bold } /* Generic.Strong */
+.listingblock .pygments .tok-gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.listingblock .pygments .tok-gt { color: #0044DD } /* Generic.Traceback */
+.listingblock .pygments .tok-kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.listingblock .pygments .tok-kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.listingblock .pygments .tok-kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.listingblock .pygments .tok-kp { color: #008000 } /* Keyword.Pseudo */
+.listingblock .pygments .tok-kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.listingblock .pygments .tok-kt { color: #B00040 } /* Keyword.Type */
+.listingblock .pygments .tok-m { color: #666666 } /* Literal.Number */
+.listingblock .pygments .tok-s { color: #BA2121 } /* Literal.String */
+.listingblock .pygments .tok-na { color: #7D9029 } /* Name.Attribute */
+.listingblock .pygments .tok-nb { color: #008000 } /* Name.Builtin */
+.listingblock .pygments .tok-nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.listingblock .pygments .tok-no { color: #880000 } /* Name.Constant */
+.listingblock .pygments .tok-nd { color: #AA22FF } /* Name.Decorator */
+.listingblock .pygments .tok-ni { color: #999999; font-weight: bold } /* Name.Entity */
+.listingblock .pygments .tok-ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.listingblock .pygments .tok-nf { color: #0000FF } /* Name.Function */
+.listingblock .pygments .tok-nl { color: #A0A000 } /* Name.Label */
+.listingblock .pygments .tok-nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.listingblock .pygments .tok-nt { color: #008000; font-weight: bold } /* Name.Tag */
+.listingblock .pygments .tok-nv { color: #19177C } /* Name.Variable */
+.listingblock .pygments .tok-ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.listingblock .pygments .tok-w { color: #bbbbbb } /* Text.Whitespace */
+.listingblock .pygments .tok-mb { color: #666666 } /* Literal.Number.Bin */
+.listingblock .pygments .tok-mf { color: #666666 } /* Literal.Number.Float */
+.listingblock .pygments .tok-mh { color: #666666 } /* Literal.Number.Hex */
+.listingblock .pygments .tok-mi { color: #666666 } /* Literal.Number.Integer */
+.listingblock .pygments .tok-mo { color: #666666 } /* Literal.Number.Oct */
+.listingblock .pygments .tok-sb { color: #BA2121 } /* Literal.String.Backtick */
+.listingblock .pygments .tok-sc { color: #BA2121 } /* Literal.String.Char */
+.listingblock .pygments .tok-sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.listingblock .pygments .tok-s2 { color: #BA2121 } /* Literal.String.Double */
+.listingblock .pygments .tok-se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.listingblock .pygments .tok-sh { color: #BA2121 } /* Literal.String.Heredoc */
+.listingblock .pygments .tok-si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.listingblock .pygments .tok-sx { color: #008000 } /* Literal.String.Other */
+.listingblock .pygments .tok-sr { color: #BB6688 } /* Literal.String.Regex */
+.listingblock .pygments .tok-s1 { color: #BA2121 } /* Literal.String.Single */
+.listingblock .pygments .tok-ss { color: #19177C } /* Literal.String.Symbol */
+.listingblock .pygments .tok-bp { color: #008000 } /* Name.Builtin.Pseudo */
+.listingblock .pygments .tok-vc { color: #19177C } /* Name.Variable.Class */
+.listingblock .pygments .tok-vg { color: #19177C } /* Name.Variable.Global */
+.listingblock .pygments .tok-vi { color: #19177C } /* Name.Variable.Instance */
+.listingblock .pygments .tok-il { color: #666666 } /* Literal.Number.Integer.Long */
+</style>
+<script type="text/javascript">
+
+/*
+ * Tocbot.min.js version 2.1.4
+ */
+
+ !function(e){function t(o){if(n[o])return n[o].exports;var i=n[o]={exports:{},id:o,loaded:!1};return e[o].call(i.exports,i,i.exports,t),i.loaded=!0,i.exports}var n={};return t.m=e,t.c=n,t.p="",t(0)}([/*!*************************!*\
+   !*** ./src/js/index.js ***!
+   \*************************/
+ function(e,t,n){var o,i,r;(function(l){!function(n,l){i=[],o=l(n),r="function"==typeof o?o.apply(t,i):o,!(void 0!==r&&(e.exports=r))}("undefined"!=typeof l?l:this.window||this.global,function(e){"use strict";function t(){for(var e={},t=0;t<arguments.length;t++){var n=arguments[t];for(var o in n)h.call(n,o)&&(e[o]=n[o])}return e}function o(e,t,n){t||(t=250);var o,i;return function(){var r=n||this,l=+new Date,s=arguments;o&&l<o+t?(clearTimeout(i),i=setTimeout(function(){o=l,e.apply(r,s)},t)):(o=l,e.apply(r,s))}}var i,r,l,s=n(/*! smooth-scroll */1),c=n(/*! ./default-options.js */2),a={},u={},d=n(/*! ./build-html.js */3),f=n(/*! ./parse-content.js */4),m=(e.document,document.body,!!e.document.querySelector&&!!e.addEventListener),h=Object.prototype.hasOwnProperty;return u.destroy=function(){try{document.querySelector(a.tocSelector).innerHTML=""}catch(e){console.warn("Element not found: "+a.tocSelector)}document.removeEventListener("scroll",this._scrollListener,!1),document.removeEventListener("resize",this._scrollListener,!1),i&&document.removeEventListener("click",this._clickListener,!1),s&&s.destroy()},u.init=function(e){if(m&&(a=t(c,e||{}),this.options=a,this.state={},i=d(a),r=f(a),this._buildHtml=i,this._parseContent=r,u.destroy(),l=r.selectHeadings(a.contentSelector,a.headingSelector),null!==l)){var n=r.nestHeadingsArray(l),h=n.nest;return i.render(a.tocSelector,h),this._scrollListener=o(function(){i.updateToc(l)},a.throttleTimeout),this._scrollListener(),document.addEventListener("scroll",this._scrollListener,!1),document.addEventListener("resize",this._scrollListener,!1),this._clickListener=o(function(e){i.disableTocAnimation(e),i.updateToc(l)},a.throttleTimeout),document.addEventListener("click",this._clickListener,!1),s&&(this.smoothScroll=s.init(t(a.smoothScrollOptions,{callback:i.enableTocAnimation}))),this}},u.refresh=function(e){u.destroy(),u.init(e||this.options)},e.tocbot=u,u})}).call(t,function(){return this}())},/*!******************************************************!*\
+   !*** ./~/smooth-scroll/dist/js/smooth-scroll.min.js ***!
+   \******************************************************/
+ function(e,t,n){var o,i,r;(function(n){/*! smooth-scroll v10.0.1 | (c) 2016 Chris Ferdinandi | MIT License | http://github.com/cferdinandi/smooth-scroll */
+ !function(n,l){i=[],o=l(n),r="function"==typeof o?o.apply(t,i):o,!(void 0!==r&&(e.exports=r))}("undefined"!=typeof n?n:this.window||this.global,function(e){"use strict";var t,n,o,i,r,l,s,c={},a="querySelector"in document&&"addEventListener"in e,u={selector:"[data-scroll]",selectorHeader:null,speed:500,easing:"easeInOutCubic",offset:0,callback:function(){}},d=function(){var e={},t=!1,n=0,o=arguments.length;"[object Boolean]"===Object.prototype.toString.call(arguments[0])&&(t=arguments[0],n++);for(var i=function(n){for(var o in n)Object.prototype.hasOwnProperty.call(n,o)&&(t&&"[object Object]"===Object.prototype.toString.call(n[o])?e[o]=d(!0,e[o],n[o]):e[o]=n[o])};o>n;n++){var r=arguments[n];i(r)}return e},f=function(e){return Math.max(e.scrollHeight,e.offsetHeight,e.clientHeight)},m=function(e,t){var n,o,i=t.charAt(0),r="classList"in document.documentElement;for("["===i&&(t=t.substr(1,t.length-2),n=t.split("="),n.length>1&&(o=!0,n[1]=n[1].replace(/"/g,"").replace(/'/g,"")));e&&e!==document&&1===e.nodeType;e=e.parentNode){if("."===i)if(r){if(e.classList.contains(t.substr(1)))return e}else if(new RegExp("(^|\\s)"+t.substr(1)+"(\\s|$)").test(e.className))return e;if("#"===i&&e.id===t.substr(1))return e;if("["===i&&e.hasAttribute(n[0])){if(!o)return e;if(e.getAttribute(n[0])===n[1])return e}if(e.tagName.toLowerCase()===t)return e}return null},h=function(e){"#"===e.charAt(0)&&(e=e.substr(1));for(var t,n=String(e),o=n.length,i=-1,r="",l=n.charCodeAt(0);++i<o;){if(t=n.charCodeAt(i),0===t)throw new InvalidCharacterError("Invalid character: the input contains U+0000.");r+=t>=1&&31>=t||127==t||0===i&&t>=48&&57>=t||1===i&&t>=48&&57>=t&&45===l?"\\"+t.toString(16)+" ":t>=128||45===t||95===t||t>=48&&57>=t||t>=65&&90>=t||t>=97&&122>=t?n.charAt(i):"\\"+n.charAt(i)}return"#"+r},p=function(e,t){var n;return"easeInQuad"===e&&(n=t*t),"easeOutQuad"===e&&(n=t*(2-t)),"easeInOutQuad"===e&&(n=.5>t?2*t*t:-1+(4-2*t)*t),"easeInCubic"===e&&(n=t*t*t),"easeOutCubic"===e&&(n=--t*t*t+1),"easeInOutCubic"===e&&(n=.5>t?4*t*t*t:(t-1)*(2*t-2)*(2*t-2)+1),"easeInQuart"===e&&(n=t*t*t*t),"easeOutQuart"===e&&(n=1- --t*t*t*t),"easeInOutQuart"===e&&(n=.5>t?8*t*t*t*t:1-8*--t*t*t*t),"easeInQuint"===e&&(n=t*t*t*t*t),"easeOutQuint"===e&&(n=1+--t*t*t*t*t),"easeInOutQuint"===e&&(n=.5>t?16*t*t*t*t*t:1+16*--t*t*t*t*t),n||t},v=function(e,t,n){var o=0;if(e.offsetParent)do o+=e.offsetTop,e=e.offsetParent;while(e);return o=Math.max(o-t-n,0),Math.min(o,b()-g())},g=function(){return Math.max(document.documentElement.clientHeight,e.innerHeight||0)},b=function(){return Math.max(document.body.scrollHeight,document.documentElement.scrollHeight,document.body.offsetHeight,document.documentElement.offsetHeight,document.body.clientHeight,document.documentElement.clientHeight)},C=function(e){return e&&"object"==typeof JSON&&"function"==typeof JSON.parse?JSON.parse(e):{}},S=function(e){return e?f(e)+e.offsetTop:0},y=function(t,n,o){o||(t.focus(),document.activeElement.id!==t.id&&(t.setAttribute("tabindex","-1"),t.focus(),t.style.outline="none"),e.scrollTo(0,n))};c.animateScroll=function(n,o,l){var c=C(o?o.getAttribute("data-options"):null),a=d(t||u,l||{},c),f="[object Number]"===Object.prototype.toString.call(n),m=f||!n.tagName?null:n;if(f||m){var h=e.pageYOffset;a.selectorHeader&&!i&&(i=document.querySelector(a.selectorHeader)),r||(r=S(i));var g,x,N=f?n:v(m,r,parseInt(a.offset,10)),L=N-h,O=b(),E=0,A=function(t,i,r){var l=e.pageYOffset;(t==i||l==i||e.innerHeight+l>=O)&&(clearInterval(r),y(n,i,f),a.callback(n,o))},H=function(){E+=16,g=E/parseInt(a.speed,10),g=g>1?1:g,x=h+L*p(a.easing,g),e.scrollTo(0,Math.floor(x)),A(x,N,s)},T=function(){clearInterval(s),s=setInterval(H,16)};0===e.pageYOffset&&e.scrollTo(0,0),T()}};var x=function(t){e.location.hash,n&&(n.id=n.getAttribute("data-scroll-id"),c.animateScroll(n,o),n=null,o=null)},N=function(i){if(0===i.button&&!i.metaKey&&!i.ctrlKey&&(o=m(i.target,t.selector),o&&"a"===o.tagName.toLowerCase()&&o.hostname===e.location.hostname&&o.pathname===e.location.pathname&&/#/.test(o.href))){var r=h(o.hash);if("#"===r){i.preventDefault(),n=document.body;var l=n.id?n.id:"smooth-scroll-top";return n.setAttribute("data-scroll-id",l),n.id="",void(e.location.hash.substring(1)===l?x():e.location.hash=l)}n=document.querySelector(r),n&&(n.setAttribute("data-scroll-id",n.id),n.id="",o.hash===e.location.hash&&(i.preventDefault(),x()))}},L=function(e){l||(l=setTimeout(function(){l=null,r=S(i)},66))};return c.destroy=function(){t&&(document.removeEventListener("click",N,!1),e.removeEventListener("resize",L,!1),t=null,n=null,o=null,i=null,r=null,l=null,s=null)},c.init=function(n){a&&(c.destroy(),t=d(u,n||{}),i=t.selectorHeader?document.querySelector(t.selectorHeader):null,r=S(i),document.addEventListener("click",N,!1),e.addEventListener("hashchange",x,!1),i&&e.addEventListener("resize",L,!1))},c})}).call(t,function(){return this}())},/*!***********************************!*\
+   !*** ./src/js/default-options.js ***!
+   \***********************************/
+ function(e,t){e.exports={tocSelector:".js-toc",contentSelector:".js-toc-content",headingSelector:"h1, h2, h3",ignoreSelector:".js-toc-ignore",linkClass:"toc-link",extraLinkClasses:"",activeLinkClass:"is-active-link",listClass:"toc-list",extraListClasses:"",isCollapsedClass:"is-collapsed",collapsibleClass:"is-collapsible",listItemClass:"toc-list-item",collapseDepth:0,smoothScrollOptions:{easing:"easeInOutCubic",offset:0,speed:300,updateURL:!0},headingsOffset:0,throttleTimeout:50,positionFixedSelector:null,positionFixedClass:"is-position-fixed",fixedSidebarOffset:"auto",includeHtml:!1}},/*!******************************!*\
+   !*** ./src/js/build-html.js ***!
+   \******************************/
+ function(e,t){e.exports=function(e){function t(e,n){var r=n.appendChild(o(e));if(e.children.length){var l=i(e.isCollapsed);e.children.forEach(function(e){t(e,l)}),r.appendChild(l)}}function n(e,n){var o=!1,r=i(o);n.forEach(function(e){t(e,r)});var l=document.querySelector(e);if(null!==l)return l.firstChild&&l.removeChild(l.firstChild),l.appendChild(r)}function o(t){var n=document.createElement("li"),o=document.createElement("a");return e.listItemClass&&n.setAttribute("class",e.listItemClass),e.includeHtml&&t.childNodes.length?u.call(t.childNodes,function(e){o.appendChild(e.cloneNode(!0))}):o.textContent=t.textContent,o.setAttribute("data-scroll",""),o.setAttribute("href","#"+t.id),o.setAttribute("class",e.linkClass+h+"node-name--"+t.nodeName+h+e.extraLinkClasses),n.appendChild(o),n}function i(t){var n=document.createElement("ul"),o=e.listClass+h+e.extraListClasses;return t&&(o+=h+e.collapsibleClass,o+=h+e.isCollapsedClass),n.setAttribute("class",o),n}function r(){var t=document.documentElement.scrollTop||f.scrollTop,n=document.querySelector(e.positionFixedSelector);"auto"===e.fixedSidebarOffset&&(e.fixedSidebarOffset=document.querySelector(e.tocSelector).offsetTop),t>e.fixedSidebarOffset?n.className.indexOf(e.positionFixedClass)===-1&&(n.className+=h+e.positionFixedClass):n.className=n.className.split(h+e.positionFixedClass).join("")}function l(t){var n=document.documentElement.scrollTop||f.scrollTop;e.positionFixedSelector&&r();var o,i=t;if(m&&null!==document.querySelector(e.tocSelector)&&i.length>0){d.call(i,function(t,r){if(t.offsetTop>n+e.headingsOffset){var l=0===r?r:r-1;return o=i[l],!0}if(r===i.length-1)return o=i[i.length-1],!0});var l=document.querySelector(e.tocSelector).querySelectorAll("."+e.linkClass);u.call(l,function(t){t.className=t.className.split(h+e.activeLinkClass).join("")});var c=document.querySelector(e.tocSelector).querySelector("."+e.linkClass+".node-name--"+o.nodeName+'[href="#'+o.id+'"]');c.className+=h+e.activeLinkClass;var a=document.querySelector(e.tocSelector).querySelectorAll("."+e.listClass+"."+e.collapsibleClass);u.call(a,function(t){var n=h+e.isCollapsedClass;t.className.indexOf(n)===-1&&(t.className+=h+e.isCollapsedClass)}),c.nextSibling&&(c.nextSibling.className=c.nextSibling.className.split(h+e.isCollapsedClass).join("")),s(c.parentNode.parentNode)}}function s(t){return t.className.indexOf(e.collapsibleClass)!==-1?(t.className=t.className.split(h+e.isCollapsedClass).join(""),s(t.parentNode.parentNode)):t}function c(t){var n=t.target||t.srcElement;n.className.indexOf(e.linkClass)!==-1&&(m=!1)}function a(){m=!0}var u=[].forEach,d=[].some,f=document.body,m=!0,h=" ";return{enableTocAnimation:a,disableTocAnimation:c,render:n,updateToc:l}}},/*!*********************************!*\
+   !*** ./src/js/parse-content.js ***!
+   \*********************************/
+ function(e,t){e.exports=function(e){function t(e){return e[e.length-1]}function n(e){return+e.nodeName.split("H").join("")}function o(t){var o={id:t.id,children:[],nodeName:t.nodeName,headingLevel:n(t),textContent:t.textContent.trim()};return e.includeHtml&&(o.childNodes=t.childNodes),o}function i(i,r){for(var l=o(i),s=n(i),c=r,a=t(c),u=a?a.headingLevel:0,d=s-u;d>0;)a=t(c),a&&void 0!==a.children&&(c=a.children),d--;return s>=e.collapseDepth&&(l.isCollapsed=!0),c.push(l),c}function r(t,n){var o=n;e.ignoreSelector&&(o=n.split(",").map(function(t){return t.trim()+":not("+e.ignoreSelector+")"}));try{return document.querySelector(t).querySelectorAll(o)}catch(i){return console.warn("Element not found: "+t),null}}function l(e){return s.call(e,function(e,t){var n=o(t);return i(n,e.nest),e},{nest:[]})}var s=[].reduce;return{nestHeadingsArray:l,selectHeadings:r}}}]);
+ //# sourceMappingURL=tocbot.min.js.map
+
+</script>
+
+<script type="text/javascript">
+
+  var generateToc = function() {
+    console.log(new Date() + 'Generate toc ' + document.readyState);
+    var readyState = document.readyState;
+    if (readyState === 'interactive' || readyState == 'complete') {
+
+      var headerSize = 140;
+
+      var tocParentNode = document.createElement("div");
+      tocParentNode.setAttribute("id", "toc-parent");
+
+      var generatedTocNode = document.createElement("div");
+      generatedTocNode.setAttribute("id", "generated-toc");
+      tocParentNode.appendChild(generatedTocNode);
+
+      var contentNode = document.getElementById("content");
+      contentNode.parentNode.insertBefore(tocParentNode, contentNode);
+
+      var clearNode = document.createElement("div");
+      clearNode.setAttribute("class", "clear");
+      contentNode.parentNode.appendChild(clearNode);
+
+      tocbot.init({
+        tocSelector: '#generated-toc',
+        contentSelector: '#content',
+        headingSelector: 'h2, h3, h4',
+        headingsOffset: headerSize,
+        smoothScrollOptions: {
+          easing: 'easeInOutCubic',
+          offset: headerSize,
+          speed: 300, // animation duration.
+          updateURL: true
+        },
+        collapseDepth: 0
+      });
+
+    } else {
+      console.log('Timeout');
+      window.setTimeout(function(){
+        generateToc();
+      }, 50);
+    }
+
+  }
+  generateToc();
+
+</script>
+</head>
+<body class="book">
+<div id="header">
+<h1>Activiti Migraton Guide : Activiti v5 to Activiti v6</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introduction">1. Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This guide describes the various things that are needed when migrating from Activiti v 5.x to Activiti version 6. This is a preliminary version of the migration guide, which will be updated while alpha/beta releases of Activiti v6 are being pushed out. As it goes with such releases, many things can still change on the road to a stable version. At that point, the migration guide will be formalized and the regular user guide will be updated to reflect all the features and capabilities in Activiti v6, as was the case for Activiti v5.</p>
+</div>
+<div class="paragraph">
+<p><strong>This current Activiti v6 release is for testing purposes only! Do not use in production yet.</strong> The main goal of this release is to gather feedback, report issues and to have people test out their process definitions on v6. Of course, as before, all contributions are more than welcomed through our Github page. The Activiti v6 code lives currently <a href="https://github.com/Activiti/Activiti/tree/activiti6">on the <em>activiti6</em> branch</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_design_goals">2. Design goals</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The design goals of version 6 are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Complete backwards compatibility with version 5: database-wise, concept-wise and code-wise.</p>
+</li>
+<li>
+<p>Rewrite of the core engine: direct execution of BPMN 2.0 (vs transformation to intermediate model)</p>
+</li>
+<li>
+<p>Simpler and cleaner runtime execution data structure, where predictability of the structure is crucial</p>
+</li>
+<li>
+<p>Decoupling of persistence layers for future possible different implementations</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_database_migration">3. Database migration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There is no database migration when moving from v5 to v6: the database schema is the same for v5 and v6. All data produced by Activiti v5 can simply remain in the database. When the v6 engine is started for the first time, it will do an automatic update (as with any v5 version) to the schema. Besides some small schema changes, the main update is the job table that has been split up in a job, timer job, suspended job and dead letter job table.
+The timer jobs that are not yet due, will be moved to the new timer table. Jobs with no more retries left will be moved to the dead letter job table and jobs for suspended process instances will be moved to the suspended job table.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conceptual_changes">4. Conceptual changes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The main reason for calling this activiti version <em>6</em> is because the core engine has been completely rewritten. The way core engine operations are executed has changed completely, along with a direct execution of BPMN (in V5 there is an intermediate model). Also the way runtime executions are represented (the <em>execution tree</em>) changed. In general, both areas have been simplified significantly, making execution simpler and clearer while also making the writing of custom behavior easier and more accessible.</p>
+</div>
+<div class="paragraph">
+<p>In the future, we&#8217;ll describe the inner workings of the engine in detail. An introduction to the version 6 basics can be found at the <a href="http://www.jorambarrez.be/blog/2015/06/18/activiti-6-launch/">Activiti 6 launch recording</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_breaking_changes">5. Breaking changes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following changes are breaking changes (ie there will be a compile error most likely)..</p>
+</div>
+<div class="sect2">
+<h3 id="_pvm_classes">5.1. PVM classes</h3>
+<div class="paragraph">
+<p>All classes from the org.activiti.engine.impl.pvm package (and subpackages) have been removed. This is because the <em>PVM</em> (Process Virtual Machine) model has been removed and replaced by a simpler and more lightweight model.</p>
+</div>
+<div class="paragraph">
+<p>This means that usages of <em>ActivitiImpl</em>, <em>ProcessDefinitionImpl</em>, <em>ExecutionImpl</em>, <em>TransitionImpl</em> are invalid.</p>
+</div>
+<div class="paragraph">
+<p>Generally, most of the usage of these classes in version 5 came down to getting information that was contained in the process definition. In version 6, all the process definition information can be found through the <em>BpmnModel</em>, which is a Java representation of the BPMN 2.0 XML for the process definition (enhanced to make certain operations and searches easier).</p>
+</div>
+<div class="paragraph">
+<p>The quickest way to get the <em>BpmnModel</em> for a process definition is to use the org.activiti.engine.impl.util.ProcessDefinitionUtil class:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// The whole model
+ProcessDefinitionUtil.getBpmnModel(String processDefinitionId);
+
+// Only the specific process definition
+ProcessDefinitionUtil.getProcess(String processDefinitionId);</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_activityexecution_is_replaced_by_delegateexecution">5.2. ActivityExecution is replaced by DelegateExecution</h3>
+<div class="paragraph">
+<p>We removed ActivityExecution and replaced it where used with the DelegateExecution class.</p>
+</div>
+<div class="paragraph">
+<p>All methods from the ActivityExecution class are copied to the DelegateExecution class.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_job_timer_suspended_and_dead_letter_jobs">5.3. Job, timer, suspended and dead letter jobs</h3>
+<div class="paragraph">
+<p>Activiti 5 had only 1 job table and this meant that a fairly complex query had to be executed to get the jobs that needed to be executed from the database.</p>
+</div>
+<div class="paragraph">
+<p>With Activiti 6, the jobs have been split up in a job (ACT_RU_JOB), timer (ACT_RU_TIMER_JOB), suspended (ACT_RU_SUSPENDED_JOB), and (ACT_RU_DEADLETTER_JOB) dead letter table.
+Jobs in the job table can be directly executed (like asynchronous jobs and due timer jobs). So there&#8217;s no need for a complex query anymore, the only where clause is a lock time column that should be NULL.
+Timer jobs are now persisted in a dedicated timer jobs table and there&#8217;s a Runnable that checks for timer jobs due to execute. When a timer job is due to be executed, the job will be moved to the job table.
+When the job executor Runnable is ready to execute the job it will be fetched from the job table and executed.
+When a process definition and process instance is suspended, the corresponding jobs will be moved to a separate suspended job table. This simplifies the job executor query and makes it very clear which jobs are suspended.
+If a job execution fails, the job will be placed in the timer job table with a due date that&#8217;s set to current time + the async failed job wait time configured on the process engine configuration.
+When the job is due to be executed it will be moved to the job table again and be executed. When the number of retries is down to zero, the job will be moved to the dead letter table and no automatic execution will be performed.
+This also simplifies the default job executor queries and makes it obvious which jobs are stuck and might need manual intervention.</p>
+</div>
+<div class="paragraph">
+<p>The embedded Activiti 5 engine in Activiti 6 works with these 4 job tables as well. But there&#8217;s only one threadpool fetching jobs from the database. When a job is fetched from the database, the engine version for the job is checked based on the process definition id, and the job is executed by the Activiti 6 or embedded Activiti 5 Engine.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_signaling_an_execution">5.4. Signaling an execution</h3>
+<div class="paragraph">
+<p>In version 5, there always was confusion about <em>signaling an execution</em>, when using for example <em>runtimeService.signal(executionI);</em>. As a <em>signal</em> is a valid BPMN 2.0 concept and feature, it conflicts conceptually.</p>
+</div>
+<div class="paragraph">
+<p>In version 6, the <em>signal()</em> methods have been renamed to <em>trigger()</em>..</p>
+</div>
+<div class="paragraph">
+<p>This also means that <em>SignalableActivityBehavior</em>, the interface to be implemented for behaviors that can be <em>triggered</em> from external sources, is now called <em>TriggerableActivityBehavior</em>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_checked_exceptions">5.5. Checked Exceptions</h3>
+<div class="paragraph">
+<p>In version 5, the delegate classes like <em>JavaDelegate</em> and <em>ActivityBevior</em> had <em>throws Exception</em> in their signature. As with any modern framework, the use of checked Exceptions has been removed in version 6.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_delegate_classes">5.6. Delegate classes</h3>
+<div class="paragraph">
+<p><em>org.activiti.engine.impl.pvm.delegate.ActivityBehavior</em> has changed package and lives now in <em>org.activiti.engine.impl.delegate</em>.</p>
+</div>
+<div class="paragraph">
+<p>The following methods have been removed from <em>DelegateExecution</em>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>end()</p>
+</li>
+<li>
+<p>createdExecution()</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>They have been replaced by calls to the ExecutionEntityManager, which can be fetched through Context.getCommandContext.getExecutionEntityManager().</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_entitymanagers">5.7. EntityManagers</h3>
+<div class="paragraph">
+<p>In Activiti version 5, all EntityManager (responsible for persistence but also certain logic) classes did not have an interface. In version 6, all EntityManager classes have been renamed to have <em>Impl</em> as suffix and an interface without the suffix. This effectively means that the version 5 EntityManager class name is now the name of the corresponding interface.</p>
+</div>
+<div class="paragraph">
+<p>All EntityManager interfaces extend the generic org.activiti.engine.impl.persistence.entity.EntityManager interface. All implementation classes extend a generic <em>AbstractEntityManager</em> interface.</p>
+</div>
+<div class="paragraph">
+<p>Also, for consistency:
+* The UserIdentityManager interface has been renamed to UserEntityManager
+* The GroupIdentityManager interface has been renamed to GroupEntityManager</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_persistentobject_renamed_to_entity">5.8. PersistentObject renamed to Entity</h3>
+<div class="paragraph">
+<p>The class <em>org.activiti.engine.impl.db.PersistentObject</em> has been renamed to <em>Entity</em> to be consistent with all the other classes (EntityManagers and such)..</p>
+</div>
+<div class="paragraph">
+<p>All related classes that used the term <em>persistent object</em> have been refactored to <em>entity</em> too.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_future_breaking_changes">5.9. Future breaking changes</h3>
+<div class="paragraph">
+<p>The following changes will most likely be applied in a next beta release of Activiti v6:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The entity cache that is created and used during the execution of a command will be moved up the hierarchy, to be at the same level as the entity managers.</p>
+</li>
+<li>
+<p>The persistence operations will be moved to a separate interface out of the EntityManager classes to allow pluggability.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_v5_compatibility">6. V5 compatibility</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When migrating to Activiti version 6 (which basically means replacing the JAR file on the classpath), all current deployments and process definitions are <em>tagged</em> as being a <em>version 5</em> artifact. At various points (completing a task, starting a new process instance, task assignment, &#8230;&#8203; quite a long list) the engine will check whether the involved process definition has that <em>version 5 tag</em>. If so, it will delegate execution to an <em>embedded mini version 5 engine</em>.</p>
+</div>
+<div class="paragraph">
+<p>This means that the compatibility approach we opted for is that of a phase out: let the current process definitions run in <em>'version 5 mode</em> until the behaviour has been verified and tested to be identical on version 6.</p>
+</div>
+<div class="paragraph">
+<p>To enable this behavior (by default it is <em>disabled</em>!), add the following to the engine config:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>&lt;property name="activiti5CompatibilityEnabled" value="true" /&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>and</strong> add the <strong>activiti5-compatibility</strong> jar to your classpath (manually or through a dependency mechanism like Maven)..</p>
+</div>
+<div class="paragraph">
+<p>In case the default implementation <em>org.activiti.compatibility.DefaultActiviti5CompatibilityHandler</em> is insufficient, as custom implementation can be created. Set the <em>activiti5CompatibilityHandlerFactory</em> property of the engine configuration to the fully qualified classname to make that happen. That Factory class should produce an instance of the handler responsible for bridging from version 6 to 5.</p>
+</div>
+<div class="paragraph">
+<p>To move a process definition to run on the version 6 engine, simply redeploy it. New process instances will be running in <em>version 6 mode</em>, while existing process instances will run in _version 5 mode).</p>
+</div>
+<div class="paragraph">
+<p>If for some reason, you&#8217;d still want to deploy a new version of a process definition to run in <em>version 5 mode</em>, the following code can be used:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>repositoryService.createDeployment()
+      .addClasspathResource("xyz")
+      .deploymentProperty(DeploymentProperties.DEPLOY_AS_ACTIVITI5_PROCESS_DEFINITION, Boolean.TRUE)
+      .deploy();</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you are using the Activiti Spring module additional configuration is needed if you want Activiti 5 compatibility:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>&lt;property name="activiti5CompatibilityEnabled" value="true" /&gt;
+&lt;property name="activiti5CompatibilityHandlerFactory" ref="activiti5CompabilityFactory" /&gt;
+
+....
+
+&lt;bean id="activiti5CompabilityFactory" class="org.activiti.compatibility.spring.SpringActiviti5CompatibilityHandlerFactory" /&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>and</strong> add the <strong>activiti5-spring</strong> and <strong>activiti5-spring-compatibility</strong> jars to your classpath (manually or through a dependency mechanism like Maven)..</p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
