@@ -10,7 +10,7 @@
 
 ==== 介绍 Introduction
 
-可以使用标准Java管理扩展（JMX）技术连接Activiti引擎，以获取信息或改变其行为。可以使用任何标准的JMX客户端。启用与禁用作业执行器、部署新的流程定义文件或删除它们等等操作，都可以通过JMX完成，而不需要写一行代码。
+可以使用标准Java管理扩展（JMX）技术连接Flowable引擎，以获取信息或改变其行为。可以使用任何标准的JMX客户端。启用与禁用作业执行器、部署新的流程定义文件或删除它们等等操作，都可以通过JMX完成，而不需要写一行代码。
 
 
 [[jmxQuickStart]]
@@ -18,23 +18,23 @@
 
 ==== 快速开始 Quick Start
 
-默认情况下没有启用JMX。要使用默认配置启动它，只要使用Maven或其他方法，将activiti-jmx jar文件加入classpath即可。如果使用Maven，可以在pom.xml中添加下列行以添加合适的依赖：
+默认情况下没有启用JMX。要使用默认配置启动它，只要使用Maven或其他方法，将flowable-jmx jar文件加入classpath即可。如果使用Maven，可以在pom.xml中添加下列行以添加合适的依赖：
 
 [source,xml,linenums]
 ----
 <dependency>
-  <groupId>org.activiti</groupId>
-  <artifactId>activiti-jmx</artifactId>
+  <groupId>org.flowable</groupId>
+  <artifactId>flowable-jmx</artifactId>
   <version>latest.version</version>
 </dependency>
 ----
 
-在添加依赖并构建流程引擎后，就可以使用JMX连接了。可以使用在标准JDK发行版中提供的jconsole。在本地线程列表中，可以看到包含Activit的JVM。如果由于任何原因没有在“本地进程”中列出合适的JVM，可以尝试使用这个URL从“远程进程”中连接：
+在添加依赖并构建流程引擎后，就可以使用JMX连接了。可以使用在标准JDK发行版中提供的jconsole。在本地线程列表中，可以看到包含Flowable的JVM。如果由于任何原因没有在“本地进程”中列出合适的JVM，可以尝试使用这个URL从“远程进程”中连接：
 ----
 service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/activiti
 ----
 
-可以在日志文件中找到正确的本地URL。连接之后，可以看到标准JVM状态与MBeans。可以选择MBeans页签，并在右侧面板选择"org.activiti.jmx.Mbeans"，以浏览Activiti专用的MBean。选择任何MBean，都可以查询信息或修改配置。这个截图展示了jconsole的样子：
+可以在日志文件中找到正确的本地URL。连接之后，可以看到标准JVM状态与MBeans。可以选择MBeans页签，并在右侧面板选择"org.activiti.jmx.Mbeans"，以浏览Flowable专用的MBean。选择任何MBean，都可以查询信息或修改配置。这个截图展示了jconsole的样子：
 
 （原图缺失）
 
@@ -133,9 +133,9 @@ service:jmx:rmi:///jndi/rmi://:<hostname>:<registryPort>/<serviceUrlPath>
 [source]
 
 mvn archetype:generate \
--DarchetypeGroupId=org.activiti \
--DarchetypeArtifactId=activiti-archetype-unittest \
--DarchetypeVersion=5.21.0 \
+-DarchetypeGroupId=org.flowable \
+-DarchetypeArtifactId=flowable-archetype-unittest \
+-DarchetypeVersion=<current version> \
 -DgroupId=org.myGroup \
 -DartifactId=myArtifact
 
@@ -145,9 +145,9 @@ mvn archetype:generate \
 [options="header" cols="1,12,30"]
 |===
 |行|参数|解释
-|1|archetypeGroupId|原型的Group id。需要为**org.activiti**
-|2|archetypeArtifactId|原型的Artifact id。需要为**activiti-archetype-unittest**
-|3|archetypeVersion|生成的测试项目中使用的Activiti版本
+|1|archetypeGroupId|原型的Group id。需要为**org.flowable**
+|2|archetypeArtifactId|原型的Artifact id。需要为**flowable-archetype-unittest**
+|3|archetypeVersion|生成的测试项目中使用的Flowable版本
 |4|groupId|生成的测试项目的Group id
 |5|artifactId|生成的测试项目的Artifact id
 |===
@@ -173,56 +173,4 @@ mvn archetype:generate \
 
 可以修改java单元测试用例与其对应的流程模型，或者添加新的单元测试用例与流程模型。如果使用该项目来表述一个bug或功能，测试用例应该在初始时失败，然后在修复了预期的bug或实现了预期的功能以后成功。请确保在发送之前键入**mvn clean**清理项目。
 
-[[docker]]
-
-=== Docker镜像 Docker images
-[[dockerIntroduction]]
-
-==== 介绍 Introduction
-
-https://www.docker.com/[Docker]是一个神奇的虚拟化工具。可以将一个应用与其所有依赖打包为一个标准的软件开发单元。人们可以创建持久化的镜像，并将其发布至共享服务器。其他人可以获取该镜像，并轻松启动与运行该软件。
-
-Activiti docker镜像的目的是快速运行activiti explorer与rest-api，而不需要为设置开发环境而处理复杂的细节。对于希望尽快运行、测试与使用Activiti的人来说十分有益。对展示演示也很有价值。
-
-[[dockerSingleImage]]
-==== 使用 Usage
-
-第一步是安装docker，如果还没有安装的话。link:$$https://docs.docker.com/engine/installation/$$[安装]十分简单明了。几乎所有主流OS都有可用的二进制安装文件。在安装Docker之后，可以使用这个命令，将activiti镜像与其依赖取回本地机器：
-
-[source]
-docker pull activiti/activiti-single-image:latest explorer
-
-取决于Internet连接速度，可能需要一段时间下载镜像。只有第一次或共享服务器版本更新之后，才需要下载。
-
-下一步是运行镜像与创建容器：
-
-[source]
-docker run -p 8080:8080  -t -i activiti/activiti-single-image:latest explorer
-
-就是这样，镜像已经启动并运行了explorer web应用。可以使用这个URL访问：
-
-[source]
-localhost:8080/activiti-explorer
-
-本地机器的端口号可以通过修改第二部分8080:8080参数修改。
-
-最后的参数决定了运行的应用。有两个可选项：
-
-* explorer
-* rest
-
-选择“rest”则会运行rest-api。例如这个URL会获取部署的列表：
-
-[source]
-http://kermit:kermit@localhost:8080/activiti-rest/service/repository/deployments
-
-如果没有提供参数，默认为“explorer”。
-
-
-[[dockerBuild]]
-==== 构建docker镜像 Build docker image
-
-Docker使用tooling/dockerImage/singleImage文件夹下的Dockerfile构建。一个名为"buildImage.sh"的工具集合文件包含了构建镜像所需的命令行。如果构建的镜像需要由其他用户使用，需要使用这个命令将其发布至docker共享服务器：
-
-[source]
-docker push activiti/activiti-single-image:latest
+[[jmxQuickStart]]
