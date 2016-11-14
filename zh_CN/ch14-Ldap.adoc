@@ -2,9 +2,9 @@
 
 == 集成LDAP (LDAP integration)
 
-公司通常已经有了LDAP（Lightweight Directory Access Protocol，轻量级目录访问协议）系统形式的用户与组存储。从5.14版本开始，Activiti提供了一个立即可用的解决方案，可以简单配置Activiti与LDAP系统连接的方式。
+公司通常已经有了LDAP（Lightweight Directory Access Protocol，轻量级目录访问协议）系统形式的用户与组存储。Flowable提供了一个立即可用的解决方案，可以简单配置Flowable与LDAP系统连接的方式。
 
-在Activiti 5.14版本以前，也可以为Activiti集成LDAP。然而，在5.14中大幅简化了配置。但配置LDAP的“老”方法仍然可用。实际上，简化配置只是在“老”基础上进行的包装。
+在早期版本中，也可以为Flowable集成LDAP。然而之后大幅简化了配置。但配置LDAP的“老”方法仍然可用。实际上，简化配置只是在“老”基础上进行的包装。
     
 
 [[ldap_usage]]
@@ -17,10 +17,10 @@
 [source,xml,linenums]            
 ----
 <dependency>
-  <groupId>org.activiti</groupId>
-  <artifactId>activiti-ldap</artifactId>
+  <groupId>org.flowable</groupId>
+  <artifactId>flowable-ldap</artifactId>
   <version>latest.version</version>
-</dependency>                    
+</dependency>
 ----
 
 
@@ -31,7 +31,7 @@
 
 目前LDAP集成有两大使用场景：
 
-* 通过IdentityService进行认证。例如在使用Activiti Explorer，并需要通过LDAP登录时很有用。
+* 通过IdentityService进行认证。在使用IdentityService处理所有认证相关事项的时候很有用。
 * 获取一个组中的用户。例如在查询一个特定用户可见的任务（也就是说，特定候选组的任务）时很重要。
                 
 
@@ -40,7 +40,7 @@
 
 === 配置 Configuration
 
-在Activiti中集成LDAP系统通过在流程引擎配置的++configurators++小节注入++org.activiti.ldap.LDAPConfigurator++完成。这个类高度可扩展：如果默认实现不能满足使用场景，可以轻松地覆盖方法，许多依赖的bean也是可插拔的。
+在Flowable中集成LDAP系统通过在流程引擎配置的++configurators++小节注入++org.activiti.ldap.LDAPConfigurator++完成。这个类高度可扩展：如果默认实现不能满足使用场景，可以轻松地覆盖方法，许多依赖的bean也是可插拔的。
 
 这是一个示例配置（请注意：当然，在编程式创建引擎时完全类似）。现在不需要太关注这些参数，我们会在下一章节详细介绍。
 
@@ -55,11 +55,11 @@
                 <!-- 服务器连接参数 Server connection params -->
                 <property name="server" value="ldap://localhost" />
                 <property name="port" value="33389" />
-                <property name="user" value="uid=admin, ou=users, o=activiti" />
+                <property name="user" value="uid=admin, ou=users, o=flowable" />
                 <property name="password" value="pass" />
                 
                 <!-- 查询参数 Query params -->
-                <property name="baseDn" value="o=activiti" />
+                <property name="baseDn" value="o=flowable" />
                 <property name="queryUserByUserId" value="(&(objectClass=inetOrgPerson)(uid={0}))" />
                 <property name="queryUserByFullNameLike" value="(&(objectClass=inetOrgPerson)(|({0}=*{1}*)({2}=*{3}*)))" />
                 <property name="queryGroupsForUser" value="(&(objectClass=groupOfUniqueNames)(uniqueMember={0}))" />
@@ -109,12 +109,12 @@
 
 |queryGroupsForUser|查找特定用户的组时执行的查询。例如：(&(objectClass=groupOfUniqueNames)(uniqueMember={0})) 。将返回class为'groupOfUniqueNames'，且提供的DN（匹配用户的DN）为'uniqueMember'的对象。在例子中，用户id使用{0}注入。如果对于特定的LDAP配置，只使用该查询不满足要求，则可以使用不同的LDAPQueryBuilder插件，提供比查询更高的自由度。|string|
 
-|userIdAttribute|匹配用户id的属性的名字。这个属性用于查找用户对象，并完成LDAP对象与Activiti用户对象间的映射。|string|
-|userFirstNameAttribute|匹配用户first name的属性的名字。这个属性用于查找用户对象，并完成LDAP对象与Activiti用户对象间的映射。|string|
-|userLastNameAttribute|匹配用户last name的属性的名字。这个属性用于查找用户对象，并完成LDAP对象与Activiti用户对象间的映射。|string|
-|groupIdAttribute|匹配组id的属性的名字。这个属性用于查找组对象，并完成LDAP对象与Activiti用户对象间的映射。|string|
-|groupNameAttribute|匹配组name的属性的名字。这个属性用于查找组对象，并完成LDAP对象与Activiti用户对象间的映射。|String|
-|groupTypeAttribute|匹配组type的属性的名字。这个属性用于查找组对象，并完成LDAP对象与Activiti用户对象间的映射。|String|
+|userIdAttribute|匹配用户id的属性的名字。这个属性用于查找用户对象，并完成LDAP对象与Flowable用户对象间的映射。|string|
+|userFirstNameAttribute|匹配用户first name的属性的名字。这个属性用于查找用户对象，并完成LDAP对象与Flowable用户对象间的映射。|string|
+|userLastNameAttribute|匹配用户last name的属性的名字。这个属性用于查找用户对象，并完成LDAP对象与Flowable用户对象间的映射。|string|
+|groupIdAttribute|匹配组id的属性的名字。这个属性用于查找组对象，并完成LDAP对象与Flowable用户对象间的映射。|string|
+|groupNameAttribute|匹配组name的属性的名字。这个属性用于查找组对象，并完成LDAP对象与Flowable用户对象间的映射。|String|
+|groupTypeAttribute|匹配组type的属性的名字。这个属性用于查找组对象，并完成LDAP对象与Flowable用户对象间的映射。|String|
 
 |===============
 
@@ -139,33 +139,4 @@
 |===============
 
 
-使用活动目录（Active Directory）时请注意：Activiti论坛的用户报告，在使用活动目录时，需要将'InitialDirContext'设置为Context.REFERRAL。可以通过customConnectionParameters map按上面介绍的方法传递。
-        
-
-[[lda-explorer]]
-
-
-=== 在Explorer中集成LDAP (Integrate LDAP in Explorer)
-
-      
-* 在++activiti-standalone-context.xml++中添加上面介绍的LDAP配置
-* 在WEB-INF/lib中添加activiti-ldap jar
-* 移除++demoDataGenerator++ bean，因为它会尝试添加用户（在集成LDAP时不允许）
-* 为++activiti-ui.context++中的++explorerApp++ bean添加下列配置：
-                        
-[source,xml,linenums]
-----
-<property name="adminGroups">
-  <list>
-    <value>admin</value>
-  </list>
-  </property>
-  <property name="userGroups">
-    <list>
-      <value>user</value>
-    </list>
-</property>                                            
-----
-
-直接使用你自己的值替换即可。需要使用的值是组的id（通过++groupIdAttribute++配置）。上面的配置将使'admin'组中的所有成员都成为Activiti Explorer的管理员用户，对于user组也类似。任何不匹配这些值的组都将成为'assignment'组，也就是说可以将任务指派给他们。
-                    
+使用活动目录（Active Directory）时请注意：用户报告在使用活动目录时，需要将'InitialDirContext'设置为Context.REFERRAL。可以通过customConnectionParameters map按上面介绍的方法传递。
