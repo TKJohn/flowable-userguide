@@ -11,7 +11,7 @@
 
 == 介绍 Introduction
 
-本手册介绍了从Activiti v5.x迁移至Activiti v6时需要注意的事项。这是一个迁移手册的初步版本，并将在后续Activiti v6发布alpha/beta版本时更新，因为很多东西仍在修改之中。到时，本迁移手册将规范化，而用户手册也将更新，一反应Activiti v6中的所有特性与功能。
+本手册介绍了从Activiti v5.x迁移至Activiti v6时需要注意的事项。这是一个迁移手册的初步版本，并将在后续Activiti v6发布alpha/beta版本时更新，因为很多东西仍在修改之中。到时，本迁移手册将规范化，而用户手册也将更新，以反映Activiti v6中的所有特性与功能。
 
 **当前的Activiti v6版本只用作测试目的！请不要在生产环境使用。**这个版本的主要目的是收集反馈，报告问题以及让用户可以在v6版本上测试他们的流程定义。当然，与之前一样，欢迎大家访问GitHub页面并做贡献。Activiti v6的代码目前处在link:$$https://github.com/Activiti/Activiti/tree/activiti6$$[__activiti6__分支]。
 
@@ -19,7 +19,7 @@
 
 v6版本的设计目标是：
 
-* 完全向上兼容v5版本：数据库层面、概念层面以及代码层面。
+* 完全向前兼容v5版本：数据库层面、概念层面以及代码层面。
 * 重写核心引擎：直接执行BPMN 2.0（不再转换为中间模型）。
 * 更简洁干净的运行时执行数据结构，并加强对结构的预判性。
 * 解耦持久层，以支持未来可能的不同实现。
@@ -27,17 +27,17 @@ v6版本的设计目标是：
 
 == 数据库迁移 Database migration
 
-从v5至v6不需要数据库迁移：v5与v6的数据库表结构已知。所有Activiti v5生成的数据都可以保留在数据库中。在v6引擎第一次运行时，会对表结构进行自动升级（同v5版本中一样）。除了一些小的数据库结构改动外，主要的改动是将作业表分拆为作业表、定时器作业表、暂停作业表与死信作业表。还未到期的定时器作业将移至新的定时器作业表；用尽重试次数的作业将移至死信作业表；已暂停流程实例的作业将移至暂停作业表。
+从v5至v6不需要数据库迁移：v5与v6的数据库表结构一致。所有Activiti v5生成的数据都可以保留在数据库中。在v6引擎第一次运行时，会对表结构进行自动升级（同v5版本中一样）。除了一些小的数据库结构改动外，主要的改动是将作业表分拆为作业表、定时器作业表、暂停作业表与死信作业表。还未到期的定时器作业将移至新的定时器作业表；用尽重试次数的作业将移至死信作业表；已暂停流程实例的作业将移至暂停作业表。
 
 == 概念变化 Conceptual changes
 
-称为Activiti v6的主要原因是完全重写了核心引擎。核心引擎执行的方式已经完全改变，将直接执行BPMN（在v5中使用中间模型）。同时运行时执行的表现形式（__执行树__）也作了修改。总的来说，这些概念都大幅简化了，让执行更简单清晰，也让撰写的自定义行为更容易更易懂。
+称为Activiti v6的主要原因是完全重写了核心引擎。核心引擎执行的方式已经完全变化，将直接执行BPMN（在v5中使用中间模型）。同时运行时执行的表现形式（__执行树__）也作了修改。总的来说，这些概念都大幅简化了，让执行更简单清晰，也让撰写自定义代码更容易更易懂。
 
 未来，我们将详细介绍引擎内部的工作。对v6版本的概要介绍可以查看link:$$http://www.jorambarrez.be/blog/2015/06/18/activiti-6-launch/$$[Activiti 6发布记录]。
 
-== 破坏性改变 Breaking changes
+== 破坏性改动 Breaking changes
 
-下列改变是破坏性改变（也就是说很可能导致编译错误）……
+下列改动是破坏性改动（也就是说很可能导致编译错误）……
 
 === PVM类 PVM classes
 
@@ -53,11 +53,11 @@ org.activiti.engine.impl.pvm包（及其子包）下的所有类都已移除。�
 // 整个模型 The whole model
 ProcessDefinitionUtil.getBpmnModel(String processDefinitionId);
 
-// 只有特定流程定义 Only the specific process definition
+// 只有流程定义 Only the specific process definition
 ProcessDefinitionUtil.getProcess(String processDefinitionId);
 ----
 
-=== ActivityExecution被DelegateExecution代替 ActivityExecution is replaced by DelegateExecution
+=== DelegateExecution代替ActivityExecution (ActivityExecution is replaced by DelegateExecution)
 
 我们移除了ActivityExecution，并使用DelegateExecution类代替它。
 
@@ -70,80 +70,81 @@ Activiti 5中只有一个作业表，导致查询需要执行的作业时，查�
 在Activiti 6中，作业被分拆成了作业表(ACT_RU_JOB)、定时器表(ACT_RU_TIMER_JOB)、暂停表(ACT_RU_SUSPENDED_JOB)与死信表(ACT_RU_DEADLETTER_JOB)。
 
 * 作业表中的作业将可以直接执行（类似异步作业与到期定时器作业）。因此就不需要使用复杂的查询，唯一的where条件是lock time(锁定时间)不能为NULL。
-* 定时器作业现在持久化在专门的定时器作业表中，并由一个线程检查到期需要执行的定时器作业。当定时器作业到期需要执行时，改作业会被移至作业表。
+* 定时器作业现在持久化在专门的定时器作业表中，并由一个线程检查到期需要执行的定时器作业。当定时器作业到期需要执行时，该作业会被移至作业表。
 * 当流程定义或流程实例暂停时，其关联的作业将被移至单独的暂停作业表。这简化了作业执行器的查询，并清楚显示了暂停中的作业。
-* 如果一个作业执行失败，它将被放入定时器作业表，并用 当前时间+引擎配置的作业失败等待时间 作为到期日期。在该作业到期将被执行时，会重新移至作业表，并被执行。如果重试次数减至0，则该作业将被移至死信表，不再自动执行。这也简化了默认的作业执行器查询，也清楚显示了卡住需要人工干预的作业。
+* 如果一个作业执行失败，它将被放入定时器作业表，并用 当前时间+引擎配置的作业失败等待时间 作为到期日期。在该作业到期将被执行时，会重新移至作业表，并被执行。如果重试次数减至0，则该作业将被移至死信表，不再自动执行。这样简化了默认的作业执行器查询，也清楚显示了卡住需要人工干预的作业。
 
-Activiti 6中嵌入的Activiti 5引擎也能够使用这4个作业表。但是只会有一个线程池从数据库中获取作业。当获取到一个作业后，会基于流程定义id检查引擎的版本，以判断作业由Activiti 6还是嵌入的Activiti 5引擎执行。
+Activiti 6内嵌的Activiti 5引擎也能够使用这4个作业表。但是只会有一个线程池从数据库中获取作业。当获取到一个作业后，会基于流程定义id检查引擎的版本，以判断作业由Activiti 6还是嵌入的Activiti 5引擎执行。
 
-=== Signaling an execution
+=== 向一个执行发信号 Signaling an execution
 
-In version 5, there always was confusion about _signaling an execution_, when using for example _runtimeService.signal(executionI);_. As a _signal_ is a valid BPMN 2.0 concept and feature, it conflicts conceptually.
+在v5中，使用例如__runtimeService.signal(executionI);__方法__向一个执行发信号__十分令人困惑。因为__信号(signal)__是一个BPMN 2.0概念和特性，它们的概念互相冲突。
 
-In version 6, the _signal()_ methods have been renamed to _trigger()_..
+在v6中，__signal()__方法更名为__trigger()__。
 
-This also means that _SignalableActivityBehavior_, the interface to be implemented for behaviors that can be _triggered_ from external sources, is now called _TriggerableActivityBehavior_.
+同时，用于实现可以被外部触发的行为的接口__SignalableActivityBehavior__，也会改名为__TriggerableActivityBehavior__。
 
-=== Checked Exceptions
+=== 受控异常 Checked Exceptions
 
-In version 5, the delegate classes like _JavaDelegate_ and _ActivityBevior_ had _throws Exception_ in their signature. As with any modern framework, the use of checked Exceptions has been removed in version 6.
+在v5中，__JavaDelegate__与__ActivitiBehavior__之类的代理类在其签名中标示抛出__Exception__。像其他现代框架一样，在v6版本中已经移除了受控异常的使用。
 
-=== Delegate classes
+=== 代理类 Delegate classes
 
-_org.activiti.engine.impl.pvm.delegate.ActivityBehavior_ has changed package and lives now in _org.activiti.engine.impl.delegate_.
+__org.activiti.engine.impl.pvm.delegate.ActivityBehavior__的包变更为__org.activiti.engine.impl.delegate__。
 
-The following methods have been removed from _DelegateExecution_:
+从__DelegateExecution__中移除了下列方法：
 
 * end()
 * createdExecution()
 
-They have been replaced by calls to the ExecutionEntityManager, which can be fetched through Context.getCommandContext.getExecutionEntityManager().
+它们已经用ExecutionEntityManager的调用代替了，可以通过Context.getCommandContext.getExecutionEntityManager()使用。
 
-=== EntityManagers
+=== 实体管理器 EntityManagers
 
-In Activiti version 5, all EntityManager (responsible for persistence but also certain logic) classes did not have an interface. In version 6, all EntityManager classes have been renamed to have _Impl_ as suffix and an interface without the suffix. This effectively means that the version 5 EntityManager class name is now the name of the corresponding interface.
+在Activiti v5中，所有的实体管理器（负责持久化，也包含一些逻辑）类都没有接口。在v6中，所有的实体类都已经重命名为__Impl__后缀，并提供了不带后缀的接口。也就是说v5的实体管理器类名现在是相应的接口名。
 
-All EntityManager interfaces extend the generic org.activiti.engine.impl.persistence.entity.EntityManager interface. All implementation classes extend a generic _AbstractEntityManager_ interface.
+所有的实体管理器接口都扩展了org.activiti.engine.impl.persistence.entity.EntityManager泛型接口。所有的实现类都实现了__AbstractEntityManager__泛型接口。
 
-Also, for consistency:
-* The UserIdentityManager interface has been renamed to UserEntityManager
-* The GroupIdentityManager interface has been renamed to GroupEntityManager
+同时，为了保证一致性：
 
-
-=== PersistentObject renamed to Entity
-
-The class _org.activiti.engine.impl.db.PersistentObject_ has been renamed to _Entity_ to be consistent with all the other classes (EntityManagers and such)..
-
-All related classes that used the term 'persistent object' have been refactored to 'entity' too.
+* UserIdentityManager接口重命名为UserEntityManager
+* GroupIdentityManager接口重命名为GroupEntityManager
 
 
-=== Future breaking changes
+=== 持久化对象重命名为实体 PersistentObject renamed to Entity
 
-The following changes will most likely be applied in a next beta release of Activiti v6:
+__org.activiti.engine.impl.db.PersistentObject__类重命名为__Entity__，与其他类保持一致（实体管理器类也一样）。
 
-* The entity cache that is created and used during the execution of a command will be moved up the hierarchy, to be at the same level as the entity managers.
-* The persistence operations will be moved to a separate interface out of the EntityManager classes to allow pluggability.
+所有使用“持久化对象”的相关类也都已经重构为“实体”。
 
 
-== V5 compatibility
+=== 功能破坏性改动 Future breaking changes
 
-When migrating to Activiti version 6 (which basically means replacing the JAR file on the classpath), all current deployments and process definitions are _tagged_ as being a _version 5_ artifact. At various points (completing a task, starting a new process instance, task assignment, ... quite a long list) the engine will check whether the involved process definition has that _version 5 tag_. If so, it will delegate execution to an _embedded mini version 5 engine_.
+下列改动很可能在下一个Activiti v6的beta版本中发布：
 
-This means that the compatibility approach we opted for is that of a phase out: let the current process definitions run in _'version 5 mode_ until the behaviour has been verified and tested to be identical on version 6.
+* 在命令执行过程中创建与使用的实体缓存，将在系统架构内上移，与实体管理器位于同一层级。
+* 为了增加可扩展性，将从实体管理器类中移除持久化操作，并将其移入单独的接口。
 
-To enable this behavior (by default it is _disabled_!), add the following to the engine config:
+
+== V5兼容性 V5 compatibility
+
+在迁移至Activiti v6时（基本上就是替换classpath中的JAR包），所有当前的部署与流程定义都将__标记__为__v5版本__的工件。在很多地方（完成一个任务，启动一个新流程实例，指派任务等等）引擎都会检查相关的流程定义是否__标记为v5版本__。若是，则将其执行代理至__内嵌的微型v5引擎__。
+
+也就是说为了保证兼容性，可以选择逐步替换：首先在__v5模式__下运行当前的流程定义，直到已经验证并测试其行为与v6版本相同。
+
+要启用这个功能（默认情况下是__禁用的__！），在引擎配置中添加下列配置：
 
 ----
 <property name="activiti5CompatibilityEnabled" value="true" />
 ----
 
-*and* add the *activiti5-compatibility* jar to your classpath (manually or through a dependency mechanism like Maven)..
+**并且**在classpath中添加**activiti5-compatibility**（手动或通过Maven之类的依赖管理机制）。
 
-In case the default implementation _org.activiti.compatibility.DefaultActiviti5CompatibilityHandler_ is insufficient, as custom implementation can be created. Set the _activiti5CompatibilityHandlerFactory_ property of the engine configuration to the fully qualified classname to make that happen. That Factory class should produce an instance of the handler responsible for bridging from version 6 to 5.
+如果默认的实现__org.activiti.compatibility.DefaultActiviti5CompatibilityHandler__不满足要求，可以创建自定义的实现。可以将引擎配置中的__activiti5CompatibilityHandlerFactory__参数设置为创建类的全限定类名。这个工厂类需要构造用于处理v5与v6桥接的类实例。
 
-To move a process definition to run on the version 6 engine, simply redeploy it. New process instances will be running in _version 6 mode_, while existing process instances will run in _version 5 mode).
+要让一个流程定义使用v6引擎运行，只需要重新部署它即可。新的流程实例将会在__v6模式__下运行，而之前的流程实例仍然在__v5模式__下运行。
 
-If for some reason, you'd still want to deploy a new version of a process definition to run in _version 5 mode_, the following code can be used:
+如果出于某些原因希望部署的新版流程定义仍然在__v5模式__下运行，可以使用下列代码：
 
 ----
 repositoryService.createDeployment()
@@ -152,7 +153,7 @@ repositoryService.createDeployment()
       .deploy();
 ----
 
-If you are using the Activiti Spring module additional configuration is needed if you want Activiti 5 compatibility:
+如果使用Activiti Spring模块，且想要使用Activiti 5兼容模式，则需要进行额外配置：
 
 ----
 <property name="activiti5CompatibilityEnabled" value="true" />
@@ -163,4 +164,5 @@ If you are using the Activiti Spring module additional configuration is needed i
 <bean id="activiti5CompabilityFactory" class="org.activiti.compatibility.spring.SpringActiviti5CompatibilityHandlerFactory" />
 ----
 
-*and* add the *activiti5-spring* and *activiti5-spring-compatibility* jars to your classpath (manually or through a dependency mechanism like Maven)..
+**并且**在classpath中添加**activiti5-spring**与**activiti5-spring-compatibility** JAR包（手动或通过Maven之类的依赖管理机制）。
+
