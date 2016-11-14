@@ -73,20 +73,20 @@
 
 ==== 基于消息队列的异步执行器 Message Queue based Async Executor
 
-When reading the <<async_executor_design,async executor design section>>, it becomes clear that the architecture is inspired by message queues. The async executor is designed in such a way that a message queue can easily be used to take over the job of the thread pool and the handling of async jobs.
+在阅读<<async_executor_design,异步执行器的设计章节>>之后，就很清楚其架构的灵感来自消息队列。异步执行器设计思路是，可以用消息队列轻松接管线程池的工作，并用于处理异步作业。
 
-Benchmarks have shown that using a message queue is superior, throughput-wise, to the thread pool-backed async executor. However, it does come with an extra architectural component, which of course makes setup, maintenance and monitoring more complex. For many users, the performance of the thread pool-backed async executor is more than sufficient. It is nice to know however, that there is an alternative if the required performance grows.
+跑分显示消息队列相比基于线程池的异步执行器，性能出众，吞吐量大。但是，会需要额外的架构组件，当然也就增加了安装配置、维护及监控的复杂度。对于多数用户来说，基于线程池的异步执行器，性能已经足够用了。但能够知道在性能要求增长之后，仍有可用方案，也是挺好的。
 
-Currently, the only option that is supported out-of-the-box is JMS and Spring. The reason for supporting Spring before anything else is because Spring has some very nice features that ease a lot of the pain when it comes to threading and dealing with multiple message consumers. However, the integration is so simple, that it can easily be ported to any message queue implementation and/or protocol (Stomp, AMPQ, etc.). Feedback is appreciated for what should be the next implementation.
+目前，立即可用的唯一选择是JMS和Spring。首先支持Spring的原因是，Spring提供了非常好的功能，抚平了使用线程以及处理多个消息消费者造成的伤痛。然而集成很简单，因此可以轻松改用任何其他消息队列实现及/或协议（Stomp、AMPQ等等）。我们欢迎反馈下一个应该实现什么。
 
-When a new async job is created by the engine, a message is put on a message queue (in a transaction committed transaction listener, so we're sure the job entry is in the database) containing the job identifier. A message consumer then takes this job identifier to fetch the job, and execute the job. The async executor will not create a thread pool anymore. It will insert and query for timers from a separate thread. When a timer fires, it is moved to the async job table, which now means a message is sent to the message queue too. The 'reset expired' thread will also unlock jobs as usual, as message queues can fail too. Instead of 'unlocking' a job, a message will now be resent. The async executor will not poll for async jobs anymore.
+（使用消息队列后）当引擎创建一个新的异步作业时，会在消息队列中放入一条包含有作业标识的消息（处在一个事务提交监听器之下，这样就可以确保该作业条目已经提交至数据库）。之后一个消息消费者可以获取作业标识，并获取及执行该作业。异步执行器不再创建线程池，而是会在另一个单独线程中插入及查询定时器。当定时器到时触发时，将会被移至异步作业表，现在会同时向消息队列发送一条消息。“重置过期”线程会按照一般逻辑解锁作业，因为消息队列也可能失败。只不过不是“解锁”作业，而是重发消息。异步执行器不再轮询异步作业。
 
-The implementation consists of two classes:
+实现由两个类组成：
 
-* An implementation of the _org.activiti.engine.impl.asyncexecutor.JobManager_ interface that puts a message on a message queue instead of passing it to the thread pool.
-* A _javax.jms.MessageListener_ implementation that consumes a message from the message queue, using the job identifier in the message to fetch and execute the job.
+* 一个__org.activiti.engine.impl.asyncexecutor.JobManager__接口的实现，用于向消息队列发送消息，以代替将其发送至线程池。
+* 一个__javax.jms.MessageListener__接口的实现，用于从消息队列中消费消息，并使用消息中的作业标识获取及执行该作业。
 
-First of all, add the _flowable-jms-spring-executor_ dependency to your project:
+首先，在你的项目中添加__flowable-jms-spring-executor__依赖：
 
 [source,xml,linenums]
 ----
@@ -97,18 +97,18 @@ First of all, add the _flowable-jms-spring-executor_ dependency to your project:
 </dependency>
 ----
 
-To enable the message queue based async executor, in the process engine configuration, the following needs to be done:
+要启用基于消息队列的异步执行器，需要在流程引擎配置中进行如下设置：
 
-* _asyncExecutorActivate_ must be set to _true_, as usual
-* _asyncExecutorMessageQueueMode_ needs to be set to _true_
-* The _org.activiti.spring.executor.jms.MessageBasedJobManager_ must be injected as _JobManager_
+* __asyncExecutorActivate__仍然需要设置为__true__
+* __asyncExecutorMessageQueueMode__需要设置为__true__
+* __org.activiti.spring.executor.jms.MessageBasedJobManager__必须作为__JobManager__注入
 
-Below is a complete example of a Java based configuration, using _ActiveMQ_ as message queue broker.
+下面是一个基于Java配置的完整例子，使用__ActiveMQ__作为消息中间件。
 
-Some things to note:
+请注意：
 
-* The _MessageBasedJobManager_ expects a _JMSTemplate_ to be injected that is configured with a correct _connectionFactory_.
-* We're using the _MessageListenerContainer_ concept from Spring, as this simplifies threading and multiple consumers a lot.
+* __MessageBasedJobManager__需要注入一个配置了正确的__connectionFactory__的__JMSTemplate__。
+* 我们使用Spring的__MessageListenerContainer__概念，因为它大幅简化了线程与多消费者的使用。
 
 [source,java,linenums]
 ----
@@ -188,7 +188,7 @@ public class SpringJmsConfig {
 }
 ----
 
-In the code above, the _JobMessageListener_ and _MessageBasedJobManager_ are the only classes from the _flowable-jms-spring-executor_ module. All the other code is from Spring. As such, when wanting to port this to other queues/protocols, these classes must be ported.
+在上面的代码中，__flowable-jms-spring-executor__模块提供的只有__JobMessageListener__与__MessageBasedJobManager__两个类。其他的所有代码都来自Spring。因此，如果想要替换为其他的队列/协议，就需要替换这些类。
 
 [[advanced_parseHandlers]]
 
@@ -811,8 +811,10 @@ long potentialOwners = identityService.createUserQuery().memberOfGroup("manageme
 List<User> findUserByQueryCriteria(UserQueryImpl query, Page page);
 ----
 
-<<chapter_ldap,LDAP集成>>中的代码包含了如何实现这些的完整示例。可以在GitHub查看代码，特别是link:$$https://github.com/Activiti/Activiti/blob/master/modules/activiti-ldap/src/main/java/org/activiti/ldap/LDAPGroupManager.java$$[LDAPGroupManager]与link:$$https://github.com/Activiti/Activiti/blob/master/modules/activiti-ldap/src/main/java/org/activiti/ldap/LDAPUserManager.java$$[LDAPUserManager]。
-
+<<chapter_ldap,LDAP集成>>中的代码包含了如何实现这些的完整示例。可以在GitHub查看代码，特别是
+link:$$https://github.com/Flowable/Flowable/blob/master/modules/flowable-ldap/src/main/java/org/activiti/ldap/LDAPGroupManager.java$$[LDAPGroupManager]
+与
+link:$$https://github.com/Flowable/Flowable/blob/master/modules/flowable-ldap/src/main/java/org/activiti/ldap/LDAPUserManager.java$$[LDAPUserManager]。
 
 [[advanced.safe.bpmn.xml]]
 
@@ -838,7 +840,7 @@ List<User> findUserByQueryCriteria(UserQueryImpl query, Page page);
 
 === 事件记录（试验性） Event logging (Experimental)
 
-从Flowable 5.16开始，引入了（试验性）的事件记录机制。记录机制基于<<eventDispatcher,Flowable引擎的事件机制>>的一般用途，并默认禁用。其思想是，来源于引擎的事件会被捕获，并创建一个包含了所有事件数据（甚至更多）的映射，提供给__org.activiti.engine.impl.event.logger.EventFlusher__，由它将这些数据刷入其他地方。默认情况下，使用简单的基于数据库的事件处理/刷入，会使用Jackson将上述映射序列化为JSON，并将其作为__EventLogEntryEntity__接口存入数据库。如果不使用事件记录，可以删除这个表。
+我们引入了（试验性）的事件记录机制。记录机制基于<<eventDispatcher,Flowable引擎的事件机制>>的一般用途，并默认禁用。其思想是，来源于引擎的事件会被捕获，并创建一个包含了所有事件数据（甚至更多）的映射，提供给__org.activiti.engine.impl.event.logger.EventFlusher__，由它将这些数据刷入其他地方。默认情况下，使用简单的基于数据库的事件处理/刷入，会使用Jackson将上述映射序列化为JSON，并将其作为__EventLogEntryEntity__接口存入数据库。如果不使用事件记录，可以删除这个表。
 
 要启用数据库记录：
 
@@ -875,20 +877,20 @@ runtimeService.addEventListener(databaseEventLogger);
 [[advancedSecureScripting]]
 === 安全脚本 Secure Scripting
 
-**试验性**：安全脚本功能随Flowable 5.21发布。
+**试验性**：安全脚本功能随Flowable 5.22发布。
 
 默认情况下，使用<<bpmnScriptTask,脚本任务>>时，执行的脚本与Java代理具有相似的能力。可以完全访问JVM，永远运行（无限循环），或占用大量内存。然而，Java代理需要撰写并放在classpath的jar中，与流程定义的生命周期不同。最终用户一般不会撰写Java代理，因为这基本上是开发者的工作。
 
 然而脚本是流程定义的一部分，具有相同的生命周期。脚本任务不需要额外的jar部署步骤，而是在流程部署后就可以执行。有时，脚本任务中的脚本不是由开发者撰写的。这就有一个上面提到的问题：脚本可以完全访问JVM，也可以在执行脚本时阻塞许多系统资源。因此允许来自几乎任何人的脚本不是一个好主意。
 
-要解决这个问题，可以启用__安全脚本__功能。目前，这个功能只实现了__javascript__脚本。要启用它，向你的项目添加__activiti-secure-javascript__依赖。使用Maven时：
+要解决这个问题，可以启用__安全脚本__功能。目前，这个功能只实现了__javascript__脚本。要启用它，向你的项目添加__flowable-secure-javascript__依赖。使用Maven时：
 
 [source,xml,linenums]
 ----
 <dependency>
-    <groupId>org.activiti</groupId>
-    <artifactId>activiti-secure-javascript</artifactId>
-    <version>${activiti.version}</version>
+    <groupId>org.flowable</groupId>
+    <artifactId>flowable-secure-javascript</artifactId>
+    <version>${flowable.version}</version>
 </dependency>
 ----
 
@@ -913,7 +915,7 @@ processEngineConfig.addConfigurator(configurator);
 可以使用下列设置：
 
 * *enableClassWhiteListing*: 为true时，会黑名单所有类。希望运行的所有类都需要添加入白名单，这样就严格控制了暴露给脚本的东西。默认为__false__。
-* *whiteListedClasses*: 一个全限定类名字符串的集合，表示允许脚本中使用的类。例如，要在脚本中暴露__execution__对象，需要在这个集合中添加__org.activiti.engine.impl.persistence.entity.ExecutionEntity__字符串。默认为__空__。
+* *whiteListedClasses*: 一个全限定类名字符串的集合，表示允许脚本中使用的类。例如，要在脚本中暴露__execution__对象，需要在这个集合中添加__org.activiti.engine.impl.persistence.entity.ExecutionEntityImpl__字符串。默认为__空__。
 * *maxStackDepth*: 限制在脚本中调用函数时的最大栈深度。可以用于避免由于递归调用脚本中定义的方法，而导致的栈溢出异常。默认为__-1__（禁用）。
 * *maxScriptExecutionTime*: 脚本允许运行的最大时间。默认为__-1__（禁用）。
 * *maxMemoryUsed*: 脚本允许使用的最大内存数量，以字节计。请注意脚本引擎自己也要需要一定量的内存，也会算在这里。默认为__-1__（禁用）。
@@ -939,4 +941,4 @@ __请注意：____maxMemoryUsed__设置只能用于支持com.sun.management.Thre
 </activiti:executionListener>
 ----
 
-演示不安全脚本以及如何通过__安全脚本__功能将其变得安全的例子，可以查看link:$$https://github.com/Activiti/Activiti/tree/master/modules/activiti-secure-javascript/src/test/resources$$[GitHub上的单元测试]
+演示不安全脚本以及如何通过__安全脚本__功能将其变得安全的例子，可以查看link:$$https://github.com/Flowable/Flowable/tree/master/modules/flowable-secure-javascript/src/test/resources$$[GitHub上的单元测试]
