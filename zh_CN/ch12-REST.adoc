@@ -11,7 +11,7 @@ Flowable在引擎中包含了REST API，可以通过在servlet容器如Apache To
 
 默认情况下Flowable引擎连接至一个H2内存数据库。可以修改WEB-INF/classes文件夹下的db.properties文件中的数据库设置。REST API使用JSON格式 (http://www.json.org) ，基于Spring MVC (http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html) 构建。
 
-默认情况下，所有REST资源都需要有一个有效的的Flowable已认证用户，使用基础HTTP访问认证，因此在请求时，可以在HTTP头添加++Authorization: Basic ...==++，也可以在请求url中包含用户名与密码（例如++http://username:password@localhost...++）。
+默认情况下，所有REST资源都需要有一个有效的Flowable已认证用户，以使用基础HTTP访问认证。因此在请求时，可以在HTTP头添加 Authorization: BasicXXX== ，也可以在请求url中包含用户名与密码（例如 http://username:password@localhost/XXX）。
 
 **建议使用基础认证时，同时使用HTTPS。**
 
