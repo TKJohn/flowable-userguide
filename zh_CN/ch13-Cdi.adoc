@@ -2,38 +2,39 @@
 
 == CDI集成 CDI integration
 
-activiti-cid模块平衡了Activiti的可配置性与cid的可扩展性。activiti-cdi最突出的特点是：
+flowable-cdi模块平衡了Flowable的可配置性与CDI(上下文和依赖注入, Contexts and Dependency Injection, J2EE)的可扩展性。flowable-cdi最突出的特点是：
    
 * 支持@BusinessProcessScoped bean（生命周期绑定至流程实例的Cdi bean），
-* 用于从流程中解析Cdi bean（包括EJB）的自定义El解析器，
+* 用于从流程中解析CDI bean（包括EJB）的自定义El解析器，
 * 使用注解对流程实例进行声明式控制，
-* Activiti关联cdi事件总线，
+* Flowable关联cdi事件总线，
 * 可以与Java EE，Java SE，以及Spring一起工作，
 * 支持单元测试。
 
 [source,xml,linenums]
 ----
 <dependency>
-	<groupId>org.activiti</groupId>
-	<artifactId>activiti-cdi</artifactId>
+	<groupId>org.flowable</groupId>
+	<artifactId>flowable-cdi</artifactId>
 	<version>5.x</version>
 </dependency>
 ----
 
-=== 设置activiti-cdi (Setting up activiti-cdi)
 
-Activiti cdi可以在不同环境中安装。在这个章节我们主要浏览配置选项。
+=== 设置flowable-cdi (Setting up flowable-cdi)
+
+Flowable cdi可以在不同环境中安装。在这个章节我们主要浏览配置选项。
     
 
 ==== 查找流程引擎 Looking up a Process Engine
 
-cid扩展需要能访问流程引擎，因此会在运行时查找++org.activiti.cdi.spi.ProcessEngineLookup++接口的实现。cdi模块提供了默认的名为++org.activiti.cdi.impl.LocalProcessEngineLookup++的实现，使用++ProcessEngines++-Utility类查找流程引擎，默认配置下使用 +$$ProcessEngines#NAME_DEFAULT$$+ 查找流程引擎。需要扩展这个类并设置一个名字。请注意：在classpath中需要有++activiti.cfg.xml++配置文件。
+CDI扩展需要能访问流程引擎，因此会在运行时查找++org.activiti.cdi.spi.ProcessEngineLookup++接口的实现。cdi模块提供了默认的名为++org.activiti.cdi.impl.LocalProcessEngineLookup++的实现，使用++ProcessEngines++-Utility类查找流程引擎，默认配置下使用 +$$ProcessEngines#NAME_DEFAULT$$+ 查找流程引擎。需要扩展这个类并设置一个名字。请注意：在classpath中需要有++activiti.cfg.xml++配置文件。
 
-Activiti cdi使用java.util.ServiceLoader SPI解析++org.activiti.cdi.spi.ProcessEngineLookup++实例。为了提供接口的自定义实现，需要在部署中添加名为++META-INF/services/org.activiti.cdi.spi.ProcessEngineLookup++的纯文本文件，在其中指定实现的全限定类名。
+Flowable cdi使用java.util.ServiceLoader SPI解析++org.activiti.cdi.spi.ProcessEngineLookup++实例。为了提供接口的自定义实现，需要在部署中添加名为++META-INF/services/org.activiti.cdi.spi.ProcessEngineLookup++的纯文本文件，在其中指定实现的全限定类名。
 
 [NOTE]
 ====
-如果不提供自定义的++org.activiti.cdi.spi.ProcessEngineLookup++实现，则Activiti会使用默认的++LocalProcessEngineLookup++实现。在这种情况下，只需要在classpath中提供activiti.cfg.xml（参见下一章节）即可。
+如果不提供自定义的++org.activiti.cdi.spi.ProcessEngineLookup++实现，则Flowable会使用默认的++LocalProcessEngineLookup++实现。在这种情况下，只需要在classpath中提供activiti.cfg.xml（参见下一章节）即可。
 ====
 
 
@@ -41,10 +42,10 @@ Activiti cdi使用java.util.ServiceLoader SPI解析++org.activiti.cdi.spi.Proces
 
 配置方式取决于选用的流程引擎查找策略（上一章节）。这里，我们关注与LocalProcessEngineLookup一起使用的可用配置选项，需要在classpath中提供一个Spring activiti.cfg.xml文件。
 
-Activiti根据底层事务管理策略的不同，提供不同的ProcessEngineConfiguration实现。activiti-cdi模块不关注事务，也就意味着可以使用任何事务管理策略（甚至是Spring抽象事务）。按照约定，cdi模块提供两个自定义的ProcessEngineConfiguration实现：
+Flowable根据底层事务管理策略的不同，提供不同的ProcessEngineConfiguration实现。flowable-cdi模块不关注事务，也就意味着可以使用任何事务管理策略（甚至是Spring抽象事务）。按照约定，cdi模块提供两个自定义的ProcessEngineConfiguration实现：
      	
-* ++org.activiti.cdi.CdiJtaProcessEngineConfiguration++: activiti JtaProcessEngineConfiguration的子类，可用于Activiti使用JTA管理事务的情况
-* ++org.activiti.cdi.CdiStandaloneProcessEngineConfiguration++: StandaloneProcessEngineConfiguration的子类，可用于Activiti使用简单JDBC事务的情况。
+* ++org.activiti.cdi.CdiJtaProcessEngineConfiguration++: Flowable JtaProcessEngineConfiguration的子类，可用于Flowable使用JTA管理事务的情况
+* ++org.activiti.cdi.CdiStandaloneProcessEngineConfiguration++: StandaloneProcessEngineConfiguration的子类，可用于Flowable使用简单JDBC事务的情况。
 
 下面是一个JBoss 7的activiti.cfg.xml文件示例：
      
@@ -119,7 +120,7 @@ Java SE环境中的配置与<<configuration,创建一个流程引擎>>章节中�
      	
 ==== 部署流程 Deploying Processes
 
-可以使用标准activiti API（++RepositoryService++）部署流程。另外，activiti-cid也提供了自动部署流程的功能，使用classpath顶层的++processes.xml++文件提供流程列表。这是一个processes.xml文件的例子：
+可以使用标准Flowable API（++RepositoryService++）部署流程。另外，flowable-cdi也提供了自动部署流程的功能，使用classpath顶层的++processes.xml++文件提供流程列表。这是一个processes.xml文件的例子：
 
 [source,xml,linenums]
 ----
@@ -134,19 +135,19 @@ Java SE环境中的配置与<<configuration,创建一个流程引擎>>章节中�
      
 === CDI的基于上下文的流程执行 Contextual Process Execution with CDI
 
-本章节我们将介绍Activiti cdi扩展使用的基于上下文的流程执行模型。BPMN业务流程通常是一个长期运行的交互动作，包含用户与系统的任务。在运行时，流程分割为独立工作单元的集合，由用户与/或应用逻辑操作。在activiti-cdi中，流程实例可以关联至一个cdi作用域，这个关联代表了一个工作单元。如果工作单元很复杂这就特别有用，例如若一个用户任务由多个不同表单的复杂顺序组成，并需要在交互过程中保持"非流程作用域（non-process-scoped）"状态。
+本章节我们将介绍Flowable cdi扩展使用的基于上下文的流程执行模型。BPMN业务流程通常是一个长期运行的交互动作，包含用户与系统的任务。在运行时，流程分割为独立工作单元的集合，由用户与/或应用逻辑操作。在flowable-cdi中，流程实例可以关联至一个cdi作用域，这个关联代表了一个工作单元。如果工作单元很复杂这就特别有用，例如若一个用户任务由多个不同表单的复杂顺序组成，并需要在交互过程中保持"非流程作用域（non-process-scoped）"状态。
 
 在默认配置中，流程实例关联至"broadest（广播）"活动作用域，一开始为会话，并在会话上下文未激活时退化为请求。
 
 ==== 将一个会话关联至一个流程实例 Associating a Conversation with a Process Instance
 
-当解析@BusinessProcessScoped bean，或注入流程变量时，会依赖一个激活的cdi作用域与一个流程实例的已有关联。Activiti-cdi提供了++org.activiti.cdi.BusinessProcess++ bean用于控制该关联，特别是：
+当解析@BusinessProcessScoped bean，或注入流程变量时，会依赖一个激活的cdi作用域与一个流程实例的已有关联。flowable-cdi提供了++org.activiti.cdi.BusinessProcess++ bean用于控制该关联，特别是：
 
-* __startProcessBy(...)__方法，镜像了Activiti ++RuntimeService++服务暴露的对应方法，用于启动并关联一个业务流程，
+* __startProcessBy(...)__方法，镜像了Flowable ++RuntimeService++服务暴露的对应方法，用于启动并关联一个业务流程，
 * ++resumeProcessById(String processInstanceId)++，用于将给定id关联至流程实例，
 * ++resumeTaskById(String taskId)++，用于将给定id关联至任务（以及扩展至相关的流程实例）。
 
-当完成了一个工作单元（例如一个用户任务）时，可以调用++completeTask()++方法，解除流程实例与会话/请求的关联。这将通知Activiti当前任务已完成，并使流程实例继续运行。
+当完成了一个工作单元（例如一个用户任务）时，可以调用++completeTask()++方法，解除流程实例与会话/请求的关联。这将通知Flowable当前任务已完成，并使流程实例继续运行。
 
 请注意++BusinessProcess++ bean是一个++@Named++ bean，意味着可以使用表达式语言调用暴露的服务，例如在JSF页面中调用。下面的JSF2代码片段启动了一个新的会话，并将其关联至一个用户任务实例，其id作为请求参数传递（例如++pageName.jsf?taskId=XX++）：
 
@@ -160,7 +161,7 @@ Java SE环境中的配置与<<configuration,创建一个流程引擎>>章节中�
 
 ==== 声明式控制流程 Declaratively controlling the Process
 
-Activiti可以使用注解，声明式启动流程实例以及完成任务。++@org.activiti.cdi.annotation.StartProcess++注解可以通过"key"或"name"启动一个流程实例。请注意流程实例在注解的方法返回__之后__启动。例如：
+Flowable可以使用注解，声明式启动流程实例以及完成任务。++@org.activiti.cdi.annotation.StartProcess++注解可以通过"key"或"name"启动一个流程实例。请注意流程实例在注解的方法返回__之后__启动。例如：
 		
 [source,java,linenums]
 ----
@@ -171,7 +172,7 @@ public String submitRequest(BusinessTripRequest request) {
 }			
 ----
 
-取决于Activiti的配置，被注解的方法代码以及流程实例的启动将处于同一个事务中。++@org.activiti.cdi.annotation.CompleteTask++的使用方式相同：
+取决于Flowable的配置，被注解的方法代码以及流程实例的启动将处于同一个事务中。++@org.activiti.cdi.annotation.CompleteTask++的使用方式相同：
 
 [source,java,linenums]
 ----
@@ -182,11 +183,11 @@ public String authorizeBusinessTrip() {
 }
 ----
 
-++@CompleteTask++注解提供了完成当前会话的能力。默认行为是在调用Activiti返回后结束回话。可以像上面的例子一样，禁用结束会话。
+++@CompleteTask++注解提供了完成当前会话的能力。默认行为是在调用Flowable返回后结束回话。可以像上面的例子一样，禁用结束会话。
 
 ==== 从流程中引用Bean (Referencing Beans from the Process)
 
-Activiti-cdi使用自定义解析器，将CDI bean暴露给Activiti El。因此可以像这样在流程中引用bean：
+flowable-cdi使用自定义解析器，将CDI bean暴露给Flowable El。因此可以像这样在流程中引用bean：
 
 [source,xml,linenums]
 ----
@@ -215,7 +216,7 @@ public Employee authorizingManager() {
 
 ==== 使用@BusinessProcessScoped bean (Working with @BusinessProcessScoped beans)
 
-使用activiti-cdi，可以将一个bean的生命周期绑定在一个流程实例上。因此，提供了名为BusinessProcessContext的自定义的上下文实现。BusinessProcessScoped bean的实例将作为流程变量存储在当前流程实例中。BusinessProcessScoped bean需要是可持久化（PassivationCapable，例如Serializable）的。下面是一个流程作用域bean的例子：
+使用flowable-cdi，可以将一个bean的生命周期绑定在一个流程实例上。因此，提供了名为BusinessProcessContext的自定义的上下文实现。BusinessProcessScoped bean的实例将作为流程变量存储在当前流程实例中。BusinessProcessScoped bean需要是可持久化（PassivationCapable，例如Serializable）的。下面是一个流程作用域bean的例子：
 
 [source,java,linenums]
 ----
@@ -233,7 +234,7 @@ public class BusinessTripRequest implements Serializable {
 
 ==== 注入流程变量 Injecting Process Variables
 
-可以注入流程变量。Activiti-CDI支持
+可以注入流程变量。flowable-cdi支持
 
 * 使用++@Inject \[additional qualifiers\] Type fieldName++类型安全地注入++@BusinessProcessScoped++ bean
 * 使用++@ProcessVariable(name?)++限定名不安全地注入其它流程变量：
@@ -258,7 +259,7 @@ public class BusinessTripRequest implements Serializable {
 
 <<experimental,[EXPERIMENTAL]>>
 
-Activiti可以关联至CDI事件总线。这样可以使用标准CDI事件机制获取流程事件。要为Activiti启用CDI事件支持，需要在配置中启用相应的处理监听器：
+Flowable可以关联至CDI事件总线。这样可以使用标准CDI事件机制获取流程事件。要为Flowable启用CDI事件支持，需要在配置中启用相应的处理监听器：
 
 [source,xml,linenums]
 ----
@@ -269,7 +270,7 @@ Activiti可以关联至CDI事件总线。这样可以使用标准CDI事件机制
 </property>
 ----
 
-这样Activiti就被配置为使用CDI事件总线发布事件。下面介绍如何在CDI bean中接收流程事件。事件通知是类型安全的。流程事件的类型是++org.activiti.cdi.BusinessProcessEvent++。下面是一个简单的事件观察者方法的例子：
+这样Flowable就被配置为使用CDI事件总线发布事件。下面介绍如何在CDI bean中接收流程事件。事件通知是类型安全的。流程事件的类型是++org.activiti.cdi.BusinessProcessEvent++。下面是一个简单的事件观察者方法的例子：
 
 [source,java,linenums]
 ----
@@ -318,6 +319,6 @@ public void onShipmentSuceeded(@Observes(during=TransactionPhase.AFTER_SUCCESS) 
 
 === 已知限制 Known Limitations
 
-尽管activiti-cdi依靠SPI实现，并设计为“移动性扩展”，但只使用Weld进行了测试。
+尽管flowable-cdi依靠SPI实现，并设计为“可移动扩展”，但只使用Weld进行了测试。
 	  	
 
