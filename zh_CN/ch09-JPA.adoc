@@ -28,13 +28,13 @@
 [source,xml,linenums]
 ----
 <bean id="processEngineConfiguration"
-  class="org.activiti.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration">
+  class="org.flowable.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration">
 
 <!-- Database configurations -->
 <property name="databaseSchemaUpdate" value="true" />
 <property name="jdbcUrl" value="jdbc:h2:mem:JpaVariableTest;DB_CLOSE_DELAY=1000" />
 
-<property name="jpaPersistenceUnitName" value="activiti-jpa-pu" />
+<property name="jpaPersistenceUnitName" value="flowable-jpa-pu" />
 <property name="jpaHandleTransaction" value="true" />
 <property name="jpaCloseEntityManager" value="true" />
 
@@ -46,7 +46,7 @@
 </bean>
 ----
 
-下面的示例配置提供了我们自己定义的++EntityManagerFactory++（在这个例子里，是一个open-jpa实体管理器）。请注意这段代码只包含了与本例相关的bean，省略了其他的。带有open-jpa实体管理器的完整的可用示例，可以在flowable-spring-examples (++/flowable-spring/src/test/java/org/activiti/spring/test/jpa/JPASpringTest.java++)中找到。
+下面的示例配置提供了我们自己定义的++EntityManagerFactory++（在这个例子里，是一个open-jpa实体管理器）。请注意这段代码只包含了与本例相关的bean，省略了其他的。带有open-jpa实体管理器的完整的可用示例，可以在flowable-spring-examples (++/flowable-spring/src/test/java/org/flowable/spring/test/jpa/JPASpringTest.java++)中找到。
 
 [source,xml,linenums]
 ----
@@ -59,7 +59,7 @@
   </property>
 </bean>
 
-<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+<bean id="processEngineConfiguration" class="org.flowable.spring.SpringProcessEngineConfiguration">
   <property name="dataSource" ref="dataSource" />
   <property name="transactionManager" ref="transactionManager" />
   <property name="databaseSchemaUpdate" value="true" />
@@ -76,7 +76,7 @@
 ----
 ProcessEngine processEngine = ProcessEngineConfiguration
 .createProcessEngineConfigurationFromResourceDefault()
-.setJpaPersistenceUnitName("activiti-pu")
+.setJpaPersistenceUnitName("flowable-pu")
 .buildProcessEngine();
 ----
 
@@ -145,7 +145,7 @@ ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("Upda
 [source,xml,linenums]
 ----
 <serviceTask id='theTask' name='updateJPAEntityTask'
-  activiti:expression="${entityToUpdate.setValue('updatedValue')}" />
+  flowable:expression="${entityToUpdate.setValue('updatedValue')}" />
 ----
 
 当服务任务完成时，流程实例在流程定义中定义的用户任务处等待，让我们可以查看流程实例。在这时，++EntityManager++已经刷入，对实体的修改也已经存入数据库。当我们使用++entityToUpdate++变量的值时，将重新载入，我们会得到++value++参数设置为++updatedValue++的实体。
@@ -161,7 +161,7 @@ assertEquals("updatedValue", ((FieldAccessJPAEntity)updatedEntity).getValue());
 
 ==== 查询JPA流程变量 Query JPA process variables
 
-可以查询以特定JPA实体作为变量值的++流程实例++与++执行++。**请注意对于++ProcessInstanceQuery++与++ExecutionQuery++的JPA实体查询，只支持++variableValueEquals(name, entity)++**。而++variableValueNotEquals++、++variableValueGreaterThan++、++variableValueGreaterThanOrEqual++、++variableValueLessThan++与++variableValueLessThanOrEqual++方法都不支持，并会在值传递为JPA实体时，抛出++ActivitiException++。
+可以查询以特定JPA实体作为变量值的++流程实例++与++执行++。**请注意对于++ProcessInstanceQuery++与++ExecutionQuery++的JPA实体查询，只支持++variableValueEquals(name, entity)++**。而++variableValueNotEquals++、++variableValueGreaterThan++、++variableValueGreaterThanOrEqual++、++variableValueLessThan++与++variableValueLessThanOrEqual++方法都不支持，并会在值传递为JPA实体时，抛出++FlowableException++。
 
 [source,java,linenums]
 ----
@@ -175,7 +175,7 @@ assertEquals("updatedValue", ((FieldAccessJPAEntity)updatedEntity).getValue());
 
 * 一个已有的Spring bean，使用已有的JPA实体，用于存储贷款申请。
 * 使用Flowable，可以通过该bean获取该实体，并将其用作流程中的变量。流程定义如下步骤：
-** 创建新的LoanRequest（贷款申请）的服务任务，使用已有的++LoanRequestBean++，并使用启动流程时接收的变量（例如，从启动表单）。创建的实体作为变量存储，使用++activiti:resultVariable++将表达式结果存储为变量。
+** 创建新的LoanRequest（贷款申请）的服务任务，使用已有的++LoanRequestBean++，并使用启动流程时接收的变量（例如，从启动表单）。创建的实体作为变量存储，使用++flowable:resultVariable++将表达式结果存储为变量。
 ** 让经理可以审核申请并批准/驳回的用户任务，该选择将会存储为boolean变量++approvedByManager++。
 ** 更新贷款申请实体的服务任务，以便其可以与流程同步。
 ** 依据++approved++实体参数的值，使用一个排他网关，选择下一步采用哪条路径：若申请被批准，结束流程；否则，产生一个额外任务（Send rejection letter 发送拒信），以便客户可以收到拒信得到通知。
@@ -190,23 +190,23 @@ image::images/jpa.spring.example.process.png[align="center"]
 <definitions id="taskAssigneeExample"
   xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:activiti="http://activiti.org/bpmn"
-  targetNamespace="org.activiti.examples">
+  xmlns:flowable="http://flowable.org/bpmn"
+  targetNamespace="org.flowable.examples">
 
   <process id="LoanRequestProcess" name="Process creating and handling loan request">
     <startEvent id='theStart' />
     <sequenceFlow id='flow1' sourceRef='theStart' targetRef='createLoanRequest' />
 
     <serviceTask id='createLoanRequest' name='Create loan request'
-      activiti:expression="${loanRequestBean.newLoanRequest(customerName, amount)}"
-      activiti:resultVariable="loanRequest"/>
+      flowable:expression="${loanRequestBean.newLoanRequest(customerName, amount)}"
+      flowable:resultVariable="loanRequest"/>
     <sequenceFlow id='flow2' sourceRef='createLoanRequest' targetRef='approveTask' />
 
     <userTask id="approveTask" name="Approve request" />
     <sequenceFlow id='flow3' sourceRef='approveTask' targetRef='approveOrDissaprove' />
 
     <serviceTask id='approveOrDissaprove' name='Store decision'
-      activiti:expression="${loanRequest.setApproved(approvedByManager)}" />
+      flowable:expression="${loanRequest.setApproved(approvedByManager)}" />
     <sequenceFlow id='flow4' sourceRef='approveOrDissaprove' targetRef='exclusiveGw' />
 
     <exclusiveGateway id="exclusiveGw" name="Exclusive Gateway approval" />

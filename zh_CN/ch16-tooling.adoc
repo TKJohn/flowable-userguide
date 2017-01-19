@@ -31,10 +31,10 @@
 
 在添加依赖并构建流程引擎后，就可以使用JMX连接了。可以使用在标准JDK发行版中提供的jconsole。在本地线程列表中，可以看到包含Flowable的JVM。如果由于任何原因没有在“本地进程”中列出合适的JVM，可以尝试使用这个URL从“远程进程”中连接：
 ----
-service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/activiti
+service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/flowable
 ----
 
-可以在日志文件中找到正确的本地URL。连接之后，可以看到标准JVM状态与MBeans。可以选择MBeans页签，并在右侧面板选择"org.activiti.jmx.Mbeans"，以浏览Flowable专用的MBean。选择任何MBean，都可以查询信息或修改配置。这个截图展示了jconsole的样子：
+可以在日志文件中找到正确的本地URL。连接之后，可以看到标准JVM状态与MBeans。可以选择MBeans页签，并在右侧面板选择"org.flowable.jmx.Mbeans"，以浏览Flowable专用的MBean。选择任何MBean，都可以查询信息或修改配置。这个截图展示了jconsole的样子：
 
 （原图缺失）
 
@@ -73,10 +73,10 @@ JMX使用最常使用的配置作为默认配置来简化部署。然而也可�
   ...
   <property name="configurators">
     <list>
-	  <bean class="org.activiti.management.jmx.JMXConfigurator">
+	  <bean class="org.flowable.management.jmx.JMXConfigurator">
 
 	    <property name="connectorPort" value="1912" />
-        <property name="serviceUrlPath" value="/jmxrmi/activiti" />
+        <property name="serviceUrlPath" value="/jmxrmi/flowable" />
 
 		...
       </bean>
@@ -91,11 +91,11 @@ JMX使用最常使用的配置作为默认配置来简化部署。然而也可�
 |===============
 |名字|默认值|描述
 |disabled|false|若值为true，即使已添加依赖也不会启动JMX
-|domain|org.activiti.jmx.Mbeans|MBean的域
+|domain|org.flowable.jmx.Mbeans|MBean的域
 |createConnector|true|若值为true，则为已启动的MbeanServer创建一个连接器
 |MBeanDomain|DefaultDomain|MBean服务器的域
 |registryPort|1099|出现在服务URL中作为注册端口
-|serviceUrlPath|/jmxrmi/activiti|出现在服务URL中
+|serviceUrlPath|/jmxrmi/flowable|出现在服务URL中
 |connectorPort|-1|如果大于0，则出现在服务URL中作为连接端口
 
 |===============
@@ -164,7 +164,7 @@ mvn archetype:generate \
         │       └── myGroup
         │           └── MyUnitTest.java
         └── resources
-            ├── activiti.cfg.xml
+            ├── flowable.cfg.xml
             ├── log4j.properties
             └── org
                 └── myGroup

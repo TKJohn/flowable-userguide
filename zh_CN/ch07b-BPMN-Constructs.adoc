@@ -17,7 +17,7 @@ BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不
 尽管BPMN 2.0规格明确指出可以支持自定义扩展，我们仍做了如下保证：
 
 * 自定义扩展的前提是，**做事情的标准方式****总**可以进行更简化的改造。因此当你决定使用自定义扩展时，不用担心无路可退（仍然可以用标准方式）。
-* 使用自定义扩展时，总是通过为新的XML元素、属性等提供**activiti:**命名空间前缀，明确标识出来。
+* 使用自定义扩展时，总是通过为新的XML元素、属性等提供**flowable:**命名空间前缀，明确标识出来。
 
 因此是否使用自定义扩展，完全取决于你自己。有些其他因素会影响选择（图形化编辑器的使用，公司策略，等等）。我们提供扩展，只是因为相信，标准中的某些地方可以用更简单或效率更高的方式处理。请不要吝啬给我们反馈对扩展的评价（正面的和/或负面的），也可以给我们提供关于自定义扩展的新想法。说不定某一天，你的想法会成为规范的一部分！
 
@@ -48,7 +48,7 @@ BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不
 
 [source,xml,linenums]
 ----
-<timerEventDefinition activiti:businessCalendarName="custom">
+<timerEventDefinition flowable:businessCalendarName="custom">
     ...
 </timerEventDefinition>
 ----
@@ -82,7 +82,7 @@ BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不
 [source,xml,linenums]
 ----
 <timerEventDefinition>
-    <timeCycle activiti:endDate="2015-02-25T16:42:11+00:00">R3/PT10H</timeCycle>
+    <timeCycle flowable:endDate="2015-02-25T16:42:11+00:00">R3/PT10H</timeCycle>
 </timerEventDefinition>
 ----
 
@@ -127,7 +127,7 @@ BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不
 </boundaryEvent>
 ----
 
-**请注意：**定时器只有在作业或者异步执行器启用时才能触发（也就是说，需要在++activiti.cfg.xml++中，将__jobExecutorActivate__或者__asyncExecutorActivate__设置为++true++。因为默认情况下，作业与异步执行器都是禁用的）。
+**请注意：**定时器只有在作业或者异步执行器启用时才能触发（也就是说，需要在++flowable.cfg.xml++中，将__jobExecutorActivate__或者__asyncExecutorActivate__设置为++true++。因为默认情况下，作业与异步执行器都是禁用的）。
 
 [[bpmnErrorEventDefinition]]
 
@@ -185,7 +185,7 @@ BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不
 
 ===== 抛出信号事件 Throwing a Signal Event
 
-信号可以由流程实例使用BPMN结构抛出，也可以通过编程方式使用Java API抛出。下面++org.activiti.engine.RuntimeService++中的方法可以用于编程方式抛出信号：
+信号可以由流程实例使用BPMN结构抛出，也可以通过编程方式使用Java API抛出。下面++org.flowable.engine.RuntimeService++中的方法可以用于编程方式抛出信号：
 
 [source,java,linenums]
 ----
@@ -236,7 +236,7 @@ RuntimeService.signalEventReceived(String signalName, String executionId);
 
 [source,xml,linenums]
 ----
-<signal id="alertSignal" name="alert" activiti:scope="processInstance"/>
+<signal id="alertSignal" name="alert" flowable:scope="processInstance"/>
 ----
 
 这个属性的默认值为__"global（全局）"__。
@@ -280,7 +280,7 @@ Flowable提供了解决的方法。可以在信号事件上添加__scope__属性
 ----
 <definitions id="definitions"
   xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
-  xmlns:activiti="http://activiti.org/bpmn"
+  xmlns:flowable="http://flowable.org/bpmn"
   targetNamespace="Examples"
   xmlns:tns="Examples">
 
@@ -392,7 +392,7 @@ image::images/bpmn.start.message.event.example.1.png[align="center"]
 
 [source,xml,linenums]
 ----
-<startEvent id="request" activiti:initiator="initiator" />
+<startEvent id="request" flowable:initiator="initiator" />
 ----
 
 认证用户必须通过++IdentityService.setAuthenticatedUserId(String)++方法，在try-finally块中设置，像这样：
@@ -467,7 +467,7 @@ image::images/bpmn.none.start.event.png[align="center"]
 
 [source,xml,linenums]
 ----
-<startEvent id="request" activiti:formKey="org/activiti/examples/taskforms/request.form" />
+<startEvent id="request" flowable:formKey="org/flowable/examples/taskforms/request.form" />
 ----
 
 
@@ -597,7 +597,7 @@ image::images/bpmn.start.message.event.png[align="center"]
 ----
 <definitions id="definitions"
   xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
-  xmlns:activiti="http://activiti.org/bpmn"
+  xmlns:flowable="http://flowable.org/bpmn"
   targetNamespace="Examples"
   xmlns:tns="Examples">
 
@@ -862,7 +862,7 @@ image::images/bpmn.terminate.end.event.png[align="center"]
 [source,xml,linenums]
 ----
 <endEvent id="myEndEvent >
-  <terminateEventDefinition activiti:terminateAll="true"></terminateEventDefinition>
+  <terminateEventDefinition flowable:terminateAll="true"></terminateEventDefinition>
 </endEvent>
 ----
 
@@ -987,7 +987,7 @@ image::images/bpmn.non.interrupting.boundary.timer.event.png[align="center"]
 <boundaryEvent id="escalationTimer" cancelActivity="false" attachedToRef="firstLineSupport"/>
 ----
 
-**请注意：**定时器边界事件只有在作业或异步执行器启用时才能触发（也就是说，需要在++activiti.cfg.xml++中，将__jobExecutorActivate__或者__asyncExecutorActivate__设置为++true++。因为默认情况下，作业与异步执行器都是禁用的。）
+**请注意：**定时器边界事件只有在作业或异步执行器启用时才能触发（也就是说，需要在++flowable.cfg.xml++中，将__jobExecutorActivate__或者__asyncExecutorActivate__设置为++true++。因为默认情况下，作业与异步执行器都是禁用的。）
 
 
 [[bpmnKnownIssueBoundaryEvent]]
@@ -1073,7 +1073,7 @@ image::images/bpmn.boundary.error.event.png[align="center"]
 
 image::images/bpmn.boundary.error.example.png[align="center"]
 
-这个流程作为演示配置的示例提供。可以在__org.activiti.examples.bpmn.event.error__包中找到流程XML与单元测试。
+这个流程作为演示配置的示例提供。可以在__org.flowable.examples.bpmn.event.error__包中找到流程XML与单元测试。
 
 
 [[bpmnBoundarySignalEvent]]
@@ -1284,7 +1284,7 @@ image::images/bpmn.boundary.compensation.event.png[align="center"]
 
 <association associationDirection="One" id="a1"  sourceRef="compensateBookHotelEvt" targetRef="undoBookHotel" />
 
-<serviceTask id="undoBookHotel" isForCompensation="true" activiti:class="..." />
+<serviceTask id="undoBookHotel" isForCompensation="true" flowable:class="..." />
 ----
 
 补偿边界事件在活动完成后才激活，因此不支持++cancelActivity++属性。
@@ -1480,7 +1480,7 @@ image::images/bpmn.intermediate.none.event.png[align="center"]
 ----
 <intermediateThrowEvent id="noneEvent">
   <extensionElements>
-    <activiti:executionListener class="org.activiti.engine.test.bpmn.event.IntermediateNoneEventTest$MyExecutionListener" event="start" />
+    <flowable:executionListener class="org.flowable.engine.test.bpmn.event.IntermediateNoneEventTest$MyExecutionListener" event="start" />
   </extensionElements>
 </intermediateThrowEvent>
 
@@ -1540,7 +1540,7 @@ image::images/bpmn.intermediate.signal.throw.event.png[align="center"]
 [source,xml,linenums]
 ----
 <intermediateThrowEvent id="signal">
-  <signalEventDefinition signalRef="newCustomerSignal" activiti:async="true" />
+  <signalEventDefinition signalRef="newCustomerSignal" flowable:async="true" />
 </intermediateThrowEvent>
 ----
 
@@ -1726,7 +1726,7 @@ image::images/bpmn.conditional.sequence.flow.png[align="center"]
 ----
 
 
-Flowable发行版中包含了下列示例流程，展示值表达式与方法表达式的使用（参见__org.activiti.examples.bpmn.expression__）。
+Flowable发行版中包含了下列示例流程，展示值表达式与方法表达式的使用（参见__org.flowable.examples.bpmn.expression__）。
 
 image::images/bpmn.uel-expression.on.seq.flow.png[align="center"]
 
@@ -2107,7 +2107,7 @@ image::images/bpmn.event.based.gateway.example.png[align="center"]
 ----
 <definitions id="definitions"
 	xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
-	xmlns:activiti="http://activiti.org/bpmn"
+	xmlns:flowable="http://flowable.org/bpmn"
 	targetNamespace="Examples">
 
 	<signal id="alertSignal" name="alert" />
@@ -2221,7 +2221,7 @@ task.getDescription()
 
 [source,xml,linenums]
 ----
-<userTask id="theTask" name="Important task" activiti:dueDate="${dateVariable}"/>
+<userTask id="theTask" name="Important task" flowable:dueDate="${dateVariable}"/>
 ----
 
 任务的到期日期，也可以使用++TaskService++，或者在++TaskListener++中使用传递的++DelegateTask++修改。
@@ -2304,7 +2304,7 @@ List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 
 [source,xml,linenums]
 ----
-<userTask id="theTask" name="my task" activiti:assignee="kermit" />
+<userTask id="theTask" name="my task" flowable:assignee="kermit" />
 ----
 
 与使用<<bpmnUserTaskAssignment,上面>>定义的**humanPerformer**结构完全相同。
@@ -2313,7 +2313,7 @@ List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 
 [source,xml,linenums]
 ----
-<userTask id="theTask" name="my task" activiti:candidateUsers="kermit, gonzo" />
+<userTask id="theTask" name="my task" flowable:candidateUsers="kermit, gonzo" />
 ----
 
 与使用<<bpmnUserTaskAssignment,上面>>定义的**potentialOwner**结构完全相同。请注意不需要像在__potential owner__中一样，使用__user(kermit)__的声明，因为这个属性只能用于用户。
@@ -2322,7 +2322,7 @@ List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 
 [source,xml,linenums]
 ----
-<userTask id="theTask" name="my task" activiti:candidateGroups="management, accountancy" />
+<userTask id="theTask" name="my task" flowable:candidateGroups="management, accountancy" />
 ----
 
 与使用<<bpmnUserTaskAssignment,上面>>定义的**potentialOwner**结构完全相同。请注意不需要像在__potential owner__中一样，使用__group(management)__的声明，因为这个属性只能用于组。
@@ -2363,11 +2363,11 @@ BPMN标准与Flowable示例身份认证是**用户**与**组**。在前一章节
 ----
 <userTask id="theTask" name="make profit">
   <extensionElements>
-    <activiti:customResource activiti:name="businessAdministrator">
+    <flowable:customResource flowable:name="businessAdministrator">
       <resourceAssignmentExpression>
         <formalExpression>user(kermit), group(management)</formalExpression>
       </resourceAssignmentExpression>
-    </activiti:customResource>
+    </flowable:customResource>
   </extensionElements>
 </userTask>
 ----
@@ -2412,7 +2412,7 @@ public void addCustomGroupIdentityLinkExpression(String identityLinkType,
 package com.yourco.engine.task;
 
 public class IdentityLinkType
-    extends org.activiti.engine.task.IdentityLinkType
+    extends org.flowable.engine.task.IdentityLinkType
 {
     public static final String ADMINISTRATOR = "administrator";
 
@@ -2432,7 +2432,7 @@ public class IdentityLinkType
 ----
 <userTask id="task1" name="My task" >
   <extensionElements>
-    <activiti:taskListener event="create" class="org.activiti.MyAssignmentHandler" />
+    <flowable:taskListener event="create" class="org.flowable.MyAssignmentHandler" />
   </extensionElements>
 </userTask>
 ----
@@ -2460,14 +2460,14 @@ public class MyAssignmentHandler implements TaskListener {
 
 [source,xml,linenums]
 ----
-<userTask id="task" name="My Task" activiti:assignee="${ldapService.findManagerForEmployee(emp)}"/>
+<userTask id="task" name="My Task" flowable:assignee="${ldapService.findManagerForEmployee(emp)}"/>
 ----
 
 也可以用于候选用户与组：
 
 [source,xml,linenums]
 ----
-<userTask id="task" name="My Task" activiti:candidateUsers="${ldapService.findAllSales()}"/>
+<userTask id="task" name="My Task" flowable:candidateUsers="${ldapService.findAllSales()}"/>
 ----
 
 请注意调用方法的返回类型必须是++String++或++Collection<String>++（候选用户与组）：
@@ -2567,7 +2567,7 @@ image::images/bpmn.scripttask.png[align="center"]
 
 [source,xml,linenums]
 ----
-<scriptTask id="script" scriptFormat="JavaScript" activiti:autoStoreVariables="false">
+<scriptTask id="script" scriptFormat="JavaScript" flowable:autoStoreVariables="false">
 ----
 
 这个参数的默认值为++false++，意味着这个参数将在脚本任务定义中忽略，所有声明的变量将只在脚本执行期间有效。
@@ -2589,11 +2589,11 @@ image::images/bpmn.scripttask.png[align="center"]
 
 ===== 脚本结果 Script results
 
-脚本任务的返回值，可以通过为脚本任务定义的__'activiti:resultVariable'__属性设置流程变量名，指定为已经存在的，或者新的流程变量。指定的已有值的流程变量，会被脚本执行的结果值覆盖。当不指定结果变量名时，脚本结果值将被忽略。
+脚本任务的返回值，可以通过为脚本任务定义的__'flowable:resultVariable'__属性设置流程变量名，指定为已经存在的，或者新的流程变量。指定的已有值的流程变量，会被脚本执行的结果值覆盖。当不指定结果变量名时，脚本结果值将被忽略。
 
 [source,xml,linenums]
 ----
-<scriptTask id="theScriptTask" name="Execute script" scriptFormat="juel" activiti:resultVariable="myVar">
+<scriptTask id="theScriptTask" name="Execute script" scriptFormat="juel" flowable:resultVariable="myVar">
   <script>#{echo}</script>
 </scriptTask>
 ----
@@ -2640,34 +2640,34 @@ image::images/bpmn.java.service.task.png[align="center"]
 * 调用方法表达式
 * 对值表达式求值
 
-要指定流程执行时调用的类，需要使用**'activiti:class'**属性提供全限定类名（fully qualified classname）。
+要指定流程执行时调用的类，需要使用**'flowable:class'**属性提供全限定类名（fully qualified classname）。
 
 [source,xml,linenums]
 ----
 <serviceTask id="javaService"
              name="My Java Service Task"
-             activiti:class="org.activiti.MyJavaDelegate" />
+             flowable:class="org.flowable.MyJavaDelegate" />
 ----
 
 
 查看<<bpmnJavaServiceTaskImplementation,实现章节>>，了解关于如何使用这种类的更多信息。
 
-也可以使用解析为对象的表达式。该对象必须遵循的规则，与使用++activiti:class++创建的对象规则相同（查看<<bpmnJavaServiceTaskImplementation,更多>>）。
+也可以使用解析为对象的表达式。该对象必须遵循的规则，与使用++flowable:class++创建的对象规则相同（查看<<bpmnJavaServiceTaskImplementation,更多>>）。
 
 [source,xml,linenums]
 ----
-<serviceTask id="serviceTask" activiti:delegateExpression="${delegateExpressionBean}" />
+<serviceTask id="serviceTask" flowable:delegateExpression="${delegateExpressionBean}" />
 ----
 
 这里，++delegateExpressionBean++是一个实现了++JavaDelegate++接口的bean，在Spring容器中定义。
 
-要指定需要计算的UEL方法表达式，使用**activiti:expression**属性。
+要指定需要计算的UEL方法表达式，使用**flowable:expression**属性。
 
 [source,xml,linenums]
 ----
 <serviceTask id="javaService"
              name="My Java Service Task"
-             activiti:expression="#{printer.printMessage()}" />
+             flowable:expression="#{printer.printMessage()}" />
 ----
 
 将在名为++printer++的对象上调用++printMessage++方法（不带参数）。
@@ -2678,18 +2678,18 @@ image::images/bpmn.java.service.task.png[align="center"]
 ----
 <serviceTask id="javaService"
              name="My Java Service Task"
-             activiti:expression="#{printer.printMessage(execution, myVar)}" />
+             flowable:expression="#{printer.printMessage(execution, myVar)}" />
 ----
 
 将在名为++printer++的对象上调用++printMessage++方法。传递的第一个参数为++DelegateExecution++，名为++execution++，在表达式上下文中默认可用。传递的第二个参数，是当前执行中，名为++myVar++变量的值。
 
-可以使用**activiti:expression**属性指定需要计算的UEL值表达式。
+可以使用**flowable:expression**属性指定需要计算的UEL值表达式。
 
 [source,xml,linenums]
 ----
 <serviceTask id="javaService"
              name="My Java Service Task"
-             activiti:expression="#{split.ready}" />
+             flowable:expression="#{split.ready}" />
 ----
 
 会调用名为++split++的bean的++ready++参数的getter方法，++getReady++（不带参数）。该对象会被解析为执行的流程变量或（如果可用的话）Spring上下文中的bean。
@@ -2700,9 +2700,9 @@ image::images/bpmn.java.service.task.png[align="center"]
 
 ===== 实现 Implementation
 
-要实现可以在流程执行中调用的类，需要实现__org.activiti.engine.delegate.JavaDelegate__接口，并在__execute__方法中提供所需逻辑。当流程执行到达该活动时，会执行方法中定义的逻辑，并按照BPMN 2.0的默认方法离开活动。
+要实现可以在流程执行中调用的类，需要实现__org.flowable.engine.delegate.JavaDelegate__接口，并在__execute__方法中提供所需逻辑。当流程执行到达该活动时，会执行方法中定义的逻辑，并按照BPMN 2.0的默认方法离开活动。
 
-让我们创建一个Java类的示例，可用于将流程变量String改为大写。这个类需要实现__org.activiti.engine.delegate.JavaDelegate__接口，因此需要实现__execute(DelegateExecution)__方法。这个方法就是引擎将调用的方法，需要实现业务逻辑。可以通过link:$$http://flowable.org/javadocs/org/activiti/engine/delegate/DelegateExecution.html$$[DelegateExecution]接口（点击链接获取该接口操作的详细Javadoc）访问流程实例信息，如流程变量等。
+让我们创建一个Java类的示例，可用于将流程变量String改为大写。这个类需要实现__org.flowable.engine.delegate.JavaDelegate__接口，因此需要实现__execute(DelegateExecution)__方法。这个方法就是引擎将调用的方法，需要实现业务逻辑。可以通过link:$$http://flowable.org/javadocs/org/flowable/engine/delegate/DelegateExecution.html$$[DelegateExecution]接口（点击链接获取该接口操作的详细Javadoc）访问流程实例信息，如流程变量等。
 
 [source,java,linenums]
 ----
@@ -2717,11 +2717,11 @@ public class ToUppercase implements JavaDelegate {
 }
 ----
 
-请注意：**只会为serviceTask上定义的Java类创建一个实例**。所有流程实例共享同一个类实例，用于调用__execute(DelegateExecution)__。这意味着该类不能有任何成员变量，并需要是线程安全的，因为它可能会在不同线程中同时执行。这也影响了<<serviceTaskFieldInjection,字段注入>>的使用方法。（译者注：原文可能较老，不正确。5.21中，activiti:class指定的类，会在流程实例启动时，为每个活动，分别进行实例化。不过，当该活动在流程中重复执行，或者为多实例时，使用的都会是同一个类实例。）
+请注意：**只会为serviceTask上定义的Java类创建一个实例**。所有流程实例共享同一个类实例，用于调用__execute(DelegateExecution)__。这意味着该类不能有任何成员变量，并需要是线程安全的，因为它可能会在不同线程中同时执行。这也影响了<<serviceTaskFieldInjection,字段注入>>的使用方法。（译者注：原文可能较老，不正确。5.21中，flowable:class指定的类，会在流程实例启动时，为每个活动，分别进行实例化。不过，当该活动在流程中重复执行，或者为多实例时，使用的都会是同一个类实例。）
 
-在流程定义中（如通过++activiti:class++）引用的类，**不会在部署时实例化**。只有当流程执行第一次到达该类使用的地方时，才会创建该类的实例。如果找不到这个类，会抛出++ActivitiException++。这是因为部署时的环境（更准确的说__classpath__），与实际运行的环境经常不一样。例如当使用__ant__或者Flowable应用中业务存档上传的方式部署的流程，其classpath中并没有流程引用的类。
+在流程定义中（如通过++flowable:class++）引用的类，**不会在部署时实例化**。只有当流程执行第一次到达该类使用的地方时，才会创建该类的实例。如果找不到这个类，会抛出++FlowableException++。这是因为部署时的环境（更准确的说__classpath__），与实际运行的环境经常不一样。例如当使用__ant__或者Flowable应用中业务存档上传的方式部署的流程，其classpath中并没有流程引用的类。
 
-<<internal,[内部：非公有实现类]>>也可以使用实现了__org.activiti.engine.impl.pvm.delegate.ActivityBehavior__接口的类。该实现可以访问更强大的__ActivityExecution__，可以例如影响流程的控制流程。请注意这并不是很好的实践，需要避免这么使用。因此，建议只有在高级使用场景下，并且你确知在做什么的时候，才使用__ActivityBehavior__接口。
+<<internal,[内部：非公有实现类]>>也可以使用实现了__org.flowable.engine.impl.pvm.delegate.ActivityBehavior__接口的类。该实现可以访问更强大的__ActivityExecution__，可以例如影响流程的控制流程。请注意这并不是很好的实践，需要避免这么使用。因此，建议只有在高级使用场景下，并且你确知在做什么的时候，才使用__ActivityBehavior__接口。
 
 
 [[serviceTaskFieldInjection]]
@@ -2736,9 +2736,9 @@ public class ToUppercase implements JavaDelegate {
 
 如果可以的话，会按照Java Bean命名约定（例如，++firstName++成员使用setter ++setFirstName(...)++），通过代理类的公有setter方法，注入变量。如果该字段没有可用的setter，会直接设置该代理类的私有成员的值。有的环境中，SecurityManagers不允许修改私有字段，因此为想要注入的字段，暴露一个公有setter方法，是更安全的做法。
 
-**不论在流程定义中声明的是什么类型的值，注入对象的setter/私有字段的类型，总是++org.activiti.engine.delegate.Expression++。解析表达式后，可以被转型为合适的类型。**
+**不论在流程定义中声明的是什么类型的值，注入对象的setter/私有字段的类型，总是++org.flowable.engine.delegate.Expression++。解析表达式后，可以被转型为合适的类型。**
 
-当使用__'actviiti:class'__属性时，支持字段注入。也可以在使用__activiti:delegateExpression__属性时，进行字段注入，然而因为线程安全的考虑，需要有特殊的规则（参见下一章节）。
+当使用__'actviiti:class'__属性时，支持字段注入。也可以在使用__flowable:delegateExpression__属性时，进行字段注入，然而因为线程安全的考虑，需要有特殊的规则（参见下一章节）。
 
 下面的代码片段展示了如何为类中声明的字段注入常量值。请注意按照BPMN 2.0 XML概要的要求，**在实际字段注入声明前，需要先声明'extensionElements'XML元素**。
 
@@ -2746,14 +2746,14 @@ public class ToUppercase implements JavaDelegate {
 ----
 <serviceTask id="javaService"
     name="Java service invocation"
-    activiti:class="org.activiti.examples.bpmn.servicetask.ToUpperCaseFieldInjected">
+    flowable:class="org.flowable.examples.bpmn.servicetask.ToUpperCaseFieldInjected">
     <extensionElements>
-      <activiti:field name="text" stringValue="Hello World" />
+      <flowable:field name="text" stringValue="Hello World" />
   </extensionElements>
 </serviceTask>
 ----
 
-++ToUpperCaseFieldInjected++类有一个字段++text++，为++org.activiti.engine.delegate.Expression++类型。当调用++text.getValue(execution)++时，会返回配置的字符串++Hello World++：
+++ToUpperCaseFieldInjected++类有一个字段++text++，为++org.flowable.engine.delegate.Expression++类型。当调用++text.getValue(execution)++时，会返回配置的字符串++Hello World++：
 
 [source,java,linenums]
 ----
@@ -2768,39 +2768,39 @@ public class ToUpperCaseFieldInjected implements JavaDelegate {
 }
 ----
 
-另外，对于较长文本（例如邮件内容），可以使用__'activiti:string'__子元素：
+另外，对于较长文本（例如邮件内容），可以使用__'flowable:string'__子元素：
 
 [source,xml,linenums]
 ----
 <serviceTask id="javaService"
     name="Java service invocation"
-    activiti:class="org.activiti.examples.bpmn.servicetask.ToUpperCaseFieldInjected">
+    flowable:class="org.flowable.examples.bpmn.servicetask.ToUpperCaseFieldInjected">
   <extensionElements>
-    <activiti:field name="text">
-        <activiti:string>
+    <flowable:field name="text">
+        <flowable:string>
           This is a long string with a lot of words and potentially way longer even!
-      </activiti:string>
-    </activiti:field>
+      </flowable:string>
+    </flowable:field>
   </extensionElements>
 </serviceTask>
 ----
 
-要在运行时动态解析注入的值，可以使用表达式。这种表达式可以使用流程变量，或者Spring定义的bean（如果使用Spring）。像<<bpmnJavaServiceTaskImplementation,服务任务实现>>中提到的，当服务任务中使用__activiti:class__属性时，该Java类的实例在所有流程实例中共享。要动态地为字段注入值，可以在++org.activiti.engine.delegate.Expression++中注入值或方法表达式，它们会通过++execute++方法传递的++DelegateExecution++计算/调用。
+要在运行时动态解析注入的值，可以使用表达式。这种表达式可以使用流程变量，或者Spring定义的bean（如果使用Spring）。像<<bpmnJavaServiceTaskImplementation,服务任务实现>>中提到的，当服务任务中使用__flowable:class__属性时，该Java类的实例在所有流程实例中共享。要动态地为字段注入值，可以在++org.flowable.engine.delegate.Expression++中注入值或方法表达式，它们会通过++execute++方法传递的++DelegateExecution++计算/调用。
 
-下面的示例类，使用了注入的表达式，并使用当前的++DelegateExecution++解析它们。调用__generBean__方法时传递的是__gender__变量。完整的代码与测试可以在++org.activiti.examples.bpmn.servicetask.JavaServiceTaskTest.testExpressionFieldInjection++中找到
+下面的示例类，使用了注入的表达式，并使用当前的++DelegateExecution++解析它们。调用__generBean__方法时传递的是__gender__变量。完整的代码与测试可以在++org.flowable.examples.bpmn.servicetask.JavaServiceTaskTest.testExpressionFieldInjection++中找到
 
 [source,xml,linenums]
 ----
 <serviceTask id="javaService" name="Java service invocation"
-  activiti:class="org.activiti.examples.bpmn.servicetask.ReverseStringsFieldInjected">
+  flowable:class="org.flowable.examples.bpmn.servicetask.ReverseStringsFieldInjected">
 
   <extensionElements>
-    <activiti:field name="text1">
-      <activiti:expression>${genderBean.getGenderString(gender)}</activiti:expression>
-    </activiti:field>
-    <activiti:field name="text2">
-       <activiti:expression>Hello ${gender == 'male' ? 'Mr.' : 'Mrs.'} ${name}</activiti:expression>
-    </activiti:field>
+    <flowable:field name="text1">
+      <flowable:expression>${genderBean.getGenderString(gender)}</flowable:expression>
+    </flowable:field>
+    <flowable:field name="text2">
+       <flowable:expression>Hello ${gender == 'male' ? 'Mr.' : 'Mrs.'} ${name}</flowable:expression>
+    </flowable:field>
   </ extensionElements>
 </ serviceTask>
 ----
@@ -2826,8 +2826,8 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 
 [source,xml,linenums]
 ----
-<activiti:field name="text1" expression="${genderBean.getGenderString(gender)}" />
-<activiti:field name="text1" expression="Hello ${gender == 'male' ? 'Mr.' : 'Mrs.'} ${name}" />
+<flowable:field name="text1" expression="${genderBean.getGenderString(gender)}" />
+<flowable:field name="text1" expression="Hello ${gender == 'male' ? 'Mr.' : 'Mrs.'} ${name}" />
 ----
 
 [[serviceTaskFieldInjectionThreadSafety]]
@@ -2836,11 +2836,11 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 
 总的来说，在服务任务中使用Java代理与字段注入是线程安全的。然而，有些情况下不能保证线程安全，取决于设置，或Flowable运行所在的环境。
 
-当使用__activiti:class__属性时，使用字段注入总是线程安全的（译者注：仍不完全安全，如对于多实例服务任务，使用的是同一个类实例）。对于引用了某个类的每一个服务任务，都会实例化新的实例，并且在创建实例时注入一次字段。在不同的任务或流程定义中多次使用同一个类没有问题。
+当使用__flowable:class__属性时，使用字段注入总是线程安全的（译者注：仍不完全安全，如对于多实例服务任务，使用的是同一个类实例）。对于引用了某个类的每一个服务任务，都会实例化新的实例，并且在创建实例时注入一次字段。在不同的任务或流程定义中多次使用同一个类没有问题。
 
-当使用__activiti:expression__属性时，不能使用字段注入。只能通过方法调用传递变量，并且这总是线程安全的。
+当使用__flowable:expression__属性时，不能使用字段注入。只能通过方法调用传递变量，并且这总是线程安全的。
 
-当使用__activiti:delegateExpression__属性时，代理实例的线程安全性，取决于表达式解析的方式。如果该代理表达式在多个任务与/或流程定义中重复使用，并且表达式总是返回相同的示例，则字段注入**不是线程安全的**。让我们看几个例子。
+当使用__flowable:delegateExpression__属性时，代理实例的线程安全性，取决于表达式解析的方式。如果该代理表达式在多个任务与/或流程定义中重复使用，并且表达式总是返回相同的示例，则字段注入**不是线程安全的**。让我们看几个例子。
 
 假设表达式为__${factory.createDelegate(someVariable)}__，其中factory为引擎可用的Java bean（例如使用Spring集成时的Spring bean），并在每次表达式解析时，创建新的实例。这种情况下，使用字段注入时，没有线程安全性问题：每次表达式解析时，新实例的字段都会注入。
 
@@ -2848,17 +2848,17 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 
 [source,xml,linenums]
 ----
-<serviceTask id="serviceTask1" activiti:delegateExpression="${someJavaDelegateBean}">
+<serviceTask id="serviceTask1" flowable:delegateExpression="${someJavaDelegateBean}">
     <extensionElements>
-        <activiti:field name="someField" expression="${input * 2}"/>
+        <flowable:field name="someField" expression="${input * 2}"/>
     </extensionElements>
 </serviceTask>
 
 <!-- other process definition elements -->
 
-<serviceTask id="serviceTask2" activiti:delegateExpression="${someJavaDelegateBean}">
+<serviceTask id="serviceTask2" flowable:delegateExpression="${someJavaDelegateBean}">
     <extensionElements>
-        <activiti:field name="someField" expression="${input * 2000}"/>
+        <flowable:field name="someField" expression="${input * 2000}"/>
     </extensionElements>
 </serviceTask>
 ----
@@ -2870,7 +2870,7 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 * 重写Java代理，以使用表达式，并将所需数据通过方法参数传递给代理。
 * 或者，在每次代理表达式解析时，返回代理类的新实例。这意味着这个bean的scope（范围）必须是**prototype（原型）**（例如在代理类上加上@Scope(SCOPE_PROTOTYPE)注解）。
 
-在Flowable 5.22版本中，可以通过配置流程引擎配置，禁用在代理表达式上使用字段注入。需要设置__delegateExpressionFieldInjectionMode__参数（取__org.activiti.engine.imp.cfg.DelegateExpressionFieldInjectionMode__枚举中的值）。
+在Flowable 5.22版本中，可以通过配置流程引擎配置，禁用在代理表达式上使用字段注入。需要设置__delegateExpressionFieldInjectionMode__参数（取__org.flowable.engine.imp.cfg.DelegateExpressionFieldInjectionMode__枚举中的值）。
 
 可使用下列选项：
 
@@ -2886,10 +2886,10 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 [source,xml,linenums]
 ----
 <bean id="singletonDelegateExpressionBean"
-  class="org.activiti.spring.test.fieldinjection.SingletonDelegateExpressionBean" />
+  class="org.flowable.spring.test.fieldinjection.SingletonDelegateExpressionBean" />
 
 <bean id="prototypeDelegateExpressionBean"
-  class="org.activiti.spring.test.fieldinjection.PrototypeDelegateExpressionBean"
+  class="org.flowable.spring.test.fieldinjection.PrototypeDelegateExpressionBean"
   scope="prototype" />
 ----
 
@@ -2899,35 +2899,35 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 
 [source,xml,linenums]
 ----
-<serviceTask id="serviceTask1" activiti:delegateExpression="${prototypeDelegateExpressionBean}">
+<serviceTask id="serviceTask1" flowable:delegateExpression="${prototypeDelegateExpressionBean}">
   <extensionElements>
-    <activiti:field name="fieldA" expression="${input * 2}"/>
-    <activiti:field name="fieldB" expression="${1 + 1}"/>
-    <activiti:field name="resultVariableName" stringValue="resultServiceTask1"/>
+    <flowable:field name="fieldA" expression="${input * 2}"/>
+    <flowable:field name="fieldB" expression="${1 + 1}"/>
+    <flowable:field name="resultVariableName" stringValue="resultServiceTask1"/>
   </extensionElements>
 </serviceTask>
 
-<serviceTask id="serviceTask2" activiti:delegateExpression="${prototypeDelegateExpressionBean}">
+<serviceTask id="serviceTask2" flowable:delegateExpression="${prototypeDelegateExpressionBean}">
   <extensionElements>
-    <activiti:field name="fieldA" expression="${123}"/>
-    <activiti:field name="fieldB" expression="${456}"/>
-    <activiti:field name="resultVariableName" stringValue="resultServiceTask2"/>
+    <flowable:field name="fieldA" expression="${123}"/>
+    <flowable:field name="fieldB" expression="${456}"/>
+    <flowable:field name="resultVariableName" stringValue="resultServiceTask2"/>
   </extensionElements>
 </serviceTask>
 
-<serviceTask id="serviceTask3" activiti:delegateExpression="${singletonDelegateExpressionBean}">
+<serviceTask id="serviceTask3" flowable:delegateExpression="${singletonDelegateExpressionBean}">
   <extensionElements>
-    <activiti:field name="fieldA" expression="${input * 2}"/>
-    <activiti:field name="fieldB" expression="${1 + 1}"/>
-    <activiti:field name="resultVariableName" stringValue="resultServiceTask1"/>
+    <flowable:field name="fieldA" expression="${input * 2}"/>
+    <flowable:field name="fieldB" expression="${1 + 1}"/>
+    <flowable:field name="resultVariableName" stringValue="resultServiceTask1"/>
   </extensionElements>
 </serviceTask>
 
-<serviceTask id="serviceTask4" activiti:delegateExpression="${singletonDelegateExpressionBean}">
+<serviceTask id="serviceTask4" flowable:delegateExpression="${singletonDelegateExpressionBean}">
   <extensionElements>
-    <activiti:field name="fieldA" expression="${123}"/>
-    <activiti:field name="fieldB" expression="${456}"/>
-    <activiti:field name="resultVariableName" stringValue="resultServiceTask2"/>
+    <flowable:field name="fieldA" expression="${123}"/>
+    <flowable:field name="fieldB" expression="${456}"/>
+    <flowable:field name="resultVariableName" stringValue="resultServiceTask2"/>
   </extensionElements>
 </serviceTask>
 ----
@@ -2997,7 +2997,7 @@ public class SingletonDelegateExpressionBean implements JavaDelegate {
 
 __INSTANCE_COUNT__总是__1__，因为是单例模式。在这个代理中，没有__Expression__成员字段。因为我们使用的是__MIXED__模式，可以这样用。而在__COMPATIBILITY__模式下，就会抛出异常，因为需要有成员字段。这个bean也可以使用__DISABLED__模式，但会禁用上面进行了字段注入的原型bean。
 
-在代理的代码里，使用了**org.activiti.engine.delegate.DelegateHelper**。它提供了一些有用的工具方法，用于执行相同的逻辑，并且在单例中是线程安全的。与注入__Expression__不同，它通过__getFieldExpression__读取。这意味着在服务任务的XML里，字段定义与单例bean完全相同。查看上面的XML代码，可以看到定义是相同的，只是实现逻辑不同。
+在代理的代码里，使用了**org.flowable.engine.delegate.DelegateHelper**。它提供了一些有用的工具方法，用于执行相同的逻辑，并且在单例中是线程安全的。与注入__Expression__不同，它通过__getFieldExpression__读取。这意味着在服务任务的XML里，字段定义与单例bean完全相同。查看上面的XML代码，可以看到定义是相同的，只是实现逻辑不同。
 
 （技术提示：__getFieldExpression__直接读取BpmnModel，并在方法执行时创建表达式，因此是线程安全的）。
 
@@ -3008,11 +3008,11 @@ __INSTANCE_COUNT__总是__1__，因为是单例模式。在这个代理中，没
 [source,xml,linenums]
 ----
 <extensionElements>
-  <activiti:executionListener
+  <flowable:executionListener
       delegateExpression="${testExecutionListener}" event="start">
-    <activiti:field name="input" expression="${startValue}" />
-    <activiti:field name="resultVar" stringValue="processStartValue" />
-  </activiti:executionListener>
+    <flowable:field name="input" expression="${startValue}" />
+    <flowable:field name="resultVar" stringValue="processStartValue" />
+  </flowable:executionListener>
 </extensionElements>
 ----
 
@@ -3044,13 +3044,13 @@ public class TestExecutionListener implements ExecutionListener {
 
 ===== 服务任务的结果 Service task results
 
-服务执行的返回值（仅对使用表达式的服务任务），可以通过为脚本任务定义的__'activiti:resultVariable'__属性设置流程变量名，指定为已经存在的，或者新的流程变量。指定的已有值的流程变量，会被服务执行的结果值覆盖。当不指定结果变量名时，服务执行的结果值将被忽略。
+服务执行的返回值（仅对使用表达式的服务任务），可以通过为脚本任务定义的__'flowable:resultVariable'__属性设置流程变量名，指定为已经存在的，或者新的流程变量。指定的已有值的流程变量，会被服务执行的结果值覆盖。当不指定结果变量名时，服务执行的结果值将被忽略。
 
 [source,xml,linenums]
 ----
 <serviceTask id="aMethodExpressionServiceTask"
-    activiti:expression="#{myService.doSomething()}"
-    activiti:resultVariable="myVar" />
+    flowable:expression="#{myService.doSomething()}"
+    flowable:resultVariable="myVar" />
 ----
 
 在上例中，服务执行的结果（流程变量或Spring bean中，使用__'myService'__名字获取的对象，调用__'doSomething()'__方法的返回值），在服务执行完成后，会设置为名为__'myVar'__的流程变量。
@@ -3069,7 +3069,7 @@ public class TestExecutionListener implements ExecutionListener {
 
 ====== 抛出BPMN错误 Throwing BPMN Errors
 
-可以在服务任务或脚本任务的用户代码中抛出BPMN错误。要这么做，可以在Java代理、脚本、表达式与代理表达式中，抛出特殊的ActivitiException，叫做__BpmnError__。引擎会捕获这个异常，并将其转发至合适的错误处理器，例如异常边界事件，或者错误事件子程序。
+可以在服务任务或脚本任务的用户代码中抛出BPMN错误。要这么做，可以在Java代理、脚本、表达式与代理表达式中，抛出特殊的FlowableException，叫做__BpmnError__。引擎会捕获这个异常，并将其转发至合适的错误处理器，例如异常边界事件，或者错误事件子程序。
 
 [source,java,linenums]
 ----
@@ -3098,16 +3098,16 @@ public class ThrowBpmnErrorDelegate implements JavaDelegate {
 
 [source,xml,linenums]
 ----
-<serviceTask id="servicetask1" name="Service Task" activiti:class="...">
+<serviceTask id="servicetask1" name="Service Task" flowable:class="...">
   <extensionElements>
-    <activiti:mapException
-          errorCode="myErrorCode1">org.activiti.SomeException</activiti:mapException>
+    <flowable:mapException
+          errorCode="myErrorCode1">org.flowable.SomeException</flowable:mapException>
   </extensionElements>
 </serviceTask>
 
 ----
 
-在上面的代码中，如果服务任务抛出了++org.activiti.SomeException++的实例，则会被捕获，并被转换为带有给定errorCode的BPMN异常（错误）。从这里开始，可以与普通BPMN异常（错误）完全一样地处理。
+在上面的代码中，如果服务任务抛出了++org.flowable.SomeException++的实例，则会被捕获，并被转换为带有给定errorCode的BPMN异常（错误）。从这里开始，可以与普通BPMN异常（错误）完全一样地处理。
 
 其他异常会依照没有映射被处理，将传播至API调用者。
 
@@ -3115,10 +3115,10 @@ public class ThrowBpmnErrorDelegate implements JavaDelegate {
 
 [source,xml,linenums]
 ----
-<serviceTask id="servicetask1" name="Service Task" activiti:class="...">
+<serviceTask id="servicetask1" name="Service Task" flowable:class="...">
   <extensionElements>
-    <activiti:mapException errorCode="myErrorCode1"
-           includeChildExceptions="true">org.activiti.SomeException</activiti:mapException>
+    <flowable:mapException errorCode="myErrorCode1"
+           includeChildExceptions="true">org.flowable.SomeException</flowable:mapException>
   </extensionElements>
 </serviceTask>
 
@@ -3130,9 +3130,9 @@ public class ThrowBpmnErrorDelegate implements JavaDelegate {
 
 [source,xml,linenums]
 ----
-<serviceTask id="servicetask1" name="Service Task" activiti:class="...">
+<serviceTask id="servicetask1" name="Service Task" flowable:class="...">
   <extensionElements>
-    <activiti:mapException errorCode="myErrorCode1"/>
+    <flowable:mapException errorCode="myErrorCode1"/>
   </extensionElements>
 </serviceTask>
 ----
@@ -3154,7 +3154,7 @@ public class ThrowBpmnErrorDelegate implements JavaDelegate {
 ----
 <serviceTask id="javaService"
   name="Java service invocation"
-  activiti:class="org.activiti.ThrowsExceptionBehavior">
+  flowable:class="org.flowable.ThrowsExceptionBehavior">
 </serviceTask>
 
 <sequenceFlow id="no-exception" sourceRef="javaService" targetRef="theEnd" />
@@ -3189,7 +3189,7 @@ public class ThrowsExceptionBehavior implements ActivityBehavior {
 
 ===== 在JavaDelegate中使用Flowable服务 Using a Flowable service from within a JavaDelegate
 
-有的时候，需要在Java服务任务中使用Flowable服务（例如当调用活动不符合需求时，通过RuntimeService启动流程实例）。__org.activiti.engine.delegate.DelegateExecution__可以方便地通过__org.activiti.engine.EngineServices__接口使用这些服务：
+有的时候，需要在Java服务任务中使用Flowable服务（例如当调用活动不符合需求时，通过RuntimeService启动流程实例）。__org.flowable.engine.delegate.DelegateExecution__可以方便地通过__org.flowable.engine.EngineServices__接口使用这些服务：
 
 [source,java,linenums]
 ----
@@ -3205,7 +3205,7 @@ public class StartProcessInstanceTestDelegate implements JavaDelegate {
 
 通过这个接口可以访问所有Flowable服务API。
 
-使用这些API调用造成的所有数据变更，都处在当前事务中。在具有依赖注入的环境，如Spring或CDI中，使用或不使用激活JTA的数据源，也都可以使用。例如，下面的代码片段与上面的代码具有相同功能，但RuntimeService是通过注入而不是通过__org.activiti.engine.EngineServices__接口获得的。
+使用这些API调用造成的所有数据变更，都处在当前事务中。在具有依赖注入的环境，如Spring或CDI中，使用或不使用激活JTA的数据源，也都可以使用。例如，下面的代码片段与上面的代码具有相同功能，但RuntimeService是通过注入而不是通过__org.flowable.engine.EngineServices__接口获得的。
 
 [source,java,linenums]
 ----
@@ -3259,7 +3259,7 @@ image::images/bpmn.web.service.task.png[align="center"]
 ----
 <import importType="http://schemas.xmlsoap.org/wsdl/"
 	location="http://localhost:63081/counter?wsdl"
-	namespace="http://webservice.activiti.org/" />
+	namespace="http://webservice.flowable.org/" />
 ----
 
 上面的声明告知Flowable导入定义，但并不创建条目定义（item definition）与消息。假设我们需要调用一个名为'prettyPrint'的方法，我们需要为请求与回复消息，创建相应的消息与条目定义：
@@ -3421,7 +3421,7 @@ image::images/bpmn.business.rule.task.png[align="center"]
 
 ===== XML表示 XML representation
 
-要执行一条或多条，与流程定义在同一个BAR文件中部署的业务规则，需要定义输入与结果变量。输入变量可以用流程变量的列表定义，使用逗号分隔。输出变量只能有一个变量名，将执行业务规则数处对象存储至流程变量。请注意结果变量会包含对象的list。如果没有指定结果变量名，会使用默认的org.activiti.engine.rules.OUTPUT。
+要执行一条或多条，与流程定义在同一个BAR文件中部署的业务规则，需要定义输入与结果变量。输入变量可以用流程变量的列表定义，使用逗号分隔。输出变量只能有一个变量名，将执行业务规则数处对象存储至流程变量。请注意结果变量会包含对象的list。如果没有指定结果变量名，会使用默认的org.flowable.engine.rules.OUTPUT。
 
 下面的业务规则任务，执行与流程定义一起部署的所有业务规则：
 
@@ -3432,8 +3432,8 @@ image::images/bpmn.business.rule.task.png[align="center"]
   <startEvent id="theStart" />
   <sequenceFlow sourceRef="theStart" targetRef="businessRuleTask" />
 
-  <businessRuleTask id="businessRuleTask" activiti:ruleVariablesInput="${order}"
-      activiti:resultVariable="rulesOutput" />
+  <businessRuleTask id="businessRuleTask" flowable:ruleVariablesInput="${order}"
+      flowable:resultVariable="rulesOutput" />
 
   <sequenceFlow sourceRef="businessRuleTask" targetRef="theEnd" />
 
@@ -3446,8 +3446,8 @@ image::images/bpmn.business.rule.task.png[align="center"]
 
 [source,xml,linenums]
 ----
-<businessRuleTask id="businessRuleTask" activiti:ruleVariablesInput="${order}"
-      activiti:rules="rule1, rule2" />
+<businessRuleTask id="businessRuleTask" flowable:ruleVariablesInput="${order}"
+      flowable:rules="rule1, rule2" />
 ----
 
 这个例子中只会执行rule1与rule2。
@@ -3456,8 +3456,8 @@ image::images/bpmn.business.rule.task.png[align="center"]
 
 [source,xml,linenums]
 ----
-<businessRuleTask id="businessRuleTask" activiti:ruleVariablesInput="${order}"
-      activiti:rules="rule1, rule2" exclude="true" />
+<businessRuleTask id="businessRuleTask" flowable:ruleVariablesInput="${order}"
+      flowable:rules="rule1, rule2" exclude="true" />
 ----
 
 这个例子中与流程定义一起部署在同一个BAR文件中的所有规则都会被执行，除了rule1与rule2.
@@ -3466,7 +3466,7 @@ image::images/bpmn.business.rule.task.png[align="center"]
 
 [source,xml,linenums]
 ----
-<businessRuleTask id="businessRuleTask" activiti:class="${MyRuleServiceDelegate}" />
+<businessRuleTask id="businessRuleTask" flowable:class="${MyRuleServiceDelegate}" />
 ----
 
 这样业务规则任务与服务任务的行为完全一样，但仍保持业务规则任务的图标，显示在这里处理业务规则。
@@ -3485,7 +3485,7 @@ Flowable可以通过自动邮件服务任务，增强业务流程。可以向一
 
 ===== 邮件服务器配置 Mail server configuration
 
-Flowable引擎通过支持SMTP的外部邮件服务器发送邮件。要发送邮件，引擎需要了解如何连接邮件服务器。可以在__activiti.cfg.xml__配置文件中设置下面的参数：
+Flowable引擎通过支持SMTP的外部邮件服务器发送邮件。要发送邮件，引擎需要了解如何连接邮件服务器。可以在__flowable.cfg.xml__配置文件中设置下面的参数：
 
 [options="header"]
 |===============
@@ -3510,7 +3510,7 @@ Flowable引擎通过支持SMTP的外部邮件服务器发送邮件。要发送�
 
 [source,xml,linenums]
 ----
-<serviceTask id="sendMail" activiti:type="mail">
+<serviceTask id="sendMail" flowable:type="mail">
 ----
 
 邮件任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数的值可以使用EL表达式，将在流程执行运行时解析。可以设置下列参数：
@@ -3527,7 +3527,7 @@ Flowable引擎通过支持SMTP的外部邮件服务器发送邮件。要发送�
 |text|否|邮件的内容，普通非富文本的邮件。对于不支持富文本内容的客户端，可以与__html__一起使用。客户端会退回为纯文本格式。
 |htmlVar|否|存储邮件HTML内容的流程变量名。与html参数的最大区别，是这个参数会在邮件任务发送前，使用其内容进行表达式替换。
 |textVar|否|存储邮件纯文本内容的流程变量名。与text参数的最大区别，是这个参数会在邮件任务发送前，使用其内容进行表达式替换。
-|ignoreException|否|处理邮件时的失败，是否抛出ActivitiException。默认设置为false。
+|ignoreException|否|处理邮件时的失败，是否抛出FlowableException。默认设置为false。
 |exceptionVariableName|否|当处理邮件时的失败，由于__ignoreException = true__设置而不会抛出异常，则使用给定名字的变量保存失败信息
 
 |===============
@@ -3543,13 +3543,13 @@ Flowable引擎通过支持SMTP的外部邮件服务器发送邮件。要发送�
 
 [source,xml,linenums]
 ----
-<serviceTask id="sendMail" activiti:type="mail">
+<serviceTask id="sendMail" flowable:type="mail">
   <extensionElements>
-    <activiti:field name="from" stringValue="order-shipping@thecompany.com" />
-    <activiti:field name="to" expression="${recipient}" />
-    <activiti:field name="subject" expression="Your order ${orderId} has been shipped" />
-    <activiti:field name="html">
-      <activiti:expression>
+    <flowable:field name="from" stringValue="order-shipping@thecompany.com" />
+    <flowable:field name="to" expression="${recipient}" />
+    <flowable:field name="subject" expression="Your order ${orderId} has been shipped" />
+    <flowable:field name="html">
+      <flowable:expression>
         <![CDATA[
           <html>
             <body>
@@ -3563,8 +3563,8 @@ Flowable引擎通过支持SMTP的外部邮件服务器发送邮件。要发送�
             </body>
           </html>
         ]]>
-      </activiti:expression>
-    </activiti:field>
+      </flowable:expression>
+    </flowable:field>
   </extensionElements>
 </serviceTask>
 
@@ -3592,7 +3592,7 @@ Mule任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，通过将服�
 
 [source,xml,linenums]
 ----
-<serviceTask id="sendMule" activiti:type="mule">
+<serviceTask id="sendMule" flowable:type="mule">
 ----
 
 Mule任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数的值可以使用EL表达式，将在流程执行运行时解析。可以设置下列参数：
@@ -3617,18 +3617,18 @@ Mule任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数�
 [source,xml,linenums]
 ----
 <extensionElements>
-  <activiti:field name="endpointUrl">
-    <activiti:string>vm://in</activiti:string>
-  </activiti:field>
-  <activiti:field name="language">
-    <activiti:string>juel</activiti:string>
-  </activiti:field>
-  <activiti:field name="payloadExpression">
-    <activiti:string>"hi"</activiti:string>
-  </activiti:field>
-  <activiti:field name="resultVariable">
-    <activiti:string>theVariable</activiti:string>
-  </activiti:field>
+  <flowable:field name="endpointUrl">
+    <flowable:string>vm://in</flowable:string>
+  </flowable:field>
+  <flowable:field name="language">
+    <flowable:string>juel</flowable:string>
+  </flowable:field>
+  <flowable:field name="payloadExpression">
+    <flowable:string>"hi"</flowable:string>
+  </flowable:field>
+  <flowable:field name="resultVariable">
+    <flowable:string>theVariable</flowable:string>
+  </flowable:field>
 </extensionElements>
 ----
 
@@ -3648,7 +3648,7 @@ Camel任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，通过将服
 
 [source,xml,linenums]
 ----
-<serviceTask id="sendCamel" activiti:type="camel">
+<serviceTask id="sendCamel" flowable:type="camel">
 ----
 
 流程定义本身只需要在服务任务上定义Camel类型。集成逻辑都通过Camel容器代理。默认情况下Flowable引擎在Spring容器中查找camelContext bean。camelContext bean定义了由Camel容器装载的Camel路由。在下面的例子中，路由通过给定的Java包装载，但也可以自行在Spring配置中直接定义路由。
@@ -3657,7 +3657,7 @@ Camel任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，通过将服
 ----
 <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
   <packageScan>
-    <package>org.activiti.camel.route</package>
+    <package>org.flowable.camel.route</package>
   </packageScan>
 </camelContext>
 ----
@@ -3668,9 +3668,9 @@ Camel任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，通过将服
 
 [source,xml,linenums]
 ----
-<serviceTask id="serviceTask1" activiti:type="camel">
+<serviceTask id="serviceTask1" flowable:type="camel">
   <extensionElements>
-    <activiti:field name="camelContext" stringValue="customCamelContext" />
+    <flowable:field name="camelContext" stringValue="customCamelContext" />
   </extensionElements>
 </serviceTask>
 ----
@@ -3681,13 +3681,13 @@ Camel任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，通过将服
 
 ===== 简单Camel调用示例 Simple Camel Call example
 
-这个例子相关的所有文件，都可以在activiti-camel模块的org.activiti.camel.examples.simpleCamelCall包中找到。目的是简单启动一个camel路由。首先需要一个配置了上面提到的路由的Spring上下文。下面的代码用做这个目的：
+这个例子相关的所有文件，都可以在flowable-camel模块的org.flowable.camel.examples.simpleCamelCall包中找到。目的是简单启动一个camel路由。首先需要一个配置了上面提到的路由的Spring上下文。下面的代码用做这个目的：
 
 [source,xml,linenums]
 ----
 <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
   <packageScan>
-    <package>org.activiti.camel.examples.simpleCamelCall</package>
+    <package>org.flowable.camel.examples.simpleCamelCall</package>
   </packageScan>
 </camelContext>
 ----
@@ -3698,7 +3698,7 @@ public class SimpleCamelCallRoute extends RouteBuilder {
 
   @Override
   public void configure() throws Exception {
-    from("activiti:SimpleCamelCallProcess:simpleCall").to("log:org.activiti.camel.examples.SimpleCamelCall");
+    from("flowable:SimpleCamelCallProcess:simpleCall").to("log:org.flowable.camel.examples.SimpleCamelCall");
   }
 }
 ----
@@ -3709,7 +3709,7 @@ public class SimpleCamelCallRoute extends RouteBuilder {
 [options="header"]
 |===============
 |终端Url部分|描述
-|activiti|引用Activiti终端
+|activiti|引用引擎终端
 |SimpleCamelCallProcess|流程名
 |simpleCall|流程中Camel服务的名字
 
@@ -3723,7 +3723,7 @@ public class SimpleCamelCallRoute extends RouteBuilder {
   <startEvent id="start"/>
   <sequenceFlow id="flow1" sourceRef="start" targetRef="simpleCall"/>
 
-  <serviceTask id="simpleCall" activiti:type="camel"/>
+  <serviceTask id="simpleCall" flowable:type="camel"/>
 
   <sequenceFlow id="flow2" sourceRef="simpleCall" targetRef="end"/>
   <endEvent id="end"/>
@@ -3762,9 +3762,9 @@ public void testPingPong() {
 <process id="PingPongProcess">
   <startEvent id="start"/>
   <sequenceFlow id="flow1" sourceRef="start" targetRef="ping"/>
-  <serviceTask id="ping" activiti:type="camel"/>
+  <serviceTask id="ping" flowable:type="camel"/>
   <sequenceFlow id="flow2" sourceRef="ping" targetRef="saveOutput"/>
-  <serviceTask id="saveOutput"  activiti:class="org.activiti.camel.examples.pingPong.SaveOutput" />
+  <serviceTask id="saveOutput"  flowable:class="org.flowable.camel.examples.pingPong.SaveOutput" />
   <sequenceFlow id="flow3" sourceRef="saveOutput" targetRef="end"/>
   <endEvent id="end"/>
 </process>
@@ -3775,20 +3775,20 @@ public void testPingPong() {
 
 [source,xml,linenums]
 ----
-<serviceTask id="serviceTask1" activiti:type="camel">
+<serviceTask id="serviceTask1" flowable:type="camel">
   <extensionElements>
-    <activiti:field name="camelBehaviorClass" stringValue="org.activiti.camel.impl.CamelBehaviorCamelBodyImpl" />
+    <flowable:field name="camelBehaviorClass" stringValue="org.flowable.camel.impl.CamelBehaviorCamelBodyImpl" />
   </extensionElements>
 </serviceTask>
 ----
 
-如果不指定行为，则会设置为org.activiti.camel.impl.CamelBehaviorDefaultImpl。这个行为将以相同名字，将变量复制到Camel参数。对于返回值，无论选择什么行为，如果Camel消息体是一个map，则其中的每个元素都将复制为变量，否则整个对象将复制为名为"camelBody"的特定变量。了解这些后，Camel路由总结为第二个例子：
+如果不指定行为，则会设置为org.flowable.camel.impl.CamelBehaviorDefaultImpl。这个行为将以相同名字，将变量复制到Camel参数。对于返回值，无论选择什么行为，如果Camel消息体是一个map，则其中的每个元素都将复制为变量，否则整个对象将复制为名为"camelBody"的特定变量。了解这些后，Camel路由总结为第二个例子：
 
 [source,java,linenums]
 ----
 @Override
 public void configure() throws Exception {
-  from("activiti:PingPongProcess:ping").transform().simple("${property.input} World");
+  from("flowable:PingPongProcess:ping").transform().simple("${property.input} World");
 }
 ----
 
@@ -3798,7 +3798,7 @@ Flowable中有已经可以使用三种不同的行为。可以通过修改路由
 
 [source,java,linenums]
 ----
-from("activiti:asyncCamelProcess:serviceTaskAsync2?copyVariablesToProperties=true").
+from("flowable:asyncCamelProcess:serviceTaskAsync2?copyVariablesToProperties=true").
 
 ----
 
@@ -3830,7 +3830,7 @@ from("activiti:asyncCamelProcess:serviceTaskAsync2?copyVariablesToProperties=tru
 上面提到的传递变量，不论是从Camel到Flowable还是反过来，都只用于变量传递的开始侧。要特别注意，由于Flowable的非阻塞行为，Flowable不会自动向Camel返回变量。因此，提供了特殊的语法。可以在Camel路由URL中，以++var.return.someVariableName++的格式，使用一个或多个参数。与这些参数同名，但没有++var.return++部分的变量，会被认为是输出变量，因此将会以相同的名字复制回Camel参数。例如在如下路由中：
 
 ----
-from("direct:start").to("activiti:process?var.return.exampleVar").to("mock:result");
+from("direct:start").to("flowable:process?var.return.exampleVar").to("mock:result");
 ----
 
 名为++exampleVar++的Flowable变量，将被认为是输出变量，因此会以同名复制回Camel参数。
@@ -3845,7 +3845,7 @@ from("direct:start").to("activiti:process?var.return.exampleVar").to("mock:resul
 
 [source,xml,linenums]
 ----
-<serviceTask id="serviceAsyncPing" activiti:type="camel" activiti:async="true"/>
+<serviceTask id="serviceAsyncPing" flowable:type="camel" flowable:async="true"/>
 ----
 
 设置这个特性后，Camel路由会由Flowable作业执行器异步启动。如果定义了Camel路由队列，Flowable流程会继续执行Camel服务任务之后的活动。Camel路由会与流程执行完全异步地执行。如果需要在流程定义的某处等待Camel服务任务的响应，可以使用接收任务（receive task）。
@@ -3859,12 +3859,12 @@ from("direct:start").to("activiti:process?var.return.exampleVar").to("mock:resul
 
 [source,java,linenums]
 ----
- from("activiti:asyncPingProcess:serviceAsyncPing").to("activiti:asyncPingProcess:receiveAsyncPing");
+ from("flowable:asyncPingProcess:serviceAsyncPing").to("flowable:asyncPingProcess:receiveAsyncPing");
 ----
 
 （译者注：原文如此。可能为缺失了的 to 终端的定义：）
 
-* “activiti”字符串常量
+* “flowable”字符串常量
 * 流程名
 * 接收任务名
 
@@ -3878,16 +3878,16 @@ from("direct:start").to("activiti:process?var.return.exampleVar").to("mock:resul
 
 [source,java,linenums]
 ----
-from("direct:start").to("activiti:camelProcess");
+from("direct:start").to("flowable:camelProcess");
 ----
 
-可以看到url有两部分，第一部分是“activiti”字符串常量，第二个名字是流程的名字。很明显流程需要已经部署，并且可以通过引擎配置启动。
+可以看到url有两部分，第一部分是“flowable”字符串常量，第二个名字是流程的名字。很明显流程需要已经部署，并且可以通过引擎配置启动。
 
 也可以在Camel头中，将流程起动人设置为某个已认证用户id。要这么做，首先需要在流程定义中指定启动人变量：
 
 [source,xml,linenums]
 ----
-<startEvent id="start" activiti:initiator="initiator" />
+<startEvent id="start" flowable:initiator="initiator" />
 ----
 
 然后在Camel头中的__CamelProcessInitiatorHeader__指定用户id。Camel路由会如下定义：
@@ -3896,7 +3896,7 @@ from("direct:start").to("activiti:camelProcess");
 ----
 from("direct:startWithInitiatorHeader")
     .setHeader("CamelProcessInitiatorHeader", constant("kermit"))
-    .to("activiti:InitiatorCamelCallProcess?processInitiatorHeaderName=CamelProcessInitiatorHeader");
+    .to("flowable:InitiatorCamelCallProcess?processInitiatorHeaderName=CamelProcessInitiatorHeader");
 ----
 
 
@@ -4000,7 +4000,7 @@ Shell任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，通过将服
 
 [source,xml,linenums]
 ----
-<serviceTask id="shellEcho" activiti:type="shell">
+<serviceTask id="shellEcho" flowable:type="shell">
 ----
 
 Shell任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数的值可以使用EL表达式，将在流程执行运行时解析。可以设置下列参数：
@@ -4030,14 +4030,14 @@ Shell任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数
 
 [source,xml,linenums]
 ----
-<serviceTask id="shellEcho" activiti:type="shell" >
+<serviceTask id="shellEcho" flowable:type="shell" >
   <extensionElements>
-    <activiti:field name="command" stringValue="cmd" />
-    <activiti:field name="arg1" stringValue="/c" />
-    <activiti:field name="arg2" stringValue="echo" />
-    <activiti:field name="arg3" stringValue="EchoTest" />
-    <activiti:field name="wait" stringValue="true" />
-    <activiti:field name="outputVariable" stringValue="resultVar" />
+    <flowable:field name="command" stringValue="cmd" />
+    <flowable:field name="arg1" stringValue="/c" />
+    <flowable:field name="arg2" stringValue="echo" />
+    <flowable:field name="arg3" stringValue="EchoTest" />
+    <flowable:field name="wait" stringValue="true" />
+    <flowable:field name="outputVariable" stringValue="resultVar" />
   </extensionElements>
 </serviceTask>
 
@@ -4049,7 +4049,7 @@ Shell任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数
 
 ==== 执行监听器 Execution listener
 
-**兼容性提示：**在5.3版本后，我们发现执行监听器、任务监听器（task listeners）与表达式仍然在非公开API中。这些类在++org.activiti.engine.impl...++子包中。++org.activiti.engine.impl.pvm.delegate.ExecutionListener++，++org.activiti.engine.impl.pvm.delegate.TaskListener++与++org.activiti.engine.impl.pvm.el.Expression++已被废弃。从现在起，应该使用++org.activiti.engine.delegate.ExecutionListener++，++org.activiti.engine.delegate.TaskListener++与++org.activiti.engine.delegate.Expression++。在新的公开可用的API中，对++ExecutionListenerExecution.getEventSource()++的访问已被移除。除了编译器的废弃警告，现有代码可以正常运行。但是请考虑切换至新的公开API接口（包名中不带有.impl.）。
+**兼容性提示：**在5.3版本后，我们发现执行监听器、任务监听器（task listeners）与表达式仍然在非公开API中。这些类在++org.flowable.engine.impl...++子包中。++org.flowable.engine.impl.pvm.delegate.ExecutionListener++，++org.flowable.engine.impl.pvm.delegate.TaskListener++与++org.flowable.engine.impl.pvm.el.Expression++已被废弃。从现在起，应该使用++org.flowable.engine.delegate.ExecutionListener++，++org.flowable.engine.delegate.TaskListener++与++org.flowable.engine.delegate.Expression++。在新的公开可用的API中，对++ExecutionListenerExecution.getEventSource()++的访问已被移除。除了编译器的废弃警告，现有代码可以正常运行。但是请考虑切换至新的公开API接口（包名中不带有.impl.）。
 
 执行监听器可以在流程执行中发生特定的事件时，执行外部Java代码或计算表达式。可以被捕获的事件有：
 
@@ -4067,7 +4067,7 @@ Shell任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数
 <process id="executionListenersProcess">
 
   <extensionElements>
-    <activiti:executionListener class="org.activiti.examples.bpmn.executionlistener.ExampleExecutionListenerOne" event="start" />
+    <flowable:executionListener class="org.flowable.examples.bpmn.executionlistener.ExampleExecutionListenerOne" event="start" />
   </extensionElements>
 
   <startEvent id="theStart" />
@@ -4076,13 +4076,13 @@ Shell任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数
   <userTask id="firstTask" />
   <sequenceFlow sourceRef="firstTask" targetRef="secondTask">
     <extensionElements>
-      <activiti:executionListener class="org.activiti.examples.bpmn.executionListener.ExampleExecutionListenerTwo" />
+      <flowable:executionListener class="org.flowable.examples.bpmn.executionListener.ExampleExecutionListenerTwo" />
     </extensionElements>
   </sequenceFlow>
 
   <userTask id="secondTask" >
     <extensionElements>
-      <activiti:executionListener expression="${myPojo.myMethod(execution.event)}" event="end" />
+      <flowable:executionListener expression="${myPojo.myMethod(execution.event)}" event="end" />
     </extensionElements>
   </userTask>
   <sequenceFlow sourceRef="secondTask" targetRef="thirdTask" />
@@ -4095,7 +4095,7 @@ Shell任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数
 </process>
 ----
 
-第一个执行监听器将在流程启动时得到通知。这个监听器是一个外部Java类（例如++ExampleExecutionListenerOne++），并且需要实现++org.activiti.engine.delegate.ExecutionListener++接口。当该事件发生时（这里是++start++事件），会调用++notify(ExecutionListenerExecution execution)++方法。
+第一个执行监听器将在流程启动时得到通知。这个监听器是一个外部Java类（例如++ExampleExecutionListenerOne++），并且需要实现++org.flowable.engine.delegate.ExecutionListener++接口。当该事件发生时（这里是++start++事件），会调用++notify(ExecutionListenerExecution execution)++方法。
 
 [source,java,linenums]
 ----
@@ -4108,7 +4108,7 @@ public class ExampleExecutionListenerOne implements ExecutionListener {
 }
 ----
 
-也可以使用实现了++org.activiti.engine.delegate.JavaDelegate++接口的代理类。这些代理类也可以用于其他的结构，例如服务任务的代理。
+也可以使用实现了++org.flowable.engine.delegate.JavaDelegate++接口的代理类。这些代理类也可以用于其他的结构，例如服务任务的代理。
 
 第二个执行监听器在take（进行）转移时被调用。请注意++listener++元素并未定义++event++，因为在转移上只会触发++take++事件。**当监听器定义在转移上时，++event++属性的值将被忽略。**
 
@@ -4116,7 +4116,7 @@ public class ExampleExecutionListenerOne implements ExecutionListener {
 
 [source,xml,linenums]
 ----
-<activiti:executionListener expression="${myPojo.myMethod(execution.eventName)}" event="end" />
+<flowable:executionListener expression="${myPojo.myMethod(execution.eventName)}" event="end" />
 ----
 
 与其他表达式一样，可以使用与解析execution变量。因为execution实现对象有一个暴露事件名的参数，因此可以使用++execution.eventName++向你的方法传递事件名。
@@ -4125,25 +4125,25 @@ public class ExampleExecutionListenerOne implements ExecutionListener {
 
 [source,xml,linenums]
 ----
-<activiti:executionListener event="start" delegateExpression="${myExecutionListenerBean}" />
+<flowable:executionListener event="start" delegateExpression="${myExecutionListenerBean}" />
 ----
 
-较早之前，我们也引入了新的执行监听器类型，org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener。这个脚本执行监听器，可以为一个执行监听器事件执行一段脚本逻辑。
+较早之前，我们也引入了新的执行监听器类型，org.flowable.engine.impl.bpmn.listener.ScriptExecutionListener。这个脚本执行监听器，可以为一个执行监听器事件执行一段脚本逻辑。
 
 [source,xml,linenums]
 ----
-<activiti:executionListener event="start" class="org.activiti.engine.impl.bpmn.listener.ScriptExecutionListener" >
-  <activiti:field name="script">
-    <activiti:string>
+<flowable:executionListener event="start" class="org.flowable.engine.impl.bpmn.listener.ScriptExecutionListener" >
+  <flowable:field name="script">
+    <flowable:string>
       def bar = "BAR";  // local variable
       foo = "FOO"; // pushes variable to execution context
       execution.setVariable("var1", "test"); // test access to execution instance
       bar // implicit return value
-    </activiti:string>
-  </activiti:field>
-  <activiti:field name="language" stringValue="groovy" />
-  <activiti:field name="resultVariable" stringValue="myVar" />
-</activiti:executionListener>
+    </flowable:string>
+  </flowable:field>
+  <flowable:field name="language" stringValue="groovy" />
+  <flowable:field name="resultVariable" stringValue="myVar" />
+</flowable:executionListener>
 ----
 
 
@@ -4160,10 +4160,10 @@ public class ExampleExecutionListenerOne implements ExecutionListener {
 ----
 <process id="executionListenersProcess">
   <extensionElements>
-    <activiti:executionListener class="org.activiti.examples.bpmn.executionListener.ExampleFieldInjectedExecutionListener" event="start">
-      <activiti:field name="fixedValue" stringValue="Yes, I am " />
-      <activiti:field name="dynamicValue" expression="${myVar}" />
-    </activiti:executionListener>
+    <flowable:executionListener class="org.flowable.examples.bpmn.executionListener.ExampleFieldInjectedExecutionListener" event="start">
+      <flowable:field name="fixedValue" stringValue="Yes, I am " />
+      <flowable:field name="dynamicValue" expression="${myVar}" />
+    </flowable:executionListener>
   </extensionElements>
 
   <startEvent id="theStart" />
@@ -4194,7 +4194,7 @@ public class ExampleFieldInjectedExecutionListener implements ExecutionListener 
 
 [source,java,linenums]
 ----
-@Deployment(resources = {"org/activiti/examples/bpmn/executionListener/ExecutionListenersFieldInjectionProcess.bpmn20.xml"})
+@Deployment(resources = {"org/flowable/examples/bpmn/executionListener/ExecutionListenersFieldInjectionProcess.bpmn20.xml"})
 public void testExecutionListenerFieldInjection() {
   Map<String, Object> variables = new HashMap<String, Object>();
   variables.put("myVar", "listening!");
@@ -4219,14 +4219,14 @@ public void testExecutionListenerFieldInjection() {
 
 __任务监听器__用于在特定的任务相关事件发生时，执行自定义的Java逻辑或表达式。
 
-任务监听器只能在流程定义中作为<<bpmnUserTask,用户任务>>的子元素。请注意，任务监听器是一个Flowable自定义结构，因此也需要作为__BPMN 2.0 extensionElements__，放在__activiti__命名空间下。
+任务监听器只能在流程定义中作为<<bpmnUserTask,用户任务>>的子元素。请注意，任务监听器是一个Flowable自定义结构，因此也需要作为__BPMN 2.0 extensionElements__，放在__flowable__命名空间下。
 
 
 [source,xml,linenums]
 ----
 <userTask id="myTask" name="My Task" >
   <extensionElements>
-    <activiti:taskListener event="create" class="org.activiti.MyTaskCreateListener" />
+    <flowable:taskListener event="create" class="org.flowable.MyTaskCreateListener" />
   </extensionElements>
 </userTask>
 ----
@@ -4238,7 +4238,7 @@ __任务监听器__支持下列属性：
 ** **assignment（指派）**：当任务已经指派给某人时触发。请注意：当流程执行到达用户任务时，__create__事件触发**前**，首先触发__assignment__事件。这看起来不是自然顺序，但是有实际原因的：当收到__create__事件时，我们通常希望查看任务的所有参数，包括办理人。
 ** **complete（完成）**：当任务已经完成，从运行时数据中删除前触发。
 ** **delete（删除）**：在任务即将被删除前触发。请注意当任务通过completeTask正常完成时也会触发。
-* **class**：需要调用的代理类。这个类必须实现++org.activiti.engine.delegate.TaskListener++接口。
+* **class**：需要调用的代理类。这个类必须实现++org.flowable.engine.delegate.TaskListener++接口。
 
 [source,java,linenums]
 ----
@@ -4257,32 +4257,32 @@ public class MyTaskCreateListener implements TaskListener {
 
 [source,java,linenums]
 ----
-<activiti:taskListener event="create" expression="${myObject.callMethod(task, task.eventName)}" />
+<flowable:taskListener event="create" expression="${myObject.callMethod(task, task.eventName)}" />
 ----
 
 * **delegateExpression**：可以指定一个能够解析为++TaskListener++接口实现类对象的表达式。<<bpmnJavaServiceTaskXML,与服务任务类似>>。
 
 [source,xml,linenums]
 ----
-<activiti:taskListener event="create" delegateExpression="${myTaskListenerBean}" />
+<flowable:taskListener event="create" delegateExpression="${myTaskListenerBean}" />
 ----
 
-* 较早之前，我们也引入了新的执行监听器类型，org.activiti.engine.impl.bpmn.listener.ScriptTaskListener。这个脚本任务监听器，可以为一个任务监听器事件执行一段脚本逻辑。
+* 较早之前，我们也引入了新的执行监听器类型，org.flowable.engine.impl.bpmn.listener.ScriptTaskListener。这个脚本任务监听器，可以为一个任务监听器事件执行一段脚本逻辑。
 
 [source,xml,linenums]
 ----
-<activiti:taskListener event="complete" class="org.activiti.engine.impl.bpmn.listener.ScriptTaskListener" >
-  <activiti:field name="script">
-    <activiti:string>
+<flowable:taskListener event="complete" class="org.flowable.engine.impl.bpmn.listener.ScriptTaskListener" >
+  <flowable:field name="script">
+    <flowable:string>
       def bar = "BAR";  // local variable
       foo = "FOO"; // pushes variable to execution context
       task.setOwner("kermit"); // test access to task instance
       bar // implicit return value
-    </activiti:string>
-  </activiti:field>
-  <activiti:field name="language" stringValue="groovy" />
-  <activiti:field name="resultVariable" stringValue="myVar" />
-</activiti:taskListener>
+    </flowable:string>
+  </flowable:field>
+  <flowable:field name="language" stringValue="groovy" />
+  <flowable:field name="resultVariable" stringValue="myVar" />
+</flowable:taskListener>
 ----
 
 
@@ -4375,7 +4375,7 @@ image::images/bpmn.multi.instance.png[align="center"]
 
 [source,xml,linenums]
 ----
-<userTask id="miTasks" name="My Task ${loopCounter}" activiti:assignee="${assignee}">
+<userTask id="miTasks" name="My Task ${loopCounter}" flowable:assignee="${assignee}">
   <multiInstanceLoopCharacteristics isSequential="false">
     <loopDataInputRef>assigneeList</loopDataInputRef>
     <inputDataItem name="assignee" />
@@ -4389,9 +4389,9 @@ image::images/bpmn.multi.instance.png[align="center"]
 
 [source,xml,linenums]
 ----
-<userTask id="miTasks" name="My Task" activiti:assignee="${assignee}">
+<userTask id="miTasks" name="My Task" flowable:assignee="${assignee}">
   <multiInstanceLoopCharacteristics isSequential="true"
-     activiti:collection="${myService.resolveUsersForTask()}" activiti:elementVariable="assignee" >
+     flowable:collection="${myService.resolveUsersForTask()}" flowable:elementVariable="assignee" >
   </multiInstanceLoopCharacteristics>
 </userTask>
 ----
@@ -4400,9 +4400,9 @@ image::images/bpmn.multi.instance.png[align="center"]
 
 [source,xml,linenums]
 ----
-<userTask id="miTasks" name="My Task" activiti:assignee="${assignee}">
+<userTask id="miTasks" name="My Task" flowable:assignee="${assignee}">
   <multiInstanceLoopCharacteristics isSequential="false"
-     activiti:collection="assigneeList" activiti:elementVariable="assignee" >
+     flowable:collection="assigneeList" flowable:elementVariable="assignee" >
     <completionCondition>${nrOfCompletedInstances/nrOfInstances >= 0.6 }</completionCondition>
   </multiInstanceLoopCharacteristics>
 </userTask>
@@ -4432,8 +4432,8 @@ image::images/bpmn.multi.instance.boundary.event.png[align="center"]
 [source,xml,linenums]
 ----
 <extensionElements>
-    <activiti:executionListener event="start" class="org.activiti.MyStartListener"/>
-		<activiti:executionListener event="end" class="org.activiti.MyEndListener"/>
+    <flowable:executionListener event="start" class="org.flowable.MyStartListener"/>
+		<flowable:executionListener event="end" class="org.flowable.MyEndListener"/>
 </extensionElements>
 ----
 
@@ -4455,8 +4455,8 @@ image::images/bpmn.multi.instance.boundary.event.png[align="center"]
 ----
 <subProcess id="subprocess1" name="Sub Process">
   <extensionElements>
-    <activiti:executionListener event="start" class="org.activiti.MyStartListener"/>
-    <activiti:executionListener event="end" class="org.activiti.MyEndListener"/>
+    <flowable:executionListener event="start" class="org.flowable.MyStartListener"/>
+    <flowable:executionListener event="end" class="org.flowable.MyEndListener"/>
   </extensionElements>
   <multiInstanceLoopCharacteristics isSequential="false">
     <loopDataInputRef>assignees</loopDataInputRef>
@@ -4511,7 +4511,7 @@ image::images/bpmn.boundary.compensation.event.png[align="center"]
 
 [source,xml,linenums]
 ----
-<serviceTask id="undoBookHotel" isForCompensation="true" activiti:class="...">
+<serviceTask id="undoBookHotel" isForCompensation="true" flowable:class="...">
 </serviceTask>
 ----
 
@@ -4796,8 +4796,8 @@ image::images/bpmn.collapsed.call.activity.png[align="center"]
 ----
 <callActivity id="callSubProcess" calledElement="checkCreditProcess" >
   <extensionElements>
-	  <activiti:in source="someVariableInMainProcess" target="nameOfVariableInSubProcess" />
-	  <activiti:out source="someVariableInSubProcess" target="nameOfVariableInMainProcess" />
+	  <flowable:in source="someVariableInMainProcess" target="nameOfVariableInSubProcess" />
+	  <flowable:out source="someVariableInSubProcess" target="nameOfVariableInMainProcess" />
   </extensionElements>
 </callActivity>
 ----
@@ -4810,8 +4810,8 @@ image::images/bpmn.collapsed.call.activity.png[align="center"]
 ----
 <callActivity id="callSubProcess" calledElement="checkCreditProcess" >
 	<extensionElements>
-	  <activiti:in sourceExpression="${x+5}" target="y" />
-	  <activiti:out source="${y+5}" target="z" />
+	  <flowable:in sourceExpression="${x+5}" target="y" />
+	  <flowable:out source="${y+5}" target="z" />
 	</extensionElements>
 </callActivity>
 ----
@@ -4821,7 +4821,7 @@ image::images/bpmn.collapsed.call.activity.png[align="center"]
 调用活动元素也可以在启动的子流程实例上使用一个自定义Flowable属性扩展，'businessKey'，来设置其businessKey。
 
 ----
-<callActivity id="callSubProcess" calledElement="checkCreditProcess" activiti:businessKey="${myVariable}">
+<callActivity id="callSubProcess" calledElement="checkCreditProcess" flowable:businessKey="${myVariable}">
 ...
 </callActivity>
 ----
@@ -4829,7 +4829,7 @@ image::images/bpmn.collapsed.call.activity.png[align="center"]
 将'inheritBusinessKey'属性设置为true，会将子流程的businessKey值设置为调用流程的businessKey的值。
 
 ----
-<callActivity id="callSubProcess" calledElement="checkCreditProcess" activiti:inheritBusinessKey="true">
+<callActivity id="callSubProcess" calledElement="checkCreditProcess" flowable:inheritBusinessKey="true">
 ...
 </callActivity>
 ----
@@ -4882,24 +4882,24 @@ image::images/bpmn.call.activity.sub.process.png[align="center"]
 
 Flowable以事务方式执行流程，并可按照你的需求配置。让我们从Flowable一般如何为事务划分范围开始介绍。如果Flowable被触发（也就是说，启动流程，完成任务，为执行发送信号），Flowable将沿流程继续，直到到达每个执行路径的等待状态。更具体地说，它以深度优先方式搜索流程图，并在每个执行分支都到达等待状态时返回。等待状态是“之后”再执行的任务，意味着Flowable将当前执行持久化，并等待再次触发。触发可以来自外部来源，例如用户任务或消息接受任务，也可以来自Flowable自身，例如定时器事件。以下面的图片说明：
 
-image::images/activiti.async.example.no.async.PNG[align="center"]
+image::images/flowable.async.example.no.async.PNG[align="center"]
 
 这是一个BPMN流程的片段，有一个用户任务，一个服务任务，与一个定时器事件。完成用户任务与验证地址（validate address）在同一个工作单元内，因此需要原子性地（atomically）成功或失败。这意味着如果服务任务抛出了异常，我们会想要回滚当前事务，以便执行返回到用户任务，而用户任务仍然存在于数据库中。这也是Activit的默认行为。在（1）中，应用或客户端线程完成任务。在相同的线程中，Flowable执行服务并继续，直到到达等待状态，在这个例子中，是定时器事件（2）。然后将控制权返回至调用者（3），同时提交事务（如果事务由Flowable开启）。
 
 在有的情况下，这不是我们想要的。有时我们需要在流程中，自定义地控制事务边界，以便为工作的逻辑单元划分范围。这就需要使用异步操作。考虑下面的流程（片段）：
 
-image::images/activiti.async.example.async.PNG[align="center"]
+image::images/flowable.async.example.async.PNG[align="center"]
 
 这次我们完成用户任务，生成发票，并将发票发送给客户。这次发票的生成不再是同一个工作单元的一部分，因此我们不希望当发票生成失败时，回滚用户任务。因此我们希望Flowable做的，是完成用户任务（1），提交事务，并将控制权返回给调用程序。然后我们希望在后台线程中，异步地生成发票。这个后台线程就是Flowable作业执行器（事实上是一个线程池），它周期性地将作业保存至数据库。因此在幕后，当到达"generate invoice（生成发票）"任务时，会为Flowable创建“消息”作业，以继续流程，并将其持久化到数据库中。这个作业之后会被作业执行器选中并执行。我们也会为本地的作业执行器进行提示，告知其有新作业到来，以提升性能。
 
-要使用这个特性，可以使用__activiti:async="true"__扩展。因此，服务任务会像是这样：
+要使用这个特性，可以使用__flowable:async="true"__扩展。因此，服务任务会像是这样：
 
 [source,xml,linenums]
 ----
-<serviceTask id="service1" name="Generate Invoice" activiti:class="my.custom.Delegate" activiti:async="true" />
+<serviceTask id="service1" name="Generate Invoice" flowable:class="my.custom.Delegate" flowable:async="true" />
 ----
 
-可以为下列BPMN任务类型指定__activiti:async__：任务，服务任务，脚本任务，业务规则任务，发送任务，接收任务，用户任务，子流程，调用活动
+可以为下列BPMN任务类型指定__flowable:async__：任务，服务任务，脚本任务，业务规则任务，发送任务，接收任务，用户任务，子流程，调用活动
 
 对于用户任务，接收任务与其他等待状态来说，异步操作允许我们在一个独立的线程/事务中启动执行监听器。
 
@@ -4914,13 +4914,13 @@ image::images/activiti.async.example.async.PNG[align="center"]
 * 重试的次数
 * 重试的间隔
 
-这两个参数可以通过++activiti:failedJobRetryTimeCycle++元素配置。这有一个简单的例子：
+这两个参数可以通过++flowable:failedJobRetryTimeCycle++元素配置。这有一个简单的例子：
 
 [source,xml,linenums]
 ----
-<serviceTask id="failingServiceTask" activiti:async="true" activiti:class="org.activiti.engine.test.jobexecutor.RetryFailingDelegate">
+<serviceTask id="failingServiceTask" flowable:async="true" flowable:class="org.flowable.engine.test.jobexecutor.RetryFailingDelegate">
 	<extensionElements>
-		<activiti:failedJobRetryTimeCycle>R5/PT7M</activiti:failedJobRetryTimeCycle>
+		<flowable:failedJobRetryTimeCycle>R5/PT7M</flowable:failedJobRetryTimeCycle>
 	</extensionElements>
 </serviceTask>
 ----
@@ -4958,11 +4958,11 @@ Flowable如何解决这个问题呢？Flowable使用乐观锁，基于数据进�
 
 排他作业不能与同一个流程实例中的其他排他作业同时执行。考虑上面展示的流程：如果我们将服务任务都声明为排他的，则JobExecutor将确保相关的作业都不会并发执行。相反，它将确保不论何时从特定流程实例中获取了排他作业，都将从同一个流程实例中获取所有其他的排他作业，并将它们代理至同一个工作线程。这保证了作业的顺序执行。
 
-如何启用这个特性？从近期版本开始，排他作业成为默认配置。所有异步操作与定时器事件，都因此默认成为排他的。另外，如果希望作业成为非排他的，可以使用++activiti:exclusive="false"++配置。例如，下面的服务任务是异步，但非排他的。
+如何启用这个特性？从近期版本开始，排他作业成为默认配置。所有异步操作与定时器事件，都因此默认成为排他的。另外，如果希望作业成为非排他的，可以使用++flowable:exclusive="false"++配置。例如，下面的服务任务是异步，但非排他的。
 
 [source,xml,linenums]
 ----
-<serviceTask id="service" activiti:expression="${myService.performBooking(hotel, dates)}" activiti:async="true" activiti:exclusive="false" />
+<serviceTask id="service" flowable:expression="${myService.performBooking(hotel, dates)}" flowable:async="true" flowable:exclusive="false" />
 ----
 
 这是好的解决方案么？有很多人问我们这是否是好的解决方案。他们的顾虑是，这将阻止并行“操作”，因此会有性能问题。再一次，需要考虑以下两点：
@@ -4976,29 +4976,29 @@ Flowable如何解决这个问题呢？Flowable使用乐观锁，基于数据进�
 
 === 流程启动认证 Process Initiation Authorization
 
-默认情况下，任何人都可以启动已部署流程定义的新流程实例。流程启动认证功能可以定义用户与组，这样Web客户端可以选择性的限制能够启动新流程实例的用户。请注意Flowable引擎**不会**用任何方式验证认证定义。这个功能只是为了开发人员可以简化Web客户端认证规则的实现。语法与为用户任务指派用户的语法类似。可以使用<activiti:potentialStarter>标签，将用户或组指派为流程的潜在启动者。这里有一个例子：
+默认情况下，任何人都可以启动已部署流程定义的新流程实例。流程启动认证功能可以定义用户与组，这样Web客户端可以选择性的限制能够启动新流程实例的用户。请注意Flowable引擎**不会**用任何方式验证认证定义。这个功能只是为了开发人员可以简化Web客户端认证规则的实现。语法与为用户任务指派用户的语法类似。可以使用<flowable:potentialStarter>标签，将用户或组指派为流程的潜在启动者。这里有一个例子：
 
 [source,xml,linenums]
 ----
 <process id="potentialStarter">
   <extensionElements>
-    <activiti:potentialStarter>
+    <flowable:potentialStarter>
        <resourceAssignmentExpression>
          <formalExpression>group2, group(group3), user(user3)</formalExpression>
        </resourceAssignmentExpression>
-    </activiti:potentialStarter>
+    </flowable:potentialStarter>
   </extensionElements>
 
   <startEvent id="theStart"/>
   ...
 ----
 
-在上面摘录的XML中，user(user3)直接引用用户user3，而group(group3)引用组group3。组没有默认标志。也可以使用<process>标签，名为<activiti:candidateStarterUsers>与<activiti:candidateStarterGroups>的属性。这里有一个例子：
+在上面摘录的XML中，user(user3)直接引用用户user3，而group(group3)引用组group3。组没有默认标志。也可以使用<process>标签，名为<flowable:candidateStarterUsers>与<flowable:candidateStarterGroups>的属性。这里有一个例子：
 
 [source,xml,linenums]
 ----
-<process id="potentialStarter" activiti:candidateStarterUsers="user1, user2"
-                               activiti:candidateStarterGroups="group1">
+<process id="potentialStarter" flowable:candidateStarterUsers="user1, user2"
+                               flowable:candidateStarterGroups="group1">
       ...
 ----
 
@@ -5059,7 +5059,7 @@ BPMN提供了将数据对象定义为流程或子流程元素的一部分的可�
 <process id="dataObjectScope" name="Data Object Scope" isExecutable="true">
   <dataObject id="dObj123" name="StringTest123" itemSubjectRef="xsd:string">
     <extensionElements>
-      <activiti:value>Testing123</activiti:value>
+      <flowable:value>Testing123</flowable:value>
     </extensionElements>
   </dataObject>
   ...

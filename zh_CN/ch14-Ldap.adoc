@@ -40,7 +40,7 @@
 
 === 配置 Configuration
 
-在Flowable中集成LDAP系统通过在流程引擎配置的++configurators++小节注入++org.activiti.ldap.LDAPConfigurator++完成。这个类高度可扩展：如果默认实现不能满足使用场景，可以轻松地覆盖方法，许多依赖的bean也是可插拔的。
+在Flowable中集成LDAP系统通过在流程引擎配置的++configurators++小节注入++org.flowable.ldap.LDAPConfigurator++完成。这个类高度可扩展：如果默认实现不能满足使用场景，可以轻松地覆盖方法，许多依赖的bean也是可插拔的。
 
 这是一个示例配置（请注意：当然，在编程式创建引擎时完全类似）。现在不需要太关注这些参数，我们会在下一章节详细介绍。
 
@@ -50,7 +50,7 @@
         ...
         <property name="configurators">
           <list>
-              <bean class="org.activiti.ldap.LDAPConfigurator">
+              <bean class="org.flowable.ldap.LDAPConfigurator">
               
                 <!-- 服务器连接参数 Server connection params -->
                 <property name="server" value="ldap://localhost" />
@@ -85,7 +85,7 @@
 
 === 参数 Properties
 
-可以为++org.activiti.ldap.LDAPConfigurator++设置下列参数：
+可以为++org.flowable.ldap.LDAPConfigurator++设置下列参数：
 
 .LDAP配置参数
 [options="header"]
@@ -128,7 +128,7 @@
 |ldapGroupManagerFactory|如果默认实现不符合要求，设置一个自定义的LDAPGroupManagerFactory实现。|LDAPGroupManagerFactory的实例|
 |ldapMemberShipManagerFactory|如果默认实现不符合要求，设置一个自定义的LDAPMembershipManagerFactory实现。请注意很少出现这种情况，因为一般使用LDAP系统管理成员信息。|LDAPMembershipManagerFactory的实例|
 
-|ldapQueryBuilder|如果默认实现不符合要求，设置一个自定义的查询构建器。当在LDAP系统中使用LDAPUserManager或LDAPGroupManage进行实际查询时，会使用LDAPQueryBuilder的实例。默认实现使用在本实例中设置的参数，例如queryGroupsForUser与queryUserById|org.activiti.ldap.LDAPQueryBuilder的实例|
+|ldapQueryBuilder|如果默认实现不符合要求，设置一个自定义的查询构建器。当在LDAP系统中使用LDAPUserManager或LDAPGroupManage进行实际查询时，会使用LDAPQueryBuilder的实例。默认实现使用在本实例中设置的参数，例如queryGroupsForUser与queryUserById|org.flowable.ldap.LDAPQueryBuilder的实例|
 
 |groupCacheSize|用于设置组缓存的大小。这是一个为用户缓存组的LRU缓存，可以避免每次需要查询用户所在组的时候都访问LDAP系统。
 

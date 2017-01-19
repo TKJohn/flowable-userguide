@@ -24,7 +24,7 @@
 
 可以使用API查询全部5种历史实体，HistoryService暴露的++createHistoricProcessInstanceQuery()++、++createHistoricVariableInstanceQuery()++、++createHistoricActivityInstanceQuery()++、++createHistoricDetailQuery()++与++createHistoricTaskInstanceQuery()++方法。
 
-下面是一些例子，展示了历史查询API的一些用法。关于各用法的全部描述可以在link:$$http://flowable.org/javadocs/index.html$$[javadoc]中找到，在++org.activiti.engine.history++包中。
+下面是一些例子，展示了历史查询API的一些用法。关于各用法的全部描述可以在link:$$http://flowable.org/javadocs/index.html$$[javadoc]中找到，在++org.flowable.engine.history++包中。
 
 [[historyQueryProcessInstance]]
 
@@ -158,7 +158,7 @@ historyService.createHistoricTaskInstanceQuery()
 
 === 历史配置 History configuration
 
-可以使用org.activiti.engine.impl.history.HistoryLevel枚举（或在早期版本中，++ProcessEngineConfiguration++中定义的__HISTORY__常量），以编程方式配置历史级别：
+可以使用org.flowable.engine.impl.history.HistoryLevel枚举（或在早期版本中，++ProcessEngineConfiguration++中定义的__HISTORY__常量），以编程方式配置历史级别：
 
 [source,java,linenums]
 ----
@@ -168,11 +168,11 @@ ProcessEngine processEngine = ProcessEngineConfiguration
   .buildProcessEngine();
 ----
 
-也可以在activiti.cfg.xml或Spring上下文中配置级别：
+也可以在flowable.cfg.xml或Spring上下文中配置级别：
 
 [source,xml,linenums]
 ----
-<bean id="processEngineConfiguration" class="org.activiti.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration">
+<bean id="processEngineConfiguration" class="org.flowable.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration">
   <property name="history" value="audit" />
   ...
 </bean>

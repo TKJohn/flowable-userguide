@@ -7,7 +7,7 @@
 
 === BPMN是什么？ What is BPMN?
 
-查看我们link:$$http://activiti.org/faq.html#WhatIsBpmn20$$[关于BPMN 2.0的FAQ条目]。
+查看我们link:$$http://flowable.org/faq.html#WhatIsBpmn20$$[关于BPMN 2.0的FAQ条目]。
 BPMN是一个广泛接受与支持的，用于呈现流程的表示方法link:$$http://www.bpmn.org/$$[OMG BPMN标准].
 
 [[bpmnDefiningProcess]]
@@ -33,7 +33,7 @@ BPMN 2.0概要（schema）的根元素（root element）是++definitions++元素
 ----
 <definitions
   xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
-  xmlns:activiti="http://activiti.org/bpmn"
+  xmlns:flowable="http://flowable.org/bpmn"
   targetNamespace="Examples">
 
   <process id="myProcess" name="My First Process">
@@ -62,7 +62,7 @@ xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL
 ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("myProcess");
 ----
 
-* 请注意这与调用++startProcessInstanceById++方法不同。++startProcessInstanceById++方法的参数为Flowable引擎在部署时生成的字符串id，可以通过调用++processDefinition.getId()++方法获取。生成id的格式为**'key:version'**，长度**限制为64字符**。如果有++ActivitiException++显示生成id过长，请限制流程__key__参数（即这个id字段）的文字长度。
+* 请注意这与调用++startProcessInstanceById++方法不同。++startProcessInstanceById++方法的参数为Flowable引擎在部署时生成的字符串id，可以通过调用++processDefinition.getId()++方法获取。生成id的格式为**'key:version'**，长度**限制为64字符**。如果有++FlowableException++显示生成id过长，请限制流程__key__参数（即这个id字段）的文字长度。
 * *name*: **可选**属性，映射为++ProcessDefinition++的__name__参数。引擎自己不会使用这个参数，可以用于例如，在用户界面上显示更用户友好的名字。
 
 
@@ -79,7 +79,7 @@ ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("myPr
 
 ==== 先决条件 Prerequisites
 
-这个教程假设你已经<<demo.setup.one.minute.version,运行了Flowable演示配置>>，并使用独立的H2服务器。编辑++db.properties++并设置++jdbc.url=jdbc:h2:tcp://localhost/activiti++，然后按照link:$$http://www.h2database.com/html/tutorial.html#using_server$$[H2文档]的介绍运行独立服务器。
+这个教程假设你已经<<demo.setup.one.minute.version,运行了Flowable演示配置>>，并使用独立的H2服务器。编辑++db.properties++并设置++jdbc.url=jdbc:h2:tcp://localhost/flowable++，然后按照link:$$http://www.h2database.com/html/tutorial.html#using_server$$[H2文档]的介绍运行独立服务器。
 
 
 [[bpmn10MinuteTutorialGoal]]
@@ -102,7 +102,7 @@ ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("myPr
 
 ==== 流程图 Process diagram
 
-上面描述的业务流程，可以使用<<activitiDesigner,Flowable Designer>>可视地画出。但是在这个教程里，我们自己写XML，这样可以学习更多。这个流程的图形化BPMN 2.0注记像是这样：
+上面描述的业务流程，可以使用<<flowableDesigner,Flowable Designer>>可视地画出。但是在这个教程里，我们自己写XML，这样可以学习更多。这个流程的图形化BPMN 2.0注记像是这样：
 
 image::images/financial.report.example.diagram.png[align="center"]
 
@@ -123,8 +123,8 @@ image::images/financial.report.example.diagram.png[align="center"]
 [source,xml,linenums]
 ----
 <definitions id="definitions"
-  targetNamespace="http://activiti.org/bpmn20"
-  xmlns:activiti="http://activiti.org/bpmn"
+  targetNamespace="http://flowable.org/bpmn20"
+  xmlns:flowable="http://flowable.org/bpmn"
   xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL">
 
 	<process id="financialReport" name="Monthly financial report reminder process">

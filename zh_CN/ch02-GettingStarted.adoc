@@ -7,7 +7,7 @@ Flowable是一个使用Java编写的轻量级业务流程引擎。Flowable流程
 
 Flowable可以十分灵活地加入你的应用/服务/构架。可以将jar形式发布的Flowable库加入应用或服务，来__嵌入__引擎。以jar形式发布使Flowable可以轻易加入任何Java环境：Java SE；Tomcat、Jetty或Spring之类的servlet容器；Jboss或Websphere之类的Java EE服务器，等等。另外，也可以使用Flowable REST API通过HTTP通信。也有Flowable Application，提供了直接可用的UI，可以使用流程与任务。
 
-所有设置Flowable方法的共同点是核心引擎，其可被看做是一组服务的集合，并暴露了管理与执行业务流程的API。下面的各种教程都以设置与使用核心引擎的介绍开始。后续章节都建立在之前章节中获取的知识之上。
+所有设置Flowable方法的共同点是核心引擎。核心引擎可被看做是一组服务的集合，并暴露了管理与执行业务流程的API。下面的各种教程都以设置与使用核心引擎的介绍开始。后续章节都建立在之前章节中获取的知识之上。
 
 * <<getting.started.command.line,第一节>>展示了以最简单的方式运行Flowable的方法：只使用Java SE的标准Java main方法。这里也会介绍许多核心概念与API。
 * <<getting.started.rest,Flowable REST API章节>>展示了如何通过REST运行及使用相同的API。
@@ -15,7 +15,7 @@ Flowable可以十分灵活地加入你的应用/服务/构架。可以将jar形�
 
 === Flowable与Activiti (Flowable and Activiti)
 
-Flowable是Activiti(Alfresco的注册商标)的分支。在下面的章节中，你会注意到包名，配置文件等等，都仍使用__activiti__。
+Flowable是Activiti(Alfresco的注册商标)的分支。在下面的章节中，你会注意到包名，配置文件等等，都使用__flowable__。
 
 [[getting.started.command.line]]
 === 构建一个命令行程序 Building a command-line application
@@ -44,8 +44,8 @@ image::images/getting.started.new.maven3.png[align="center"]
 
 这样就建立了空的Maven项目，然后添加两个依赖：
 
-* Flowable流程引擎，使我们可以创建一个ProcessEngine流程引擎对象，并访问Flowable API。
-* 一个内存数据库，本例中为H2，因为Flowable引擎在运行流程实例时，需要使用数据库来存储执行与历史数据。请注意H2依赖包含了数据库__及__驱动。如果使用其他数据库（例如PostgreSQL，MySQL等），需要添加对应的数据库驱动依赖。
+* Flowable流程引擎。使我们可以创建一个ProcessEngine流程引擎对象，并访问Flowable API。
+* 一个内存数据库。本例中为H2，因为Flowable引擎在运行流程实例时，需要使用数据库来存储执行与历史数据。请注意H2依赖包含了数据库__及__驱动。如果使用其他数据库（例如PostgreSQL，MySQL等），需要添加对应的数据库驱动依赖。
 
 在你的__pom.xml__文件中添加下列行：
 
@@ -55,7 +55,7 @@ image::images/getting.started.new.maven3.png[align="center"]
   <dependency>
     <groupId>org.flowable</groupId>
     <artifactId>flowable-engine</artifactId>
-    <version>6.0.0.RC1-SNAPSHOT</version>
+    <version>6.0.0.RC1</version>
   </dependency>
   <dependency>
     <groupId>com.h2database</groupId>
@@ -82,15 +82,15 @@ public class HolidayRequest {
 }
 ----
 
-首先要做的是初始化一个**ProcessEngine**流程引擎实例。这是一个线程安全的对象，因此通常只需要在一个应用中初始化一次。__ProcessEngine__由一个**ProcessEngineConfiguration**实例创建。该实例可以配置与调整流程引擎的设置。通常，使用一个配置XML文件创建__ProcessEngineConfiguration__，但是（像在这里做的一样）也可以编程方式创建它。__ProcessEngineConfiguration__最少需要配置一个数据库的JDBC连接：
+首先要做的是初始化一个**ProcessEngine**流程引擎实例。这是一个线程安全的对象，因此通常只需要在一个应用中初始化一次。__ProcessEngine__由一个**ProcessEngineConfiguration**实例创建。该实例可以配置与调整流程引擎的设置。通常使用一个配置XML文件创建__ProcessEngineConfiguration__，但是（像在这里做的一样）也可以编程方式创建它。__ProcessEngineConfiguration__最少需要配置一个数据库的JDBC连接：
 
 [source,java,linenums]
 ----
 package org.flowable;
 
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.ProcessEngineConfiguration;
-import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
+import org.flowable.engine.ProcessEngine;
+import org.flowable.engine.ProcessEngineConfiguration;
+import org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 
 public class HolidayRequest {
 
@@ -188,7 +188,7 @@ image::images/getting.started.bpmn.process.png[align="center"]
   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
   xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
   xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
-  xmlns:activiti="http://activiti.org/bpmn"
+  xmlns:flowable="http://flowable.org/bpmn"
   typeLanguage="http://www.w3.org/2001/XMLSchema"
   expressionLanguage="http://www.w3.org/1999/XPath"
   targetNamespace="http://www.flowable.org/processdef">
@@ -217,13 +217,13 @@ image::images/getting.started.bpmn.process.png[align="center"]
       </conditionExpression>
     </sequenceFlow>
 
-    <serviceTask id="externalSystemCall" name="Enter holidays in external system"   activiti:class="org.flowable.CallExternalSystemDelegate"/>
+    <serviceTask id="externalSystemCall" name="Enter holidays in external system"   flowable:class="org.flowable.CallExternalSystemDelegate"/>
     <sequenceFlow sourceRef="externalSystemCall" targetRef="holidayApprovedTask"/>
 
     <userTask id="holidayApprovedTask" name="Holiday approved"/>
     <sequenceFlow sourceRef="holidayApprovedTask" targetRef="approveEnd"/>
 
-    <serviceTask id="sendRejectionMail" name="Send out rejection email" activiti:class="org.flowable.SendRejectionMail"/>
+    <serviceTask id="sendRejectionMail" name="Send out rejection email" flowable:class="org.flowable.SendRejectionMail"/>
     <sequenceFlow sourceRef="sendRejectionMail" targetRef="rejectEnd"/>
 
     <endEvent id="approveEnd"/>
@@ -332,14 +332,14 @@ ProcessInstance processInstance =
 
 [source,xml]
 ----
-<userTask id="approveTask" name="Approve or reject request" activiti:candidateGroups="managers"/>
+<userTask id="approveTask" name="Approve or reject request" flowable:candidateGroups="managers"/>
 ----
 
 并如下所示为第二个任务添加__assignee__属性。请注意我们没有像上面的'managers'一样使用静态值，而是使用一个流程变量动态指派。这个流程变量是在流程实例启动时传递的：
 
 [source,xml]
 ----
-<userTask id="holidayApprovedTask" name="Holiday approved" activiti:assignee="${employee}"/>
+<userTask id="holidayApprovedTask" name="Holiday approved" flowable:assignee="${employee}"/>
 ----
 
 要获得实际的任务列表，需要通过__TaskService__创建一个__TaskQuery__。我们配置这个查询只返回'managers'组的任务：
@@ -388,19 +388,19 @@ taskService.complete(task.getId(), variables);
 
 [source,xml]
 ----
-<serviceTask id="externalSystemCall" name="Enter holidays in external system"   activiti:class="org.flowable.CallExternalSystemDelegate"/>
+<serviceTask id="externalSystemCall" name="Enter holidays in external system"   flowable:class="org.flowable.CallExternalSystemDelegate"/>
 ----
 
 在现实中，这个逻辑可以做任何事情：向某个系统发起一个HTTP REST调用，或调用某个使用了好几十年的系统中的遗留代码。我们不会在这里实现实际的逻辑，而只是简单的日志记录。
 
-创建一个新的类(在Eclipse里__File -> New -> Class__)，填入__org.flowable__作为包名，__CallExternalSystemDelegate__作为类名。让这个类实现__org.activiti.engine.delegate.JavaDelegate__接口，并实现__execute__方法：
+创建一个新的类(在Eclipse里__File -> New -> Class__)，填入__org.flowable__作为包名，__CallExternalSystemDelegate__作为类名。让这个类实现__org.flowable.engine.delegate.JavaDelegate__接口，并实现__execute__方法：
 
 [source,java,linenums]
 ----
 package org.flowable;
 
-import org.activiti.engine.delegate.DelegateExecution;
-import org.activiti.engine.delegate.JavaDelegate;
+import org.flowable.engine.delegate.DelegateExecution;
+import org.flowable.engine.delegate.JavaDelegate;
 
 public class CallExternalSystemDelegate implements JavaDelegate {
 

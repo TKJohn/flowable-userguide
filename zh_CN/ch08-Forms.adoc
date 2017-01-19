@@ -60,28 +60,28 @@ formService.getStartFormData(String processDefinitionId).getFormProperties()
 ----
 <userTask id="task">
   <extensionElements>
-    <activiti:formProperty id="room" />
-    <activiti:formProperty id="duration" type="long"/>
-    <activiti:formProperty id="speaker" variable="SpeakerName" writable="false" />
-    <activiti:formProperty id="street" expression="#{address.street}" required="true" />
+    <flowable:formProperty id="room" />
+    <flowable:formProperty id="duration" type="long"/>
+    <flowable:formProperty id="speaker" variable="SpeakerName" writable="false" />
+    <flowable:formProperty id="street" expression="#{address.street}" required="true" />
   </extensionElements>
 </userTask>
 ----
 
 * ++room++表单参数将作为String，映射为++room++流程变量
 * ++duration++表单参数将作为java.lang.Long，映射为++duration++流程变量
-* ++speaker++表单参数将被映射为++SpeakerName++流程变量。将只在TaskFormData对象中可用。若提交了speaker参数，将抛出ActivitiException。类似的，使用++readable="false"++属性，可以将参数从FormData中排除，但仍然可以在提交时处理。
+* ++speaker++表单参数将被映射为++SpeakerName++流程变量。将只在TaskFormData对象中可用。若提交了speaker参数，将抛出FlowableException。类似的，使用++readable="false"++属性，可以将参数从FormData中排除，但仍然可以在提交时处理。
 * ++street++表单参数将作为String，映射为++address++流程变量的Java bean参数++street++。如果在提交时没有提供这个字段，required="true"将抛出异常。
 
 也可以提供类型元数据，作为++StartFormData FormService.getStartFormData(String processDefinitionId)++与++TaskFormdata FormService.getTaskFormData(String taskId)++方法返回的FormData的一部分
 
 我们支持下列表单参数类型：
 
-* +string+ (org.activiti.engine.impl.form.StringFormType
-* +long+ (org.activiti.engine.impl.form.LongFormType)
-* +enum+ (org.activiti.engine.impl.form.EnumFormType)
-* +date+ (org.activiti.engine.impl.form.DateFormType)
-* +boolean+ (org.activiti.engine.impl.form.BooleanFormType)
+* +string+ (org.flowable.engine.impl.form.StringFormType
+* +long+ (org.flowable.engine.impl.form.LongFormType)
+* +enum+ (org.flowable.engine.impl.form.EnumFormType)
+* +date+ (org.flowable.engine.impl.form.DateFormType)
+* +boolean+ (org.flowable.engine.impl.form.BooleanFormType)
 
 对每个声明的表单参数，下列++FormProperty++信息都可以通过++List<FormProperty> formService.getStartFormData(String processDefinitionId).getFormProperties()++与++List<FormProperty> formService.getTaskFormData(String taskId).getFormProperties()++方法获取
 
@@ -132,21 +132,21 @@ public interface FormProperty {
 ----
 <startEvent id="start">
   <extensionElements>
-    <activiti:formProperty id="speaker"
+    <flowable:formProperty id="speaker"
       name="Speaker"
       variable="SpeakerName"
       type="string" />
 
-    <activiti:formProperty id="start"
+    <flowable:formProperty id="start"
       type="date"
       datePattern="dd-MMM-yyyy" />
 
-    <activiti:formProperty id="direction" type="enum">
-      <activiti:value id="left" name="Go Left" />
-      <activiti:value id="right" name="Go Right" />
-      <activiti:value id="up" name="Go Up" />
-      <activiti:value id="down" name="Go Down" />
-    </activiti:formProperty>
+    <flowable:formProperty id="direction" type="enum">
+      <flowable:value id="left" name="Go Left" />
+      <flowable:value id="right" name="Go Right" />
+      <flowable:value id="up" name="Go Up" />
+      <flowable:value id="down" name="Go Down" />
+    </flowable:formProperty>
 
   </extensionElements>
 </startEvent>
@@ -160,9 +160,9 @@ public interface FormProperty {
 ----
 <startEvent>
   <extensionElements>
-    <activiti:formProperty id="numberOfDays" name="Number of days" value="${numberOfDays}" type="long" required="true"/>
-    <activiti:formProperty id="startDate" name="First day of holiday (dd-MM-yyy)" value="${startDate}" datePattern="dd-MM-yyyy hh:mm" type="date" required="true" />
-    <activiti:formProperty id="vacationMotivation" name="Motivation" value="${vacationMotivation}" type="string" />
+    <flowable:formProperty id="numberOfDays" name="Number of days" value="${numberOfDays}" type="long" required="true"/>
+    <flowable:formProperty id="startDate" name="First day of holiday (dd-MM-yyy)" value="${startDate}" datePattern="dd-MM-yyyy hh:mm" type="date" required="true" />
+    <flowable:formProperty id="vacationMotivation" name="Motivation" value="${vacationMotivation}" type="string" />
   </extensionElements>
 </userTask>
 
@@ -187,5 +187,5 @@ API也支持使用在Flowable引擎之外渲染的，你自己的任务表单。
 
 除了任务表单，也可以为任何目的，使用访问部署资源的能力。
 
-++<userTask activiti:formKey="..."++属性，由API通过++String FormService.getStartFormData(String processDefinitionId).getFormKey()++与++String FormService.getTaskFormData(String taskId).getFormKey()++暴露。可以用它保存部署中模板的全名（如++org/activiti/example/form/my-custom-form.xml++），但并非必须。例如，也可以在表单参数中保存普通的key，并用算法或变换得到实际需要使用的模板。在你需要使用不同的用户界面技术，渲染不同的表单时很有用。例如，一个表单在普通屏幕尺寸的Web应用中使用，另一个表单在手机小屏幕中使用，甚至可以为IM表单或邮件表单提供模板。
+++<userTask flowable:formKey="..."++属性，由API通过++String FormService.getStartFormData(String processDefinitionId).getFormKey()++与++String FormService.getTaskFormData(String taskId).getFormKey()++暴露。可以用它保存部署中模板的全名（如++org/flowable/example/form/my-custom-form.xml++），但并非必须。例如，也可以在表单参数中保存普通的key，并用算法或变换得到实际需要使用的模板。在你需要使用不同的用户界面技术，渲染不同的表单时很有用。例如，一个表单在普通屏幕尺寸的Web应用中使用，另一个表单在手机小屏幕中使用，甚至可以为IM表单或邮件表单提供模板。
 

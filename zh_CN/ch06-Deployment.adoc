@@ -11,7 +11,7 @@
 
 [NOTE]
 ====
-业务存档中的Java类**不会添加至classpath**。业务存档中，所有流程定义使用的自定义类（例如Java服务任务service tasks或者事件监听器实现event listener implementations），都应该放在用于运行流程的activiti引擎的classpath下。
+业务存档中的Java类**不会添加至classpath**。业务存档中，所有流程定义使用的自定义类（例如Java服务任务service tasks或者事件监听器实现event listener implementations），都应该放在用于运行流程的flowable引擎的classpath下。
 ====
 
 ==== 编程方式部署 Deploying programmatically
@@ -48,7 +48,7 @@ repositoryService.createDeployment()
 
 ==== 在流程中使用Spring bean (Using Spring beans from a process)
 
-当在表达式或脚本中使用Spring bean时，执行该流程定义的引擎需要可以使用这些bean。如果你自行构建web应用，并按照<<springintegration,Spring集成章节>>的介绍，在上下文中配置流程引擎，就可以直接使用。但也请牢记在心，如果使用Flowable rest web应用，就需要更新它的上下文配置。用包含你的Spring上下文配置的++activiti-context.xml++文件，替换++activiti-rest/lib/activiti-cfg.jar++ jar文件中的++activiti.cfg.xml++。
+当在表达式或脚本中使用Spring bean时，执行该流程定义的引擎需要可以使用这些bean。如果你自行构建web应用，并按照<<springintegration,Spring集成章节>>的介绍，在上下文中配置流程引擎，就可以直接使用。但也请牢记在心，如果使用Flowable rest web应用，就需要更新它的上下文配置。用包含你的Spring上下文配置的++flowable-context.xml++文件，替换++flowable-rest/lib/flowable-cfg.jar++ jar文件中的++flowable.cfg.xml++。
 
 ==== 创建单独应用 Creating a single app
 
@@ -131,10 +131,10 @@ BPMN并没有版本的概念。这其实很好，因为可执行的BPMN流程文
 
 部署可以添加流程图图片。这个图片将存储在Flowable数据库中，并可以使用API访问。这个图片可以用在Flowable应用中，使流程形象化。
 
-如果在classpath中，有一个++org/activiti/expenseProcess.bpmn20.xml++流程，key为'expense'。则流程图图片会使用下列命名约定（按此顺序）：
+如果在classpath中，有一个++org/flowable/expenseProcess.bpmn20.xml++流程，key为'expense'。则流程图图片会使用下列命名约定（按此顺序）：
 
-* 如果部署中有图片资源，并且它的名字为BPMN 2.0 XML文件名，加上流程key以及图片后缀，则使用这个图片。在我们的例子中，就是++org/activiti/expenseProcess.expense.png++（或者.jpg/gif）。如果一个BPMN 2.0 XML文件中有多个流程定义，这个方式就很合理，因为每一个流程图的文件名中都有流程key。
-* 如果没有这种图片，就会寻找部署中匹配BPMN 2.0 XML文件名的图片资源。在我们的例子中，就是++org/activiti/expenseProcess.png++。请注意这就意味着同一个BPMN 2.0文件中的**每一个流程定义**，都会使用同一个流程图图片。很显然，如果每个BPMN 2.0 XML文件中都只有一个流程定义，就没有问题。
+* 如果部署中有图片资源，并且它的名字为BPMN 2.0 XML文件名，加上流程key以及图片后缀，则使用这个图片。在我们的例子中，就是++org/flowable/expenseProcess.expense.png++（或者.jpg/gif）。如果一个BPMN 2.0 XML文件中有多个流程定义，这个方式就很合理，因为每一个流程图的文件名中都有流程key。
+* 如果没有这种图片，就会寻找部署中匹配BPMN 2.0 XML文件名的图片资源。在我们的例子中，就是++org/flowable/expenseProcess.png++。请注意这就意味着同一个BPMN 2.0文件中的**每一个流程定义**，都会使用同一个流程图图片。很显然，如果每个BPMN 2.0 XML文件中都只有一个流程定义，就没有问题。
 
 
 用编程方式部署的例子：
@@ -144,8 +144,8 @@ BPMN并没有版本的概念。这其实很好，因为可执行的BPMN流程文
 
 repositoryService.createDeployment()
   .name("expense-process.bar")
-  .addClasspathResource("org/activiti/expenseProcess.bpmn20.xml")
-  .addClasspathResource("org/activiti/expenseProcess.png")
+  .addClasspathResource("org/flowable/expenseProcess.bpmn20.xml")
+  .addClasspathResource("org/flowable/expenseProcess.png")
   .deploy();
 ----
 

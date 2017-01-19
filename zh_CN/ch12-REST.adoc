@@ -17,7 +17,7 @@ Flowable在引擎中包含了REST API，可以通过在servlet容器如Apache To
 
 ==== 配置 Configuration
 
-Flowable REST web应用使用Spring Java Configuration来启动Flowable引擎、定义基础认证安全使用Spring security，以及为特定的变量处理定义变量转换。可以修改WEB-INF/classes目录下的engine.properties文件，定义少量参数。如果需要高级配置选项，可以在activiti-custom-context.xml文件中覆盖默认的Spring bean，这个文件也在WEB-INF/classes目录下。该文件中已经以注释形式提供了示例配置。也可以在这里通过定义一个新的命名为restResponsefactory的Spring bean，覆盖默认的RestResponseFactory，并使用自定义实现类。
+Flowable REST web应用使用Spring Java Configuration来启动Flowable引擎、定义基础认证安全使用Spring security，以及为特定的变量处理定义变量转换。可以修改WEB-INF/classes目录下的engine.properties文件，定义少量参数。如果需要高级配置选项，可以在flowable-custom-context.xml文件中覆盖默认的Spring bean，这个文件也在WEB-INF/classes目录下。该文件中已经以注释形式提供了示例配置。也可以在这里通过定义一个新的命名为restResponsefactory的Spring bean，覆盖默认的RestResponseFactory，并使用自定义实现类。
 
 [[restUsageInTomcat]]
 
@@ -227,7 +227,7 @@ HTTP响应的media-type总是++application/json++，除非请求的是二进制�
 |serializable|代表序列化的Java对象。与++binary++类型一样，++value++属性为null，++valueUrl++包含指向原始二进制流的URL。所有可序列化的变量（不是上述任意类型的）将被暴露为这个类型的变量。
 |===============
 
-可以使用自定义JSON表示，以支持额外的变量类型（既可以是简单值，也可以是复杂/嵌套的JSON对象）。通过扩展++org.activiti.rest.service.api.RestResponseFactory++的++initializeVariableConverters()++方法，可以添加额外的++org.activiti.rest.service.api.engine.variable.RestVariableConverter++类，来将你的POJO转换为适合通过REST传输的格式，以及将REST值转换为POJO。实际转换JSON使用Jackson。
+可以使用自定义JSON表示，以支持额外的变量类型（既可以是简单值，也可以是复杂/嵌套的JSON对象）。通过扩展++org.flowable.rest.service.api.RestResponseFactory++的++initializeVariableConverters()++方法，可以添加额外的++org.flowable.rest.service.api.engine.variable.RestVariableConverter++类，来将你的POJO转换为适合通过REST传输的格式，以及将REST值转换为POJO。实际转换JSON使用Jackson。
 
 
 === 部署 Deployment
@@ -728,7 +728,7 @@ GET repository/process-definitions/{processDefinitionId}/model
 |===============
 
 
-**响应体：**响应体是一个代表了++org.activiti.bpmn.model.BpmnModel++的JSON，包含所有流程定义模型。
+**响应体：**响应体是一个代表了++org.flowable.bpmn.model.BpmnModel++的JSON，包含所有流程定义模型。
 
 [source,json,linenums]
 ----
@@ -6093,7 +6093,7 @@ GET management/engine
 {
    "name":"default",
    "version":"5.15",
-   "resourceUrl":"file://activiti/activiti.cfg.xml",
+   "resourceUrl":"file://flowable/flowable.cfg.xml",
    "exception":null
 }
 ----
@@ -6627,9 +6627,6 @@ GET identity/users/{userId}/picture
 |userId|是|String|要更新图片的用户的id。
 
 |===============
-
-
-**请求体：**
 
 **请求体：**请求需要是++multipart/form-data++类型的。需要有唯一的file-part，包含变量的二进制值。另外，也可以使用下列额外的form-fields：
 

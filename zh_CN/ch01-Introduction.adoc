@@ -31,38 +31,37 @@ Flowable的发布包里包含了大部分源码，这些源码是以jar压缩文
 
 ==== JDK 7+
 
-Flowable需要JDK 7或以上版本。访问 link:$$http://www.oracle.com/technetwork/java/javase/downloads/index.html$$[Oracle Java SE downloads] 点击“下载JDK”按钮。这个页面上有安装文档。安装完成后，执行 +java -version+ 校验安装是否成功。能看到JDK的版本信息就说明安装成功了。
+Flowable需要JDK 7或以上版本。访问 link:$$http://www.oracle.com/technetwork/java/javase/downloads/index.html$$[Oracle Java SE下载] 点击“下载JDK”按钮。这个页面上也有安装指导。安装完成后，执行 +java -version+ 校验安装是否成功。能看到JDK的版本信息就说明安装成功了。
 
 
 ==== IDE
 
-可以选择用于Flowable开发的IDE。如果想要使用Flowable Designer，则需要Eclipse Kepler或Luna。
-到 link:$$http://www.eclipse.org/downloads/$$[Eclipse 下载页面]选择对应的Eclipse版本下载。把下载的文件解压，
-然后执行++eclipse++目录下的eclipse文件。手册后续有专门一章 <<eclipseDesignerInstallation,安装我们的Eclipse Designer插件>>。
+可以自行选择用于Flowable开发的IDE。如果想要使用Flowable Designer，则需要Eclipse Kepler或Luna。
+到 link:$$http://www.eclipse.org/downloads/$$[Eclipse下载页面]选择Eclipse版本并下载。解压下载的文件，
+然后执行++eclipse++目录下的eclipse文件。手册后续有专门一章介绍如何<<eclipseDesignerInstallation,安装我们的Eclipse Designer插件>>。
 
 
 [[reporting.problems]]
 
 === 反馈问题 Reporting problems
 
-每一个自重的开发者都应该先看看这个 link:$$http://www.catb.org/~esr/faqs/smart-questions.html$$[提问的智慧] 。
+每一个自重的开发者都应该先看看link:$$http://www.catb.org/~esr/faqs/smart-questions.html$$[提问的智慧]。
 
 
 看完提问的智慧，你可以在 link:$$http://forums.flowable.org$$[用户论坛] 提问和评论，也可以在link:$$https://github.com/Flowable/Flowable/issues$$[我们的Github问题跟踪系统]创建问题。
 
 [[experimental]]
 
-=== 实验性功能 Experimental features
+=== 试验性功能 Experimental features
 
-标记*[EXPERIMENTAL]*的章节介绍的功能
-还不够稳定。
+标记**[EXPERIMENTAL]**的章节介绍的功能还不够稳定。
 
 
-++.impl.++包下的类都是内部实现类，后续可能发生各种变化。但是，如果是在用户手册中作为配置参数介绍的类，它们是被官方支持的，可以认为是稳定的。
+++.impl.++包下的类都是内部实现类，不保证稳定。但是，在用户手册中，作为配置参数介绍的类，则是被官方支持的，可以保证稳定。
 
 
 [[internal]]
 
 === 内部实现类 Internal implementation classes
 
-在jar文件中，所有包名中包含++.impl.++的类（比如，++org.activiti.engine.impl.db++）都是实现类，这些类都是内部类。这些类和接口都不会保证稳定。（不同版本之间可能会有变化。谨慎使用。）
+在jar文件中，所有++.impl.++包下的类（比如，++org.flowable.engine.impl.db++）都是内部实现类。实现类中的所有类或接口都不保证稳定。

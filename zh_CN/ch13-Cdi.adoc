@@ -28,26 +28,26 @@ Flowable cdi可以在不同环境中安装。在这个章节我们主要浏览�
 
 ==== 查找流程引擎 Looking up a Process Engine
 
-CDI扩展需要能访问流程引擎，因此会在运行时查找++org.activiti.cdi.spi.ProcessEngineLookup++接口的实现。cdi模块提供了默认的名为++org.activiti.cdi.impl.LocalProcessEngineLookup++的实现，使用++ProcessEngines++-Utility类查找流程引擎，默认配置下使用 +$$ProcessEngines#NAME_DEFAULT$$+ 查找流程引擎。需要扩展这个类并设置一个名字。请注意：在classpath中需要有++activiti.cfg.xml++配置文件。
+CDI扩展需要能访问流程引擎，因此会在运行时查找++org.flowable.cdi.spi.ProcessEngineLookup++接口的实现。cdi模块提供了默认的名为++org.flowable.cdi.impl.LocalProcessEngineLookup++的实现，使用++ProcessEngines++-Utility类查找流程引擎，默认配置下使用 +$$ProcessEngines#NAME_DEFAULT$$+ 查找流程引擎。需要扩展这个类并设置一个名字。请注意：在classpath中需要有++flowable.cfg.xml++配置文件。
 
-Flowable cdi使用java.util.ServiceLoader SPI解析++org.activiti.cdi.spi.ProcessEngineLookup++实例。为了提供接口的自定义实现，需要在部署中添加名为++META-INF/services/org.activiti.cdi.spi.ProcessEngineLookup++的纯文本文件，在其中指定实现的全限定类名。
+Flowable cdi使用java.util.ServiceLoader SPI解析++org.flowable.cdi.spi.ProcessEngineLookup++实例。为了提供接口的自定义实现，需要在部署中添加名为++META-INF/services/org.flowable.cdi.spi.ProcessEngineLookup++的纯文本文件，在其中指定实现的全限定类名。
 
 [NOTE]
 ====
-如果不提供自定义的++org.activiti.cdi.spi.ProcessEngineLookup++实现，则Flowable会使用默认的++LocalProcessEngineLookup++实现。在这种情况下，只需要在classpath中提供activiti.cfg.xml（参见下一章节）即可。
+如果不提供自定义的++org.flowable.cdi.spi.ProcessEngineLookup++实现，则Flowable会使用默认的++LocalProcessEngineLookup++实现。在这种情况下，只需要在classpath中提供flowable.cfg.xml（参见下一章节）即可。
 ====
 
 
 ==== 配置流程引擎 Configuring the Process Engine
 
-配置方式取决于选用的流程引擎查找策略（上一章节）。这里，我们关注与LocalProcessEngineLookup一起使用的可用配置选项，需要在classpath中提供一个Spring activiti.cfg.xml文件。
+配置方式取决于选用的流程引擎查找策略（上一章节）。这里，我们关注与LocalProcessEngineLookup一起使用的可用配置选项，需要在classpath中提供一个Spring flowable.cfg.xml文件。
 
 Flowable根据底层事务管理策略的不同，提供不同的ProcessEngineConfiguration实现。flowable-cdi模块不关注事务，也就意味着可以使用任何事务管理策略（甚至是Spring抽象事务）。按照约定，cdi模块提供两个自定义的ProcessEngineConfiguration实现：
      	
-* ++org.activiti.cdi.CdiJtaProcessEngineConfiguration++: Flowable JtaProcessEngineConfiguration的子类，可用于Flowable使用JTA管理事务的情况
-* ++org.activiti.cdi.CdiStandaloneProcessEngineConfiguration++: StandaloneProcessEngineConfiguration的子类，可用于Flowable使用简单JDBC事务的情况。
+* ++org.flowable.cdi.CdiJtaProcessEngineConfiguration++: Flowable JtaProcessEngineConfiguration的子类，可用于Flowable使用JTA管理事务的情况
+* ++org.flowable.cdi.CdiStandaloneProcessEngineConfiguration++: StandaloneProcessEngineConfiguration的子类，可用于Flowable使用简单JDBC事务的情况。
 
-下面是一个JBoss 7的activiti.cfg.xml文件示例：
+下面是一个JBoss 7的flowable.cfg.xml文件示例：
      
 [source,xml,linenums]
 ----
@@ -64,7 +64,7 @@ Flowable根据底层事务管理策略的不同，提供不同的ProcessEngineCo
 
 	<!-- 流程定义配置 process engine configuration -->
 	<bean id="processEngineConfiguration"
-		class="org.activiti.cdi.CdiJtaProcessEngineConfiguration">
+		class="org.flowable.cdi.CdiJtaProcessEngineConfiguration">
 		<!-- 查找默认的Jboss数据源 lookup the default Jboss datasource -->
 		<property name="dataSourceJndiName" value="java:jboss/datasources/ExampleDS" />
 		<property name="databaseType" value="h2" />
@@ -77,7 +77,7 @@ Flowable根据底层事务管理策略的不同，提供不同的ProcessEngineCo
      	
 ----
 
-这是Glassfish 3.1.1中的样子（假设已正确配置了名为jdbc/activiti的数据源）：
+这是Glassfish 3.1.1中的样子（假设已正确配置了名为jdbc/flowable的数据源）：
 
 [source,xml,linenums]     	
 ----
@@ -94,8 +94,8 @@ Flowable根据底层事务管理策略的不同，提供不同的ProcessEngineCo
 
 	<!-- 流程定义配置 process engine configuration -->
 	<bean id="processEngineConfiguration"
-		class="org.activiti.cdi.CdiJtaProcessEngineConfiguration">
-		<property name="dataSourceJndiName" value="jdbc/activiti" />
+		class="org.flowable.cdi.CdiJtaProcessEngineConfiguration">
+		<property name="dataSourceJndiName" value="jdbc/flowable" />
 		<property name="transactionManager" ref="transactionManager" />
 		<!-- 使用外部管理事务 using externally managed transactions -->
 		<property name="transactionsExternallyManaged" value="true" />
@@ -141,7 +141,7 @@ Java SE环境中的配置与<<configuration,创建一个流程引擎>>章节中�
 
 ==== 将一个会话关联至一个流程实例 Associating a Conversation with a Process Instance
 
-当解析@BusinessProcessScoped bean，或注入流程变量时，会依赖一个激活的cdi作用域与一个流程实例的已有关联。flowable-cdi提供了++org.activiti.cdi.BusinessProcess++ bean用于控制该关联，特别是：
+当解析@BusinessProcessScoped bean，或注入流程变量时，会依赖一个激活的cdi作用域与一个流程实例的已有关联。flowable-cdi提供了++org.flowable.cdi.BusinessProcess++ bean用于控制该关联，特别是：
 
 * __startProcessBy(...)__方法，镜像了Flowable ++RuntimeService++服务暴露的对应方法，用于启动并关联一个业务流程，
 * ++resumeProcessById(String processInstanceId)++，用于将给定id关联至流程实例，
@@ -161,7 +161,7 @@ Java SE环境中的配置与<<configuration,创建一个流程引擎>>章节中�
 
 ==== 声明式控制流程 Declaratively controlling the Process
 
-Flowable可以使用注解，声明式启动流程实例以及完成任务。++@org.activiti.cdi.annotation.StartProcess++注解可以通过"key"或"name"启动一个流程实例。请注意流程实例在注解的方法返回__之后__启动。例如：
+Flowable可以使用注解，声明式启动流程实例以及完成任务。++@org.flowable.cdi.annotation.StartProcess++注解可以通过"key"或"name"启动一个流程实例。请注意流程实例在注解的方法返回__之后__启动。例如：
 		
 [source,java,linenums]
 ----
@@ -172,7 +172,7 @@ public String submitRequest(BusinessTripRequest request) {
 }			
 ----
 
-取决于Flowable的配置，被注解的方法代码以及流程实例的启动将处于同一个事务中。++@org.activiti.cdi.annotation.CompleteTask++的使用方式相同：
+取决于Flowable的配置，被注解的方法代码以及流程实例的启动将处于同一个事务中。++@org.flowable.cdi.annotation.CompleteTask++的使用方式相同：
 
 [source,java,linenums]
 ----
@@ -192,7 +192,7 @@ flowable-cdi使用自定义解析器，将CDI bean暴露给Flowable El。因此�
 [source,xml,linenums]
 ----
 <userTask id="authorizeBusinessTrip" name="Authorize Business Trip"			 
-			activiti:assignee="#{authorizingManager.account.username}" />
+			flowable:assignee="#{authorizingManager.account.username}" />
 ----
 
 其中"authorizingManager"可以是生产者方法提供的bean：
@@ -212,7 +212,7 @@ public Employee authorizingManager() {
 
 ----
 
-可以使用++activiti:expression="myEjb.method()"++扩展，在服务任务中调用一个EJB中的业务方法。请注意这需要在++MyEjb++类上使用++@Named++注解。
+可以使用++flowable:expression="myEjb.method()"++扩展，在服务任务中调用一个EJB中的业务方法。请注意这需要在++MyEjb++类上使用++@Named++注解。
 
 ==== 使用@BusinessProcessScoped bean (Working with @BusinessProcessScoped beans)
 
@@ -265,12 +265,12 @@ Flowable可以关联至CDI事件总线。这样可以使用标准CDI事件机制
 ----
 <property name="postBpmnParseHandlers">
 	<list>
-		<bean class="org.activiti.cdi.impl.event.CdiEventSupportBpmnParseHandler" />
+		<bean class="org.flowable.cdi.impl.event.CdiEventSupportBpmnParseHandler" />
 	</list>
 </property>
 ----
 
-这样Flowable就被配置为使用CDI事件总线发布事件。下面介绍如何在CDI bean中接收流程事件。事件通知是类型安全的。流程事件的类型是++org.activiti.cdi.BusinessProcessEvent++。下面是一个简单的事件观察者方法的例子：
+这样Flowable就被配置为使用CDI事件总线发布事件。下面介绍如何在CDI bean中接收流程事件。事件通知是类型安全的。流程事件的类型是++org.flowable.cdi.BusinessProcessEvent++。下面是一个简单的事件观察者方法的例子：
 
 [source,java,linenums]
 ----

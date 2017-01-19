@@ -27,7 +27,7 @@ image::images/designer.add.update.site.png[align="center"]
 
 * 创建Flowable项目与流程图（diagram）。
 
-image::images/designer.create.activiti.project.png[align="center"]
+image::images/designer.create.flowable.project.png[align="center"]
 
 * Flowable Designer在创建新的Flowable流程图时，会创建一个.bpmn文件。当使用Flowable Diagram Editor（Flowable流程图编辑器）视图打开时，将提供图形化的模型画布与画板。这个文件也可以使用XML编辑器打开，将显示流程定义的BPMN 2.0 XML元素。因此Flowable Designer只用一个文件，既是流程图，也是BPMN 2.0 XML。请注意在Flowable 5.9版本中，还不支持使用.bpmn扩展名作为流程定义的部署包。因此Flowable Designer的"create deployment artifacts（创建部署包）"功能，将生成一个BAR文件，与一个包含.bpmn文件内容的.bpmn20.xml文件。也可以方便的自己重命名。请注意，也可以使用Flowable Diagram Editor打开.bpmn20.xml文件。
 
@@ -279,12 +279,12 @@ image::images/designer.preferences.userlibraries.png[align="center"]
 
 * 选择++User Libraries++选项，将在右侧显示树形界面，可以添加库。应该可以看到一个默认组，可以用于添加Flowable Designer的扩展（根据Eclipse安装不同，也可能看到几个其他的）。
 
-image::images/designer.preferences.userlibraries.activiti.empty.png[align="center"]
+image::images/designer.preferences.userlibraries.flowable.empty.png[align="center"]
 
 
 * 选择++Flowable Designer Extensions++组，并点击++Add JARs...++按钮。跳转至存储扩展的目录，并选择希望添加的扩展文件。完成后，配置界面会将扩展作为++Flowable Designer Extensions++组的成员进行显示，像下面这样。
 
-image::images/designer.preferences.userlibraries.activiti.moneytasks.png[align="center"]
+image::images/designer.preferences.userlibraries.flowable.moneytasks.png[align="center"]
 
 
 * 点击++OK++按钮保存并关闭配置对话框。++Flowable Designer Extensions++会自动添加至你创建的新Flowable项目。可以在导航条或包管理器的项目树下的用户库条目中看到。如果工作空间中已经有了Flowable项目，也可以看到组中显示了新扩展，像下面这样。
@@ -357,7 +357,7 @@ public class AcmeMoneyTask extends AbstractCustomServiceTask {
   /*
    * (non-Javadoc)
    *
-   * @see org.activiti.designer.integration.servicetask.AbstractCustomServiceTask #contributeToPaletteDrawer()
+   * @see org.flowable.designer.integration.servicetask.AbstractCustomServiceTask #contributeToPaletteDrawer()
    */
   @Override
   public String contributeToPaletteDrawer() {
@@ -372,7 +372,7 @@ public class AcmeMoneyTask extends AbstractCustomServiceTask {
   /*
    * (non-Javadoc)
    *
-   * @see org.activiti.designer.integration.servicetask.AbstractCustomServiceTask #getSmallIconPath()
+   * @see org.flowable.designer.integration.servicetask.AbstractCustomServiceTask #getSmallIconPath()
    */
   @Override
   public String getSmallIconPath() {
@@ -412,9 +412,9 @@ image::images/designer.palette.add.money.help.png[align="center"]
 
 使用时，++CustomServiceTask++将会表现为流程建模BPMN中的一个普通的++ServiceTask++。Flowable提供了<<bpmnJavaServiceTask,多种方法>>定义++ServiceTask++的运行时特性。因此，++@Runtime++可以使用Flowable提供的三个属性中的一个：
 
-* ++javaDelegateClass++在BPMN输出中映射为++activiti:class++。指定一个实现了++JavaDelegate++的类的全限定类名。
-* ++expression++在BPMN输出中映射为++activiti:expression++。指定一个需要执行的方法的表达式，例如一个Spring Bean中的方法。当使用这个选项时，__不应__在字段上指定任何++@Property++注解。下面有更详细的说明。
-* ++javaDelegateExpression++在BPMN输出中映射为++activiti:delegateExpression++。指定一个实现了++JavaDelegate++的类的表达式。
+* ++javaDelegateClass++在BPMN输出中映射为++flowable:class++。指定一个实现了++JavaDelegate++的类的全限定类名。
+* ++expression++在BPMN输出中映射为++flowable:expression++。指定一个需要执行的方法的表达式，例如一个Spring Bean中的方法。当使用这个选项时，__不应__在字段上指定任何++@Property++注解。下面有更详细的说明。
+* ++javaDelegateExpression++在BPMN输出中映射为++flowable:delegateExpression++。指定一个实现了++JavaDelegate++的类的表达式。
 
 如果在类中为Flowable提供了可以注入的成员，就可以将用户的参数至注入到运行时类中。名字需要与++CustomServiceTask++的成员名一致。查看用户手册的<<serviceTaskFieldInjection,这个部分>>了解更多信息。请注意从Designer的5.11.0版本开始，可以为动态字段值使用++Expression++接口。这意味着Flowable Designer中参数的值必须要是表达式，并且这个表达式将在之后注入++JavaDelegate++实现类的++Expression++参数中。
 
@@ -565,7 +565,7 @@ public class MyPaletteCustomizer extends AbstractDefaultPaletteCustomizer {
   /*
    * (non-Javadoc)
    *
-   * @see org.activiti.designer.integration.palette.DefaultPaletteCustomizer#disablePaletteEntries()
+   * @see org.flowable.designer.integration.palette.DefaultPaletteCustomizer#disablePaletteEntries()
    */
   @Override
   public List<PaletteEntry> disablePaletteEntries() {
@@ -591,7 +591,7 @@ public class MyPaletteCustomizer extends AbstractDefaultPaletteCustomizer {
   /*
    * (non-Javadoc)
    *
-   * @see org.activiti.designer.integration.palette.DefaultPaletteCustomizer#disablePaletteEntries()
+   * @see org.flowable.designer.integration.palette.DefaultPaletteCustomizer#disablePaletteEntries()
    */
   @Override
   public List<PaletteEntry> disablePaletteEntries() {
@@ -655,14 +655,14 @@ clearMarkersForDiagram();
 审核中！
 ====
 
-在你的++plugin.xml++文件中，创建一个++org.activiti.designer.eclipse.extension.validation.ProcessValidator++扩展点的扩展。这个扩展点需要扩展++AbstractProcessValidator++类。
+在你的++plugin.xml++文件中，创建一个++org.flowable.designer.eclipse.extension.validation.ProcessValidator++扩展点的扩展。这个扩展点需要扩展++AbstractProcessValidator++类。
 
 [source,xml,linenums]
 ----
 <?eclipse version="3.6"?>
 <plugin>
   <extension
-    point="org.activiti.designer.eclipse.extension.validation.ProcessValidator">
+    point="org.flowable.designer.eclipse.extension.validation.ProcessValidator">
     <ProcessValidator
       class="org.acme.validation.AcmeProcessValidator">
     </ProcessValidator>
@@ -697,7 +697,7 @@ for (final EObject object : contents) {
 
 ===== 创建ExportMarshaller扩展 Creating an ExportMarshaller extension
 
-在你的++plugin.xml++文件中，创建一个++org.activiti.designer.eclipse.extension.ExportMarshaller++扩展点的扩展。这个扩展点需要扩展++AbstractExportMarshaller++类。这个基类提供了一些在保存为你自己的格式时有用的方法，但最重要的是提供了将资源保存至工作空间，以及调用验证器的功能。
+在你的++plugin.xml++文件中，创建一个++org.flowable.designer.eclipse.extension.ExportMarshaller++扩展点的扩展。这个扩展点需要扩展++AbstractExportMarshaller++类。这个基类提供了一些在保存为你自己的格式时有用的方法，但最重要的是提供了将资源保存至工作空间，以及调用验证器的功能。
 
 Designer的示例目录下有一个示例实现。这个示例展示了如何使用基类中的方法完成基本操作，例如访问流程图的++InputStream++，使用其++BpmnModel++，以及将资源保存至工作空间。
 
@@ -706,7 +706,7 @@ Designer的示例目录下有一个示例实现。这个示例展示了如何使
 <?eclipse version="3.6"?>
 <plugin>
   <extension
-    point="org.activiti.designer.eclipse.extension.ExportMarshaller">
+    point="org.flowable.designer.eclipse.extension.ExportMarshaller">
     <ExportMarshaller
       class="org.acme.export.AcmeExportMarshaller">
     </ExportMarshaller>

@@ -28,7 +28,7 @@ DynamicBpmnService dynamicBpmnService = processEngine.getDynamicBpmnService();
 ++ProcessEngines.getDefaultProcessEngine()++在第一次被调用时将初始化并构建流程引擎，在之后的调用都会返回相同的流程引擎。流程引擎的创建通过++ProcessEngines.init()++实现，关闭由++ProcessEngines.destroy()++实现。
 
 
-ProcessEngines会扫描所有++activiti.cfg.xml++与++activiti-context.xml++文件。对于所有的++activiti.cfg.xml++文件，流程引擎会以标准Flowable方式构建引擎：++ProcessEngineConfiguration.createProcessEngineConfigurationFromInputStream(inputStream).buildProcessEngine()++。对于所有的++activiti-context.xml++文件，流程引擎会以Spring的方式构建：首先构建Spring应用上下文，然后从该上下文中获取流程引擎。
+ProcessEngines会扫描所有++flowable.cfg.xml++与++flowable-context.xml++文件。对于所有的++flowable.cfg.xml++文件，流程引擎会以标准Flowable方式构建引擎：++ProcessEngineConfiguration.createProcessEngineConfigurationFromInputStream(inputStream).buildProcessEngine()++。对于所有的++flowable-context.xml++文件，流程引擎会以Spring的方式构建：首先构建Spring应用上下文，然后从该上下文中获取流程引擎。
 
 所有的服务都是无状态的。这意味着你可以很容易的在集群环境的多个节点上运行Flowable，使用同一个数据库，而不用担心上一次调用实际在哪台机器上执行。不论在哪里执行，对任何服务的任何调用都是幂等（idempotent）的。
 
@@ -66,28 +66,28 @@ ProcessEngines会扫描所有++activiti.cfg.xml++与++activiti-context.xml++文�
 
 === 异常策略 Exception strategy
 
-Flowable的异常基类是++org.activiti.engine.ActivitiException++，这是一个未检查异常(unchecked exception)。在任何API操作时都可能会抛出这个异常，link:$$http://www.flowable.org/docs/javadocs/index.html$[javadoc]记录了每个方法可能发生的异常。例如，从++TaskService++中摘录：
+Flowable的异常基类是++org.flowable.engine.FlowableException++，这是一个未检查异常(unchecked exception)。在任何API操作时都可能会抛出这个异常，link:$$http://www.flowable.org/docs/javadocs/index.html$[javadoc]记录了每个方法可能发生的异常。例如，从++TaskService++中摘录：
 
 [source,java,linenums]
 ----
 /**
  * 当任务成功执行时调用。
  * @param taskId 需要完成的任务id，不能为null。
- * @throws FlowableObjectNotFoundException 若给定id找不到任务。
+ * @throws ActivitiObjectNotFoundException 若给定id找不到任务。
  */
  void complete(String taskId);
 ----
 
 在上例中，如果传递的id找不到任务，会抛出异常。并且，由于javadoc中**明确要求taskId不能为null，因此如果传递了++null++值，会抛出++FlowableIllegalArgumentException++异常**。
 
-尽管我们想避免过大的异常层次结构，我们还是添加了下述在特定情况下抛出的异常子类。所有流程执行与API调用中发生的错误，如果不符合下面列出的异常，会统一抛出++ActivitiExceptions++。
+尽管我们想避免过大的异常层次结构，我们还是添加了下述在特定情况下抛出的异常子类。所有流程执行与API调用中发生的错误，如果不符合下面列出的异常，会统一抛出++FlowableExceptions++。
 
-* ++ActivitiWrongDbException++: 当Flowable引擎检测到数据库表结构版本与引擎版本不匹配时抛出。
-* ++ActivitiOptimisticLockingException++: 当对同一数据实体的并发访问，导致数据存储发生乐观锁时抛出。
-* ++ActivitiClassLoadingException++: 当需要载入的类（如JavaDelegates, TaskListeners, ...）无法找到，或载入时发生错误时抛出。
-* ++ActivitiObjectNotFoundException++: 当请求或要操作的对象不存在时抛出。
-* ++ActivitiIllegalArgumentException++: 这个异常说明调用Flowable API时使用了不合法的参数。可能是引擎配置中的不合法值，或者是API调用传递的不合法参数，也可能是流程定义中的不合法值。
-* ++ActivitiTaskAlreadyClaimedException++: 当调用++taskService.claim(...)++，而该任务已经被认领时抛出。
+* ++FlowableWrongDbException++: 当Flowable引擎检测到数据库表结构版本与引擎版本不匹配时抛出。
+* ++FlowableOptimisticLockingException++: 当对同一数据实体的并发访问，导致数据存储发生乐观锁时抛出。
+* ++FlowableClassLoadingException++: 当需要载入的类（如JavaDelegates, TaskListeners, ...）无法找到，或载入时发生错误时抛出。
+* ++FlowableObjectNotFoundException++: 当请求或要操作的对象不存在时抛出。
+* ++FlowableIllegalArgumentException++: 这个异常说明调用Flowable API时使用了不合法的参数。可能是引擎配置中的不合法值，或者是API调用传递的不合法参数，也可能是流程定义中的不合法值。
+* ++FlowableTaskAlreadyClaimedException++: 当调用++taskService.claim(...)++，而该任务已经被认领时抛出。
 
 
 [[queryAPI]]
@@ -319,15 +319,15 @@ ${myBean.doSomething(myVar, execution)}
 
 业务流程是软件项目的必要组成部分，也需要使用测试一般应用逻辑的方法——单元测试——测试它们。Flowable是嵌入式的Java引擎，因此为业务流程编写单元测试就与编写一般的单元测试一样简单。
 
-Flowable支持JUnit版本3与4的单元测试风格。按照JUnit 3的风格，必须扩展(extended)++org.activiti.engine.test.ActivitiTestCase++。它通过保护(protected)成员变量提供对ProcessEngine与服务的访问。在测试的++setup()++中，processEngine会默认使用classpath中的++activiti.cfg.xml++资源初始化。如果要指定不同的配置文件，请覆盖__getConfigurationResource()__方法。当使用相同的配置资源时，流程引擎会静态缓存，用于多个单元测试。
+Flowable支持JUnit版本3与4的单元测试风格。按照JUnit 3的风格，必须扩展(extended)++org.flowable.engine.test.FlowableTestCase++。它通过保护(protected)成员变量提供对ProcessEngine与服务的访问。在测试的++setup()++中，processEngine会默认使用classpath中的++flowable.cfg.xml++资源初始化。如果要指定不同的配置文件，请覆盖__getConfigurationResource()__方法。当使用相同的配置资源时，流程引擎会静态缓存，用于多个单元测试。
 
-通过扩展++ActivitiTestCase++，你可以使用++org.activiti.engine.test.Deployment++注解测试方法。在测试运行前，会部署与测试类在同一个包下的格式为++testClassName.testMethod.bpmn20.xml++的资源文件。在测试结束时，会删除这个部署，包括所有相关的流程实例、任务，等等。也可以使用++Deployment++注解显式指定资源位置。查看该类以获得更多信息。
+通过扩展++FlowableTestCase++，你可以使用++org.flowable.engine.test.Deployment++注解测试方法。在测试运行前，会部署与测试类在同一个包下的格式为++testClassName.testMethod.bpmn20.xml++的资源文件。在测试结束时，会删除这个部署，包括所有相关的流程实例、任务，等等。也可以使用++Deployment++注解显式指定资源位置。查看该类以获得更多信息。
 
 综上所述，JUnit 3风格的测试看起来类似：
 
 [source,java,linenums]
 ----
-public class MyBusinessProcessTest extends ActivitiTestCase {
+public class MyBusinessProcessTest extends FlowableTestCase {
 
   @Deployment
   public void testSimpleProcess() {
@@ -342,24 +342,24 @@ public class MyBusinessProcessTest extends ActivitiTestCase {
 }
 ----
 
-要使用JUnit 4的风格书写单元测试并达成同样的功能，必须使用++org.activiti.engine.test.ActivitiRule++规则。这样能够通过它的getter获得流程引擎与服务。对于++ActivitiTestCase++（上例），包含++@Rule++就可以使用++org.activiti.engine.test.Deployment++注解（参见上例解释其用途及配置），并且会自动在classpath中寻找默认配置文件。当使用相同的配置资源时，流程引擎会静态缓存，以用于多个单元测试。
+要使用JUnit 4的风格书写单元测试并达成同样的功能，必须使用++org.flowable.engine.test.FlowableRule++规则。这样能够通过它的getter获得流程引擎与服务。对于++FlowableTestCase++（上例），包含++@Rule++就可以使用++org.flowable.engine.test.Deployment++注解（参见上例解释其用途及配置），并且会自动在classpath中寻找默认配置文件。当使用相同的配置资源时，流程引擎会静态缓存，以用于多个单元测试。
 
-下面的代码片段展示了JUnit 4风格的测试与++ActivitiRule++的用法。
+下面的代码片段展示了JUnit 4风格的测试与++FlowableRule++的用法。
 
 [source,java,linenums]
 ----
 public class MyBusinessProcessTest {
 
   @Rule
-  public ActivitiRule activitiRule = new ActivitiRule();
+  public FlowableRule flowableRule = new FlowableRule();
 
   @Test
   @Deployment
   public void ruleUsageExample() {
-    RuntimeService runtimeService = activitiRule.getRuntimeService();
+    RuntimeService runtimeService = flowableRule.getRuntimeService();
     runtimeService.startProcessInstanceByKey("ruleUsage");
 
-    TaskService taskService = activitiRule.getTaskService();
+    TaskService taskService = flowableRule.getTaskService();
     Task task = taskService.createTaskQuery().singleResult();
     assertEquals("My Task", task.getName());
 
@@ -392,7 +392,7 @@ image::images/api.test.debug.start.h2.server.png[align="center"]
 
 image::images/api.test.debug.start.h2.server.2.png[align="center"]
 
-现在打开浏览器并访问link:$$http://localhost:8082$$[http://localhost:8082]，填入内存数据库的JDBC URL（默认为++jdbc:h2:mem:activiti++），然后点击connect按钮。
+现在打开浏览器并访问link:$$http://localhost:8082$$[http://localhost:8082]，填入内存数据库的JDBC URL（默认为++jdbc:h2:mem:flowable++），然后点击connect按钮。
 
 image::images/api.test.debug.h2.login.png[align="center"]
 
@@ -426,7 +426,7 @@ public class ProcessEnginesServletContextListener implements ServletContextListe
 }
 ----
 
-++contextInitialized++方法委托给++ProcessEngines.init()++。它会在classpath中查找++activiti.cfg.xml++资源文件，并为每个配置分别创建++ProcessEngine++（例如多个jar都包含配置文件）。如果在classpath中有多个这样的资源文件，请确保它们都使用不同的名字。需要使用流程引擎时，可以获取通过
+++contextInitialized++方法委托给++ProcessEngines.init()++。它会在classpath中查找++flowable.cfg.xml++资源文件，并为每个配置分别创建++ProcessEngine++（例如多个jar都包含配置文件）。如果在classpath中有多个这样的资源文件，请确保它们都使用不同的名字。需要使用流程引擎时，可以获取通过
 
 [source,java,linenums]
 ----

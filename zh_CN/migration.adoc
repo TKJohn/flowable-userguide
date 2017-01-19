@@ -1,4 +1,4 @@
-= Activiti迁移手册：Activiti v5到Activiti v6 (Activiti Migration Guide : Activiti v5 to Activiti v6)
+= Flowable迁移手册：Flowable v5到Flowable v6 (Flowable Migration Guide : Flowable v5 to Flowable v6)
 :doctype: book
 :docinfo1: header
 :icons: font
@@ -11,9 +11,9 @@
 
 == 介绍 Introduction
 
-本手册介绍了从Activiti v5.x迁移至Activiti v6时需要注意的事项。这是一个迁移手册的初步版本，并将在后续Activiti v6发布alpha/beta版本时更新，因为很多东西仍在修改之中。到时，本迁移手册将规范化，而用户手册也将更新，以反映Activiti v6中的所有特性与功能。
+本手册介绍了从Flowable v5.x迁移至Flowable v6时需要注意的事项。这是一个迁移手册的初步版本，并将在后续Flowable v6发布alpha/beta版本时更新，因为很多东西仍在修改之中。到时，本迁移手册将规范化，而用户手册也将更新，以反映Flowable v6中的所有特性与功能，就像Flowable v5的情形一样。
 
-**当前的Activiti v6版本只用作测试目的！请不要在生产环境使用。**这个版本的主要目的是收集反馈，报告问题以及让用户可以在v6版本上测试他们的流程定义。当然，与之前一样，欢迎大家访问GitHub页面并做贡献。Activiti v6的代码目前处在link:$$https://github.com/Activiti/Activiti/tree/activiti6$$[__activiti6__分支]。
+**当前的Flowable v6版本只用作测试目的！请不要在生产环境使用。**这个版本的主要目的是收集反馈，报告问题以及让用户可以在v6版本上测试他们的流程定义。当然，与之前一样，欢迎大家访问GitHub页面并做贡献。Flowable v6的代码目前处在link:$$https://github.com/flowable/flowable-engine$$[__master__分支]。
 
 == 设计目标 Design goals
 
@@ -27,27 +27,42 @@ v6版本的设计目标是：
 
 == 数据库迁移 Database migration
 
-从v5至v6不需要数据库迁移：v5与v6的数据库表结构一致。所有Activiti v5生成的数据都可以保留在数据库中。在v6引擎第一次运行时，会对表结构进行自动升级（同v5版本中一样）。除了一些小的数据库结构改动外，主要的改动是将作业表分拆为作业表、定时器作业表、暂停作业表与死信作业表。还未到期的定时器作业将移至新的定时器作业表；用尽重试次数的作业将移至死信作业表；已暂停流程实例的作业将移至暂停作业表。
+从v5至v6不需要数据库迁移：v5与v6的数据库表结构一致。所有Flowable v5生成的数据都可以保留在数据库中。在v6引擎第一次运行时，会对表结构进行自动升级（同v5版本中一样）。除了一些小的数据库结构改动外，主要的改动是将作业表分拆为作业表、定时器作业表、暂停作业表与死信作业表。还未到期的定时器作业将移至新的定时器作业表；用尽重试次数的作业将移至死信作业表；已暂停流程实例的作业将移至暂停作业表。
 
 == 概念变化 Conceptual changes
 
-称为Activiti v6的主要原因是完全重写了核心引擎。核心引擎执行的方式已经完全变化，将直接执行BPMN（在v5中使用中间模型）。同时运行时执行的表现形式（__执行树__）也作了修改。总的来说，这些概念都大幅简化了，让执行更简单清晰，也让撰写自定义代码更容易更易懂。
+称为Flowable v6的主要原因是完全重写了核心引擎。核心引擎执行的方式已经完全变化，将直接执行BPMN（在v5中使用中间模型）。同时运行时执行的表现形式（__执行树__）也作了修改。总的来说，这些概念都大幅简化了，让执行更简单清晰，也让撰写自定义代码更容易更易懂。
 
-未来，我们将详细介绍引擎内部的工作。对v6版本的概要介绍可以查看link:$$http://www.jorambarrez.be/blog/2015/06/18/activiti-6-launch/$$[Activiti 6发布记录]。
+未来，我们将详细介绍引擎内部的工作。
 
 == 破坏性改动 Breaking changes
 
-下列改动是破坏性改动（也就是说很可能导致编译错误）……
+下列改动是破坏性改动（也就是说很可能导致编译错误）。
+
+=== 包重命名：org.activiti重命名为org.flowable
+
+所有org.activiti包都已重命名为org.flowable。
+
+=== Activiti类重命名
+
+所有类名中包含的Activiti都已重命名，使用Flowable替换。
+例如ActivitiEvent重命名为FlowableEvent，而ActivitiException重命名为FlowableException。
+
+=== activiti.cfg.xml重命名为flowable.cfg.xml
+
+在Flowable引擎启动时读取的默认配置文件，已经从activiti.cfg.xml重命名为flowable.cfg.xml。
+对于默认的Spring配置文件activiti-context.xml也是一样，已经重命名为flowable-context.xml.
+
 
 === PVM类 PVM classes
 
-org.activiti.engine.impl.pvm包（及其子包）下的所有类都已移除。这是因为__PVM__ (流程虚拟机 Process Virtual Machine)模型已被移除，并被一个更简单更轻量的模型替代。
+以前在org.activiti.engine.impl.pvm包（及其子包）下的所有类都已移除。这是因为__PVM__ (流程虚拟机 Process Virtual Machine)模型已被移除，并被一个更简单更轻量的模型替代。
 
-这意味着__ActivitiImpl__、__ProcessDefinitionImpl__、__ExecutionImpl__及__TransitionImpl__的使用都将失效。
+这意味着__ActivitiImpl__、__ProcessDefinitionImpl__、__ExecutionImpl__及__TransitionImpl__都将失效。
 
 总的来说，在v5中这些类大多用于获取流程定义中包含的信息。在v6中，所有流程定义的信息都可以通过__BpmnModel__获取。这是一个BPMN 2.0 XML流程定义的Java表现形式（对特定操作及搜索进行了增强）。
 
-获取__BpmnModel__流程定义最快捷的方法是使用org.activiti.engine.impl.util.ProcessDefinitionUtil类：
+获取__BpmnModel__流程定义最快捷的方法是使用org.flowable.engine.impl.util.ProcessDefinitionUtil类：
 
 ----
 // 整个模型 The whole model
@@ -65,16 +80,16 @@ ProcessDefinitionUtil.getProcess(String processDefinitionId);
 
 === 作业、定时器、暂停与死信作业 Job, timer, suspended and dead letter jobs
 
-Activiti 5中只有一个作业表，导致查询需要执行的作业时，查询条件异常复杂。
+Flowable 5中只有一个作业表，导致查询需要执行的作业时，查询条件异常复杂。
 
-在Activiti 6中，作业被分拆成了作业表(ACT_RU_JOB)、定时器表(ACT_RU_TIMER_JOB)、暂停表(ACT_RU_SUSPENDED_JOB)与死信表(ACT_RU_DEADLETTER_JOB)。
+在Flowable 6中，作业被分拆成了作业表(ACT_RU_JOB)、定时器表(ACT_RU_TIMER_JOB)、暂停表(ACT_RU_SUSPENDED_JOB)与死信表(ACT_RU_DEADLETTER_JOB)。
 
 * 作业表中的作业将可以直接执行（类似异步作业与到期定时器作业）。因此就不需要使用复杂的查询，唯一的where条件是lock time(锁定时间)不能为NULL。
 * 定时器作业现在持久化在专门的定时器作业表中，并由一个线程检查到期需要执行的定时器作业。当定时器作业到期需要执行时，该作业会被移至作业表。
 * 当流程定义或流程实例暂停时，其关联的作业将被移至单独的暂停作业表。这简化了作业执行器的查询，并清楚显示了暂停中的作业。
 * 如果一个作业执行失败，它将被放入定时器作业表，并用 当前时间+引擎配置的作业失败等待时间 作为到期日期。在该作业到期将被执行时，会重新移至作业表，并被执行。如果重试次数减至0，则该作业将被移至死信表，不再自动执行。这样简化了默认的作业执行器查询，也清楚显示了卡住需要人工干预的作业。
 
-Activiti 6内嵌的Activiti 5引擎也能够使用这4个作业表。但是只会有一个线程池从数据库中获取作业。当获取到一个作业后，会基于流程定义id检查引擎的版本，以判断作业由Activiti 6还是嵌入的Activiti 5引擎执行。
+Flowable 6内嵌的Flowable 5引擎也能够使用这4个作业表。但是只会有一个线程池从数据库中获取作业，这个线程池在两个引擎间共享。当获取到一个作业后，会基于流程定义id检查引擎的版本，以判断作业由Flowable 6还是嵌入的Flowable 5引擎执行。
 
 === 向一个执行发信号 Signaling an execution
 
@@ -86,11 +101,11 @@ Activiti 6内嵌的Activiti 5引擎也能够使用这4个作业表。但是只�
 
 === 受控异常 Checked Exceptions
 
-在v5中，__JavaDelegate__与__ActivitiBehavior__之类的代理类在其签名中标示抛出__Exception__。像其他现代框架一样，在v6版本中已经移除了受控异常的使用。
+在v5中，__JavaDelegate__与__FlowableBehavior__之类的代理类在其签名中标示抛出__Exception__。像其他现代框架一样，在v6版本中已经移除了受控异常的使用。
 
 === 代理类 Delegate classes
 
-__org.activiti.engine.impl.pvm.delegate.ActivityBehavior__的包变更为__org.activiti.engine.impl.delegate__。
+__org.flowable.engine.impl.pvm.delegate.ActivityBehavior__的包变更为__org.flowable.engine.impl.delegate__。
 
 从__DelegateExecution__中移除了下列方法：
 
@@ -101,9 +116,9 @@ __org.activiti.engine.impl.pvm.delegate.ActivityBehavior__的包变更为__org.a
 
 === 实体管理器 EntityManagers
 
-在Activiti v5中，所有的实体管理器（负责持久化，也包含一些逻辑）类都没有接口。在v6中，所有的实体类都已经重命名为__Impl__后缀，并提供了不带后缀的接口。也就是说v5的实体管理器类名现在是相应的接口名。
+在Flowable v5中，所有的实体管理器（负责持久化，也包含一些逻辑）类都没有接口。在v6中，所有的实体类都已经重命名为__Impl__后缀，并提供了不带后缀的接口。也就是说v5的实体管理器类名现在是相应的接口名。
 
-所有的实体管理器接口都扩展了org.activiti.engine.impl.persistence.entity.EntityManager泛型接口。所有的实现类都实现了__AbstractEntityManager__泛型接口。
+所有的实体管理器接口都扩展了org.flowable.engine.impl.persistence.entity.EntityManager泛型接口。所有的实现类都实现了__AbstractEntityManager__泛型接口。
 
 同时，为了保证一致性：
 
@@ -113,34 +128,30 @@ __org.activiti.engine.impl.pvm.delegate.ActivityBehavior__的包变更为__org.a
 
 === 持久化对象重命名为实体 PersistentObject renamed to Entity
 
-__org.activiti.engine.impl.db.PersistentObject__类重命名为__Entity__，与其他类保持一致（实体管理器类也一样）。
+__org.flowable.engine.impl.db.PersistentObject__类重命名为__Entity__，与其他类保持一致（实体管理器类也一样）。
 
 所有使用“持久化对象”的相关类也都已经重构为“实体”。
 
 
-=== 功能破坏性改动 Future breaking changes
+=== 身份逻辑与表的分离 Separation of identity logic and tables
 
-下列改动很可能在下一个Activiti v6的beta版本中发布：
-
-* 在命令执行过程中创建与使用的实体缓存，将在系统架构内上移，与实体管理器位于同一层级。
-* 为了增加可扩展性，将从实体管理器类中移除持久化操作，并将其移入单独的接口。
-
+在v5中，身份逻辑及表示流程引擎的必要部分。在v6中，这部分逻辑已经重构为独立的模块，名为__flowable-idm-engine__（其中idm代表“身份管理(identity management)”）。相关的数据库表由这个引擎管理。为了保证兼容性，在启动流程引擎时，idm引擎默认启用。可以在流程引擎配置中，将__disableIdmEngine__设置为__true__，以禁用这个引擎。这种情况下，就不会创建身份数据库表（以__ACT_ID__开头），如果它们已经存在，也可以删除。
 
 == V5兼容性 V5 compatibility
 
-在迁移至Activiti v6时（基本上就是替换classpath中的JAR包），所有当前的部署与流程定义都将__标记__为__v5版本__的工件。在很多地方（完成一个任务，启动一个新流程实例，指派任务等等）引擎都会检查相关的流程定义是否__标记为v5版本__。若是，则将其执行代理至__内嵌的微型v5引擎__。
+在迁移至Flowable v6时（基本上就是替换classpath中的JAR包），所有当前的部署与流程定义都将__标记__为__v5版本__的工件。在很多地方（完成一个任务，启动一个新流程实例，指派任务等等）引擎都会检查相关的流程定义是否__标记为v5版本__。若是，则将其执行代理至__内嵌的微型v5引擎__。
 
 也就是说为了保证兼容性，可以选择逐步替换：首先在__v5模式__下运行当前的流程定义，直到已经验证并测试其行为与v6版本相同。
 
 要启用这个功能（默认情况下是__禁用的__！），在引擎配置中添加下列配置：
 
 ----
-<property name="activiti5CompatibilityEnabled" value="true" />
+<property name="flowable5CompatibilityEnabled" value="true" />
 ----
 
-**并且**在classpath中添加**activiti5-compatibility**（手动或通过Maven之类的依赖管理机制）。
+**并且**在classpath中添加**flowable5-compatibility**（手动或通过Maven之类的依赖管理机制）。
 
-如果默认的实现__org.activiti.compatibility.DefaultActiviti5CompatibilityHandler__不满足要求，可以创建自定义的实现。可以将引擎配置中的__activiti5CompatibilityHandlerFactory__参数设置为创建类的全限定类名。这个工厂类需要构造用于处理v5与v6桥接的类实例。
+如果默认的实现__org.flowable.compatibility.DefaultFlowable5CompatibilityHandler__不满足要求，可以创建自定义的实现。可以将引擎配置中的__flowable5CompatibilityHandlerFactory__参数设置为创建类的全限定类名。这个工厂类需要构造用于处理v5与v6桥接的类实例。
 
 要让一个流程定义使用v6引擎运行，只需要重新部署它即可。新的流程实例将会在__v6模式__下运行，而之前的流程实例仍然在__v5模式__下运行。
 
@@ -149,20 +160,20 @@ __org.activiti.engine.impl.db.PersistentObject__类重命名为__Entity__，与�
 ----
 repositoryService.createDeployment()
       .addClasspathResource("xyz")
-      .deploymentProperty(DeploymentProperties.DEPLOY_AS_ACTIVITI5_PROCESS_DEFINITION, Boolean.TRUE)
+      .deploymentProperty(DeploymentProperties.DEPLOY_AS_FLOWABLE5_PROCESS_DEFINITION, Boolean.TRUE)
       .deploy();
 ----
 
-如果使用Activiti Spring模块，且想要使用Activiti 5兼容模式，则需要进行额外配置：
+如果使用Flowable Spring模块，且想要使用Flowable 5兼容模式，则需要进行额外配置：
 
 ----
-<property name="activiti5CompatibilityEnabled" value="true" />
-<property name="activiti5CompatibilityHandlerFactory" ref="activiti5CompabilityFactory" />
+<property name="flowable5CompatibilityEnabled" value="true" />
+<property name="flowable5CompatibilityHandlerFactory" ref="flowable5CompabilityFactory" />
 
 ....
 
-<bean id="activiti5CompabilityFactory" class="org.activiti.compatibility.spring.SpringActiviti5CompatibilityHandlerFactory" />
+<bean id="flowable5CompabilityFactory" class="org.flowable.compatibility.spring.SpringFlowable5CompatibilityHandlerFactory" />
 ----
 
-**并且**在classpath中添加**activiti5-spring**与**activiti5-spring-compatibility** JAR包（手动或通过Maven之类的依赖管理机制）。
+**并且**在classpath中添加**flowable5-spring**与**flowable5-spring-compatibility** JAR包（手动或通过Maven之类的依赖管理机制）。
 
