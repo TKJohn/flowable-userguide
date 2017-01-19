@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.5">
-<title>Activiti Migraton Guide : Activiti v5 to Activiti v6</title>
+<title>Flowable迁移手册：Flowable v5到Flowable v6 (Flowable Migration Guide : Flowable v5 to Flowable v6)</title>
 <style>
 
 /* normalize.css */
@@ -229,71 +229,6 @@ a:hover {
 }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
-<style>
-.listingblock .pygments .hll { background-color: #ffffcc }
-.listingblock .pygments, .listingblock .pygments code { background: #f8f8f8; }
-.listingblock .pygments .tok-c { color: #408080; font-style: italic } /* Comment */
-.listingblock .pygments .tok-err { border: 1px solid #FF0000 } /* Error */
-.listingblock .pygments .tok-k { color: #008000; font-weight: bold } /* Keyword */
-.listingblock .pygments .tok-o { color: #666666 } /* Operator */
-.listingblock .pygments .tok-cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.listingblock .pygments .tok-cp { color: #BC7A00 } /* Comment.Preproc */
-.listingblock .pygments .tok-c1 { color: #408080; font-style: italic } /* Comment.Single */
-.listingblock .pygments .tok-cs { color: #408080; font-style: italic } /* Comment.Special */
-.listingblock .pygments .tok-gd { color: #A00000 } /* Generic.Deleted */
-.listingblock .pygments .tok-ge { font-style: italic } /* Generic.Emph */
-.listingblock .pygments .tok-gr { color: #FF0000 } /* Generic.Error */
-.listingblock .pygments .tok-gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.listingblock .pygments .tok-gi { color: #00A000 } /* Generic.Inserted */
-.listingblock .pygments .tok-go { color: #888888 } /* Generic.Output */
-.listingblock .pygments .tok-gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.listingblock .pygments .tok-gs { font-weight: bold } /* Generic.Strong */
-.listingblock .pygments .tok-gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.listingblock .pygments .tok-gt { color: #0044DD } /* Generic.Traceback */
-.listingblock .pygments .tok-kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.listingblock .pygments .tok-kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.listingblock .pygments .tok-kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.listingblock .pygments .tok-kp { color: #008000 } /* Keyword.Pseudo */
-.listingblock .pygments .tok-kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.listingblock .pygments .tok-kt { color: #B00040 } /* Keyword.Type */
-.listingblock .pygments .tok-m { color: #666666 } /* Literal.Number */
-.listingblock .pygments .tok-s { color: #BA2121 } /* Literal.String */
-.listingblock .pygments .tok-na { color: #7D9029 } /* Name.Attribute */
-.listingblock .pygments .tok-nb { color: #008000 } /* Name.Builtin */
-.listingblock .pygments .tok-nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.listingblock .pygments .tok-no { color: #880000 } /* Name.Constant */
-.listingblock .pygments .tok-nd { color: #AA22FF } /* Name.Decorator */
-.listingblock .pygments .tok-ni { color: #999999; font-weight: bold } /* Name.Entity */
-.listingblock .pygments .tok-ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.listingblock .pygments .tok-nf { color: #0000FF } /* Name.Function */
-.listingblock .pygments .tok-nl { color: #A0A000 } /* Name.Label */
-.listingblock .pygments .tok-nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.listingblock .pygments .tok-nt { color: #008000; font-weight: bold } /* Name.Tag */
-.listingblock .pygments .tok-nv { color: #19177C } /* Name.Variable */
-.listingblock .pygments .tok-ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.listingblock .pygments .tok-w { color: #bbbbbb } /* Text.Whitespace */
-.listingblock .pygments .tok-mb { color: #666666 } /* Literal.Number.Bin */
-.listingblock .pygments .tok-mf { color: #666666 } /* Literal.Number.Float */
-.listingblock .pygments .tok-mh { color: #666666 } /* Literal.Number.Hex */
-.listingblock .pygments .tok-mi { color: #666666 } /* Literal.Number.Integer */
-.listingblock .pygments .tok-mo { color: #666666 } /* Literal.Number.Oct */
-.listingblock .pygments .tok-sb { color: #BA2121 } /* Literal.String.Backtick */
-.listingblock .pygments .tok-sc { color: #BA2121 } /* Literal.String.Char */
-.listingblock .pygments .tok-sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.listingblock .pygments .tok-s2 { color: #BA2121 } /* Literal.String.Double */
-.listingblock .pygments .tok-se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.listingblock .pygments .tok-sh { color: #BA2121 } /* Literal.String.Heredoc */
-.listingblock .pygments .tok-si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.listingblock .pygments .tok-sx { color: #008000 } /* Literal.String.Other */
-.listingblock .pygments .tok-sr { color: #BB6688 } /* Literal.String.Regex */
-.listingblock .pygments .tok-s1 { color: #BA2121 } /* Literal.String.Single */
-.listingblock .pygments .tok-ss { color: #19177C } /* Literal.String.Symbol */
-.listingblock .pygments .tok-bp { color: #008000 } /* Name.Builtin.Pseudo */
-.listingblock .pygments .tok-vc { color: #19177C } /* Name.Variable.Class */
-.listingblock .pygments .tok-vg { color: #19177C } /* Name.Variable.Global */
-.listingblock .pygments .tok-vi { color: #19177C } /* Name.Variable.Instance */
-.listingblock .pygments .tok-il { color: #666666 } /* Literal.Number.Integer.Long */
-</style>
 <script type="text/javascript">
 
 /*
@@ -324,7 +259,6 @@ a:hover {
 <script type="text/javascript">
 
   var generateToc = function() {
-    console.log(new Date() + 'Generate toc ' + document.readyState);
     var readyState = document.readyState;
     if (readyState === 'interactive' || readyState == 'complete') {
 
@@ -359,7 +293,6 @@ a:hover {
       });
 
     } else {
-      console.log('Timeout');
       window.setTimeout(function(){
         generateToc();
       }, 50);
@@ -372,147 +305,175 @@ a:hover {
 </head>
 <body class="book">
 <div id="header">
-<h1>Activiti Migraton Guide : Activiti v5 to Activiti v6</h1>
+<h1>Flowable迁移手册：Flowable v5到Flowable v6 (Flowable Migration Guide : Flowable v5 to Flowable v6)</h1>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_introduction">1. Introduction</h2>
+<h2 id="_介绍_introduction">1. 介绍 Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This guide describes the various things that are needed when migrating from Activiti v 5.x to Activiti version 6. This is a preliminary version of the migration guide, which will be updated while alpha/beta releases of Activiti v6 are being pushed out. As it goes with such releases, many things can still change on the road to a stable version. At that point, the migration guide will be formalized and the regular user guide will be updated to reflect all the features and capabilities in Activiti v6, as was the case for Activiti v5.</p>
+<p>本手册介绍了从Flowable v5.x迁移至Flowable v6时需要注意的事项。这是一个迁移手册的初步版本，并将在后续Flowable v6发布alpha/beta版本时更新，因为很多东西仍在修改之中。到时，本迁移手册将规范化，而用户手册也将更新，以反映Flowable v6中的所有特性与功能，就像Flowable v5的情形一样。</p>
 </div>
 <div class="paragraph">
-<p><strong>This current Activiti v6 release is for testing purposes only! Do not use in production yet.</strong> The main goal of this release is to gather feedback, report issues and to have people test out their process definitions on v6. Of course, as before, all contributions are more than welcomed through our Github page. The Activiti v6 code lives currently <a href="https://github.com/Activiti/Activiti/tree/activiti6">on the <em>activiti6</em> branch</a></p>
+<p><strong>当前的Flowable v6版本只用作测试目的！请不要在生产环境使用。</strong>这个版本的主要目的是收集反馈，报告问题以及让用户可以在v6版本上测试他们的流程定义。当然，与之前一样，欢迎大家访问GitHub页面并做贡献。Flowable v6的代码目前处在<a href="https://github.com/flowable/flowable-engine"><em>master</em>分支</a>。</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_design_goals">2. Design goals</h2>
+<h2 id="_设计目标_design_goals">2. 设计目标 Design goals</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The design goals of version 6 are:</p>
+<p>v6版本的设计目标是：</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Complete backwards compatibility with version 5: database-wise, concept-wise and code-wise.</p>
+<p>完全向前兼容v5版本：数据库层面、概念层面以及代码层面。</p>
 </li>
 <li>
-<p>Rewrite of the core engine: direct execution of BPMN 2.0 (vs transformation to intermediate model)</p>
+<p>重写核心引擎：直接执行BPMN 2.0（不再转换为中间模型）。</p>
 </li>
 <li>
-<p>Simpler and cleaner runtime execution data structure, where predictability of the structure is crucial</p>
+<p>更简洁干净的运行时执行数据结构，并加强对结构的预判性。</p>
 </li>
 <li>
-<p>Decoupling of persistence layers for future possible different implementations</p>
+<p>解耦持久层，以支持未来可能的不同实现。</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_database_migration">3. Database migration</h2>
+<h2 id="_数据库迁移_database_migration">3. 数据库迁移 Database migration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>There is no database migration when moving from v5 to v6: the database schema is the same for v5 and v6. All data produced by Activiti v5 can simply remain in the database. When the v6 engine is started for the first time, it will do an automatic update (as with any v5 version) to the schema. Besides some small schema changes, the main update is the job table that has been split up in a job, timer job, suspended job and dead letter job table.
-The timer jobs that are not yet due, will be moved to the new timer table. Jobs with no more retries left will be moved to the dead letter job table and jobs for suspended process instances will be moved to the suspended job table.</p>
+<p>从v5至v6不需要数据库迁移：v5与v6的数据库表结构一致。所有Flowable v5生成的数据都可以保留在数据库中。在v6引擎第一次运行时，会对表结构进行自动升级（同v5版本中一样）。除了一些小的数据库结构改动外，主要的改动是将作业表分拆为作业表、定时器作业表、暂停作业表与死信作业表。还未到期的定时器作业将移至新的定时器作业表；用尽重试次数的作业将移至死信作业表；已暂停流程实例的作业将移至暂停作业表。</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_conceptual_changes">4. Conceptual changes</h2>
+<h2 id="_概念变化_conceptual_changes">4. 概念变化 Conceptual changes</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The main reason for calling this activiti version <em>6</em> is because the core engine has been completely rewritten. The way core engine operations are executed has changed completely, along with a direct execution of BPMN (in V5 there is an intermediate model). Also the way runtime executions are represented (the <em>execution tree</em>) changed. In general, both areas have been simplified significantly, making execution simpler and clearer while also making the writing of custom behavior easier and more accessible.</p>
+<p>称为Flowable v6的主要原因是完全重写了核心引擎。核心引擎执行的方式已经完全变化，将直接执行BPMN（在v5中使用中间模型）。同时运行时执行的表现形式（<em>执行树</em>）也作了修改。总的来说，这些概念都大幅简化了，让执行更简单清晰，也让撰写自定义代码更容易更易懂。</p>
 </div>
 <div class="paragraph">
-<p>In the future, we&#8217;ll describe the inner workings of the engine in detail. An introduction to the version 6 basics can be found at the <a href="http://www.jorambarrez.be/blog/2015/06/18/activiti-6-launch/">Activiti 6 launch recording</a>.</p>
+<p>未来，我们将详细介绍引擎内部的工作。</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_breaking_changes">5. Breaking changes</h2>
+<h2 id="_破坏性改动_breaking_changes">5. 破坏性改动 Breaking changes</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The following changes are breaking changes (ie there will be a compile error most likely)..</p>
+<p>下列改动是破坏性改动（也就是说很可能导致编译错误）。</p>
 </div>
 <div class="sect2">
-<h3 id="_pvm_classes">5.1. PVM classes</h3>
+<h3 id="_包重命名_org_activiti重命名为org_flowable">5.1. 包重命名：org.activiti重命名为org.flowable</h3>
 <div class="paragraph">
-<p>All classes from the org.activiti.engine.impl.pvm package (and subpackages) have been removed. This is because the <em>PVM</em> (Process Virtual Machine) model has been removed and replaced by a simpler and more lightweight model.</p>
+<p>所有org.activiti包都已重命名为org.flowable。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_activiti类重命名">5.2. Activiti类重命名</h3>
+<div class="paragraph">
+<p>所有类名中包含的Activiti都已重命名，使用Flowable替换。
+例如ActivitiEvent重命名为FlowableEvent，而ActivitiException重命名为FlowableException。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_activiti_cfg_xml重命名为flowable_cfg_xml">5.3. activiti.cfg.xml重命名为flowable.cfg.xml</h3>
+<div class="paragraph">
+<p>在Flowable引擎启动时读取的默认配置文件，已经从activiti.cfg.xml重命名为flowable.cfg.xml。
+对于默认的Spring配置文件activiti-context.xml也是一样，已经重命名为flowable-context.xml.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_pvm类_pvm_classes">5.4. PVM类 PVM classes</h3>
+<div class="paragraph">
+<p>以前在org.activiti.engine.impl.pvm包（及其子包）下的所有类都已移除。这是因为<em>PVM</em> (流程虚拟机 Process Virtual Machine)模型已被移除，并被一个更简单更轻量的模型替代。</p>
 </div>
 <div class="paragraph">
-<p>This means that usages of <em>ActivitiImpl</em>, <em>ProcessDefinitionImpl</em>, <em>ExecutionImpl</em>, <em>TransitionImpl</em> are invalid.</p>
+<p>这意味着<em>ActivitiImpl</em>、<em>ProcessDefinitionImpl</em>、<em>ExecutionImpl</em>及<em>TransitionImpl</em>都将失效。</p>
 </div>
 <div class="paragraph">
-<p>Generally, most of the usage of these classes in version 5 came down to getting information that was contained in the process definition. In version 6, all the process definition information can be found through the <em>BpmnModel</em>, which is a Java representation of the BPMN 2.0 XML for the process definition (enhanced to make certain operations and searches easier).</p>
+<p>总的来说，在v5中这些类大多用于获取流程定义中包含的信息。在v6中，所有流程定义的信息都可以通过<em>BpmnModel</em>获取。这是一个BPMN 2.0 XML流程定义的Java表现形式（对特定操作及搜索进行了增强）。</p>
 </div>
 <div class="paragraph">
-<p>The quickest way to get the <em>BpmnModel</em> for a process definition is to use the org.activiti.engine.impl.util.ProcessDefinitionUtil class:</p>
+<p>获取<em>BpmnModel</em>流程定义最快捷的方法是使用org.flowable.engine.impl.util.ProcessDefinitionUtil类：</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>// The whole model
+<pre>// 整个模型 The whole model
 ProcessDefinitionUtil.getBpmnModel(String processDefinitionId);
 
-// Only the specific process definition
+// 只有流程定义 Only the specific process definition
 ProcessDefinitionUtil.getProcess(String processDefinitionId);</pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_activityexecution_is_replaced_by_delegateexecution">5.2. ActivityExecution is replaced by DelegateExecution</h3>
+<h3 id="_delegateexecution代替activityexecution_activityexecution_is_replaced_by_delegateexecution">5.5. DelegateExecution代替ActivityExecution (ActivityExecution is replaced by DelegateExecution)</h3>
 <div class="paragraph">
-<p>We removed ActivityExecution and replaced it where used with the DelegateExecution class.</p>
+<p>我们移除了ActivityExecution，并使用DelegateExecution类代替它。</p>
 </div>
 <div class="paragraph">
-<p>All methods from the ActivityExecution class are copied to the DelegateExecution class.</p>
+<p>所有ActivityExecution类中的方法都已复制到DelegateExecution类中。</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_job_timer_suspended_and_dead_letter_jobs">5.3. Job, timer, suspended and dead letter jobs</h3>
+<h3 id="_作业_定时器_暂停与死信作业_job_timer_suspended_and_dead_letter_jobs">5.6. 作业、定时器、暂停与死信作业 Job, timer, suspended and dead letter jobs</h3>
 <div class="paragraph">
-<p>Activiti 5 had only 1 job table and this meant that a fairly complex query had to be executed to get the jobs that needed to be executed from the database.</p>
+<p>Flowable 5中只有一个作业表，导致查询需要执行的作业时，查询条件异常复杂。</p>
 </div>
 <div class="paragraph">
-<p>With Activiti 6, the jobs have been split up in a job (ACT_RU_JOB), timer (ACT_RU_TIMER_JOB), suspended (ACT_RU_SUSPENDED_JOB), and (ACT_RU_DEADLETTER_JOB) dead letter table.
-Jobs in the job table can be directly executed (like asynchronous jobs and due timer jobs). So there&#8217;s no need for a complex query anymore, the only where clause is a lock time column that should be NULL.
-Timer jobs are now persisted in a dedicated timer jobs table and there&#8217;s a Runnable that checks for timer jobs due to execute. When a timer job is due to be executed, the job will be moved to the job table.
-When the job executor Runnable is ready to execute the job it will be fetched from the job table and executed.
-When a process definition and process instance is suspended, the corresponding jobs will be moved to a separate suspended job table. This simplifies the job executor query and makes it very clear which jobs are suspended.
-If a job execution fails, the job will be placed in the timer job table with a due date that&#8217;s set to current time + the async failed job wait time configured on the process engine configuration.
-When the job is due to be executed it will be moved to the job table again and be executed. When the number of retries is down to zero, the job will be moved to the dead letter table and no automatic execution will be performed.
-This also simplifies the default job executor queries and makes it obvious which jobs are stuck and might need manual intervention.</p>
+<p>在Flowable 6中，作业被分拆成了作业表(ACT_RU_JOB)、定时器表(ACT_RU_TIMER_JOB)、暂停表(ACT_RU_SUSPENDED_JOB)与死信表(ACT_RU_DEADLETTER_JOB)。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>作业表中的作业将可以直接执行（类似异步作业与到期定时器作业）。因此就不需要使用复杂的查询，唯一的where条件是lock time(锁定时间)不能为NULL。</p>
+</li>
+<li>
+<p>定时器作业现在持久化在专门的定时器作业表中，并由一个线程检查到期需要执行的定时器作业。当定时器作业到期需要执行时，该作业会被移至作业表。</p>
+</li>
+<li>
+<p>当流程定义或流程实例暂停时，其关联的作业将被移至单独的暂停作业表。这简化了作业执行器的查询，并清楚显示了暂停中的作业。</p>
+</li>
+<li>
+<p>如果一个作业执行失败，它将被放入定时器作业表，并用 当前时间+引擎配置的作业失败等待时间 作为到期日期。在该作业到期将被执行时，会重新移至作业表，并被执行。如果重试次数减至0，则该作业将被移至死信表，不再自动执行。这样简化了默认的作业执行器查询，也清楚显示了卡住需要人工干预的作业。</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>The embedded Activiti 5 engine in Activiti 6 works with these 4 job tables as well. But there&#8217;s only one threadpool fetching jobs from the database. When a job is fetched from the database, the engine version for the job is checked based on the process definition id, and the job is executed by the Activiti 6 or embedded Activiti 5 Engine.</p>
+<p>Flowable 6内嵌的Flowable 5引擎也能够使用这4个作业表。但是只会有一个线程池从数据库中获取作业，这个线程池在两个引擎间共享。当获取到一个作业后，会基于流程定义id检查引擎的版本，以判断作业由Flowable 6还是嵌入的Flowable 5引擎执行。</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_signaling_an_execution">5.4. Signaling an execution</h3>
+<h3 id="_向一个执行发信号_signaling_an_execution">5.7. 向一个执行发信号 Signaling an execution</h3>
 <div class="paragraph">
-<p>In version 5, there always was confusion about <em>signaling an execution</em>, when using for example <em>runtimeService.signal(executionI);</em>. As a <em>signal</em> is a valid BPMN 2.0 concept and feature, it conflicts conceptually.</p>
+<p>在v5中，使用例如<em>runtimeService.signal(executionI);</em>方法<em>向一个执行发信号</em>十分令人困惑。因为<em>信号(signal)</em>是一个BPMN 2.0概念和特性，它们的概念互相冲突。</p>
 </div>
 <div class="paragraph">
-<p>In version 6, the <em>signal()</em> methods have been renamed to <em>trigger()</em>..</p>
+<p>在v6中，<em>signal()</em>方法更名为<em>trigger()</em>。</p>
 </div>
 <div class="paragraph">
-<p>This also means that <em>SignalableActivityBehavior</em>, the interface to be implemented for behaviors that can be <em>triggered</em> from external sources, is now called <em>TriggerableActivityBehavior</em>.</p>
+<p>同时，用于实现可以被外部触发的行为的接口<em>SignalableActivityBehavior</em>，也会改名为<em>TriggerableActivityBehavior</em>。</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_checked_exceptions">5.5. Checked Exceptions</h3>
+<h3 id="_受控异常_checked_exceptions">5.8. 受控异常 Checked Exceptions</h3>
 <div class="paragraph">
-<p>In version 5, the delegate classes like <em>JavaDelegate</em> and <em>ActivityBevior</em> had <em>throws Exception</em> in their signature. As with any modern framework, the use of checked Exceptions has been removed in version 6.</p>
+<p>在v5中，<em>JavaDelegate</em>与<em>FlowableBehavior</em>之类的代理类在其签名中标示抛出<em>Exception</em>。像其他现代框架一样，在v6版本中已经移除了受控异常的使用。</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_delegate_classes">5.6. Delegate classes</h3>
+<h3 id="_代理类_delegate_classes">5.9. 代理类 Delegate classes</h3>
 <div class="paragraph">
-<p><em>org.activiti.engine.impl.pvm.delegate.ActivityBehavior</em> has changed package and lives now in <em>org.activiti.engine.impl.delegate</em>.</p>
+<p><em>org.flowable.engine.impl.pvm.delegate.ActivityBehavior</em>的包变更为<em>org.flowable.engine.impl.delegate</em>。</p>
 </div>
 <div class="paragraph">
-<p>The following methods have been removed from <em>DelegateExecution</em>:</p>
+<p>从<em>DelegateExecution</em>中移除了下列方法：</p>
 </div>
 <div class="ulist">
 <ul>
@@ -525,102 +486,100 @@ This also simplifies the default job executor queries and makes it obvious which
 </ul>
 </div>
 <div class="paragraph">
-<p>They have been replaced by calls to the ExecutionEntityManager, which can be fetched through Context.getCommandContext.getExecutionEntityManager().</p>
+<p>它们已经用ExecutionEntityManager的调用代替了，可以通过Context.getCommandContext.getExecutionEntityManager()使用。</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_entitymanagers">5.7. EntityManagers</h3>
+<h3 id="_实体管理器_entitymanagers">5.10. 实体管理器 EntityManagers</h3>
 <div class="paragraph">
-<p>In Activiti version 5, all EntityManager (responsible for persistence but also certain logic) classes did not have an interface. In version 6, all EntityManager classes have been renamed to have <em>Impl</em> as suffix and an interface without the suffix. This effectively means that the version 5 EntityManager class name is now the name of the corresponding interface.</p>
-</div>
-<div class="paragraph">
-<p>All EntityManager interfaces extend the generic org.activiti.engine.impl.persistence.entity.EntityManager interface. All implementation classes extend a generic <em>AbstractEntityManager</em> interface.</p>
+<p>在Flowable v5中，所有的实体管理器（负责持久化，也包含一些逻辑）类都没有接口。在v6中，所有的实体类都已经重命名为<em>Impl</em>后缀，并提供了不带后缀的接口。也就是说v5的实体管理器类名现在是相应的接口名。</p>
 </div>
 <div class="paragraph">
-<p>Also, for consistency:
-* The UserIdentityManager interface has been renamed to UserEntityManager
-* The GroupIdentityManager interface has been renamed to GroupEntityManager</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_persistentobject_renamed_to_entity">5.8. PersistentObject renamed to Entity</h3>
-<div class="paragraph">
-<p>The class <em>org.activiti.engine.impl.db.PersistentObject</em> has been renamed to <em>Entity</em> to be consistent with all the other classes (EntityManagers and such)..</p>
+<p>所有的实体管理器接口都扩展了org.flowable.engine.impl.persistence.entity.EntityManager泛型接口。所有的实现类都实现了<em>AbstractEntityManager</em>泛型接口。</p>
 </div>
 <div class="paragraph">
-<p>All related classes that used the term <em>persistent object</em> have been refactored to <em>entity</em> too.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_future_breaking_changes">5.9. Future breaking changes</h3>
-<div class="paragraph">
-<p>The following changes will most likely be applied in a next beta release of Activiti v6:</p>
+<p>同时，为了保证一致性：</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>The entity cache that is created and used during the execution of a command will be moved up the hierarchy, to be at the same level as the entity managers.</p>
+<p>UserIdentityManager接口重命名为UserEntityManager</p>
 </li>
 <li>
-<p>The persistence operations will be moved to a separate interface out of the EntityManager classes to allow pluggability.</p>
+<p>GroupIdentityManager接口重命名为GroupEntityManager</p>
 </li>
 </ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_持久化对象重命名为实体_persistentobject_renamed_to_entity">5.11. 持久化对象重命名为实体 PersistentObject renamed to Entity</h3>
+<div class="paragraph">
+<p><em>org.flowable.engine.impl.db.PersistentObject</em>类重命名为<em>Entity</em>，与其他类保持一致（实体管理器类也一样）。</p>
+</div>
+<div class="paragraph">
+<p>所有使用“持久化对象”的相关类也都已经重构为“实体”。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_身份逻辑与表的分离_separation_of_identity_logic_and_tables">5.12. 身份逻辑与表的分离 Separation of identity logic and tables</h3>
+<div class="paragraph">
+<p>在v5中，身份逻辑及表示流程引擎的必要部分。在v6中，这部分逻辑已经重构为独立的模块，名为<em>flowable-idm-engine</em>（其中idm代表“身份管理(identity management)”）。相关的数据库表由这个引擎管理。为了保证兼容性，在启动流程引擎时，idm引擎默认启用。可以在流程引擎配置中，将<em>disableIdmEngine</em>设置为<em>true</em>，以禁用这个引擎。这种情况下，就不会创建身份数据库表（以<em>ACT_ID</em>开头），如果它们已经存在，也可以删除。</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_v5_compatibility">6. V5 compatibility</h2>
+<h2 id="_v5兼容性_v5_compatibility">6. V5兼容性 V5 compatibility</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When migrating to Activiti version 6 (which basically means replacing the JAR file on the classpath), all current deployments and process definitions are <em>tagged</em> as being a <em>version 5</em> artifact. At various points (completing a task, starting a new process instance, task assignment, &#8230;&#8203; quite a long list) the engine will check whether the involved process definition has that <em>version 5 tag</em>. If so, it will delegate execution to an <em>embedded mini version 5 engine</em>.</p>
+<p>在迁移至Flowable v6时（基本上就是替换classpath中的JAR包），所有当前的部署与流程定义都将<em>标记</em>为<em>v5版本</em>的工件。在很多地方（完成一个任务，启动一个新流程实例，指派任务等等）引擎都会检查相关的流程定义是否<em>标记为v5版本</em>。若是，则将其执行代理至<em>内嵌的微型v5引擎</em>。</p>
 </div>
 <div class="paragraph">
-<p>This means that the compatibility approach we opted for is that of a phase out: let the current process definitions run in <em>'version 5 mode</em> until the behaviour has been verified and tested to be identical on version 6.</p>
+<p>也就是说为了保证兼容性，可以选择逐步替换：首先在<em>v5模式</em>下运行当前的流程定义，直到已经验证并测试其行为与v6版本相同。</p>
 </div>
 <div class="paragraph">
-<p>To enable this behavior (by default it is <em>disabled</em>!), add the following to the engine config:</p>
+<p>要启用这个功能（默认情况下是<em>禁用的</em>！），在引擎配置中添加下列配置：</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>&lt;property name="activiti5CompatibilityEnabled" value="true" /&gt;</pre>
+<pre>&lt;property name="flowable5CompatibilityEnabled" value="true" /&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>and</strong> add the <strong>activiti5-compatibility</strong> jar to your classpath (manually or through a dependency mechanism like Maven)..</p>
+<p><strong>并且</strong>在classpath中添加<strong>flowable5-compatibility</strong>（手动或通过Maven之类的依赖管理机制）。</p>
 </div>
 <div class="paragraph">
-<p>In case the default implementation <em>org.activiti.compatibility.DefaultActiviti5CompatibilityHandler</em> is insufficient, as custom implementation can be created. Set the <em>activiti5CompatibilityHandlerFactory</em> property of the engine configuration to the fully qualified classname to make that happen. That Factory class should produce an instance of the handler responsible for bridging from version 6 to 5.</p>
+<p>如果默认的实现<em>org.flowable.compatibility.DefaultFlowable5CompatibilityHandler</em>不满足要求，可以创建自定义的实现。可以将引擎配置中的<em>flowable5CompatibilityHandlerFactory</em>参数设置为创建类的全限定类名。这个工厂类需要构造用于处理v5与v6桥接的类实例。</p>
 </div>
 <div class="paragraph">
-<p>To move a process definition to run on the version 6 engine, simply redeploy it. New process instances will be running in <em>version 6 mode</em>, while existing process instances will run in _version 5 mode).</p>
+<p>要让一个流程定义使用v6引擎运行，只需要重新部署它即可。新的流程实例将会在<em>v6模式</em>下运行，而之前的流程实例仍然在<em>v5模式</em>下运行。</p>
 </div>
 <div class="paragraph">
-<p>If for some reason, you&#8217;d still want to deploy a new version of a process definition to run in <em>version 5 mode</em>, the following code can be used:</p>
+<p>如果出于某些原因希望部署的新版流程定义仍然在<em>v5模式</em>下运行，可以使用下列代码：</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre>repositoryService.createDeployment()
       .addClasspathResource("xyz")
-      .deploymentProperty(DeploymentProperties.DEPLOY_AS_ACTIVITI5_PROCESS_DEFINITION, Boolean.TRUE)
+      .deploymentProperty(DeploymentProperties.DEPLOY_AS_FLOWABLE5_PROCESS_DEFINITION, Boolean.TRUE)
       .deploy();</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you are using the Activiti Spring module additional configuration is needed if you want Activiti 5 compatibility:</p>
+<p>如果使用Flowable Spring模块，且想要使用Flowable 5兼容模式，则需要进行额外配置：</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>&lt;property name="activiti5CompatibilityEnabled" value="true" /&gt;
-&lt;property name="activiti5CompatibilityHandlerFactory" ref="activiti5CompabilityFactory" /&gt;
+<pre>&lt;property name="flowable5CompatibilityEnabled" value="true" /&gt;
+&lt;property name="flowable5CompatibilityHandlerFactory" ref="flowable5CompabilityFactory" /&gt;
 
 ....
 
-&lt;bean id="activiti5CompabilityFactory" class="org.activiti.compatibility.spring.SpringActiviti5CompatibilityHandlerFactory" /&gt;</pre>
+&lt;bean id="flowable5CompabilityFactory" class="org.flowable.compatibility.spring.SpringFlowable5CompatibilityHandlerFactory" /&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>and</strong> add the <strong>activiti5-spring</strong> and <strong>activiti5-spring-compatibility</strong> jars to your classpath (manually or through a dependency mechanism like Maven)..</p>
+<p><strong>并且</strong>在classpath中添加<strong>flowable5-spring</strong>与<strong>flowable5-spring-compatibility</strong> JAR包（手动或通过Maven之类的依赖管理机制）。</p>
 </div>
 </div>
 </div>
