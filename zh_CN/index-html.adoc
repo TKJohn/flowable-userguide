@@ -1,9 +1,9 @@
-= Flowable DOCS (v 6.0.0.rc1)
+= Flowable DOCS (v 6.0.1)
 :doctype: book
 :docinfo1: header
 :icons: font
 :numbered:
-:source-highlighter: pygments.rb
+:source-highlighter: pygments
 :pygments-css: class
 :pygments-linenums-mode: table
 :compat-mode:
