@@ -48,7 +48,7 @@ Flowable需要JDK 7或以上版本。访问 link:$$http://www.oracle.com/technet
 我们希望开发者在报告或提问任何问题之前，先看看link:$$http://www.catb.org/~esr/faqs/smart-questions.html$$[提问的智慧]。
 
 
-看完提问的智慧，你可以在 link:$$http://forums.flowable.org$$[用户论坛] 提问、评论以及提交改进建议，也可以在link:$$https://github.com/flowable/flowable-engine/issues$$[我们的Github问题跟踪系统]创建bug报告。
+看完提问的智慧，你可以在link:$$http://forums.flowable.org$$[用户论坛]提问、评论以及提交改进建议，也可以在link:$$https://github.com/flowable/flowable-engine/issues$$[我们的Github问题跟踪系统]创建bug报告。
 
 [[experimental]]
 
@@ -64,4 +64,4 @@ Flowable需要JDK 7或以上版本。访问 link:$$http://www.oracle.com/technet
 
 === 内部实现类 Internal implementation classes
 
-在JAR文件中，所有++.impl.++包下的类（比如，++org.flowable.engine.impl.db++）都是只在内部使用。实现类中的所有类或接口都不保证稳定。
+在JAR文件中，所有++.impl.++包下的类（比如++org.flowable.engine.impl.db++）都是只在内部使用。实现类中的所有类或接口都不保证稳定。
