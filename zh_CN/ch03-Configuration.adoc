@@ -91,7 +91,7 @@ ProcessEngine processEngine = ProcessEngineConfiguration.createStandaloneInMemPr
 ----
 
 
-这个bean被用于构建++ProcessEngine++。有多个类可以用于定义++processEngineConfiguration++。这些类用于不同的环境，并各自设置一些默认值。最佳实践是选择（最）匹配你环境的类，以便减少配置引擎需要的参数。下面列出目前可以使用的类（后续版本会提供更多）：[[configurationClasses]]
+这个bean用于构建++ProcessEngine++。有多个类可以用于定义++processEngineConfiguration++。这些类用于不同的环境，并各自设置一些默认值。最佳实践是选择最匹配你环境的类，以便减少配置引擎需要的参数。下面列出目前可以使用的类：[[configurationClasses]]
 
 * *org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration*：流程引擎独立运行。Flowable自行处理事务。在默认情况下，数据库检查只在引擎启动时进行（如果Flowable表结构不存在或表结构版本不对，会抛出异常）。
 * *org.flowable.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration*：这是一个便于使用单元测试的类。Flowable自行处理事务。默认使用H2内存数据库。数据库会在引擎启动时创建，并在引擎关闭时删除。使用这个类时，很可能不需要更多的配置（除了使用任务执行器或邮件功能等时）。
@@ -152,7 +152,7 @@ ProcessEngine processEngine = ProcessEngineConfiguration.createStandaloneInMemPr
 
 无论使用JDBC还是数据源方式配置，下列参数都可以使用：
 
-* *databaseType*: 通常不需要专门设置这个参数，因为它可以从数据库连接信息中自动分析得出。只有在自动检测失败时才需要设置。可用值：{h2, mysql, oracle, postgres, mssql, db2}。这个选项会决定创建、删除与查询时使用的脚本。查看<<supporteddatabases,“支持的数据库”章节>>了解我们支持哪些类型的数据库。
+* *databaseType*: 通常不需要专门设置这个参数，因为它可以从数据库连接信息中自动检测得出。只有在自动检测失败时才需要设置。可用值：{h2, mysql, oracle, postgres, mssql, db2}。这个选项会决定创建、删除与查询时使用的脚本。查看<<supporteddatabases,“支持的数据库”章节>>了解我们支持哪些类型的数据库。
 * *databaseSchemaUpdate*: 用于设置流程引擎启动关闭时使用的数据库表结构控制策略。
 ** +false+ (默认): 当引擎启动时，检查数据库表结构的版本是否匹配库文件版本。版本不匹配时抛出异常。
 ** ++true++: 构建引擎时，检查并在需要时更新表结构。表结构不存在则会创建。
@@ -243,10 +243,9 @@ Tomcat的JNDI资源配置在$CATALINA_BASE/conf/[enginename]/[hostname]/[warname
 flowable.{db}.{create|drop}.{type}.sql
 ----
 
-__db__为<<supporteddatabases,支持的数据库>>，而__type__为
+__db__为<<supporteddatabases,支持的数据库>>，而__type__为：
 
 * *engine:* 引擎执行所需的表，必需。
-* *identity:* 存储用户、组、用户与组关系的表。这些表是可选的，但在使用引擎自带的默认身份管理时需要使用。
 * *history:* 存储历史与审计信息的表。当历史级别设置为__none__时不需要。请注意不使用这些表会导致部分使用历史数据的功能失效（如任务备注）。
 
 **MySQL用户请注意：**低于5.6.4的MySQL版本不支持timestamps或包含毫秒精度的日期。更糟的是部分版本会在创建类似的列时抛出异常，而另一些版本则不会。当使用自动创建/升级时，引擎在执行时会自动修改DDL语句。当使用DDL文件方式建表时，可以使用通用版本，或使用文件名包含__mysql55__的特殊版本（用于5.6.4以下的任何版本）。特殊版本的文件中不会使用毫秒精度的列类型。
@@ -270,9 +269,8 @@ Flowable的所有数据库表都以**ACT_**开头。第二部分是说明表用�
 
 * *ACT_RE_**: 'RE'代表++repository++。带有这个前缀的表包含“静态”信息，例如流程定义与流程资源（图片、规则等）。
 * *ACT_RU_**: 'RU'代表++runtime++。这些表存储运行时信息，例如流程实例（process instance）、用户任务（user task）、变量（variable）、作业（job）等。Flowable只在流程实例运行中保存运行时数据，并在流程实例结束时删除记录。这样保证运行时表小和快。
-* *ACT_ID_**: 'ID'代表++identity++。这些表包含身份信息，例如用户、组等。
 * *ACT_HI_**: 'HI'代表++history++。这些表存储历史数据，例如已完成的流程实例、变量、任务等。
-* *ACT_GE_**: 通用数据。用于不同场景下。
+* *ACT_GE_**: 通用数据。在很多场景中使用。
 
 
 [[databaseUpgrade]]
@@ -292,7 +290,8 @@ Flowable的所有数据库表都以**ACT_**开头。第二部分是说明表用�
 ----
 <beans >
 
-  <bean id="processEngineConfiguration" class="org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+  <bean id="processEngineConfiguration"
+     class="org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration">
     <!-- ... -->
     <property name="databaseSchemaUpdate" value="true" />
     <!-- ... -->
@@ -301,15 +300,15 @@ Flowable的所有数据库表都以**ACT_**开头。第二部分是说明表用�
 </beans>
 ----
 
-**同时，在classpath中加上合适的数据库驱动。**升级你应用中的Flowable库，或者启动一个新版本的Flowable，并将它指向旧版本的数据库。将++databaseSchemaUpdate++设置为++true++。当Flowable发现库与数据库表结构不同步时，会自动将数据库表结构升级至新版本。
+**同时，在classpath中加上合适的数据库驱动。**升级你应用中的Flowable库，或者启动一个新版本的Flowable，并将它指向包含旧版本数据的数据库。将++databaseSchemaUpdate++设置为++true++。当Flowable发现库与数据库表结构不同步时，会自动将数据库表结构升级至新版本。
 
 **你还可以直接运行升级DDL语句**，也可以从Flowable下载页面获取升级数据库脚本并运行。
 
 [[jobExecutorConfiguration]]
 
-=== 作业执行器（从6.0.0版本起） Job Executor (since version 6.0.0)
+=== 作业执行器（从6.0.1版本起） Job Executor (from version 6.0.1 onwards)
 
-在Flowable 6中唯一可用的作业执行器，是Flowable 5中的异步执行器。因为它为Flowable引擎提供了性能更好，对数据库也更友好的执行异步作业的方式。Flowable 5中的作业执行器已经移除。可以在用户手册的高级章节找到更多信息。
+在Flowable V6中唯一可用的作业执行器，是Flowable V5中的异步执行器(async executor)。因为它为Flowable引擎提供了性能更好，对数据库也更友好的执行异步作业的方式。Flowable V5中的作业执行器(job executor)在V6中不再可用。可以在用户手册的高级章节找到更多信息。
 
 此外，如果在Java EE 7下运行，容器还可以使用符合JSR-236标准的++ManagedJobExecutor++来管理线程。要启用这个功能，需要在配置中如下加入线程工厂：
 
@@ -443,7 +442,7 @@ Flowable支持SLF4J的映射诊断上下文特性。下列基本信息会与需�
 * processInstance Id 作为 mdcProcessInstanceID
 * execution Id 作为 mdcExecutionId
 
-默认情况下这些信息都不会被日志记录，但可以通过配置日志记录器，以使用想要的格式，与其他日志信息一起显示。例如在log4j中进行如下简单的布局定义，就可以让日志记录器显示上述信息：
+默认情况下这些信息都不会被日志记录，但可以通过配置日志记录器，按照你想要的格式，与其他日志信息一起显示。例如在log4j中进行如下简单的布局定义，就可以让日志记录器显示上述信息：
 
 [source,properties,linenums]
 ----
@@ -522,7 +521,8 @@ Flowable提供了少量基础实现，以简化常用的事件监听器用例。
 
 [source,xml,linenums]
 ----
-<bean id="processEngineConfiguration" class="org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+<bean id="processEngineConfiguration"
+    class="org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration">
     ...
     <property name="eventListeners">
       <list>
@@ -536,7 +536,8 @@ Flowable提供了少量基础实现，以简化常用的事件监听器用例。
 
 [source,xml,linenums]
 ----
-<bean id="processEngineConfiguration" class="org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+<bean id="processEngineConfiguration"
+    class="org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration">
     ...
     <property name="typedEventListeners">
       <map>
@@ -631,8 +632,6 @@ void addEventListener(FlowableEventListener listenerToAdd, FlowableEventType... 
 
 
 ===== 抛出BPMN事件的监听器 Listeners throwing BPMN events
-
-<<experimental, [EXPERIMENTAL] >>
 
 
 处理分发的事件的另一个方法，是抛出BPMN事件。请牢记在心，只有特定种类的Flowable事件类型，抛出BPMN事件才合理。例如，在流程实例被删除时抛出BPMN事件，会导致错误。下面的代码片段展示了如何在流程实例中抛出信号，向外部流程（全局）抛出信号，在流程实例中抛出消息事件，以及在流程实例中抛出错误事件。这里不使用++class++或++delegateExpression++，而要使用++throwEvent++属性，以及一个附加属性，用于指定需要抛出的事件类型。
@@ -771,8 +770,17 @@ void addEventListener(FlowableEventListener listenerToAdd, FlowableEventType... 
 ==== 附加信息 Additional remarks
 
 
+
+*Listeners are only notified for events dispatched from the engine they are registered with.* So if you have different engines - running against the same database - only events that originated in the engine the listener is registered to are dispatched to that listener. The events that occur in other engines are not dispatched to the listeners, regardless of whether they are running in the same JVM or not.
+
+Certain event-types (related to entities) expose the targeted entity. Depending on the type or event, these entities cannot be updated anymore (for example, when the entity is deleted). If possible, use the +EngineServices+ exposed by the event to interact in a safe way with the engine. Even then, you need to be cautious with updates/operations on entities that are involved in the dispatched event.
+
+No entity-events are dispatched related to history, as they all have a runtime-counterpart that dispatch their events.
+
+
+
 **监听器只会被通知其所在引擎分发的事件。**因此如果在同一个数据库上运行不同的引擎，则只有该监听器注册的引擎生成的事件，才会分发给该监听器。其他引擎生成的事件不会分发给这个监听器，而不论这些引擎是否运行在同一个JVM下。
 
-某些事件类型（与实体相关）暴露了目标实体。按照事件类型的不同，有时实体不能被更新（例如实体删除事件）。如果可能的话，请使用事件暴露的++EngineServices++安全操作引擎。即使这样，更新、操作事件中暴露的实体仍然需要小心。
+某些事件类型（与实体相关）暴露了目标实体。按照事件类型的不同，有些实体不能被更新（例如对于实体删除事件）。如果可能的话，请使用事件暴露的++EngineServices++来安全地操作引擎。即使这样，更新、操作事件中暴露的实体仍然需要小心。
 
 历史不会分发实体事件，因为它们都有对应的运行时实体分发事件。

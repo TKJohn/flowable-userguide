@@ -7,7 +7,7 @@
 
 === 流程引擎API与服务 The Process Engine API and services
 
-引擎API是与Flowable交互的最常用手段。其中心入口是++ProcessEngine++，并像<<configuration,配置章节>>中介绍的一样，可以使用多种方式创建。使用ProcessEngine，可以获得多种包含工作流/BPM方法的服务。ProcessEngine与服务对象都是线程安全的，因此可以在整个服务器中保存一份引用。
+引擎API是与Flowable交互的最常用手段。其入口是++ProcessEngine++，并像<<configuration,配置章节>>中介绍的一样，可以使用多种方式创建。使用ProcessEngine，可以获得多种包含工作流/BPM方法的服务。ProcessEngine与服务对象都是线程安全的，因此可以在整个服务器中保存一份引用。
 
 image::images/api.services.png[align="center"]
 
@@ -37,14 +37,14 @@ ProcessEngines会扫描所有++flowable.cfg.xml++与++flowable-context.xml++文�
 此外，这个服务还可以：
 
 * 查询引擎已知的部署与流程定义。
-* 暂停或激活部署中的某些流程，或整个部署。暂停意味着不能再对它进行操作，激活是其反操作。
+* 暂停或激活部署中的某些流程，或整个部署。暂停意味着不能再对它进行操作，激活刚好相反，使它重新可以操作。
 * 读取各种资源，比如部署中保存的文件，或者引擎自动生成的流程图。
 * 读取POJO版本的流程定义。使用它可以用Java而不是xml的方式检查流程。
 
 ++RepositoryService++提供的是静态信息（也就是不会改变，至少不会经常改变的信息）。而**RuntimeService**就完全相反。它可以启动流程定义的新流程实例。前面介绍过，++流程定义++中定义了流程中不同步骤的结构与行为。流程实例则是流程定义的实际执行。同一时刻，一个流程定义通常有多个运行中的实例。++RuntimeService++也用于读取与存储++流程变量++。流程变量是给定流程持有的数据，可以在流程的许多构造中使用（例如排他网关经常使用流程变量决定流程下一步要选择的路径）。++RuntimeService++还可以用于查询流程实例与执行。执行代表了BPMN 2.0中 +$$'token'$$+ 的概念。通常执行是指向流程实例当前位置的指针。最后，++RuntimeService++还可以在流程实例等待外部触发时使用，以便流程可以继续运行。流程有许多++等待状态(wait states)++，++RuntimeService++服务提供了许多操作用于“通知”流程实例，告知已经接收到外部触发，使流程实例可以继续运行。
 
 
-对于像Flowable这样的BPM引擎来说，核心是需要人类用户实际操作的任务。所有任务相关的东西都组织在**TaskService**中，例如
+对于像Flowable这样的BPM引擎来说，核心是需要人类用户操作的任务。所有任务相关的东西都组织在**TaskService**中，例如：
 
 * 查询分派给用户或组的任务
 * 创建__独立运行(standalone)__任务。这是一种没有关联到流程实例的任务。
@@ -73,14 +73,14 @@ Flowable的异常基类是++org.flowable.engine.FlowableException++，这是一�
 /**
  * 当任务成功执行时调用。
  * @param taskId 需要完成的任务id，不能为null。
- * @throws ActivitiObjectNotFoundException 若给定id找不到任务。
+ * @throws FlowableObjectNotFoundException 若给定id找不到任务。
  */
  void complete(String taskId);
 ----
 
 在上例中，如果传递的id找不到任务，会抛出异常。并且，由于javadoc中**明确要求taskId不能为null，因此如果传递了++null++值，会抛出++FlowableIllegalArgumentException++异常**。
 
-尽管我们想避免过大的异常层次结构，我们还是添加了下述在特定情况下抛出的异常子类。所有流程执行与API调用中发生的错误，如果不符合下面列出的异常，会统一抛出++FlowableExceptions++。
+尽管我们想避免过大的异常层次结构，在特定情况下仍然会抛出下述异常子类。所有流程执行与API调用中发生的错误，如果不符合下面列出的异常，会统一抛出++FlowableExceptions++。
 
 * ++FlowableWrongDbException++: 当Flowable引擎检测到数据库表结构版本与引擎版本不匹配时抛出。
 * ++FlowableOptimisticLockingException++: 当对同一数据实体的并发访问，导致数据存储发生乐观锁时抛出。
@@ -107,7 +107,7 @@ List<Task> tasks = taskService.createTaskQuery()
     .list();
 ----
 
-有时你需要更强力的查询，例如使用OR操作符查询，或者使用查询API不能满足查询条件要求。我们为这种需求提供了可以自己写SQL查询的原生查询。返回类型由使用的查询对象决定，数据也会映射到正确的对象中，如Task、ProcessInstance、Execution....查询会在数据库中进行，因此你需要使用数据库中定义的表名与列名。这需要了解内部数据结构，因此建议小心使用原生查询。数据库表名可以通过API读取，这样可以将依赖关系减到最小。
+有时你需要更强力的查询，例如使用OR操作符查询，或者使用查询API不能满足查询条件要求。我们为这种需求提供了可以自己写SQL查询的原生查询。返回类型由使用的查询对象决定，数据也会映射到正确的对象中（Task、ProcessInstance、Execution，等等）。查询会在数据库中进行，因此你需要使用数据库中定义的表名与列名。这需要了解内部数据结构，因此建议小心使用原生查询。数据库表名可以通过API读取，这样可以将依赖关系减到最小。
 
 [source,java,linenums]
 ----
@@ -130,14 +130,14 @@ long count = taskService.createNativeTaskQuery()
 
 流程实例可以拥有变量（称作__流程变量 process variables__），用户任务以及__执行(executions)__——流程当前活动节点的指针——也可以拥有变量。流程实例可以持有任意数量的变量，每个变量都存储在__ACT_RU_VARIABLE__数据库表的一行中。
 
-任何__startProcessInstanceXXX__方法都有一个可选参数，用于在流程实例创建并启动时设置变量。例如，在__RuntimeService__中：
+所有的__startProcessInstanceXXX__方法都有一个可选参数，用于在流程实例创建并启动时设置变量。例如，在__RuntimeService__中：
 
 [source,java,linenums]
 ----
 ProcessInstance startProcessInstanceByKey(String processDefinitionKey, Map<String, Object> variables);
 ----
 
-也可以在流程执行中加入变量。例如(_RuntimeService_):
+也可以在流程执行中加入变量。例如，(_RuntimeService_):
 
 [source,java,linenums]
 ----
@@ -147,7 +147,7 @@ void setVariables(String executionId, Map<String, ? extends Object> variables);
 void setVariablesLocal(String executionId, Map<String, ? extends Object> variables);
 ----
 
-请注意可以为给定执行（请记住流程实例由一颗执行的树tree of executions组成）设置__局部(local)__变量。局部变量将只在该执行中可见，而对执行树的上层则不可见。这可以用于 数据不应该在流程实例级别传播，或者变量在流程实例的不同路径中有不同的值（例如使用并行路径时）的情况。
+请注意可以为给定执行（请记住，流程实例由一颗执行的树tree of executions组成）设置__局部(local)__变量。局部变量将只在该执行中可见，而对执行树的上层则不可见。这可以用于 数据不应该在流程实例级别传播，或者变量在流程实例的不同路径中有不同的值（例如使用并行路径时）的情况。
 
 可以用下列方法读取变量。请注意__TaskService__中有类似的方法。这意味着任务与执行一样，可以持有局部变量，其生存期为任务持续的时间。
 
@@ -175,9 +175,9 @@ execution.setVariable(String variableName, Object value);
 
 请注意也可以使用上例中方法的__局部变量__版本。
 
-由于历史（与向后兼容的）原因，当调用上述任何方法时，引擎实际上会从数据库中取出**所有**变量。也就是说，如果你有10个变量，使用__getVariable("myVariable")__获取其中的一个，实际上其他9个变量也会从数据库取出并缓存。这并不坏，因为后续的调用可以不必再读取数据库。比如，如果流程定义包含三个连续的服务任务（因此它们在同一个数据库事务里），在第一个服务任务里通过一次调用获取全部变量，也许比在每个服务任务里分别获取需要的变量要好。请注意对读取与设置变量**都是这样**。
+由于历史（与向后兼容的）原因，当调用上述任何方法时，引擎会从数据库中取出**所有**变量。也就是说，如果你有10个变量，使用__getVariable("myVariable")__获取其中的一个，实际上其他9个变量也会从数据库取出并缓存。这并不坏，因为后续的调用可以不必再读取数据库。比如，如果流程定义包含三个连续的服务任务（因此它们在同一个数据库事务里），在第一个服务任务里通过一次调用获取全部变量，也许比在每个服务任务里分别获取需要的变量要好。请注意对读取与设置变量**都是这样**。
 
-当然，如果使用大量变量，或者你希望精细控制数据库查询与流量，上述的做法就不合适了。我们引入了可以更精细控制的方法。这个方法有一个可选的参数，告诉引擎是否需要在幕后将所有变量读取并缓存：
+当然，如果使用大量变量，或者你希望精细控制数据库查询与流量，上述的做法就不合适了。我们引入了可以更精细控制的方法。这个方法有一个可选的参数，告诉引擎是否需要读取并缓存所有变量：
 
 [source,java,linenums]
 ----
@@ -195,17 +195,17 @@ void setVariable(String variableName, Object value, boolean fetchAllVariables);
 
 === 瞬时变量 Transient variables
 
-瞬时变量的行为类似普通变量，只是不会被持久化。通常来说，瞬时变量用于高级使用场景（也就是说，如果不清楚，还是使用普通流程变量为好）。
+瞬时变量的行为类似普通变量，只是不会被持久化。通常来说，瞬时变量用于高级使用场景。如果不清楚，还是使用普通流程变量为好。
 
 瞬时变量具有下列特性：
 
 * 瞬时变量完全不存储历史。
-* 与__普通__变量类似，设置瞬时变量时会存入__最上层父__中。这意味着在一个执行中设置一个变量时，瞬时变量实际上会存储在流程实例执行中。与普通变量类似，如果变量需要设置为某个执行或任务的局部变量，可以使用__局部(local)__的对应方法。
+* 与__普通__变量类似，设置瞬时变量时会存入__最上层父__中。这意味着在一个执行中设置一个变量时，瞬时变量实际上会存储在流程实例执行中。与普通变量类似，可以使用__局部(local)__的对应方法，将变量设置为某个执行或任务的局部变量。
 * 瞬时变量只能在下一个“等待状态”之前访问。之后该变量即消失。等待状态意味着流程实例会持久化至数据存储中。请注意在这个定义中，__异步__活动也是“等待状态”！
 * 只能使用__setTransientVariable(name, value)__设置瞬时变量，但是调用__getVariable(name)__也会返回瞬时变量（也有__getTransientVariable(name)__方法，它只会返回瞬时变量）。这么做可以简化表达式的撰写，并保证已有逻辑可以使用这两种类型的变量。
-* 瞬时变量__遮蔽(shadow)__同名的持久化变量。也就是说当一个流程实例中设置了同名的持久化变量与瞬时变量时，__getVariable("someVariable")__会返回瞬时变量的值。
+* 瞬时变量__屏蔽(shadow)__同名的持久化变量。也就是说当一个流程实例中设置了同名的持久化变量与瞬时变量时，__getVariable("someVariable")__会返回瞬时变量的值。
 
-在大多数使用普通变量的地方，都可以获取及/或设置瞬时变量：
+在大多数可以使用普通变量的地方，都可以获取、设置瞬时变量：
 
 * 在__JavaDelegate__实现中的__DelegateExecution__内
 * 在__ExecutionListener__实现中的__DelegateExecution__内，以及在__TaskListener__实现中的__DelegateTask__内
@@ -249,7 +249,7 @@ ProcessInstance processInstance = runtimeService.createProcessInstanceBuilder()
        .start();
 ----
 
-请注意在到达用户任务并将其持久化之前，都可以使用这些变量。例如，在'Additional Work(额外工作)'用户任务中它们就不再存在。也请注意如果'Fetch Data'是异步的，则瞬时变量在该步骤之后也不再存在。
+请注意在到达用户任务并将其持久化之前，都可以使用这些瞬时变量。例如，在'Additional Work(额外工作)'用户任务中它们就不再可用。也请注意如果'Fetch Data'是异步的，则瞬时变量在该步骤之后也不再可用。
 
 'Fetch Data'（简化版本）可以像是：
 
@@ -282,7 +282,8 @@ public static class FetchDataServiceTask implements JavaDelegate {
 
 === 表达式 Expressions
 
-Flowable使用UEL进行表达式解析。UEL代表__Unified Expression Language__，是EE6规范的一部分（查看link:$$http://docs.oracle.com/javaee/6/tutorial/doc/gjddd.html$$[EE6规范]了解更多信息）。footnote:[为了在所有环境上支持UEL标准的所有最新特性，我们在V5版本兼容引擎中，使用JUEL的修改版本。]
+Flowable使用UEL进行表达式解析。UEL代表__Unified Expression Language__，是EE6规范的一部分（查看link:$$http://docs.oracle.com/javaee/6/tutorial/doc/gjddd.html$$[EE6规范]了解更多信息）。
+
 表达式可以用于<<bpmnJavaServiceTaskXML,Java服务任务 Java Service tasks>>、<<executionListeners,执行监听器 Execution Listeners>>、<<taskListeners,任务监听器 Task Listeners>> 与 <<conditionalSequenceFlowXml,条件流 Conditional sequence flows>>等。尽管有值表达式与方法表达式两种表达式，通过Flowable的抽象，它们都可以在需要++表达式++的地方使用。
 
 * **值表达式 Value expression**: 解析为一个值。默认情况下，所有流程变量都可以使用。（若使用Spring）所有的Spring bean也可以用在表达式里。例如：
@@ -301,7 +302,7 @@ ${myBean.addNewOrder('orderName')}
 ${myBean.doSomething(myVar, execution)}
 ----
 
-请注意，表达式支持解析（包括比较）原始类型(primitive)、bean、list、数组(array)与map。
+请注意，表达式支持解析（包括进行比较）原始类型(primitive)、bean、list、数组(array)与map。
 
 除了所有流程变量外，还有一些默认对象可在表达式中使用：
 
@@ -376,7 +377,7 @@ public class MyBusinessProcessTest {
 
 当使用H2内存数据库进行单元测试时，下面的介绍可以让你在调试过程中容易地检查Flowable数据库中的数据。截图来自Eclipse，但原理应该与其他IDE相似。
 
-假设我们的单元测试的某处放置了__断点(breakpoint)__。在Eclipse里可以通过在代码左侧条上双击实现：
+假设我们的单元测试的某处放置了__断点(breakpoint)__（在Eclipse里可以通过在代码左侧条上双击实现）：
 
 image::images/api.test.debug.breakpoint.png[align="center"]
 
