@@ -1,0 +1,72 @@
+[[IDM]]
+
+== 身份管理 Identity management
+
+从Flowable V6起，将身份管理（IDM）组件从flowable引擎模块中抽出，并将其逻辑移至几个不同的模块：flowable-idm-api、flowable-idm-engine、flowable-idm-spring及flowable-idm-engine-configurator。分离IDM逻辑的主要原因，是因为它并不是Flowable引擎的核心，并且在很多将Flowable引擎嵌入应用的用例中，并不使用或需要身份管理逻辑。
+
+默认情况下，IDM引擎在Flowable引擎启动时初始化并启动。这使身份管理逻辑与Flowable V5一致。IDM引擎管理其自己的数据库表结构，并使用下列实体：
+
+* User与UserEntity，用户信息。
+* Group与GroupEntity，组信息。
+* MembershipEntity，组中的用户成员。
+* Privilege与PrivilegeEntity，权限定义（例如用于控制应用界面的访问，如Flowable Modeler与Flowable Task应用）。
+* PrivilegeMappingEntity，将用户及/或组与权限关联。
+* Token与TokenEntity，应用界面程序使用的认证令牌。
+
+由于数据库保存了历史实体以及正在执行的实例，可以考虑查询这些表，以减少对运行时流程实例数据的访问，并保证运行时执行的性能。
+
+
+[[IDM engine configuration]]
+
+
+=== IDM引擎配置 IDM engine configuration
+
+默认情况下，IDM引擎使用++org.flowable.engine.impl.cfg.IdmEngineConfigurator++启动。这个配置器使用Flowable流程引擎配置中相同的数据源配置。类似于在Flowable V5中一样，使用身份管理不需要额外的配置。
+
+如果Flowable引擎不需要身份管理逻辑，可以在流程引擎配置中禁用IDM引擎。
+
+[source,xml,linenums]
+----
+<bean id="processEngineConfiguration" class="org.flowable.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration">
+  <property name="disableIdmEngine" value="true" />
+  ...
+</bean>
+----
+
+这意味着不能使用用户与组进行查询，也不能在任务查询中，为用户读取候选组。
+
+也可以覆盖默认的IDM引擎配置器，使用自定义方式初始化IDM引擎。LDAPConfigurator的实现就是一个很好的例子。它覆盖了默认的IDM引擎，使用LDAP服务代替了默认的IDM数据库表。可以使用流程引擎配置的++idmProcessEngineConfigurator++参数，设置自定义的配置器，例如LDAPConfigurator
+
+[source,xml,linenums]
+----
+<bean id="processEngineConfiguration" class="...SomeProcessEngineConfigurationClass">
+    ...
+    <property name="idmProcessEngineConfigurator">
+      <bean class="org.flowable.ldap.LDAPConfigurator">
+
+        <!-- 服务器连接参数 Server connection params -->
+        <property name="server" value="ldap://localhost" />
+        <property name="port" value="33389" />
+        <property name="user" value="uid=admin, ou=users, o=flowable" />
+        <property name="password" value="pass" />
+
+        <!-- 查询参数 Query params -->
+        <property name="baseDn" value="o=flowable" />
+        <property name="queryUserByUserId" value="(&(objectClass=inetOrgPerson)(uid={0}))" />
+        <property name="queryUserByFullNameLike" value="(&(objectClass=inetOrgPerson)(|({0}=*{1}*)({2}=*{3}*)))" />
+        <property name="queryGroupsForUser" value="(&(objectClass=groupOfUniqueNames)(uniqueMember={0}))" />
+
+        <!-- 参数配置 Attribute config -->
+        <property name="userIdAttribute" value="uid" />
+        <property name="userFirstNameAttribute" value="cn" />
+        <property name="userLastNameAttribute" value="sn" />
+        <property name="userEmailAttribute" value="mail" />
+
+
+        <property name="groupIdAttribute" value="cn" />
+        <property name="groupNameAttribute" value="cn" />
+
+      </bean>
+    </property>
+</bean>
+----
