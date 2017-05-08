@@ -137,7 +137,8 @@ public class FieldAccessJPAEntity {
 Map<String, Object> variables = new HashMap<String, Object>();
 variables.put("entityToUpdate", entityToUpdate);
 
-ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("UpdateJPAValuesProcess", variables);
+ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(
+    "UpdateJPAValuesProcess", variables);
 ----
 
 我们流程定义的第一个节点，是一个++服务任务++，将调用++entityToUpdate++上的++setValue++方法。它将解析为我们之前启动流程实例时设置的JPA变量，并使用当前引擎的上下文关联的++EntityManager+载入。
