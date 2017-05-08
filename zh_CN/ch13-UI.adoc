@@ -42,7 +42,7 @@ datasource.username=flowable
 datasource.password=flowable
 ----
 
-This configuration will expect a flowable database to be present in the MySQL server and the UI apps will automatically generate the necessary database tables. For Postgres the following changes are necessary:
+这个配置需要MySQL服务器中有一个flowable数据库，用户界面程序会自动生成必要的数据库表。对于Postgres，需要做如下修改：
 
 [source,linenums]
 ----
@@ -52,54 +52,53 @@ datasource.username=flowable
 datasource.password=flowable
 ----
 
-In addition to changing the configuration, make sure the database driver is available on the classpath. Again, you could do this for every web application separately by adding the driver JAR file to the WEB-INF/lib folder, but you can also copy the JAR file once to the Tomcat lib folder. For MySQL and Postgres the database drivers can be downloaded from:
+除了修改配置，还需要确保在classpath中有对应的数据库驱动。类似的，你可以对每个web应用分别操作，将驱动JAR文件添加到WEB-INF/lib目录下，也可以将JAR文件拷贝一次到Tomcat的lib目录下。对于MySQL与Postgres，数据库驱动可以从这里下载：
 
 * MySQL: link:$$https://dev.mysql.com/downloads/connector/j$$[https://dev.mysql.com/downloads/connector/j]
 * Postgres: link:$$https://jdbc.postgresql.org/$$[https://jdbc.postgresql.org/]
 
-The additional configuration options are described in the table below:
+下表介绍了额外的配置选项：
 
 [options="header"]
 |===============
-|Property name|Description
-|security.rememberme.key|The hash key that is used by Spring Security to hash the password values in the applications. Make sure that you change the value of this property.
-|datasource.jndi.name|JNDI name of the data source, to be used when the datasource is configured in the servlet container instead of defining the datasource url and driver in this configuration file
-|datasource.jndi.resourceRef|Set whether the lookup occurs in a J2EE container, i.e. if the prefix "java:comp/env/" needs to be added if the JNDI name doesn't already contain it. Default is "true".
-|datasource.driver|The JDBC driver class name
-|datasource.url|The JDBC driver url
-|datasource.username|The username to be used for the JDBC connection
-|datasource.password|The password to be used for the JDBC connection
-|datasource.min-pool-size|The minimum datasource pool size
-|datasource.max-pool-size|The maximum datasource pool size
-|datasource.acquire-increment|Determines how many connections at a time c3p0 will try to acquire when the pool is exhausted
-|datasource.preferred-test-query|Defines the query that will be executed for all connection tests
-|datasource.test-connection-on-checkin|Test the connection when checking in to the pool
-|datasource.test-connection-on-checkout|Test the connection on checkout from the pool
-|datasource.max-idle-time|Seconds a Connection can remain pooled but unused before being discarded. Zero means idle connections never expire
-|datasource.max-idle-time-excess-connections|Number of seconds that Connections in excess of minPoolSize should be permitted to remain idle in the pool before being culled
-|email.host|Hostname of the email server for the Flowable Task application email service task
-|email.port|Port of the email server
-|email.useCredentials|Does the email server require authentication
-|email.username|Username for the email server connection
-|email.password|Password for the email server connection
-|flowable.process-definitions.cache.max|Defines the maximum amount of process definitions available in the process definition cache
-|admin.userid|Username of the default administrator user for the Flowable IDM application. Default is admin.
-|admin.password|Password of the default administrator user for the Flowable IDM application. Default is test.
-|admin.firstname|Firstname of the default administrator user for the Flowable IDM application. Default is Test.
-|admin.lastname|Lastname of the default administrator user for the Flowable IDM application. Default is Administrator.
-|admin.email|Email of the default administrator user for the Flowable IDM application. Default is admin@flowable.org.
-|file.upload.max.size|Maximum size of file uploads, such as attachments and model files
-|contentstorage.fs.rootFolder|Root folder location where content files will be stored, for example, task attachments or form file uploads
-|contentstorage.fs.createRoot|If the root folder doesn't exist, should the Flowable Task application create it?
-|idm.app.url|The URL to the IDM application, used for the login redirect when the cookie isn't set or is invalid, and for the user info and token info REST GET calls.
-|idm.admin.user|The username used for executing the REST calls (with basic auth) to the IDM REST services. Default is admin.
-|idm.admin.password|The password used for executing the REST calls (with basic auth) to the IDM REST services. Default is test.
-|deployment.api.url|The root URI to th REST services of the Flowable engine, used by the Flowable Modeler application to deploy the application definition BAR file to the engine. Default url for the Flowable Task application is http://localhost:8080/flowable-task/process-api
+|参数名|描述
+|security.rememberme.key|Spring Security用于hash应用的密码值的hash key。请确保修改这个参数的值。
+|datasource.jndi.name|数据源的JNDI名，用于数据源在servlet容器中定义，而非通过配置文件的数据源url及驱动定义的情况。
+|datasource.jndi.resourceRef|设置是否在J2EE容器中查找数据源JNDI。也就是说，如果JNDI名中不包含"java:comp/env/"前缀，是否需要添加它。默认为"true"。
+|datasource.driver|JDBC驱动类名
+|datasource.url|JDBC驱动url
+|datasource.username|JDBC链接的用户名
+|datasource.password|JDBC链接的密码
+|datasource.min-pool-size|最小数据源池容量
+|datasource.max-pool-size|最大数据源池容量
+|datasource.acquire-increment|决定当池耗尽时，c3p0一次尝试获取多少个链接
+|datasource.preferred-test-query|定义用于所有连接测试的查询
+|datasource.test-connection-on-checkin|在签入池时测试链接
+|datasource.test-connection-on-checkout|在从池中签出时测试链接
+|datasource.max-idle-time|链接被放弃前，可以在池中保持未使用状态的秒数。0代表空闲连接永不过期
+|datasource.max-idle-time-excess-connections|超过最小池容量的链接，在被剔除前，可以允许保持空闲的秒数
+|email.host|Flowable Task应用email服务任务使用的email服务器地址
+|email.port|email服务器的端口
+|email.useCredentials|email服务器是否需要认证
+|email.username|email服务器链接的用户名
+|email.password|email服务器链接的密码
+|flowable.process-definitions.cache.max|在流程定义缓存中保存的最大流程定义数量
+|admin.userid|Flowable IDM应用默认管理员用户的用户名。默认为admin。
+|admin.password|Flowable IDM应用默认管理员用户的密码。默认为test。
+|admin.firstname|Flowable IDM应用默认管理员用户的名字。默认为Test。
+|admin.lastname|Flowable IDM应用默认管理员用户的姓。默认为Administrator。
+|admin.email|Flowable IDM应用默认管理员用户的email。默认为 admin@flowable.org。
+|file.upload.max.size|文件上传的最大尺寸。例如附件和模型文件
+|contentstorage.fs.rootFolder|内容文件存储的根目录位置。例如任务附件或流程文件的上传
+|contentstorage.fs.createRoot|如果根目录不存在，Flowable Task应用是否需要创建它？
+|idm.app.url|IDM应用的URL，用于在cookie未设置或失效时，进行登陆重定向。也用于获取用户信息与令牌信息的REST GET调用。
+|idm.admin.user|用于向IDM REST服务执行REST请求的用户名（基本认证）。默认为admin。
+|idm.admin.password|用于向IDM REST服务执行REST请求的密码（基本认证）。默认为test。
+|deployment.api.url|Flowable引擎REST服务的根URI，由Flowable Modeler应用使用，用于向引擎部署应用定义BAR文件。Flowable Task应用的默认url为http://localhost:8080/flowable-task/process-api
 
 |===============
 
-In addition to these properties that are used by multiple Flowable web applications, the Flowable admin application has a few more properties. The full
-content of the properties file can be viewed on link:$$https://github.com/flowable/flowable-engine/blob/master/modules/flowable-ui-admin/src/main/resources/META-INF/flowable-ui-app/flowable-ui-app.properties$$[Github]. The additional properties are mainly used for defining the initial values for the REST endpoints for the different engines. The Admin application uses the initial values to make a connection to the Flowable engines, but the values can be overridden in the Admin application configuration view and these values are stored in the __ACT\_ADM\_SERVER\_CONFIG__ table. An example of the BPMN Engine REST properties is shown below:
+除了这些由多个Flowable web应用共同使用的参数之外，Flowable Admin应用还有一些其他参数。配置文件的完整内容可以在link:$$https://github.com/flowable/flowable-engine/blob/master/modules/flowable-ui-admin/src/main/resources/META-INF/flowable-ui-app/flowable-ui-app.properties$$[Github]上查看。额外参数主要用于为不同引擎定义REST终端的初始值。这些值可以在Admin应用配置界面修改，并存储在__ACT\_ADM\_SERVER\_CONFIG__表中。下面是一个BPMN引擎REST参数的例子：
 
 [source,linenums]
 ----
@@ -113,34 +112,34 @@ rest.process.app.user=admin
 rest.process.app.password=test
 ----
 
-These values can be used when the Flowable Task app (with all the Flowable engines included) is managed by the Flowable Admin application.
+这些值可以用于使用Flowable Admin应用管理Flowable Task应用（包括所有Flowable引擎）的情况。
 
 [[flowableIDMApp]]
 
-=== Flowable IDM application
+=== Flowable IDM应用 Flowable IDM application
 
-The Flowable IDM application is used by all other three Flowable web applications for authentication and authorization and is therefore required to be available when you want to run the Modeler, Task or Admin application. The Flowable IDM application is a simple identity management application and is targeted at providing single sign-on capabilities to the Flowable web applications, including providing a central place to define users, groups and privileges.
+Flowable IDM应用，用于其他三个Flowable web应用的认证与授权。因此如果你想要运行Modeler，Task或者Admin应用，就需要运行IDM应用。Flowable IDM应用是一个简单的身份管理应用，目标是为Flowable web应用提供单点登录能力，也提供了一个定义用户、组与权限的地方。
 
-The IDM application boots the IDM engine at startup and will create the identity tables as defined in the IDM engine in the datasource defined in the properties configuration.
+IDM应用在启动时启动IDM引擎，并按照配置参数中定义的数据源，创建IDM引擎中定义的身份表。
 
-When the Flowable IDM application is deployed and started, it will check if there's a user available in the ACT_ID_USER table, and if not it will use the admin.userid property to create a new default admin user in this table. It will also add all available privileges in the Flowable project to the newly created admin user:
+当Flowable IDM应用部署及启动时，将检查是否在ACT_ID_USER表中有用户。如果没有，将在表中使用admin.userid参数创建默认管理员用户。同时也将为新创建的管理员用户，添加Flowable项目中所有可用权限：
 
-* access-idm: provides the privilege to manage users, groups and privileges
-* access-admin: allows the user to login to the Flowable Admin application and manage the Flowable engines
-* access-modeler: enables access to the Flowable Modeler application
-* access-task: provides the privilege to login to the Flowable Task application
+* access-idm: 提供管理用户、组与权限的权限
+* access-admin: 使用户可以登入Flowable Admin应用，并管理Flowable引擎
+* access-modeler: 提供访问Flowable Modeler应用的权限
+* access-task: 提供登入Flowable Task应用的权限
 
-When logging in to link:$$http://localhost:8080/flowable-idm$$[http://localhost:8080/flowable-idm] with admin/test for the first time the following user overview screen is shown:
+在第一次使用admin/test登入link:$$http://localhost:8080/flowable-idm$$[http://localhost:8080/flowable-idm]时，会显示下列用户总览界面：
 
 image::images/flowable_idm_startup_screen.png[align="center"]
 
-In this screen users can be added, removed and updated. The groups section can be used to create, delete and update groups. In the group details view you can also add and remove users to and from the group. The privilege screen allows you to add and remove privileges from users and groups:
+在这个界面中，可以添加、删除与更新用户。组选项可以用于创建、删除与更新组。在组详情界面中，也可以向组添加与删除用户。权限界面让你可以为用户与组添加及删除权限：
 
 image::images/flowable_idm_privilege_screen.png[align="center"]
 
-There's no option to define new privileges yet, but you can add and remove users and groups for the existing four privileges.
+还没有定义新权限的选项，但是你可以为用户与组添加及删除已有的四个权限。
 
-In addition to the default identity tables, the IDM application can also be configured to use a LDAP server. To connect to a LDAP server, additional properties in the flowable-ui-app.properties file are needed:
+除了默认的身份表之外，IDM应用也可以配置为使用LDAP服务器。要连接至LDAP服务器，需要在flowable-ui-app.properties文件中进行额外配置：
 
 [source,linenums]
 ----
@@ -167,11 +166,11 @@ ldap.cache.groupsize=10000
 ldap.cache.groupexpiration=180000
 ----
 
-When the ldap.enabled property is set to true, the IDM app will expect the other LDAP properties to have been filled-in. In this example configuration the server configuration + LDAP queries for the Apache Directory Server are provided. For other LDAP servers, like Active Directory, other configuration values are needed.
+当ldap.enabled参数设置为true时，IDM应用将期望其他的LDAP参数也已经填入。在这个示例配置中，提供了Apache Directory服务的服务器配置 + LDAP查询。对于其他LDAP服务器，例如Active Directory，需要其他的配置值。
 
-When LDAP is configured, authentication and group retrieval for a user will be done through the LDAP server. Only privileges will still be retrieved from the Flowable identity tables. So make sure each LDAP user has the correct privileges defined in the IDM application.
+当配置了LDAP时，认证以及从组中获取用户将通过LDAP服务器实现。只有权限仍然从Flowable身份表中获取。因此需要确保每一个LDAP用户都在IDM应用中定义了正确的权限。
 
-If the IDM application is booted with LDAP configuration the bootstrap logic will check if there are already privileges present in the Flowable identity tables. If there are no privileges (only when booting the first time), the 4 default privileges will be created and the admin.userid property value (from flowable-ui-app.properties) will be used as the user id to get all 4 privileges. So make sure that the admin.userid property value is set to a valid LDAP user, otherwise nobody will be able to login to any of the Flowable UI apps.
+如果IDM应用使用LDAP配置启动，则启动逻辑将检查在Flowable身份表中是否已经存在权限。如果没有权限（只有第一次启动时会这样），则创建4个默认权限，并使用（flowable-ui-app.properties中的）admin.userid参数值作为赋予4个权限的用户id。因此请确保admin.userid参数值设置为合法的LDAP用户，否则将没有人能够登入任何Flowable用户界面应用。
 
 [[flowableModelerApp]]
 
