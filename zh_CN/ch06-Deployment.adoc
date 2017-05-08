@@ -4,14 +4,15 @@
 
 === 业务存档 Business archives
 
-要部署流程，需要将它们包装在业务存档里。业务存档是Flowable引擎的部署单元，也就是一个zip文件。可以包含BPMN 2.0流程，任务表单，规则，与其他类型的文件。总的来说，业务存档包含一组已命名的资源。
+要部署流程，需要将它们包装在业务存档(BAR)里。业务存档是Flowable引擎的部署单元，也就是一个zip文件。可以包含BPMN 2.0流程、表单定义、DMN规则，与其他类型的文件。总的来说，业务存档包含一组已命名的资源。
 
 
-当部署业务存档时，会扫描具有++.bpmn20.xml++或++.bpmn++扩展名的BPMN文件。每一个这种文件都会被解析，并可以包含多个流程定义。
+当部署业务存档时，会扫描具有++.bpmn20.xml++或++.bpmn++扩展名的BPMN文件。每一个这种文件都会被处理，并可以包含多个流程定义。
+当启用DMN引擎时，也会解析++.dmn++。当启用表单引擎时，会处理++.form++文件。
 
 [NOTE]
 ====
-业务存档中的Java类**不会添加至classpath**。业务存档中，所有流程定义使用的自定义类（例如Java服务任务service tasks或者事件监听器实现event listener implementations），都应该放在用于运行流程的flowable引擎的classpath下。
+业务存档中的Java类**不会添加至classpath**。业务存档中，所有流程定义使用的自定义类（例如Java服务任务service tasks或者事件监听器实现event listener implementations），都需要在用于运行流程的flowable引擎的classpath下。
 ====
 
 ==== 编程方式部署 Deploying programmatically
@@ -41,14 +42,14 @@ repositoryService.createDeployment()
 
 所有流程中用到的自定义类（例如服务任务、事件监听器、任务监听器等中，用到的JavaDelegate），在流程启动时，都需要存在于引擎的classpath中。
 
-然而在业务存档部署时，classpath中不是必须要有这些类。这意味着使用Ant部署新业务存档时，你的代理类不必须放在classpath中。
+然而在业务存档部署时，classpath中不是必须要有这些类。这意味着例如使用Ant部署新业务存档时，你的代理类不必须放在classpath中。
 
-当使用演示配置，且希望添加自定义类时，需要在flowable应用或flowable-rest web应用库中，添加包含有你的自定义类的jar。别忘了也要添加你的自定义类的依赖（若有）。或者，也可以将你的依赖添加到Tomcat的库文件夹，++${tomcat.home}/lib++中。
+当使用演示配置，且希望添加自定义类时，需要在flowable-task或flowable-rest 的webapp lib中，添加包含有你的自定义类的JAR。别忘了也要添加你的自定义类的依赖（若有）。或者，也可以将你的依赖添加到Tomcat的库文件夹，++${tomcat.home}/lib++中。
 
 
 ==== 在流程中使用Spring bean (Using Spring beans from a process)
 
-当在表达式或脚本中使用Spring bean时，执行该流程定义的引擎需要可以使用这些bean。如果你自行构建web应用，并按照<<springintegration,Spring集成章节>>的介绍，在上下文中配置流程引擎，就可以直接使用。但也请牢记在心，如果使用Flowable rest web应用，就需要更新它的上下文配置。用包含你的Spring上下文配置的++flowable-context.xml++文件，替换++flowable-rest/lib/flowable-cfg.jar++ jar文件中的++flowable.cfg.xml++。
+当在表达式或脚本中使用Spring bean时，执行该流程定义的引擎需要可以使用这些bean。如果你自行构建web应用，并按照<<springintegration,Spring集成章节>>的介绍，在上下文中配置流程引擎，就可以直接使用。但也请牢记在心，如果使用Flowable task和rest web应用，就需要更新它的上下文配置。
 
 ==== 创建单独应用 Creating a single app
 
@@ -60,7 +61,7 @@ repositoryService.createDeployment()
 
 === 流程定义的版本 Versioning of process definitions
 
-BPMN并没有版本的概念。这其实很好，因为可执行的BPMN流程文件很可能已经作为你的开发项目的一部分，保存在版本管理系统仓库中了（例如Subversion，Git，或者Mercurial）。流程定义的版本在部署时创建。在部署时，Flowable会在保存至Flowable数据库前，为++ProcessDefinition++指定版本。
+BPMN并没有版本的概念。这其实很好，因为可执行的BPMN流程文件很可能已经作为你的开发项目的一部分，保存在版本管理系统仓库中了（例如Subversion，Git，或者Mercurial）。然而，作为部署过程的一部分，引擎会创建流程定义的版本。在部署时，Flowable会在保存至Flowable数据库前，为++ProcessDefinition++指定版本。
 
 
 对于业务存档中的每个流程定义，下列步骤都会执行，以初始化++key++、++version++、++name++与++id++参数：
@@ -190,10 +191,10 @@ image::images/deployment.image.generation.png[align="center"]
 
 === 类别 Category
 
-部署与流程定义都可以定义类别。流程定义的类别使用BPMN文件中的++<definitions ... targetNamespace="yourCategory" .../>++设置。
+部署与流程定义都可以定义类别。流程定义的类别使用BPMN文件中targetNamespace的值设置：++<definitions ... targetNamespace="yourCategory" .../>++。
 
 
-部署的类别可用API如此设定：
+部署的类别也可用API如此设定：
 
 [source,java,linenums]
 ----
