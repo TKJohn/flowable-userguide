@@ -29,28 +29,28 @@ image::images/designer.add.update.site.png[align="center"]
 
 image::images/designer.create.flowable.project.png[align="center"]
 
-* Flowable Designer在创建新的Flowable流程图时，会创建一个.bpmn文件。当使用Flowable Diagram Editor（Flowable流程图编辑器）视图打开时，将提供图形化的模型画布与画板。这个文件也可以使用XML编辑器打开，将显示流程定义的BPMN 2.0 XML元素。因此Flowable Designer只用一个文件，既是流程图，也是BPMN 2.0 XML。请注意在Flowable 5.9版本中，还不支持使用.bpmn扩展名作为流程定义的部署包。因此Flowable Designer的"create deployment artifacts（创建部署包）"功能，将生成一个BAR文件，与一个包含.bpmn文件内容的.bpmn20.xml文件。也可以方便的自己重命名。请注意，也可以使用Flowable Diagram Editor打开.bpmn20.xml文件。
+* Flowable Designer在创建新的Flowable流程图时，会创建一个.bpmn文件。当使用Flowable Diagram Editor（Flowable流程图编辑器）视图打开时，将提供图形化的模型画布与画板。这个文件也可以使用XML编辑器打开，将显示流程定义的BPMN 2.0 XML元素。因此，Flowable Designer只用一个文件，既是流程图，也是BPMN 2.0 XML。请注意在早期版本中，不支持使用.bpmn扩展名作为流程定义的部署包。因此，可以使用Flowable Designer的"create deployment artifacts（创建部署包）"功能，生成一个BAR文件，其中有一个.bpmn20.xml文件，包含.bpmn文件的内容。也可以方便的自己重命名。请注意，也可以使用Flowable Diagram Editor打开.bpmn20.xml文件。
 
 image::images/designer.bpmn.file.png[align="center"]
 
 
-* 可以将BPMN 2.0 XML文件导入Flowable Designer，会自动创建流程图。只需要将BPMN 2.0 XML文件复制到项目中，并使用Flowable Diagram Editor视图打开它。Flowable Designer使用文件中的BPMN DI信息来创建流程图。如果BPMN 2.0 XML文件中没有BPMN DI信息，则不会创建流程图。
+* 可以将BPMN 2.0 XML文件导入Flowable Designer，会自动显示流程图。只需要将BPMN 2.0 XML文件复制到项目中，并使用Flowable Diagram Editor视图打开它。Flowable Designer使用文件中的BPMN DI信息来创建流程图。如果BPMN 2.0 XML文件中没有BPMN DI信息，会使用Flowable BPMN自动布局模块，创建流程图。
 
-image::images/designer.open.importedfile.png[align="center"]
+image::images/designer.open.importedfile.png[align="center", width="600"]
 
 * 要进行部署，可以使用Flowable Designer创建BAR文件，或JAR文件。在包浏览器中的Flowable项目上点击右键，在弹出菜单的下方选择__Create deployment artifacts（创建部署包）__选项。要了解关于Designer部署功能的更多信息，请查看<<eclipseDesignerDeployment,部署>>章节。
 
-image::images/designer.create.deployment.png[align="center"]
+image::images/designer.create.deployment.png[align="center", width="500"]
 
 
 * 生成单元测试（在包浏览器中的BPMN 2.0 XML文件上点击右键，选择__generate unit test 生成单元测试__）。将创建一个单元测试及运行在嵌入式H2数据库上的Flowable配置。这样就可以运行单元测试，来测试你的流程定义。
 
-image::images/designer.unittest.generate.png[align="center"]
+image::images/designer.unittest.generate.png[align="center", width="600"]
 
 
 * Flowable项目可以生成为Maven项目。要配置依赖，需要运行__mvn eclipse:eclipse__。请注意在流程设计时，不需要Maven依赖。只在运行单元测试时才需要依赖。
 
-image::images/designer.project.maven.png[align="center"]
+image::images/designer.project.maven.png[align="center", width="500"]
 
 
 [[eclipseDesignerBPMNFeatures]]
@@ -116,15 +116,15 @@ image::images/designer.sequence.condition.png[align="center"]
 
 在Flowable引擎上部署流程定义与任务表单并不困难。需要有一个包含有流程定义BPMN 2.0 XML文件的BAR文件，与可选的用于在Flowable应用中查看的任务表单和流程图片。在Flowable Designer中，创建BAR文件十分简单。在完成流程实现后，只要在包浏览器中的Flowable项目上点击右键，在弹出菜单下方选择**Create deployment artifacts（创建部署包）**选项。
 
-image::images/designer.create.deployment.png[align="center"]
+image::images/designer.create.deployment.png[align="center", width="600"]
 
 然后就会创建一个部署目录，包含BAR文件，与可能的JAR文件。其中JAR文件包含Flowable项目中的Java类。
 
 image::images/designer.deployment.dir.png[align="center"]
 
-这样就可以在Flowable应用的部署页签中，将这个文件上传至Flowable引擎。
+这样就可以在Flowable Admin应用的部署页签中，将这个文件上传至Flowable引擎。
 
-如果项目包含Java类，部署时要多做一些工作。在这种情况下，Flowable Designer的**Create deployment artifacts（创建部署包）**操作也会创建包含编译后类的JAR文件。这个JAR文件必须部署在Flowable Tomcat安装目录的flowable-XXX/WEB-INF/lib目录下。这将为Flowable引擎的classpath添加这些类。
+如果项目包含Java类，部署时要多做一些工作。在这种情况下，Flowable Designer的**Create deployment artifacts（创建部署包）**操作也会创建包含编译后类的JAR文件。这个JAR文件必须部署在Flowable Tomcat（或其它容器）安装目录的flowable-XXX/WEB-INF/lib目录下。这将为Flowable引擎的classpath添加这些类。
 
 
 [[eclipseDesignerExtending]]
@@ -132,7 +132,7 @@ image::images/designer.deployment.dir.png[align="center"]
 
 === 扩展Flowable Designer (Extending Flowable Designer)
 
-可以扩展Flowable Designer提供的默认功能。这段文档介绍了可以使用哪些扩展，如何使用，并提供了一些例子。在建模业务流程时，如果默认功能不能满足需要，需要额外的功能，或有领域专门需求的时候，扩展Flowable Designer就很有用。扩展Flowable Designer分为两个不同领域，扩展画板与扩展输出格式。两种方式都需要专门的方法，与不同的技术知识。
+可以扩展Flowable Designer提供的默认功能。这段文档介绍了可以使用哪些扩展，如何使用，并提供了一些例子。在建模业务流程时，如果默认功能不能满足需要，需要额外的功能，或有领域专门需求的时候，扩展Flowable Designer就很有用。扩展Flowable Designer分为两个不同领域，扩展画板与扩展输出格式。两者都需要专门的方法，与不同的技术知识。
 
 
 [NOTE]
@@ -151,14 +151,14 @@ image::images/designer.deployment.dir.png[align="center"]
 * 将你自己的形状/节点添加到已有或新建的抽屉
 * 禁用Flowable Designer提供的部分或全部BPMN 2.0默认形状，除了连线与选择工具
 
-要自定义画板，需要创建一个JAR文件，并加入Flowable Designer安装目录（后面介绍<<eclipseDesignerApplyingExtension,如何做>>）。这个JAR文件叫做__扩展（extension）__。通过编写扩展中包含的类，就能让Flowable Designer知道你需要自定义什么。要做到这个，你的类需要实现特定的接口。有一个集成类库，包含这些接口以及需要加入classpath的用于扩展的基类。
+要自定义画板，需要创建一个JAR文件，并将其加入每一个Flowable Designer的安装目录（后面介绍<<eclipseDesignerApplyingExtension,如何做>>）。这个JAR文件叫做__扩展（extension）__。通过编写扩展中包含的类，就能让Flowable Designer知道你需要自定义什么。要做到这个，你的类需要实现特定的接口。有一个集成类库，包含这些接口以及需要加入classpath的用于扩展的基类。
 
-可以在下列地方找到代码示例：Flowable源码的++projects/designer++目录下的++examples/money-tasks++目录。
+可以在下列地方找到代码示例：Flowable link:$$https://github.com/flowable/flowable-designer/tree/master/examples$$[源码]，++flowable-designer++仓库下的++examples/money-tasks++目录。
 
 
 [NOTE]
 ====
-可以使用你喜欢的任何工具设置项目，并使用你选择的构建工具构建JAR。在下面的介绍中，假设使用Eclipse Kepler或Indigo，并使用Maven（3.x）作为构建工具。但任何设置都可以创建相同的结果。
+可以使用你喜欢的任何工具设置项目，并使用你选择的构建工具构建JAR。在下面的介绍中，假设使用Eclipse Mars或Neon，并使用Maven（3.x）作为构建工具。但任何设置都可以创建相同的结果。
 ====
 
 
@@ -196,7 +196,7 @@ image::images/designer.deployment.dir.png[align="center"]
   <dependency>
     <groupId>org.flowable.designer</groupId>
     <artifactId>org.flowable.designer.integration</artifactId>
-    <version>5.12.0</version> <!-- Use the current Flowable Designer version -->
+    <version>5.22.0</version> <!-- 使用当前的Flowable Designer版本。 Use the current Flowable Designer version -->
     <scope>compile</scope>
   </dependency>
 </dependencies>
@@ -217,8 +217,8 @@ image::images/designer.deployment.dir.png[align="center"]
         <plugin>
       <artifactId>maven-compiler-plugin</artifactId>
       <configuration>
-        <source>1.5</source>
-        <target>1.5</target>
+        <source>1.8</source>
+        <target>1.8</target>
         <showDeprecation>true</showDeprecation>
         <showWarnings>true</showWarnings>
         <optimize>true</optimize>
@@ -227,7 +227,7 @@ image::images/designer.deployment.dir.png[align="center"]
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-jar-plugin</artifactId>
-      <version>2.3.1</version>
+      <version>2.3.2</version>
       <configuration>
         <archive>
           <index>true</index>
@@ -271,25 +271,24 @@ mvn eclipse:eclipse
 
 * 创建扩展JAR（例如，使用Maven构建时，在项目中运行mvn install）后，需要将扩展传递至Flowable Designer安装的计算机；
 * 将扩展存储在硬盘上，方便记忆的位置。__请注意：__必须保存在Flowable Designer的Eclipse工作空间之外——将扩展保存在工作空间内，会导致弹出错误消息弹框，扩展将不可用；
-* 启动Flowable Designer，从菜单中，选择++Window++ > ++Preferences++
+* 启动Flowable Designer，从菜单中，选择++Window++ > ++Preferences++，或++Eclipse++ > ++Preferences++
 * 在Preferences界面，键入++user++作为关键字。将可以看到在Eclipse中++Java++段落内，++User Libraries++的选项。
 
-image::images/designer.preferences.userlibraries.png[align="center"]
+image::images/designer.preferences.userlibraries.png[align="center", width="250"]
 
 
 * 选择++User Libraries++选项，将在右侧显示树形界面，可以添加库。应该可以看到一个默认组，可以用于添加Flowable Designer的扩展（根据Eclipse安装不同，也可能看到几个其他的）。
 
-image::images/designer.preferences.userlibraries.flowable.empty.png[align="center"]
+image::images/designer.preferences.userlibraries.flowable.empty.png[align="center", width="600"]
 
 
-* 选择++Flowable Designer Extensions++组，并点击++Add JARs...++按钮。跳转至存储扩展的目录，并选择希望添加的扩展文件。完成后，配置界面会将扩展作为++Flowable Designer Extensions++组的成员进行显示，像下面这样。
+* 选择++Flowable Designer Extensions++组，并点击++Add JARs...++或++Add External JARs++按钮。跳转至存储扩展的目录，并选择希望添加的扩展文件。完成后，配置界面会将扩展作为++Flowable Designer Extensions++组的成员进行显示，像下面这样。
 
-image::images/designer.preferences.userlibraries.flowable.moneytasks.png[align="center"]
-
+image::images/designer.preferences.userlibraries.flowable.moneytasks.png[align="center", width="600"]
 
 * 点击++OK++按钮保存并关闭配置对话框。++Flowable Designer Extensions++会自动添加至你创建的新Flowable项目。可以在导航条或包管理器的项目树下的用户库条目中看到。如果工作空间中已经有了Flowable项目，也可以看到组中显示了新扩展，像下面这样。
 
-image::images/designer.userlibraries.project.png[align="center"]
+image::images/designer.userlibraries.project.png[align="center", width="400"]
 
 打开的流程图将在其画板上显示新扩展的图形（或者禁用部分图形，取决于扩展中的配置）。如果已经打开了流程图，关闭并重新打开就能在画板上看到变化。
 
@@ -326,7 +325,7 @@ private String accountNumber;
 
 可以使用多种++PropertyType++值，在<<eclipseDesignerPropertyTypes,这个章节>>中详细描述。可以通过将required属性设置为true，将一个字段设为必填。如果用户没有填写这个字段，将会提示消息，背景也会变红。
 
-如果想要确保类中多个参数在参数界面上的显示顺序，需要指定++@Property++注解的order属性。
+如果想要调整类中多个参数在参数界面上的显示顺序，需要指定++@Property++注解的order属性。
 
 可以看到有个++@Help++注解，它用于为用户提供一些填写字段的指导。也可以在类本身上使用++@Help++注解——这个信息将在显示给用户的参数表格最上面显示。
 
@@ -341,24 +340,22 @@ private String accountNumber;
  * @since 1.0.0
  */
 @Runtime(javaDelegateClass = "org.acme.runtime.AcmeMoneyJavaDelegation")
-@Help(displayHelpShort = "创建一个新的账户 Creates a new account", displayHelpLong = "使用给定的账户编码，创建一个新的账户 Creates a new account using the account number specified")
+@Help(displayHelpShort = "创建一个新的账户 Creates a new account",
+  displayHelpLong = "使用给定的账户编码，创建一个新的账户 Creates a new account using the account number specified")
 public class AcmeMoneyTask extends AbstractCustomServiceTask {
 
-  private static final String HELP_ACCOUNT_NUMBER_LONG = "提供一个可用作账户编码的编码。 Provide a number that is suitable as an account number.";
+  private static final String HELP_ACCOUNT_NUMBER_LONG =
+       "提供一个可用作账户编码的编码。 Provide a number that is suitable as an account number.";
 
   @Property(type = PropertyType.TEXT, displayName = "Account Number", required = true)
   @Help(displayHelpShort = "提供一个账户编码 Provide an account number", displayHelpLong = HELP_ACCOUNT_NUMBER_LONG)
   private String accountNumber;
 
   @Property(type = PropertyType.MULTILINE_TEXT, displayName = "Comments")
-  @Help(displayHelpShort = "提供备注 Provide comments", displayHelpLong = "可以为节点添加备注，以提供详细说明。 You can add comments to the node to provide a brief description.")
+  @Help(displayHelpShort = "提供备注 Provide comments", displayHelpLong =
+      "可以为节点添加备注，以提供详细说明。 You can add comments to the node to provide a brief description.")
   private String comments;
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.flowable.designer.integration.servicetask.AbstractCustomServiceTask #contributeToPaletteDrawer()
-   */
   @Override
   public String contributeToPaletteDrawer() {
     return "Acme Corporation";
@@ -369,11 +366,6 @@ public class AcmeMoneyTask extends AbstractCustomServiceTask {
     return "Money node";
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.flowable.designer.integration.servicetask.AbstractCustomServiceTask #getSmallIconPath()
-   */
   @Override
   public String getSmallIconPath() {
     return "icons/coins.png";
@@ -383,7 +375,7 @@ public class AcmeMoneyTask extends AbstractCustomServiceTask {
 
 如果使用这个图形扩展Flowable Designer，画板与相应的图形将像是这样：
 
-image::images/designer.palette.add.money.png[align="center"]
+image::images/designer.palette.add.money.png[align="center", width="250"]
 
 money任务的参数界面在下面显示。请注意++accountNumber++字段的必填信息。
 
@@ -475,8 +467,10 @@ image::images/designer.property.boolean.choice.png[align="center"]
 [source,java,linenums]
 ----
 @Property(type = PropertyType.RADIO_CHOICE, displayName = "提款限额 Withdrawl limit", required = true)
-@Help(displayHelpShort = "最大每日提款限额 The maximum daily withdrawl amount ", displayHelpLong = "选择从该账户中每日最大能提取的额度。 Choose the maximum daily amount that can be withdrawn from the account.")
-@PropertyItems({ LIMIT_LOW_LABEL, LIMIT_LOW_VALUE, LIMIT_MEDIUM_LABEL, LIMIT_MEDIUM_VALUE, LIMIT_HIGH_LABEL, LIMIT_HIGH_VALUE })
+@Help(displayHelpShort = "最大每日提款限额 The maximum daily withdrawl amount ",
+    displayHelpLong = "选择从该账户中每日最大能提取的额度。 Choose the maximum daily amount that can be withdrawn from the account.")
+@PropertyItems({ LIMIT_LOW_LABEL, LIMIT_LOW_VALUE, LIMIT_MEDIUM_LABEL, LIMIT_MEDIUM_VALUE,
+    LIMIT_HIGH_LABEL, LIMIT_HIGH_VALUE })
 private String withdrawlLimit;
 ----
 
@@ -494,10 +488,12 @@ image::images/designer.property.radio.choice.invalid.png[align="center"]
 [source,java,linenums]
 ----
 @Property(type = PropertyType.COMBOBOX_CHOICE, displayName = "账户类型 Account type", required = true)
-@Help(displayHelpShort = "账户的类型 The type of account", displayHelpLong = "从选项列表中选择账户的类型 Choose a type of account from the list of options")
-@PropertyItems({ ACCOUNT_TYPE_SAVINGS_LABEL, ACCOUNT_TYPE_SAVINGS_VALUE, ACCOUNT_TYPE_JUNIOR_LABEL, ACCOUNT_TYPE_JUNIOR_VALUE, ACCOUNT_TYPE_JOINT_LABEL,
-  ACCOUNT_TYPE_JOINT_VALUE, ACCOUNT_TYPE_TRANSACTIONAL_LABEL, ACCOUNT_TYPE_TRANSACTIONAL_VALUE, ACCOUNT_TYPE_STUDENT_LABEL, ACCOUNT_TYPE_STUDENT_VALUE,
-  ACCOUNT_TYPE_SENIOR_LABEL, ACCOUNT_TYPE_SENIOR_VALUE })
+@Help(displayHelpShort = "账户的类型 The type of account",
+    displayHelpLong = "从选项列表中选择账户的类型 Choose a type of account from the list of options")
+@PropertyItems({ ACCOUNT_TYPE_SAVINGS_LABEL, ACCOUNT_TYPE_SAVINGS_VALUE, ACCOUNT_TYPE_JUNIOR_LABEL,
+    ACCOUNT_TYPE_JUNIOR_VALUE, ACCOUNT_TYPE_JOINT_LABEL, ACCOUNT_TYPE_JOINT_VALUE,
+    ACCOUNT_TYPE_TRANSACTIONAL_LABEL, ACCOUNT_TYPE_TRANSACTIONAL_VALUE, ACCOUNT_TYPE_STUDENT_LABEL,
+    ACCOUNT_TYPE_STUDENT_VALUE, ACCOUNT_TYPE_SENIOR_LABEL, ACCOUNT_TYPE_SENIOR_VALUE })
 private String accountType;
 ----
 
@@ -515,7 +511,8 @@ image::images/designer.property.combobox.choice.invalid.png[align="center"]
 [source,java,linenums]
 ----
 @Property(type = PropertyType.DATE_PICKER, displayName = "过期日期 Expiry date", required = true)
-@Help(displayHelpShort = "账户过期的日期 The date the account expires ", displayHelpLong = "选择一个日期，如果账户未在该日期前展期，则将过期。 Choose the date when the account will expire if no extended before the date.")
+@Help(displayHelpShort = "账户过期的日期 The date the account expires ",
+    displayHelpLong = "选择一个日期，如果账户未在该日期前展期，则将过期。 Choose the date when the account will expire if no extended before the date.")
 @DatePickerProperty(dateTimePattern = "MM-dd-yyyy", swtStyle = 32)
 private String expiryDate;
 ----
@@ -537,7 +534,7 @@ image::images/designer.property.date.picker.png[align="center"]
 private List<GroceryListItem> groceryList;
 ----
 
-与++CustomServiceTask++一样，当使用数据表格时，"itemClass"可以使用相同的注解指定字段类型，目前支持++TEXT++，+$$MULTILINE_TEXT$$+ 与++PERIOD++。你会注意到不论其++PropertyType++是什么，表格都会为每个字段创建一个单行文本控件。这是为了表格保持整洁与可读。如果考虑下++PERIOD++这种++PropertyType++的显示模式，就可以想象出它绝不适合在表格的单元格中显示。对于 +$$MULTILINE_TEXT$$+ 与++PERIOD++，会为每个字段添加双击机制，并会为该++PropertyType++弹出更大的编辑器。数值将在用户点击OK后存储至字段，因此可以在表格中显示。
+与++CustomServiceTask++一样，"itemClass"可以使用相同的注解指定字段类型（除了数据表格）。目前支持++TEXT++，+$$MULTILINE_TEXT$$+ 与++PERIOD++。你会注意到不论其++PropertyType++是什么，表格都会为每个字段创建一个单行文本控件。这是为了表格保持整洁与可读。如果考虑下++PERIOD++这种++PropertyType++的显示模式，就可以想象出它绝不适合在表格的单元格中显示。对于 +$$MULTILINE_TEXT$$+ 与++PERIOD++，会为每个字段添加双击机制，并会为该++PropertyType++弹出更大的编辑器。数值将在用户点击OK后存储至字段，因此可以在表格中显示。
 
 必选属性使用与普通++TEXT++字段类似的方式处理，当任何字段失去焦点时，会验证整个表格。验证失败的单元格，背景色将变为浅红色。
 
@@ -554,7 +551,7 @@ image::images/designer.property.datagrid.png[align="center"]
 
 ===== 在画板中禁用默认图形 Disabling default shapes in the palette
 
-这种自定义需要在你的扩展中引入一个实现了++DefaultPaletteCustomizer++接口的类。不应该直接实现这个接口，而要扩展++AbstractDefaultPaletteCustomizer++基类。目前，这个类不提供任何功能，但++DefaultPaletteCustomizer++未来的版本中会提供更多功能，这样基类将提供更多合理的默认值，这样你的扩展将在未来的版本中更好用。
+这种自定义需要在你的扩展中引入一个实现了++DefaultPaletteCustomizer++接口的类。不应该直接实现这个接口，而要扩展++AbstractDefaultPaletteCustomizer++基类。目前，这个类不提供任何功能，但++DefaultPaletteCustomizer++未来的版本中会提供更多功能，这样基类将提供更多合理的默认值。因此最好使用它的子类，这样你的扩展将可以兼容未来的版本。
 
 扩展++AbstractDefaultPaletteCustomizer++需要实现一个方法，++disablePaletteEntries()++，并必须返回一个++PaletteEntry++值的list。请注意如果从默认集合中移除图形，导致某个抽屉中没有图形，则该抽屉也会被移除。如果需要禁用所有的默认图形，只需要在结果中添加++PaletteEntry.ALL++。作为例子，下面的代码禁用了画板中的手动任务和脚本任务图形。
 
@@ -562,11 +559,6 @@ image::images/designer.property.datagrid.png[align="center"]
 ----
 public class MyPaletteCustomizer extends AbstractDefaultPaletteCustomizer {
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.flowable.designer.integration.palette.DefaultPaletteCustomizer#disablePaletteEntries()
-   */
   @Override
   public List<PaletteEntry> disablePaletteEntries() {
     List<PaletteEntry> result = new ArrayList<PaletteEntry>();
@@ -588,11 +580,6 @@ image::images/designer.palette.disable.manual.and.script.png[align="center"]
 ----
 public class MyPaletteCustomizer extends AbstractDefaultPaletteCustomizer {
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.flowable.designer.integration.palette.DefaultPaletteCustomizer#disablePaletteEntries()
-   */
   @Override
   public List<PaletteEntry> disablePaletteEntries() {
     List<PaletteEntry> result = new ArrayList<PaletteEntry>();
@@ -619,7 +606,7 @@ image::images/designer.palette.disable.all.png[align="center"]
 
 Flowable Designer可以编写用于验证流程图的扩展。默认情况已经可以在工具中验证BPMN结构，但你也可以添加自己的，如果希望验证额外的条目，例如建模约定，或者++CustomServiceTask++中的参数值。这些扩展被称作++Process Validators++。
 
-也可以在Flowable Designer保存流程图时，发布为其它格式。这些扩展被称作++Export Marshallers++，将在每次用户进行保存操作时，由Flowable Designer自动调用。这个行为可以在Eclipse配置对话框中，为每一种扩展检测出的格式，分别启用或禁用。Designer会根据用户的配置，确保在保存流程图时，调用你的++ExportMarshaller++。
+也可以自定义配置，在Flowable Designer保存流程图时，发布为其它格式。这些扩展被称作++Export Marshallers++，将在每次用户进行保存操作时，由Flowable Designer自动调用。这个行为可以在Eclipse配置对话框中，为每一种扩展检测出的格式，分别启用或禁用。Designer会根据用户的配置，确保在保存流程图时，调用你的++ExportMarshaller++。
 
 通常，会想要将++ProcessValidator++与++ExportMarshaller++一起使用。例如有一些++CustomServiceTask++，带有一些希望在流程中使用的参数。然而，在生成流程前，希望验证其中一些值。联合使用++ProcessValidator++与++ExportMarshaller++是最佳的方式，Flowable Designer也允许你无缝拼接扩展。
 
@@ -646,14 +633,9 @@ Flowable Designer可以编写用于验证流程图的扩展。默认情况已经
 clearMarkersForDiagram();
 ----
 
-也需要使用（++DiagramWorkerContext++中）提供的进度监控，将你的进度报告给用户，因为验证与/或保存操作可能花费很多时间，而用户只能等待。报告进度需要了解如何使用Eclipse的功能。查看link:$$http://www.eclipse.org/articles/Article-Progress-Monitors/article.html$$[这篇文章]了解详细概念与用法。
+也需要使用（++DiagramWorkerContext++中）提供的进度监控，将你的进度报告给用户，因为验证与保存操作可能花费很多时间，而用户只能等待。报告进度需要了解如何使用Eclipse的功能。查看link:$$http://www.eclipse.org/articles/Article-Progress-Monitors/article.html$$[这篇文章]了解详细概念与用法。
 
 ===== 创建ProcessValidator扩展 Creating a ProcessValidator extension
-
-[NOTE]
-====
-审核中！
-====
 
 在你的++plugin.xml++文件中，创建一个++org.flowable.designer.eclipse.extension.validation.ProcessValidator++扩展点的扩展。这个扩展点需要扩展++AbstractProcessValidator++类。
 
@@ -677,7 +659,7 @@ public class AcmeProcessValidator extends AbstractProcessValidator {
 }
 ----
 
-需要实现一些方法。最重要的是实现++getValidatorId()++，为验证器返回全局唯一ID。这将使你可以在++ExportMarshaller++中调用它，或者在其他++ExportMarshaller++中让其他人调用你的验证器。实现++getValidatorName()++，为验证器返回逻辑名字。这个名字将在对话框中显示给用户。++getFormatName()++可以返回这个验证器通常验证的流程图类型。
+需要实现一些方法。最重要的是实现++getValidatorId()++，为验证器返回全局唯一ID。这将使你可以在++ExportMarshaller++中调用它，或者允许其他++ExportMarshaller++调用你的验证器。实现++getValidatorName()++，为验证器返回逻辑名字。这个名字将在对话框中显示给用户。++getFormatName()++可以返回这个验证器通常验证的流程图类型。
 
 验证工作通过++validateDiagram()++方法实现。从这里开始，就是你自己的功能代码了。然而，通常你会想从获取流程中的所有节点开始，这样就可以迭代访问，收集、比较与验证数据了。这段代码展示了如何进行这些操作：
 
