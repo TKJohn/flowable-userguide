@@ -2,7 +2,67 @@
 
 == 表单 Forms
 
-Flowable提供了一个方便灵活的方法，为你的业务流程的人工步骤添加表单。我们支持两种使用表单的方式：表单参数的内置表单渲染，以及外部表单渲染。
+Flowable提供了简便快捷的方法向你的业务流程中的人工步骤添加表单。
+我们支持两种表单策略：使用表单定义（由表单设计器创建）的内建表单渲染，以及外部表单渲染。
+对于外部表单渲染策略，可以使用表单参数（类似在V5版本中的Explorer web应用支持的），也可以使用表单key定义指向外部的、可以使用自定义代码解析的表单引用。
+
+[[formDefinition]]
+
+=== 表单定义 Form definition
+
+关于表单定义与Flowable表单引擎的完整信息，可以在link:$$http://flowable.org/docs/userguide-form/$$[表单引擎用户手册]中找到。link:$$https://tkjohn.github.io/flowable-userguide-form/$$[翻译地址]。
+表单定义可以由Flowable表单设计器创建，这个表单设计器是Flowable Modeler web应用的一部分。也可以手动使用JSON编辑器创建。
+表单引擎用户手册介绍了表单定义JSON的完整结构。支持下列表单字段类型：
+
+* Text: 渲染为文本框
+* Multiline text: 渲染为多行文本框
+* Number: 渲染为只允许数字值的文本框
+* CheckBox: 渲染为复选框
+* Date: 渲染为日期框
+* Dropdown: 渲染为下拉选择框，候选值由字段定义配置
+* Radio buttons: 渲染为单选按钮，候选值由字段定义配置
+* People: 渲染为选人框，可以选择认证用户表中的用户
+* Group of people: 渲染为选组框，可以选择认证组表中的组
+* Upload: 渲染为上传框
+* Expression: 渲染为一个标签，可以在标签文字中使用JUEL表达式，以使用变量及/或其他动态值
+
+Flowable Task应用可以使用表单定义JSON，渲染出html表单。也可以使用Flowable API，自行获取表单定义JSON。
+
+[source,java,linenums]
+----
+FormModel RuntimeService.getStartFormModel(String processDefinitionId, String processInstanceId)
+----
+
+或
+
+[source,java,linenums]
+----
+FormModel TaskService.getTaskFormModel(String taskId)
+----
+
+FormModel对象是一个代表了表单定义JSON的Java对象。
+
+要使用启动表单定义，启动一个流程实例，可以调用下列API：
+
+[source,java,linenums]
+----
+ProcessInstance RuntimeService.startProcessInstanceWithForm(String processDefinitionId, String outcome,
+    Map<String, Object> variables, String processInstanceName)
+----
+
+如果一个表单定义定义在流程定义的（某一个）启动事件上，则这个方法可以使用启动表单中填写的值，启动一个流程实例。
+Flowable Task应用也使用这个方法，用一个表单启动一个流程实例。
+所有需要的表单值，都通过变量map传入，也可以提供可选的表单输出字符串与流程实例名。
+
+类似的，可以调用下列API，使用一个表单，完成一个用户任务：
+
+[source,java,linenums]
+----
+void TaskService.completeTaskWithForm(String taskId, String formDefinitionId,
+    String outcome, Map<String, Object> variables)
+----
+
+再次强调，要获取关于表单定义的更多信息，请查看link:$$http://flowable.org/docs/userguide-form/$$[表单引擎用户手册]。link:$$https://tkjohn.github.io/flowable-userguide-form/$$[翻译地址]。
 
 
 [[formProperties]]
