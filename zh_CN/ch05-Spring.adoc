@@ -28,7 +28,7 @@
 我们会一步一步地解释(Flowable)发行版里，Spring示例中的++SpringTransactionIntegrationTest++。下面是我们示例中使用的Spring配置文件（SpringTransactionIntegrationTest-context.xml）。下面的小节包含了dataSource(数据源)，transactionManager(事务管理器)，processEngine(流程引擎)与Flowable引擎服务。
 
 
-将DataSource传递给++SpringProcessEngineConfiguration++（使用“dataSource”参数）时，Flowable会在内部使用++org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy++对得到的数据源进行包装（wrap）。这是为了保证从数据源获取的SQL连接与Spring的事务可以协同工作。也就是说不需要在Spring配置中对数据源进行代理（proxy）。尽管仍然可以将++TransactionAwareDataSourceProxy++传递给++SpringProcessEngineConfiguration++——在这种情况下，不会再进行包装。
+将DataSource传递给++SpringProcessEngineConfiguration++（使用“dataSource”参数）时，Flowable会在内部使用++org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy++对得到的数据源进行包装（wrap）。这是为了保证从数据源获取的SQL连接与Spring的事务可以协同工作。也就是说不需要在Spring配置中对数据源进行代理（proxy）。但仍然可以将++TransactionAwareDataSourceProxy++传递给++SpringProcessEngineConfiguration++——在这种情况下，不会再进行包装。
 
 **请确保如果自行在Spring配置中声明了++TransactionAwareDataSourceProxy++，则不要将它用在已经配置Spring事务的资源上（例如DataSourceTransactionManager与JPATransactionManager需要的是未代理的数据源）。**
 
@@ -38,9 +38,12 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
-                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-                           http://www.springframework.org/schema/tx      http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                             http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                             http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.springframework.org/schema/tx
+                             http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
   <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
     <property name="driverClass" value="org.h2.Driver" />
@@ -91,7 +94,7 @@
 </beans>
 ----
 
-可以使用任何Spring的方式创建应用上下文(application context)。在这个例子中，可以使用classpath中的XML资源配置来创建Spring应用上下文：
+可以使用任何Spring支持的方式创建应用上下文(application context)。在这个例子中，可以使用classpath中的XML资源配置来创建Spring应用上下文：
 
 [source,java,linenums]
 ----
@@ -103,7 +106,8 @@ ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationC
 
 [source,java,linenums]
 ----
-@ContextConfiguration("classpath:org/flowable/spring/test/transaction/SpringTransactionIntegrationTest-context.xml")
+@ContextConfiguration
+  ("classpath:org/flowable/spring/test/transaction/SpringTransactionIntegrationTest-context.xml")
 ----
 
 
@@ -334,7 +338,7 @@ Spring Boot是一个应用框架，按照link:$$http://projects.spring.io/spring
 
 要获得更多关于Spring Boot的信息，请查阅link:$$http://projects.spring.io/spring-boot/$$[http://projects.spring.io/spring-boot/]
 
-Flowable与Spring Boot的集成目前只是试验性的。我们已经与Spring的提交者共同开发，但为时尚早。我们欢迎试用并提供反馈。
+Flowable与Spring Boot的集成目前是我们与Spring的提交者共同开发的。
 
 ==== 兼容性 Compatibility
 
@@ -464,12 +468,11 @@ public class MyApplication {
                 	+ repositoryService.createProcessDefinitionQuery().count());
                 System.out.println("Number of tasks : " + taskService.createTaskQuery().count());
                 runtimeService.startProcessInstanceByKey("oneTaskProcess");
-                System.out.println("Number of tasks after process start: " + taskService.createTaskQuery().count());
+                System.out.println("Number of tasks after process start: "
+                   + taskService.createTaskQuery().count());
             }
         };
-
     }
-
 }
 ----
 
@@ -529,7 +532,7 @@ org.flowable.engine.impl.db.DbSqlSession   : performing create on identity with 
 
 ==== REST支持 (REST support)
 
-通常在嵌入的Flowable引擎之上，需要提供REST API（用于与公司的不同服务交互）。Spring Boot让这变得很容易。在classpath中添加下列依赖：
+通常在嵌入的Flowable引擎之上，使用REST API（用于与公司的不同服务交互）。Spring Boot让这变得很容易。在classpath中添加下列依赖：
 
 [source,xml,linenums]
 ----
@@ -540,7 +543,7 @@ org.flowable.engine.impl.db.DbSqlSession   : performing create on identity with 
 </dependency>
 ----
 
-创建一个新的Spring服务类，并创建两个方法：一个用于启动流程，另一个用于获得给定任务办理人的任务列表。在这里我们简单地包装了Flowable调用，但很明显在实际使用场景中会比这复杂得多。
+创建一个新的Spring服务类，并创建两个方法：一个用于启动流程，另一个用于获得给定任务办理人的任务列表。在这里我们简单地包装了Flowable调用，但在实际使用场景中会比这复杂得多。
 
 [source,java,linenums]
 ----
@@ -855,5 +858,3 @@ curl http://localhost:8080/tasks?assignee=1
 * Spring Integration支持
 * Rest API集成：启动Spring应用中嵌入的Flowable Rest API
 * Spring Security支持
-
-目前这些领域都是初版，未来会不断演进。
