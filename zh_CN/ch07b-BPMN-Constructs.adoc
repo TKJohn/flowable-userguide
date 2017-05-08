@@ -10,16 +10,16 @@
 === 自定义扩展 Custom extensions
 
 
-BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不需要因为依赖专利解决方案，而被供应商“绑架”。Flowable之类的开源框架，也可以提供与大型供应商的解决方案相同（经常是更好;-）的实现。有了BPMN 2.0标准，从大型供应商解决方案向Flowable的转变，就变得简单平滑。
+BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不需要因为依赖专有解决方案，而被供应商“绑架”。Flowable之类的开源框架，也可以提供与大型供应商的解决方案相同（经常是更好;-）的实现。有了BPMN 2.0标准，从大型供应商解决方案向Flowable的转变，就可以变得简单平滑。
 
-然而标准的缺点，是它通常是不同公司（不同观点）大量讨论与妥协的结果。作为阅读BPMN 2.0 XML流程定义的开发者，有时会觉得某些结构或做事方法太笨重了。Flowable将开发者的感受放在最高优先，因此引入了一些**'Flowable BPMN extensions（扩展）'**。这些“扩展”并不在BPMN 2.0规格中，有些是新结构，有些是对特定结构的简化。
+然而标准的缺点，是它通常是不同公司（不同观点）大量讨论与妥协的结果。作为阅读BPMN 2.0 XML流程定义的开发者，有时会觉得某些结构或做事方法十分笨重。Flowable将开发者的感受放在最高优先，因此引入了一些**'Flowable BPMN extensions（扩展）'**。这些“扩展”并不在BPMN 2.0规格中，有些是新结构，有些是对特定结构的简化。
 
 尽管BPMN 2.0规格明确指出可以支持自定义扩展，我们仍做了如下保证：
 
 * 自定义扩展的前提是，**做事情的标准方式****总**可以进行更简化的改造。因此当你决定使用自定义扩展时，不用担心无路可退（仍然可以用标准方式）。
-* 使用自定义扩展时，总是通过为新的XML元素、属性等提供**flowable:**命名空间前缀，明确标识出来。
+* 使用自定义扩展时，总是通过为新的XML元素、属性等提供**flowable:**命名空间前缀，明确标识出来。请注意Flowable引擎也支持**activiti:**命名空间前缀。
 
-因此是否使用自定义扩展，完全取决于你自己。有些其他因素会影响选择（图形化编辑器的使用，公司策略，等等）。我们提供扩展，只是因为相信，标准中的某些地方可以用更简单或效率更高的方式处理。请不要吝啬给我们反馈对扩展的评价（正面的和/或负面的），也可以给我们提供关于自定义扩展的新想法。说不定某一天，你的想法会成为规范的一部分！
+因此是否使用自定义扩展，完全取决于你自己。有些其他因素会影响选择（图形化编辑器的使用，公司策略，等等）。我们提供扩展，只是因为相信，标准中的某些地方可以用更简单或效率更高的方式处理。请不要吝啬给我们反馈对扩展的评价（正面的或负面的），也可以给我们提供关于自定义扩展的新想法。说不定某一天，你的想法会成为规范的一部分！
 
 
 [[bpmnEvents]]
@@ -28,7 +28,7 @@ BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不
 
 事件通常用于为流程生命周期中发生的事情建模。事件总是图形化为圆圈。在BPMN 2.0中，有两种主要的事件分类：__捕获（catching）__与__抛出（throwing）__事件。
 
-* **捕获:** 当流程执行到达这个事件时，会等待直到触发器动作。触发器的类型，由其中的图标，或者说XML中的类型声明而定义。捕获事件与抛出事件显示上的区别，是其内部的图标没有填充（也就是说，是白色的）。
+* **捕获:** 当流程执行到达这个事件时，会等待直到触发器动作。触发器的类型，由其中的图标，或者说XML中的类型声明而定义。捕获事件与抛出事件显示上的区别，是其内部的图标没有填充（即白色的）。
 * **抛出:** 当流程执行到达这个事件时，会触发一个触发器。触发器的类型，由其中的图标，或者说XML中的类型声明而定义。抛出事件与捕获事件显示上的区别，是其内部的图标填充为黑色。
 
 [[eventDefinitions]]
@@ -36,7 +36,7 @@ BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不
 
 ==== 事件定义 Event Definitions
 
-事件定义，定义了事件的语义。没有事件定义的话，事件就“不做什么特别的事情”。例如一个没有事件定义的开始事件，并不限定具体是什么启动了流程。如果为这个开始事件添加事件定义（例如定时器事件定义），就声明了启动流程的“类型”（例如对于定时器事件定义，就是到达了特定的时间点）。
+事件定义，定义了事件的语义。没有事件定义的话，事件就“不做什么特别的事情”。例如，一个没有事件定义的开始事件，并不限定具体是什么启动了流程。如果为这个开始事件添加事件定义（例如定时器事件定义），就声明了启动流程的“类型”（例如对于定时器事件定义，就是到达了特定的时间点）。
 
 
 [[timerEventDefinitions]]
@@ -44,7 +44,7 @@ BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不
 
 ==== 定时器事件定义 Timer Event Definitions
 
-定时器事件，是由定义的定时器触发的事件。可以用于<<bpmnTimerStartEvent,开始事件 start event>>，<<bpmnIntermediateCatchingEvent,中间事件 intermediate event>>，或<<bpmnTimerBoundaryEvent,边界事件 boundary event>>。定时器事件的行为，取决于所使用的业务日历（business calendar）。定时器事件有默认的业务日历，但也可以为每个定时器事件定义，定义业务日历。
+定时器事件，是由定义的定时器触发的事件。可以用于<<bpmnTimerStartEvent,开始事件 start event>>，<<bpmnIntermediateCatchingEvent,中间事件 intermediate event>>，或<<bpmnTimerBoundaryEvent,边界事件 boundary event>>。定时器事件的行为，取决于所使用的业务日历（business calendar）。定时器事件有默认的业务日历，但也可以为每个定时器事件定义，单独定义业务日历。
 
 [source,xml,linenums]
 ----
@@ -86,9 +86,9 @@ BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不
 </timerEventDefinition>
 ----
 
-也可以指定__endDate__，作为__timeCycle__的可选属性，或者像这样直接写在时间表达式的结尾：++R3/PT10H/${EndDate}++。
+* 也可以指定__endDate__，作为__timeCycle__的可选属性，或者像这样直接写在时间表达式的结尾：++R3/PT10H/${EndDate}++。
 当到达endDate时，应用会停止，并为该任务创建其他作业。
-可以使用link:$$http://en.wikipedia.org/wiki/ISO_8601#Dates$$[ISO 8601]标准的静态值，比如__"2015-02-25T16:42:11+00:00"__。也可以使用变量__${EndDate}__
+可以使用link:$$http://en.wikipedia.org/wiki/ISO_8601#Dates$$[ISO 8601]标准的静态值，比如__"2015-02-25T16:42:11+00:00"__。也可以使用变量，例如__${EndDate}__
 
 [source,xml,linenums]
 ----
@@ -113,7 +113,7 @@ BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不
 
 **请注意:** 与普通的Unix cron不同，第一个符号代表的是秒。
 
-重复时间周期更适用于使用相对时间，也就是从某个特定时间点开始计算（比如用户任务开始的时间）。而cron表达式可以使用绝对时间，因此绝对适合用于<<timerStartEventDescription,定时启动事件 timer start events>>。
+重复时间周期更适用于使用相对时间，也就是从某个特定时间点开始计算（比如用户任务开始的时间）。而cron表达式可以使用绝对时间，因此更适合用于<<timerStartEventDescription,定时启动事件 timer start events>>。
 
 
 可以在定时事件定义中使用表达式，也就是使用流程变量调整定时器定义。这个流程变量必须是包含合适时间格式的字符串，ISO 8601（或者对于循环类型，cron）。
@@ -127,7 +127,7 @@ BPMN 2.0标准对流程的所有的参与者都是个好东西。最终用户不
 </boundaryEvent>
 ----
 
-**请注意：**定时器只有在作业或者异步执行器启用时才能触发（也就是说，需要在++flowable.cfg.xml++中，将__jobExecutorActivate__或者__asyncExecutorActivate__设置为++true++。因为默认情况下，作业与异步执行器都是禁用的）。
+**请注意：**定时器只有在作业或者异步执行器启用时才能触发（需要在++flowable.cfg.xml++中，将__jobExecutorActivate__或者__asyncExecutorActivate__设置为++true++。因为默认情况下，作业与异步执行器都是禁用的）。
 
 [[bpmnErrorEventDefinition]]
 
@@ -193,7 +193,7 @@ RuntimeService.signalEventReceived(String signalName);
 RuntimeService.signalEventReceived(String signalName, String executionId);
 ----
 
-++signalEventReceived(String signalName);++与++signalEventReceived(String signalName, String executionId);++的区别，是前者在全局范围，为所有已订阅处理器抛出信号（广播），而后者只为指定的执行传递信号。
+++signalEventReceived(String signalName)++与++signalEventReceived(String signalName, String executionId)++的区别，是前者在全局范围，为所有已订阅处理器抛出信号（广播），而后者只为指定的执行传递信号。
 
 
 [[bpmnSignalEventDefinitionCatch]]
@@ -230,7 +230,7 @@ RuntimeService.signalEventReceived(String signalName, String executionId);
 
 默认情况下，信号事件在__流程引擎全局广播__。这意味着你可以在一个流程实例中抛出一个信号事件，而不同流程定义的不同流程实例都会响应这个事件。
 
-然而，有时也会希望只在__同一个流程实例__中响应信号事件。例如在流程实例中使用异步机制，而两个或多个活动彼此互斥的时候。
+然而，有时也会希望只在__同一个流程实例__中响应信号事件。例如，在流程实例中使用异步机制，而两个或多个活动彼此互斥的时候。
 
 要限制信号事件的__范围（scope）__，在信号事件定义中添加（非BPMN 2.0标准！）__scope属性__：
 
@@ -260,7 +260,7 @@ image::images/bpmn.signal.event.catch.png[align="center"]
 image::images/bpmn.signal.event.warning.1.png[align="center"]
 
 
-Flowable不支持上面流程中描述的模式。理想情况是，在执行"do something"任务时抛出的错误，由错误边界事件捕获，并通过信号抛出事件传播至执行的并行分支，最终中断"do something in parallel"任务。到目前为止Flowable会按照预期效果执行。**然而，由于信号的广播效应，它也会被传播至所有其他订阅了这个信号事件的流程实例。**这可能并我们希望的效果。
+Flowable不支持上面流程中描述的模式。我们的想法是，在执行"do something"任务时抛出的错误，由错误边界事件捕获，并通过信号抛出事件传播至执行的并行分支，最终中断"do something in parallel"任务。到目前为止Flowable会按照预期效果执行。**然而，由于信号的广播效应，它也会被传播至所有其他订阅了这个信号事件的流程实例。**这可能并我们希望的效果。
 
 **请注意：**信号事件与特定的流程实例无关，而是会广播给所有流程实例。如果你需要只为某一特定的流程实例传递信号，则需要使用++signalEventReceived(String signalName, String executionId)++手动建立关联，并使用适当的的<<bpmnSignalEventDefinitionQuery,查询机制 query mechanisms>>。
 
@@ -319,10 +319,11 @@ Flowable提供了解决的方法。可以在信号事件上添加__scope__属性
 ----
 ProcessInstance startProcessInstanceByMessage(String messageName);
 ProcessInstance startProcessInstanceByMessage(String messageName, Map<String, Object> processVariables);
-ProcessInstance startProcessInstanceByMessage(String messageName, String businessKey, Map<String, Object> processVariables);
+ProcessInstance startProcessInstanceByMessage(String messageName, String businessKey,
+    Map<String, Object> processVariables);
 ----
 
-这些方法可以使用引用的消息启动流程实例。
+这些方法使用引用的消息启动流程实例。
 
 如果需要由已有的流程实例接收消息，需要首先将消息与特定的流程实例关联（查看后续章节），然后触发等待中的执行，让其继续。runtime服务提供了下列方法，根据消息事件的订阅，触发执行：
 
@@ -428,7 +429,7 @@ try {
 ProcessInstance processInstance = runtimeService.startProcessInstanceByXXX();
 ----
 
-__请注意：__子流程（subprocess）总是有空启动事件。
+__请注意：__子流程（subprocess）需要有空启动事件。
 
 
 [[noneStartEventGraphicalNotation]]
@@ -436,7 +437,7 @@ __请注意：__子流程（subprocess）总是有空启动事件。
 
 ===== 图示 Graphical notation
 
-空启动事件用空心圆圈表示，中间没有图标（也就是说没有触发器）。
+空启动事件用空心圆圈表示，中间没有图标（也就是说，没有触发器）。
 
 image::images/bpmn.none.start.event.png[align="center"]
 
@@ -463,11 +464,11 @@ image::images/bpmn.none.start.event.png[align="center"]
 
 ===== 空启动事件的自定义扩展 Custom extensions for the none start event
 
-*formKey*: 引用表单模板，用户需要在启动新流程实例时填写该表单。可以在<<forms,表单章节>>找到更多信息。例如：
+*formKey*: 引用表单定义，用户需要在启动新流程实例时填写该表单。可以在<<forms,表单章节>>找到更多信息。例如：
 
 [source,xml,linenums]
 ----
-<startEvent id="request" flowable:formKey="org/flowable/examples/taskforms/request.form" />
+<startEvent id="request" flowable:formKey="request" />
 ----
 
 
@@ -547,7 +548,7 @@ image::images/bpmn.clock.start.event.png[align="center"]
 
 当**部署**具有一个或多个消息启动事件的流程定义时，会考虑下列因素：
 
-* 消息启动事件的名字，在给定流程定义中，必须是唯一的。一个流程定义不得包含多个同名的消息启动事件。如果流程定义中有两个或多个消息启动事件引用同一个消息，也即两个或多个消息启动事件引用了具有相同消息名字的消息，则Flowable在部署这个流程定义时，会抛出异常。
+* 消息启动事件的名字，在给定流程定义中，必须是唯一的。一个流程定义不得包含多个同名的消息启动事件。如果流程定义中有两个或多个消息启动事件引用同一个消息，或者两个或多个消息启动事件引用了具有相同消息名字的消息，则Flowable在部署这个流程定义时，会抛出异常。
 * 消息启动事件的名字，在所有已部署的流程定义中，必须是唯一的。如果流程定义中，一个或多个消息启动事件，引用了已经部署的另一流程定义中消息启动事件的消息名，则Flowable在部署这个流程定义时，会抛出异常。
 * 流程版本：在部署流程定义的新版本时，会取消上一版本的消息订阅。即使新版本中并没有这个消息事件，仍然如此（取消上版本的消息订阅）。
 
@@ -557,7 +558,8 @@ image::images/bpmn.clock.start.event.png[align="center"]
 ----
 ProcessInstance startProcessInstanceByMessage(String messageName);
 ProcessInstance startProcessInstanceByMessage(String messageName, Map<String, Object> processVariables);
-ProcessInstance startProcessInstanceByMessage(String messageName, String businessKey, Map<String, Object< processVariables);
+ProcessInstance startProcessInstanceByMessage(String messageName, String businessKey,
+    Map<String, Object< processVariables);
 ----
 
 
@@ -722,7 +724,7 @@ image::images/bpmn.start.error.event.png[align="center"]
 ==== 结束事件 End Events
 
 
-结束事件标志着（子）流程的（分支的）结束。结束事件**总是抛出（型）事件**。这意味着当流程执行到达结束事件时，会抛出一个__结果__。结果的类型由事件内部的黑色图标描绘。在XML表示中，类型由子元素声明给出。
+结束事件标志着流程或子流程中一个分支的结束。结束事件**总是抛出（型）事件**。这意味着当流程执行到达结束事件时，会抛出一个__结果__。结果的类型由事件内部的黑色图标描绘。在XML表示中，类型由子元素声明给出。
 
 
 [[bpmnNoneEndEvent]]
@@ -836,7 +838,7 @@ __error__的**errorCode**用于查找匹配的错误捕获边界事件。如果_
 
 请注意__errorRef__必须遵从BPMN 2.0概要（schema），且必须是合法的QName。
 
-[[bpmnCancelEndEvent]]
+[[bpmnTerminateEndEvent]]
 
 ==== 终止结束事件 Terminate End Event
 
@@ -866,10 +868,10 @@ image::images/bpmn.terminate.end.event.png[align="center"]
 </endEvent>
 ----
 
-
+[[bpmnCancelEndEvent]]
 ==== 取消结束事件 Cancel End Event
 
-<<experimental, [EXPERIMENTAL]>>[[bpmnCancelEndEventDescription]]
+[[bpmnCancelEndEventDescription]]
 
 
 ===== 描述 Description
@@ -941,7 +943,7 @@ image::images/bpmn.cancel.end.event.png[align="center"]
 ===== 描述 Description
 
 
-定时器边界事件的行为像是跑表与闹钟。当执行到达边界事件所依附的活动时，启动定时器。当定时器触发时（例如在特定事件间隔后），活动会被中断，沿着边界事件继续执行。
+定时器边界事件的行为像是跑表与闹钟。当执行到达边界事件所依附的活动时，启动定时器。当定时器触发时（例如在特定事件间隔后），活动会被中断，沿着边界事件的出口顺序流继续执行。
 
 
 [[bpmnTimerBoundaryEventGraphicalNotation]]
@@ -978,9 +980,9 @@ image::images/bpmn.boundary.timer.event.png[align="center"]
 
 image::images/bpmn.non.interrupting.boundary.timer.event.png[align="center"]
 
-其典型使用场景，是发送额外的升级邮件，但不中断正常的流程流向。
+其典型使用场景，是在一段时间之后发送额外的升级邮件，但不影响正常的流程流向。
 
-在BPMN 2.0中，中断与非中断定时器事件是不同的。默认为中断。非中断意味着最初的活动**不会**被中断，而会保留。并会创建额外的执行，用于处理事件的出口转移（outgoing transition）。在XML表示中，__cancelActivity__属性设置为false。
+中断与非中断定时器事件是不同的。非中断意味着最初的活动**不会**被中断，而会保持原样。默认为中断行为。在XML表示中，__cancelActivity__属性设置为false。
 
 [source,xml,linenums]
 ----
@@ -1187,13 +1189,13 @@ image::images/bpmn.boundary.message.event.png[align="center"]
 
 ==== 取消边界事件 Cancel Boundary Event
 
-<<experimental, [EXPERIMENTAL]>>[[bpmnBoundaryCancelEventDescription]]
+[[bpmnBoundaryCancelEventDescription]]
 
 
 ===== 描述 Description
 
 
-依附在事务子流程边界上的取消__捕获__中间（事件），或简称**取消边界事件**，在事务取消时触发。当取消边界事件触发时，首先会中断当前范围的所有活动执行。接下来，启动事务范围内所有有效的的补偿边界事件（compensation boundary event）。补偿会同步执行，也就是说在离开事务前，边界事件会等待补偿完成。当补偿完成时，使用取消边界事件的出口顺序流，离开事务子流程。
+依附在事务子流程边界上的取消__捕获__中间事件，或简称**取消边界事件**，在事务取消时触发。当取消边界事件触发时，首先会中断当前范围的所有活动执行。接下来，启动事务范围内所有有效的的补偿边界事件（compensation boundary event）。补偿会同步执行，也就是说在离开事务前，边界事件会等待补偿完成。当补偿完成时，使用取消边界事件的任何出口顺序流，离开事务子流程。
 
 
 **请注意：**一个事务子流程只允许一个取消边界事件。
@@ -1238,7 +1240,7 @@ image::images/bpmn.boundary.cancel.event.png[align="center"]
 
 ==== 补偿边界事件 Compensation Boundary Event
 
-<<experimental, [EXPERIMENTAL]>>[[bpmnBoundaryCompensationEventDescription]]
+[[bpmnBoundaryCompensationEventDescription]]
 
 
 ===== 描述 Description
@@ -1247,7 +1249,7 @@ image::images/bpmn.boundary.cancel.event.png[align="center"]
 
 补偿边界事件必须通过直接关联的方式，引用单个的补偿处理器。
 
-补偿边界事件与其它边界事件的活动策略不同。其它边界事件，例如信号边界事件，当其依附的活动启动时激活；当离开该活动时，会被解除，并取消相应的事件订阅。而补偿边界事件不是这样。补偿边界事件在其依附的活动**成功完成**时激活，同时创建补偿事件的相应订阅。当补偿事件被触发，或者相应的流程实例结束时，才会移除订阅。请考虑下列因素：
+补偿边界事件与其它边界事件的活动策略不同。其它边界事件，例如信号边界事件，当其依附的活动启动时激活；当该活动结束时，会被解除，并取消相应的事件订阅。而补偿边界事件不是这样。补偿边界事件在其依附的活动**成功完成**时激活，同时创建补偿事件的相应订阅。当补偿事件被触发，或者相应的流程实例结束时，才会移除订阅。请考虑下列因素：
 
 * 当补偿被触发时，补偿边界事件关联的补偿处理器会被调用，次数与其依附的活动成功完成的次数相同。
 * 如果补偿边界事件依附在具有多实例特性的活动上，则会为每一个实例创建补偿事件订阅。
@@ -1282,7 +1284,8 @@ image::images/bpmn.boundary.compensation.event.png[align="center"]
           <compensateEventDefinition />
 </boundaryEvent>
 
-<association associationDirection="One" id="a1"  sourceRef="compensateBookHotelEvt" targetRef="undoBookHotel" />
+<association associationDirection="One" id="a1"
+    sourceRef="compensateBookHotelEvt" targetRef="undoBookHotel" />
 
 <serviceTask id="undoBookHotel" isForCompensation="true" flowable:class="..." />
 ----
@@ -1304,7 +1307,7 @@ image::images/bpmn.boundary.compensation.event.png[align="center"]
 </intermediateCatchEvent>
 ----
 
-捕获中间事件由下列（元素）定义
+捕获中间事件由下列（元素）定义:
 
 * 唯一标识符（流程范围）
 * 定义了捕获中间事件类型的，__XXXEventDefinition__形式的XML子元素（例如__TimerEventDefinition__等）。查阅特定中间捕获事件类型，以了解更多细节。
@@ -1460,7 +1463,7 @@ image::images/bpmn.intermediate.message.catch.event.png[align="center"]
 </intermediateThrowEvent>
 ----
 
-抛出中间事件由下列（元素）定义
+抛出中间事件由下列（元素）定义:
 
 * 唯一标识符（流程范围）
 * 定义了抛出中间事件类型的，__XXXEventDefinition__形式的XML子元素（例如__signalEventDefinition__等）。查阅特定中间抛出事件类型，以了解更多细节。
@@ -1474,7 +1477,7 @@ image::images/bpmn.intermediate.message.catch.event.png[align="center"]
 
 image::images/bpmn.intermediate.none.event.png[align="center"]
 
-基本上添加一个<<executionListeners,执行监听器 execution listener>>后，空中间事件就可以成为很好的监视某些KPI（Key Performance Indicators 关键绩效指标）的钩子。
+添加一个<<executionListeners,执行监听器 execution listener>>后，空中间事件就可以成为很好的监视某些KPI（Key Performance Indicators 关键绩效指标）的钩子。
 
 [source,xml,linenums]
 ----
@@ -1487,7 +1490,7 @@ image::images/bpmn.intermediate.none.event.png[align="center"]
 ----
 
 
-你也可以添加一些自己的代码，将部分事件发送给你的BAM（Business Activity Monitoring 业务活动监控）工具，或者DWH（Data Warehouse 数据仓库）。引擎本身不会在事件中做任何事情，只是从中穿过。
+你也可以添加一些自己的代码，将部分事件发送给你的BAM（Business Activity Monitoring 业务活动监控）工具，或者DWH（Data Warehouse 数据仓库）。在这种情况下，引擎本身不会做任何事情，只是从中穿过。
 
 
 [[bpmnIntermediateThrowSignalEvent]]
@@ -1561,7 +1564,7 @@ image::images/bpmn.intermediate.signal.throw.event.png[align="center"]
 
 ==== 补偿抛出中间事件 Compensation Intermediate Throwing Event
 
-<<experimental, [EXPERIMENTAL]>>[[bpmnIntermediateThrowCompensationEventDescription]]
+[[bpmnIntermediateThrowCompensationEventDescription]]
 
 
 ===== 描述 Description
@@ -1581,7 +1584,7 @@ image::images/bpmn.intermediate.signal.throw.event.png[align="center"]
 
 image::images/bpmn.throw.compensation.example1.png[align="center"]
 
-在这个流程中，有两个并行的执行。一个执行嵌入子流程，另一个执行“charge credit card（信用卡付款）”活动。假定两个执行都已开始，且第一个并行执行正等待用户完成“review bookings（检查预定）”任务。第二个执行进行了“charge credit card（信用卡付款）”活动的操作，抛出了一个错误，导致“cancel reservations（取消预订）”事件触发补偿。这时并行子流程还未完成，意味着补偿不会传播至该子流程，因此不会执行“cancel hotel reservation（取消酒店预订）”补偿处理器。而如果“cancel reservations（取消预订）”运行前，这个用户任务（因此该嵌入式子流程也）已经完成，则补偿会传播至该嵌入式子流程。
+在这个流程中，有两个并行的执行：一个执行嵌入子流程，另一个执行“charge credit card（信用卡付款）”活动。假定两个执行都已开始，且第一个并行执行正等待用户完成“review bookings（检查预定）”任务。第二个执行进行了“charge credit card（信用卡付款）”活动的操作，抛出了一个错误，导致“cancel reservations（取消预订）”事件触发补偿。这时并行子流程还未完成，意味着补偿不会传播至该子流程，因此不会执行“cancel hotel reservation（取消酒店预订）”补偿处理器。而如果“cancel reservations（取消预订）”运行前，这个用户任务（因此该嵌入式子流程也）已经完成，则补偿会传播至该嵌入式子流程。
 
 **流程变量：**当补偿嵌入式子流程时，用于执行补偿处理器的执行，可以以变量在子流程完成时所处的状态，访问子流程的局部流程变量。围了实现这一点，会为范围执行（为执行子流程所创建的执行）所关联的流程变量，进行快照。意味着：
 
@@ -1592,7 +1595,7 @@ image::images/bpmn.throw.compensation.example1.png[align="center"]
 **目前的限制：**
 
 * 目前不支持++waitForCompletion="false"++。当补偿抛出中间事件触发补偿时，只有在补偿成功完成时，才会离开该事件。
-* 补偿现在由并行执行来运行。该并行执行按照补偿活动完成的逆序启动。Flowable的后续版本可能会添加选项，使补偿可以按（活动完成的）顺序运行。
+* 补偿现在由并行执行来运行。该并行执行按照补偿活动完成的逆序启动。
 * 补偿不会传播至调用活动（call activity）生成的子流程。
 
 
@@ -1622,7 +1625,7 @@ image::images/bpmn.intermediate.compensation.throw.event.png[align="center"]
 </intermediateThrowEvent>
 ----
 
-另外，++activityRef++可选项可用于为指定的范围/活动触发补偿：
+另外，++activityRef++可选项可用于为指定的范围或活动触发补偿：
 
 [source,xml,linenums]
 ----
@@ -1705,7 +1708,7 @@ image::images/bpmn.conditional.sequence.flow.png[align="center"]
 </sequenceFlow>
 ----
 
-目前conditionalExpressions**只能使用UEL**，详细信息可以在<<apiExpressions,表达式>>章节找到。使用的表达式需要能解析为boolean值，否则当计算条件时会抛出异常。
+目前conditionalExpressions**只能使用UEL**。详细信息可以在<<apiExpressions,表达式>>章节找到。使用的表达式需要能解析为boolean值，否则当计算条件时会抛出异常。
 
 * 下面的例子，通过典型的JavaBean的方式，使用getter引用流程变量的数据。
 
@@ -1803,7 +1806,7 @@ image::images/bpmn.gateway.png[align="center"]
 
 ===== 描述 Description
 
-排他网关（也叫__异或网关 XOR gateway__，或者更专业的，__基于数据的排他网关 exclusive data-based gateway__），用于为流程中的**决策**建模。当执行到达这个网关时，所有出口顺序流会按照它们定义的顺序进行计算。条件计算为true的顺序流（当没有设置条件时，认为顺序流定义为__true__）会被选择用于继续流程。
+排他网关（也叫__异或网关 XOR gateway__，或者更专业的，__基于数据的排他网关 exclusive data-based gateway__），用于为流程中的**决策**建模。当执行到达这个网关时，所有出口顺序流会按照它们定义的顺序进行计算。条件计算为true的第一条顺序流（当没有设置条件时，认为顺序流定义为__true__）会被选择用于继续流程。
 
 **请注意这里出口顺序流的含义与BPMN 2.0中的一般情况不一样。一般情况下，所有条件计算为true的顺序流，都会被选择继续，并行执行。而使用排他网关时，只会选择一条顺序流。当多条顺序流的条件都计算为true时，其中在XML中定义的第一条（也只有这条）会被选择，用于继续流程。如果没有可选的顺序流，会抛出异常。**
 
@@ -1813,7 +1816,7 @@ image::images/bpmn.gateway.png[align="center"]
 
 ===== 图示 Graphical notation
 
-排他网关，用内部带有'X'图标的标准网关（菱形）表示，'X'图标代表__异或（XOR）__的含义。请注意内部没有图标的网关默认为排他网关。BPMN 2.0规范不允许在同一个流程中，混合使用带有及没有X的菱形标志。
+排他网关，用内部带有'X'图标的标准网关（菱形）表示，'X'图标代表__异或（XOR）__的含义。请注意内部没有图标的网关默认为排他网关。BPMN 2.0规范不允许在同一个流程中，混合使用有及没有X的菱形标志。
 
 image::images/bpmn.exclusive.gateway.notation.png[align="center"]
 
@@ -1968,10 +1971,14 @@ image::images/bpmn.unbalanced.parallel.gateway.png[align="center"]
 包容网关的功能，基于其入口与出口顺序流：
 
 * **分支：**所有出口顺序流的条件都会被计算，对于条件计算为true的顺序流，流程会并行地沿其继续，为每一条顺序流创建一个并行执行。
-* **合并：**所有到达包容网关的并行执行，都会在网关处等待，直到每一条具有流程标志的入口顺序流，都有一个执行到达。这是与并行网关的重要区别。换句话说，包容网关只会等待将会被执行的入口顺序流。在合并后，流程穿过合并并行网关继续。
+* **合并：**所有到达包容网关的并行执行，都会在网关处等待，直到每一条具有流程标志（process token, 即可以执行到达）的入口顺序流，都有一个执行到达。这是与并行网关的重要区别。换句话说，包容网关只会等待可以被执行的入口顺序流。在合并后，流程穿过合并并行网关继续。
 
 请注意，如果包容网关同时具有多条入口与出口顺序流，可以**同时具有分支与合并的行为**。在这种情况下，网关首先合并所有具有流程标志的入口顺序流，然后为条件计算为true的出口顺序流，分裂为多条并行执行路径。
 
+翻译附：alfresco文档上的额外解释 http://docs.alfresco.com/process-services1.6/topics/inclusive_gateway.html
+
+包容网关的汇聚行为比并行网关更复杂。所有到达包容网关的并行执行，都会在网关等待，直到所有“可以到达”包容网关的执行都“到达”包容网关。
+判断方法为：计算当前流程实例中的所有执行，检查从其位置是否有一条到达包容网关的路径（忽略顺序流上的任何条件）。如果存在这样的执行（可到达但尚未到达），则不会触发包容网关的汇聚行为。
 
 [[bpmnInclusiveGatewayGraphicalNotation]]
 
@@ -2048,7 +2055,7 @@ assertEquals("Ship Order", task.getName());
 ----
 
 
-当这个任务完成后，第二个包容网关会合并这两个执行，并且由于只有一条出口顺序流，不会再创建并行执行路径，只会激活__Archive Order(存档订单)__任务。
+当这个任务完成后，第二个包容网关会合并这两个执行。并且由于只有一条出口顺序流，不会再创建并行执行路径，只会激活__Archive Order(存档订单)__任务。
 
 
 请注意包容网关不需要“平衡”（也就是说，对应的包容网关，其入口/出口顺序流的数量不需要匹配）。包容网关会简单地等待所有入口顺序流，并为每一条出口顺序流创建并行执行，不受流程模型中的其他结构影响。
@@ -2065,7 +2072,7 @@ assertEquals("Ship Order", task.getName());
 ===== 描述 Description
 
 
-基于事件的网关，允许基于事件做选择。网关的每一条出口顺序流，都需要连接至一个捕获中间事件。当流程执行到达基于事件的网关时，网关类似等待状态地动作：执行被暂停。并且，为每一条出口顺序流，创建一个事件订阅。
+基于事件的网关，提供了基于事件做选择的方式。网关的每一条出口顺序流，都需要连接至一个捕获中间事件。当流程执行到达基于事件的网关时，网关类似等待状态地动作：执行被暂停。并且，为每一条出口顺序流，创建一个事件订阅。
 
 请注意基于事件的网关，其出口顺序流与一般的顺序流不同。这些顺序流从不实际**被执行**。相反，它们允许流程引擎决定，当执行到达一个基于事件的网关时，需要订阅什么事件。基于下列约束：
 
@@ -2285,7 +2292,7 @@ List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 
 将获取所有kermit作为**候选用户**的任务，也就是说，表达式含有__user(kermit)__的任务，也将获取所有**指派给kermit为其成员的组**的任务（例如__group(management)__，如果kermit是这个组的成员，并且使用Flowable身份组件）。组会在运行时解析，并可通过<<apiEngine,IdentityService（身份服务）>>管理。
 
-如果并未指定给定字符串是用户还是组，引擎默认其为组。因此下列代码与__声明了group(accountancy)__一样。
+如果并未指定给定字符串是用户还是组，引擎默认其为组。下列代码与__声明了group(accountancy)__一样。
 
 [source,xml,linenums]
 ----
@@ -2300,7 +2307,7 @@ List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 
 很明显，当指派关系不复杂时，这种用户与组的指派方式十分笨重。为避免这种复杂性，可以在用户任务上使用<<bpmnCustomExtensions,自定义扩展>>。
 
-* **assignee（办理人）属性**：这个自定义扩展用于直接将一个用户任务指派至一个给定用户。
+* **assignee（办理人）属性**：这个自定义扩展用于直接将一个给定用户指派至一个用户任务。
 
 [source,xml,linenums]
 ----
@@ -2335,9 +2342,7 @@ List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 [[bpmnUserTaskUserCustomIdentityLinkAssignmentExtension]]
 
 
-===== 自定义身份关联类型（试验特性） Custom identity link types (Experimental)
-
-<<experimental,[EXPERIMENTAL]>>
+===== 自定义身份关联类型 Custom identity link types
 
 在<<bpmnUserTaskAssignment,用户指派>>中定义过，BPMN标准支持单个指派用户即**hunamPerformer**，或者一组用户构成**potentialOwners**潜在用户池。另外，Flowable为用户任务定义了<<bpmnUserTaskUserAssignmentExtension,扩展属性元素>>，代表任务的**办理人**或者**候选用户**。
 
@@ -2382,28 +2387,26 @@ protected Map<String, Set<Expression>> customUserIdentityLinkExpressions =
 protected Map<String, Set<Expression>> customGroupIdentityLinkExpressions =
       new HashMap<String, Set<Expression>>();
 
-public Map<String,
-         Set<Expression>> getCustomUserIdentityLinkExpressions() {
+public Map<String, Set<Expression>> getCustomUserIdentityLinkExpressions() {
   return customUserIdentityLinkExpressions;
 }
 
-public void addCustomUserIdentityLinkExpression(String identityLinkType,
-      Set<Expression> idList)
+public void addCustomUserIdentityLinkExpression(
+    String identityLinkType, Set<Expression> idList){
   customUserIdentityLinkExpressions.put(identityLinkType, idList);
 }
 
-public Map<String,
-       Set<Expression>> getCustomGroupIdentityLinkExpressions() {
+public Map<String, Set<Expression>> getCustomGroupIdentityLinkExpressions() {
   return customGroupIdentityLinkExpressions;
 }
 
-public void addCustomGroupIdentityLinkExpression(String identityLinkType,
-       Set<Expression> idList) {
+public void addCustomGroupIdentityLinkExpression(
+    String identityLinkType, Set<Expression> idList) {
   customGroupIdentityLinkExpressions.put(identityLinkType, idList);
 }
 ----
 
-并将会在运行时，由__UserTaskActivityBehavior handleAssignments__方法填写。
+这些方法将在运行时，由__UserTaskActivityBehavior handleAssignments__方法调用。
 
 最后，需要扩展__IdentityLinkType__类，以支持自定义身份关联类型：
 
@@ -2411,9 +2414,7 @@ public void addCustomGroupIdentityLinkExpression(String identityLinkType,
 ----
 package com.yourco.engine.task;
 
-public class IdentityLinkType
-    extends org.flowable.engine.task.IdentityLinkType
-{
+public class IdentityLinkType extends org.flowable.engine.task.IdentityLinkType{
     public static final String ADMINISTRATOR = "administrator";
 
     public static final String EXCLUDED_OWNER = "excludedOwner";
@@ -2532,9 +2533,9 @@ image::images/bpmn.scripttask.png[align="center"]
 </scriptTask>
 ----
 
-**scriptFormat**属性的值，必须是兼容link:$$http://jcp.org/en/jsr/detail?id=223$$[JSR-223]（Java平台脚本）的名字。默认情况下，JavaScript包含在每一个JDK中，因此不需要添加任何jar。如果想使用其它（兼容JSR-223的）脚本引擎，需要在classpath中添加相应的jar，并使用适当的名字。例如，Flowable单元测试经常使用Groovy，因为其语法与Java十分相似。
+**scriptFormat**属性的值，必须是兼容link:$$http://jcp.org/en/jsr/detail?id=223$$[JSR-223]（Java平台脚本）的名字。默认情况下，JavaScript包含在每一个JDK中，因此不需要添加任何JAR文件。如果想使用其它（兼容JSR-223的）脚本引擎，需要在classpath中添加相应的jar，并使用适当的名字。例如，Flowable单元测试经常使用Groovy，因为其语法与Java十分相似。
 
-请注意Groovy脚本引擎与groovy-all jar捆绑在一起。在2.0版本以前，脚本引擎是Groovy jar的一部分。因此，现在必须添加如下依赖：
+请注意Groovy脚本引擎与groovy-all jar捆绑在一起。在Groovy 2.0版本以前，脚本引擎是Groovy JAR的一部分。因此，现在必须添加如下依赖：
 
 [source,xml,linenums]
 ----
@@ -2708,7 +2709,7 @@ image::images/bpmn.java.service.task.png[align="center"]
 ----
 public class ToUppercase implements JavaDelegate {
 
-  public void execute(DelegateExecution execution) throws Exception {
+  public void execute(DelegateExecution execution) {
     String var = (String) execution.getVariable("input");
     var = var.toUpperCase();
     execution.setVariable("input", var);
@@ -2719,9 +2720,9 @@ public class ToUppercase implements JavaDelegate {
 
 请注意：**只会为serviceTask上定义的Java类创建一个实例**。所有流程实例共享同一个类实例，用于调用__execute(DelegateExecution)__。这意味着该类不能有任何成员变量，并需要是线程安全的，因为它可能会在不同线程中同时执行。这也影响了<<serviceTaskFieldInjection,字段注入>>的使用方法。（译者注：原文可能较老，不正确。5.21中，flowable:class指定的类，会在流程实例启动时，为每个活动，分别进行实例化。不过，当该活动在流程中重复执行，或者为多实例时，使用的都会是同一个类实例。）
 
-在流程定义中（如通过++flowable:class++）引用的类，**不会在部署时实例化**。只有当流程执行第一次到达该类使用的地方时，才会创建该类的实例。如果找不到这个类，会抛出++FlowableException++。这是因为部署时的环境（更准确的说__classpath__），与实际运行的环境经常不一样。例如当使用__ant__或者Flowable应用中业务存档上传的方式部署的流程，其classpath中并没有流程引用的类。
+在流程定义中（如通过++flowable:class++）引用的类，**不会在部署时实例化**。只有当流程执行第一次到达该类使用的地方时，才会创建该类的实例。如果找不到这个类，会抛出++FlowableException++。这是因为部署时的环境（更准确的说__classpath__），与实际运行的环境经常不一样。例如当使用__ant__或者Flowable应用中业务存档上传的方式部署的流程，其classpath中不会自动包含流程引用的类。
 
-<<internal,[内部：非公有实现类]>>也可以使用实现了__org.flowable.engine.impl.pvm.delegate.ActivityBehavior__接口的类。该实现可以访问更强大的__ActivityExecution__，可以例如影响流程的控制流程。请注意这并不是很好的实践，需要避免这么使用。因此，建议只有在高级使用场景下，并且你确知在做什么的时候，才使用__ActivityBehavior__接口。
+<<internal,[内部：非公有实现类]>>也可以使用实现了__org.flowable.engine.impl.delegate.ActivityBehavior__接口的类。该实现可以访问更强大的引擎功能，例如，可以影响流程的控制流程。请注意这并不是很好的实践，需要避免这么使用。因此，建议只有在高级使用场景下，并且你确知在做什么的时候，才使用__ActivityBehavior__接口。
 
 
 [[serviceTaskFieldInjection]]
@@ -2787,7 +2788,7 @@ public class ToUpperCaseFieldInjected implements JavaDelegate {
 
 要在运行时动态解析注入的值，可以使用表达式。这种表达式可以使用流程变量，或者Spring定义的bean（如果使用Spring）。像<<bpmnJavaServiceTaskImplementation,服务任务实现>>中提到的，当服务任务中使用__flowable:class__属性时，该Java类的实例在所有流程实例中共享。要动态地为字段注入值，可以在++org.flowable.engine.delegate.Expression++中注入值或方法表达式，它们会通过++execute++方法传递的++DelegateExecution++计算/调用。
 
-下面的示例类，使用了注入的表达式，并使用当前的++DelegateExecution++解析它们。调用__generBean__方法时传递的是__gender__变量。完整的代码与测试可以在++org.flowable.examples.bpmn.servicetask.JavaServiceTaskTest.testExpressionFieldInjection++中找到
+下面的示例类，使用了注入的表达式，并使用当前的++DelegateExecution++解析它们。调用__genderBean__方法时传递的是__gender__变量。完整的代码与测试可以在++org.flowable.examples.bpmn.servicetask.JavaServiceTaskTest.testExpressionFieldInjection++中找到
 
 [source,xml,linenums]
 ----
@@ -2840,11 +2841,11 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 
 当使用__flowable:expression__属性时，不能使用字段注入。只能通过方法调用传递变量，并且这总是线程安全的。
 
-当使用__flowable:delegateExpression__属性时，代理实例的线程安全性，取决于表达式解析的方式。如果该代理表达式在多个任务与/或流程定义中重复使用，并且表达式总是返回相同的示例，则字段注入**不是线程安全的**。让我们看几个例子。
+当使用__flowable:delegateExpression__属性时，代理实例的线程安全性，取决于表达式解析的方式。如果该代理表达式在多个任务或流程定义中重复使用，并且表达式总是返回相同的示例，则字段注入**不是线程安全的**。让我们看几个例子。
 
 假设表达式为__${factory.createDelegate(someVariable)}__，其中factory为引擎可用的Java bean（例如使用Spring集成时的Spring bean），并在每次表达式解析时，创建新的实例。这种情况下，使用字段注入时，没有线程安全性问题：每次表达式解析时，新实例的字段都会注入。
 
-然而，如果表达式为__${someJavaDelegateBean}__，解析为JavaDelegate的实现，并且在创建单例的环境（如Spring）中运行。当在不同的任务和/或流程定义中使用这个表达式时，表达式总会解析为相同的实例。这种情况下，使用字段注入不是线程安全的。例如：
+然而，如果表达式为__${someJavaDelegateBean}__，解析为JavaDelegate的实现，并且在创建单例的环境（如Spring）中运行。当在不同的任务或流程定义中使用这个表达式时，表达式总会解析为相同的实例。这种情况下，使用字段注入不是线程安全的。例如：
 
 [source,xml,linenums]
 ----
@@ -2865,7 +2866,7 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 
 这段示例代码有两个服务任务，使用同一个代理表达式，但是__expression__字段填写不同的值。**如果该表达式解析为相同的实例，就会在并发场景下，注入__someField__字段时出现竞争条件**。
 
-最简单的解决方案，为
+最简单的解决方案，为：
 
 * 重写Java代理，以使用表达式，并将所需数据通过方法参数传递给代理。
 * 或者，在每次代理表达式解析时，返回代理类的新实例。这意味着这个bean的scope（范围）必须是**prototype（原型）**（例如在代理类上加上@Scope(SCOPE_PROTOTYPE)注解）。
@@ -2875,7 +2876,7 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 可使用下列选项：
 
 * **DISABLED（禁用）**：当使用代理表达式时，完全禁用字段注入。不会再尝试进行字段注入。这是最安全的方式，保证线程安全。
-* **COMPATIBILITY（兼容）**：在这个模式下，行为与5.21版本之前完全一样：可以在代理表达式中使用字段注入，如果代理类中没有定义该字段，会抛出异常。这是最不线程安全的模式，但可以保证历史版本兼容性，也可以在代理表达式只在一个任务中使用的时候（因此不会产生并发竞争条件），安全使用。
+* **COMPATIBILITY（兼容）**：在这个模式下，行为与V5.21之前完全一样：可以在代理表达式中使用字段注入，如果代理类中没有定义该字段，会抛出异常。这是最不线程安全的模式，但可以保证历史版本兼容性，也可以在代理表达式只在一个任务中使用的时候（因此不会产生并发竞争条件），安全使用。
 * **MIXED（混合）**：可以在使用代理表达式时注入，但当代理中没有定义字段时，不会抛出异常。这样可以在部分代理中使用注入（例如不是单例时），而在部分代理中不使用注入。
 
 * **Flowable 5.x版本的默认模式为COMPATIBILITY（兼容）**。
@@ -2951,7 +2952,7 @@ public class PrototypeDelegateExpressionBean implements JavaDelegate {
   }
 
   @Override
-  public void execute(DelegateExecution execution) throws Exception {
+  public void execute(DelegateExecution execution) {
 
     Number fieldAValue = (Number) fieldA.getValue(execution);
     Number fieldValueB = (Number) fieldB.getValue(execution);
@@ -2978,7 +2979,7 @@ public class SingletonDelegateExpressionBean implements JavaDelegate {
   }
 
   @Override
-  public void execute(DelegateExecution execution) throws Exception {
+  public void execute(DelegateExecution execution) {
 
     Expression fieldAExpression = DelegateHelper.getFieldExpression(execution, "fieldA");
     Number fieldA = (Number) fieldAExpression.getValue(execution);
@@ -2988,7 +2989,8 @@ public class SingletonDelegateExpressionBean implements JavaDelegate {
 
     int result = fieldA.intValue() + fieldB.intValue();
 
-    String resultVariableName = DelegateHelper.getFieldExpression(execution, "resultVariableName").getValue(execution).toString();
+    String resultVariableName = DelegateHelper.getFieldExpression(execution,
+        "resultVariableName").getValue(execution).toString();
     execution.setVariable(resultVariableName, result);
   }
 
@@ -2999,11 +3001,11 @@ __INSTANCE_COUNT__总是__1__，因为是单例模式。在这个代理中，没
 
 在代理的代码里，使用了**org.flowable.engine.delegate.DelegateHelper**。它提供了一些有用的工具方法，用于执行相同的逻辑，并且在单例中是线程安全的。与注入__Expression__不同，它通过__getFieldExpression__读取。这意味着在服务任务的XML里，字段定义与单例bean完全相同。查看上面的XML代码，可以看到定义是相同的，只是实现逻辑不同。
 
-（技术提示：__getFieldExpression__直接读取BpmnModel，并在方法执行时创建表达式，因此是线程安全的）。
+技术提示：__getFieldExpression__直接读取BpmnModel，并在方法执行时创建表达式，因此是线程安全的。
 
 
-* 在Flowable 5.x版本中，（由于架构缺陷）不能在__ExecutionListener__或__TaskListener__中使用DelegateHelper。要保证监听器的线程安全，仍需使用表达式，或确保每次解析代理表达式时，都创建新实例。
-* 在Flowable 6.x版本中，在__ExecutionListener__或__TaskListener__中可以使用DelegateHelper。例如在6.x版本中，下列代码可以使用**DelegateHelper**：
+* 在Flowable V5.x版本中，（由于架构缺陷）不能在__ExecutionListener__或__TaskListener__中使用DelegateHelper。要保证监听器的线程安全，仍需使用表达式，或确保每次解析代理表达式时，都创建新实例。
+* 在Flowable V6.x版本中，在__ExecutionListener__或__TaskListener__中可以使用DelegateHelper。例如在V6.x版本中，下列代码可以使用**DelegateHelper**：
 
 [source,xml,linenums]
 ----
@@ -3161,23 +3163,23 @@ public class ThrowBpmnErrorDelegate implements JavaDelegate {
 <sequenceFlow id="exception" sourceRef="javaService" targetRef="fixException" />
 ----
 
-在这里，这个服务任务具有两条出口顺序流，分别称为++exception++与++no-exception++。这些顺序流id会在发生异常时，用于控制流程流向：
+在这里，这个服务任务具有两条出口顺序流，分别称为++exception++与++no-exception++。这些顺序流ID会在发生异常时，用于控制流程流向：
 
 [source,java,linenums]
 ----
 public class ThrowsExceptionBehavior implements ActivityBehavior {
 
-  public void execute(ActivityExecution execution) throws Exception {
+  public void execute(DelegateExecution execution) {
     String var = (String) execution.getVariable("var");
 
-    PvmTransition transition = null;
+    String sequenceFlowToTake = null;
     try {
       executeLogic(var);
-      transition = execution.getActivity().findOutgoingTransition("no-exception");
+      sequenceFlowToTake = "no-exception";
     } catch (Exception e) {
-      transition = execution.getActivity().findOutgoingTransition("exception");
+      sequenceFlowToTake = "exception";
     }
-    execution.take(transition);
+    DelegateHelper.leaveDelegate(execution, sequenceFlowToTake);
   }
 
 }
@@ -3189,14 +3191,14 @@ public class ThrowsExceptionBehavior implements ActivityBehavior {
 
 ===== 在JavaDelegate中使用Flowable服务 Using a Flowable service from within a JavaDelegate
 
-有的时候，需要在Java服务任务中使用Flowable服务（例如当调用活动不符合需求时，通过RuntimeService启动流程实例）。__org.flowable.engine.delegate.DelegateExecution__可以方便地通过__org.flowable.engine.EngineServices__接口使用这些服务：
+有的时候，需要在Java服务任务中使用Flowable服务（例如当调用活动不符合需求时，通过RuntimeService启动流程实例）。
 
 [source,java,linenums]
 ----
 public class StartProcessInstanceTestDelegate implements JavaDelegate {
 
   public void execute(DelegateExecution execution) throws Exception {
-    RuntimeService runtimeService = execution.getEngineServices().getRuntimeService();
+    RuntimeService runtimeService = Context.getProcessEngineConfiguration().getRuntimeService();
     runtimeService.startProcessInstanceByKey("myProcess");
   }
 
@@ -3230,7 +3232,7 @@ public class StartProcessInstanceTestDelegateWithInjection {
 
 ==== Web服务任务 Web Service Task
 
-<<experimental,[EXPERIMENTAL]>>[[bpmnWebserviceTaskDescription]]
+[[bpmnWebserviceTaskDescription]]
 
 
 ===== 描述 Description
@@ -3396,7 +3398,7 @@ image::images/bpmn.web.service.task.png[align="center"]
 
 ==== 业务规则任务 Business Rule Task
 
-<<experimental,[EXPERIMENTAL]>>[[bpmnBusinessRuleTaskDescription]]
+[[bpmnBusinessRuleTaskDescription]]
 
 
 ===== 描述 Description
@@ -3522,12 +3524,12 @@ Flowable引擎通过支持SMTP的外部邮件服务器发送邮件。要发送�
 |from|否|邮件的发信人地址。如果不设置，会使用<<bpmnEmailTaskServerConfiguration,默认配置>>的地址
 |cc|否|邮件的抄送人。可以使用逗号分隔的列表定义多个接收人
 |bcc|否|邮件的密送人。可以使用逗号分隔的列表定义多个接收人
-|charset|否|可以修改邮件的字符集，对许多非英语语言很必要。
+|charset|否|可以指定邮件的字符集，对许多非英语语言很必要。
 |html|否|邮件的HTML内容
-|text|否|邮件的内容，普通非富文本的邮件。对于不支持富文本内容的客户端，可以与__html__一起使用。客户端会退回为纯文本格式。
-|htmlVar|否|存储邮件HTML内容的流程变量名。与html参数的最大区别，是这个参数会在邮件任务发送前，使用其内容进行表达式替换。
-|textVar|否|存储邮件纯文本内容的流程变量名。与text参数的最大区别，是这个参数会在邮件任务发送前，使用其内容进行表达式替换。
-|ignoreException|否|处理邮件时的失败，是否抛出FlowableException。默认设置为false。
+|text|否|邮件的内容，普通非富文本的邮件。对于不支持富文本内容的客户端，可以与__html__一起使用。邮件客户端可以退回为纯文本格式。
+|htmlVar|否|存储邮件HTML内容的流程变量名。与__html__参数的最大区别，是这个参数会在邮件任务发送前，使用其内容进行表达式替换。
+|textVar|否|存储邮件纯文本内容的流程变量名。与__text__参数的最大区别，是这个参数会在邮件任务发送前，使用其内容进行表达式替换。
+|ignoreException|否|处理邮件失败时，是忽略还是抛出FlowableException。默认设置为false。
 |exceptionVariableName|否|当处理邮件时的失败，由于__ignoreException = true__设置而不会抛出异常，则使用给定名字的变量保存失败信息
 
 |===============
@@ -3569,11 +3571,6 @@ Flowable引擎通过支持SMTP的外部邮件服务器发送邮件。要发送�
 </serviceTask>
 
 ----
-
-产生如下结果：
-
-image::images/email.task.result.png[align="center"]
-
 
 [[bpmnMuleTask]]
 
@@ -3662,9 +3659,9 @@ Camel任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，通过将服
 </camelContext>
 ----
 
-可以在link:$$http://camel.apache.org/$$[Camel网站]找到关于Camel路由的更多文档。这篇文档中只通过几个小例子展示基本概念。在第一个例子中，在Flowable工作流中进行最简单的Camel调用。叫做SimpleCamelCall。
+可以在link:$$http://camel.apache.org/$$[Camel网站]找到关于Camel路由的更多文档。下面只通过几个小例子展示基本概念。在第一个例子中，在Flowable工作流中进行最简单的Camel调用。叫做SimpleCamelCall。
 
-如果想要定义多个Camel上下文bean，并且/或想使用不同的bean名字，可以在Camel任务定义中像这样覆盖：
+如果想要定义多个Camel上下文bean，或想使用不同的bean名字，可以在Camel任务定义中像这样覆盖：
 
 [source,xml,linenums]
 ----
@@ -3709,7 +3706,7 @@ public class SimpleCamelCallRoute extends RouteBuilder {
 [options="header"]
 |===============
 |终端Url部分|描述
-|activiti|引用引擎终端
+|flowable|引用引擎终端
 |SimpleCamelCallProcess|流程名
 |simpleCall|流程中Camel服务的名字
 
@@ -3771,7 +3768,7 @@ public void testPingPong() {
 
 ----
 
-请注意SaveOutput服务任务，将“Output”变量从上下文中取出，存储至上面提到的OutputMap。现在需要了解变量如何发送至Camel，以及如何返回。这就需要了解Camel行为（Behavior）的概念。变量与Camel通信的方式可以通过CamelBehavior配置。在这个例子里使用默认配置，其它配置在后面会进行简短介绍。下面的代码配置了期望的Camel行为：
+请注意SaveOutput服务任务，将“Output”变量从上下文中取出，存储至上面提到的OutputMap。现在需要了解变量如何发送至Camel，以及如何返回。这就需要了解Camel行为（Behavior）的概念。变量与Camel通信的方式可以通过CamelBehavior配置。在这个例子里使用默认配置，其它配置在后面会进行简短介绍。使用类似的代码配置了期望的Camel行为：
 
 [source,xml,linenums]
 ----
@@ -3792,7 +3789,7 @@ public void configure() throws Exception {
 }
 ----
 
-在这个路由中，字符串"world"会在结尾连接上名为“input”的参数，结果作为消息体。可以通过Java服务任务检查"camelBody"变量，并复制到“outputMap”，并可通过测试用例检查。既然这个例子使用默认行为，就让我们看看还有什么其他选择。在每个Camel路由的开始处，流程实例id会复制为名为"PROCESS_ID_PROPERTY"的Camel参数。之后会用于将流程实例与Camel路由相关联，也可以在Camel路由中使用。
+在这个路由中，字符串"world"会在结尾连接上名为“input”的参数，结果作为消息体。可以通过Java服务任务检查"camelBody"变量，并复制到“outputMap”。既然这个例子使用默认行为，那就让我们看看还有什么其他选择。在每个Camel路由的开始处，流程实例id会复制为名为"PROCESS_ID_PROPERTY"的Camel参数。之后会用于将流程实例与Camel路由相关联，也可以在Camel路由中使用。
 
 Flowable中有已经可以使用三种不同的行为。可以通过修改路由URL中特定的部分，覆写行为。这里有个在URL中重载已有行为的例子：
 
@@ -3813,7 +3810,7 @@ from("flowable:asyncCamelProcess:serviceTaskAsync2?copyVariablesToProperties=tru
 
 |===============
 
-上表解释了Flowable变量如何传递给Camel。下表解释了Camel变量如何返回至Flowable。只能在路由URL中配置。
+上表展示了Flowable变量如何传递给Camel。下表展示Camel变量如何返回至Flowable。只能在路由URL中配置。
 
 [options="header"]
 |===============
@@ -3827,7 +3824,7 @@ from("flowable:asyncCamelProcess:serviceTaskAsync2?copyVariablesToProperties=tru
 
 ===== 返回变量 Returning back the variables
 
-上面提到的传递变量，不论是从Camel到Flowable还是反过来，都只用于变量传递的开始侧。要特别注意，由于Flowable的非阻塞行为，Flowable不会自动向Camel返回变量。因此，提供了特殊的语法。可以在Camel路由URL中，以++var.return.someVariableName++的格式，使用一个或多个参数。与这些参数同名，但没有++var.return++部分的变量，会被认为是输出变量，因此将会以相同的名字复制回Camel参数。例如在如下路由中：
+上面提到的传递变量，不论是从Camel到Flowable还是反过来，都只用于变量传递的起始侧。要特别注意，由于Flowable的非阻塞行为，Flowable不会自动向Camel返回变量。因此，提供了特殊的语法。可以在Camel路由URL中，以++var.return.someVariableName++的格式，使用一个或多个参数。与这些参数同名（但没有++var.return++部分）的变量，会被认为是输出变量，因此将会以相同的名字复制回Camel参数。例如在如下路由中：
 
 ----
 from("direct:start").to("flowable:process?var.return.exampleVar").to("mock:result");
@@ -3841,14 +3838,14 @@ from("direct:start").to("flowable:process?var.return.exampleVar").to("mock:resul
 
 ===== 异步连通性测试 Asynchronous Ping Pong example
 
-上面的例子都是同步的。工作流停止，直到Camel路由结束并返回。有时，需要Flowable工作流继续运行。为了这个目的，Camel服务任务的异步功能就很有用。可以通过将Camel服务任务的异步参数设置为true，启用这个功能。
+上面的例子全都是同步的。流程实例停止，直到Camel路由结束并返回。有时，需要Flowable流程实例继续运行。为了这个目的，Camel服务任务的异步功能就很有用。可以通过将Camel服务任务的异步参数设置为true，启用这个功能。
 
 [source,xml,linenums]
 ----
 <serviceTask id="serviceAsyncPing" flowable:type="camel" flowable:async="true"/>
 ----
 
-设置这个特性后，Camel路由会由Flowable作业执行器异步启动。如果定义了Camel路由队列，Flowable流程会继续执行Camel服务任务之后的活动。Camel路由会与流程执行完全异步地执行。如果需要在流程定义的某处等待Camel服务任务的响应，可以使用接收任务（receive task）。
+设置这个特性后，Camel路由会由Flowable作业执行器异步启动。如果定义了Camel路由队列，Flowable流程实例会继续执行流程定义中，Camel服务任务之后的活动。Camel路由会与流程执行完全异步地执行。如果需要在流程定义的某处等待Camel服务任务的响应，可以使用接收任务（receive task）。
 
 [source,xml,linenums]
 ----
@@ -3862,7 +3859,6 @@ from("direct:start").to("flowable:process?var.return.exampleVar").to("mock:resul
  from("flowable:asyncPingProcess:serviceAsyncPing").to("flowable:asyncPingProcess:receiveAsyncPing");
 ----
 
-（译者注：原文如此。可能为缺失了的 to 终端的定义：）
 
 * “flowable”字符串常量
 * 流程名
@@ -3874,16 +3870,16 @@ from("direct:start").to("flowable:process?var.return.exampleVar").to("mock:resul
 
 ===== 从Camel路由实例化工作流 Instantiate workflow from Camel route
 
-上面的所有例子，都是先启动Flowable工作流，然后在工作流中启动Camel路由。也可以反过来。可以在已经启动的Camel路由中实例化工作流。与为接收任务发送消息很类似，除了最后一部分。这是一个简单的路由：
+上面的所有例子，都是先启动Flowable流程实例，然后在流程实例中启动Camel路由。也可以反过来。可以在已经启动的Camel路由中启动或调用流程实例。与为接收任务发送消息很类似。这是一个简单的路由：
 
 [source,java,linenums]
 ----
 from("direct:start").to("flowable:camelProcess");
 ----
 
-可以看到url有两部分，第一部分是“flowable”字符串常量，第二个名字是流程的名字。很明显流程需要已经部署，并且可以通过引擎配置启动。
+可以看到url有两部分，第一部分是“flowable”字符串常量，第二个是流程定义的名字。很明显流程定义需要已经在Flowable引擎中部署。
 
-也可以在Camel头中，将流程起动人设置为某个已认证用户id。要这么做，首先需要在流程定义中指定启动人变量：
+也可以在Camel头中，将流程实例起动人设置为某个已认证用户ID。为此，首先需要在流程定义中指定启动人变量：
 
 [source,xml,linenums]
 ----
@@ -3910,7 +3906,7 @@ from("direct:startWithInitiatorHeader")
 
 ===== 描述 Description
 
-__手动任务__定义了在BPMN引擎外部的任务。用于建模引擎不需要了解的某项工作，或者其他系统或用户界面。对于引擎来说，手动任务将按**直接穿过活动**处理，在流程执行到达时，自动继续流程。
+__手动任务__定义了在BPM引擎外部的任务。用于建模引擎不需要了解的某项工作，或者其他系统或用户界面。对于引擎来说，手动任务将按**直接穿过活动**处理，在流程执行到达时，自动继续流程。
 
 
 [[bpmnManualTaskGraphicalNotation]]
@@ -4067,7 +4063,9 @@ Shell任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数
 <process id="executionListenersProcess">
 
   <extensionElements>
-    <flowable:executionListener class="org.flowable.examples.bpmn.executionlistener.ExampleExecutionListenerOne" event="start" />
+    <flowable:executionListener
+      class="org.flowable.examples.bpmn.executionlistener.ExampleExecutionListenerOne"
+      event="start" />
   </extensionElements>
 
   <startEvent id="theStart" />
@@ -4076,13 +4074,16 @@ Shell任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数
   <userTask id="firstTask" />
   <sequenceFlow sourceRef="firstTask" targetRef="secondTask">
     <extensionElements>
-      <flowable:executionListener class="org.flowable.examples.bpmn.executionListener.ExampleExecutionListenerTwo" />
+      <flowable:executionListener
+        class="org.flowable.examples.bpmn.executionListener.ExampleExecutionListenerTwo" />
     </extensionElements>
   </sequenceFlow>
 
   <userTask id="secondTask" >
     <extensionElements>
-      <flowable:executionListener expression="${myPojo.myMethod(execution.event)}" event="end" />
+      <flowable:executionListener
+        expression="${myPojo.myMethod(execution.event)}"
+        event="end" />
     </extensionElements>
   </userTask>
   <sequenceFlow sourceRef="secondTask" targetRef="thirdTask" />
@@ -4095,7 +4096,7 @@ Shell任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数
 </process>
 ----
 
-第一个执行监听器将在流程启动时得到通知。这个监听器是一个外部Java类（例如++ExampleExecutionListenerOne++），并且需要实现++org.flowable.engine.delegate.ExecutionListener++接口。当该事件发生时（这里是++start++事件），会调用++notify(ExecutionListenerExecution execution)++方法。
+第一个执行监听器将在流程启动时得到通知。这个监听器是一个外部Java类（++ExampleExecutionListenerOne++），并且需要实现++org.flowable.engine.delegate.ExecutionListener++接口。当该事件发生时（这里是++start++事件），会调用++notify(ExecutionListenerExecution execution)++方法。
 
 [source,java,linenums]
 ----
@@ -4132,7 +4133,9 @@ public class ExampleExecutionListenerOne implements ExecutionListener {
 
 [source,xml,linenums]
 ----
-<flowable:executionListener event="start" class="org.flowable.engine.impl.bpmn.listener.ScriptExecutionListener" >
+<flowable:executionListener event="start"
+    class="org.flowable.engine.impl.bpmn.listener.ScriptExecutionListener" >
+
   <flowable:field name="script">
     <flowable:string>
       def bar = "BAR";  // local variable
@@ -4160,7 +4163,10 @@ public class ExampleExecutionListenerOne implements ExecutionListener {
 ----
 <process id="executionListenersProcess">
   <extensionElements>
-    <flowable:executionListener class="org.flowable.examples.bpmn.executionListener.ExampleFieldInjectedExecutionListener" event="start">
+    <flowable:executionListener
+      class="org.flowable.examples.bpmn.executionListener.ExampleFieldInjectedExecutionListener"
+      event="start">
+
       <flowable:field name="fixedValue" stringValue="Yes, I am " />
       <flowable:field name="dynamicValue" expression="${myVar}" />
     </flowable:executionListener>
@@ -4185,7 +4191,8 @@ public class ExampleFieldInjectedExecutionListener implements ExecutionListener 
   private Expression dynamicValue;
 
   public void notify(ExecutionListenerExecution execution) throws Exception {
-    execution.setVariable("var", fixedValue.getValue(execution).toString() + dynamicValue.getValue(execution).toString());
+    execution.setVariable("var", fixedValue.getValue(execution).toString() +
+        dynamicValue.getValue(execution).toString());
   }
 }
 ----
@@ -4194,12 +4201,14 @@ public class ExampleFieldInjectedExecutionListener implements ExecutionListener 
 
 [source,java,linenums]
 ----
-@Deployment(resources = {"org/flowable/examples/bpmn/executionListener/ExecutionListenersFieldInjectionProcess.bpmn20.xml"})
+@Deployment(resources = {
+  "org/flowable/examples/bpmn/executionListener/ExecutionListenersFieldInjectionProcess.bpmn20.xml"})
 public void testExecutionListenerFieldInjection() {
   Map<String, Object> variables = new HashMap<String, Object>();
   variables.put("myVar", "listening!");
 
-  ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("executionListenersProcess", variables);
+  ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(
+      "executionListenersProcess", variables);
 
   Object varSetByListener = runtimeService.getVariable(processInstance.getId(), "var");
   assertNotNull(varSetByListener);
@@ -4296,7 +4305,7 @@ public class MyTaskCreateListener implements TaskListener {
 
 ===== 描述 Description
 
-__多实例活动__是在业务流程中，为特定步骤定义重复的方式。在编程概念中，多实例匹配**for each**结构：可以为给定集合中的每一条目，**顺序或并行地**，执行特定步骤，甚至是整个子流程。
+__多实例活动__是在业务流程中，为特定步骤定义重复的方式。在编程概念中，多实例类似**for each**结构：可以为给定集合中的每一条目，**顺序或并行地**，执行特定步骤，甚至是整个子流程。
 
 __多实例__是一个普通活动，加上定义（被称作“__多实例__特性”）的额外参数，会使得活动在运行时被多次执行。下列活动可以成为__多实例活动：__
 
@@ -4313,15 +4322,15 @@ __多实例__是一个普通活动，加上定义（被称作“__多实例__特
 
 <<bpmnGateways,网关>>与<<bpmnEvents,事件>>**不能**成为多实例。
 
-按照规范的要求，所有用于为每个实例创建执行的父执行，都有下列变量：
+按照BPMN2.0规范的要求，所有用于为每个实例创建执行的父执行，都有下列变量：
 
 * **nrOfInstances**：实例总数
-* **nrOfActiveInstances**：当前活动的，也就是说未完成的，实例数量。对于顺序多实例，这个值总为1.
+* **nrOfActiveInstances**：当前活动的（未完成的），实例数量。对于顺序多实例，这个值总为1.
 * **nrOfCompletedInstances**：已经完成的实例数量
 
 可以通过调用++execution.getVariable(x)++方法，获取这些值。
 
-另外，每个创建的执行，都有执行本地变量（也就是说，对其他执行不可见，也不存储在流程实例级别）：
+另外，每个创建的执行，都有执行本地变量（对其他执行不可见，也不存储在流程实例级别）：
 
 * **loopCounter**：代表给定实例在__foreach循环中的index__。可以通过Flowable的**elementIndexVariable**属性为loopCounter变量重命名。
 
@@ -4385,7 +4394,7 @@ image::images/bpmn.multi.instance.png[align="center"]
 
 假设变量++assigneeList++包含++[kermit, gonzo, fozzie]++。在上面的代码中，会并行创建三个用户任务。每一个执行都有一个名为++assignee++的流程变量，含有集合中的一个值，并在这个例子中被用于指派用户任务。
 
-++loopDataInputRef++与++inputDataItem++的缺点是 1)名字很难记 2)由于BPMN 2.0概要的限制，不能使用表达式。Flowable通过在++multiInstanceCharacteristics++上提供**collection**与**elementVariable**属性解决了这些问题：
+++loopDataInputRef++与++inputDataItem++的缺点是名字很难记，并且由于BPMN 2.0概要的限制，不能使用表达式。Flowable通过在++multiInstanceCharacteristics++上提供**collection**与**elementVariable**属性解决了这些问题：
 
 [source,xml,linenums]
 ----
@@ -4446,7 +4455,7 @@ image::images/bpmn.multi.instance.boundary.event.png[align="center"]
 
 对结束事件类似：
 
-* 当离开实际活动时，抛出一个结束事件。这时__loopCounter__变量已经设置。
+* 当离开实际活动后，抛出一个结束事件。这时__loopCounter__变量已经设置。
 * 当多实例活动整体完成时，抛出一个结束事件。这时__loopCounter__变量未设置。
 
 例如：
@@ -4474,7 +4483,7 @@ image::images/bpmn.multi.instance.boundary.event.png[align="center"]
 * 每一个活动实例抛出一个启动事件。调用三次__start__执行监听器，__loopCounter__与__assignee__变量均已设置（也就是说不为null）。
 * 因此启动执行监听器总共被调用四次。
 
-请注意当__multiInstanceLoopCharacteristics__不是定义在子元素上，也是如此。例如上面的简单用户任务的例子，也合理适用这一点。
+请注意当__multiInstanceLoopCharacteristics__不是定义在子元素上，也是如此。例如上面的简单用户任务的例子，同样如此。
 
 ==== 补偿处理器 Compensation Handlers
 
@@ -4483,9 +4492,8 @@ image::images/bpmn.multi.instance.boundary.event.png[align="center"]
 
 ===== 描述 Description
 
-<<experimental,[EXPERIMENTAL]>>
 
-如果一个活动要用于补偿另一个活动的影响，可以声明为补偿处理器。补偿处理器不在普通流程中，只在抛出补偿事件时才会执行。
+如果一个活动要用于补偿另一个活动的影响，可以声明为__补偿处理器__。补偿处理器不在普通流程中，只在抛出补偿事件时才会执行。
 
 补偿处理器不得有入口或出口顺序流。
 
@@ -4507,7 +4515,7 @@ image::images/bpmn.boundary.compensation.event.png[align="center"]
 
 ===== XML表示 XML representation
 
-要将一个活动声明为补偿处理器，需要将isForCompensation属性设置为true：
+要将一个活动声明为补偿处理器，需要将++isForCompensation++属性设置为true：
 
 [source,xml,linenums]
 ----
@@ -4535,7 +4543,7 @@ __子流程__是包含其他的活动、网关、事件等的活动。其本身�
 子流程有两个主要的使用场景：
 
 * 子流程可以**分层建模**。很多建模工具都可以__折叠__子流程，隐藏子流程的所有细节，而只显示业务流程的高层端到端总览。
-* 子流程创建了新的**事件范围**。在子流程执行中抛出的事件，可以通过子流程边界上的<<bpmnBoundaryEvent,边界事件>>捕获。因此为该事件创建了限制在子流程内的范围。
+* 子流程创建了新的**事件范围**。在子流程执行中抛出的事件，可以通过子流程边界上的<<bpmnBoundaryEvent,边界事件>>捕获。为该事件创建了限制在子流程内的范围。
 
 使用子流程也要注意以下几点：
 
@@ -4548,7 +4556,7 @@ __子流程__是包含其他的活动、网关、事件等的活动。其本身�
 
 ===== 图示 Graphical Notation
 
-子流程表示为标准活动，即圆角矩形。若__折叠__了子流程，则只显示其名字与一个加号，提供了流程的高层概览：
+子流程表示为标准活动(圆角矩形)。若__折叠__了子流程，则只显示其名字与一个加号，提供了流程的高层概览：
 
 image::images/bpmn.collapsed.subprocess.png[align="center"]
 
@@ -4601,7 +4609,7 @@ image::images/bpmn.subprocess.with.boundary.timer.png[align="center"]
 **目前的限制：**
 
 * Flowable只支持中断事件子流程。
-* Flowable只支持错误启动事件与消息启动事件触发事件子流程。
+* Flowable支持错误、定时器、信号与消息启动事件触发事件子流程。
 
 
 [[bpmnEventSubprocessGraphicalNotation]]
@@ -4664,7 +4672,7 @@ image::images/bpmn.subprocess.eventSubprocess.example.2b.png[align="center"]
 * 嵌入式（事件）子流程使用其宿主范围的执行来执行。这意味着嵌入式（事件）子流程可以访问其范围的局部变量。当使用边界事件时，创建用于执行嵌入式子流程的执行，将被边界事件的出口顺序流删除。这意味着嵌入式子流程创建的变量将不再可用。
 * 使用事件子流程时，事件完全由其所在的子流程处理。当使用边界事件时，事件由其父流程处理。
 
-这两个区别可以帮助你判断，使用边界事件还是嵌入式（事件）子流程，哪个更适合解决特定的流程建模/实现问题。
+这两个区别可以帮助你判断，使用边界事件还是嵌入式（事件）子流程，哪个更适合解决特定的流程建模或实现问题。
 
 
 [[bpmnTransactionSubprocess]]
@@ -4672,7 +4680,7 @@ image::images/bpmn.subprocess.eventSubprocess.example.2b.png[align="center"]
 
 ==== 事务子流程 Transaction subprocess
 
-<<experimental,[EXPERIMENTAL]>>[[bpmnTransactionSubprocessDescription]]
+[[bpmnTransactionSubprocessDescription]]
 
 
 ===== 描述 Description
@@ -4683,7 +4691,7 @@ image::images/bpmn.subprocess.eventSubprocess.example.2b.png[align="center"]
 
 * 若未被取消，或被意外终止，则事务__成功__。若事务子流程成功，将使用出口顺序流离开。若流程后面抛出了补偿事件，成功的事务可以被补偿。__请注意：__与“普通”嵌入式子流程一样，可以使用补偿抛出中间事件，在事务成功完成后补偿。
 * 若执行到达取消结束事件时，事务被__取消__。在这种情况下，所有执行都将被终止并移除。只会保留一个执行，设置为取消边界事件，并将触发补偿。在补偿完成后，事务子流程通过取消边界事件的出口顺序流离开。
-* 若由于抛出了错误结束事件，且未被事务子流程所在的范围捕获，则事务会被__意外__终止（错误被事件子流程的边界捕获也一样）。在这种情况下，不会进行补偿。
+* 若由于抛出了错误结束事件，且未被事务子流程所在的范围捕获，则事务会被__意外__终止。错误被事件子流程的边界捕获也一样。在这种情况下，不会进行补偿。
 
 下面的流程图展示了三种不同的结果：
 
@@ -4691,10 +4699,10 @@ image::images/bpmn.transaction.subprocess.example.1.png[align="center"]
 
 **与ACID事务的关系：**要注意不要将BPMN事务子流程与技术（ACID）事务混淆。BPMN事务子流程不是划分技术事务范围的方法。要理解Acitivit中的事务管理，请阅读<<bpmnConcurrencyAndTransactions,并发与事务>>章节。BPMN事务与技术事务有如下区别：
 
-* ACID事务技术上生存期短暂，而BPMN事务可以持续几小时，几天甚至几个月才完成。（考虑一个场景，事务包括的活动中有一个用户任务。通常人的响应时间要比程序长。或者，在另一个场景下，BPMN事务可能等待某些业务事件发生，像是特定订单的填写完成。）这些操作通常要比更新数据库字段，或者使用事务队列存储消息，花长得多的时间完成。
+* ACID事务技术上生存期短暂，而BPMN事务可以持续几小时，几天甚至几个月才完成。考虑一个场景：事务包括的活动中有一个用户任务。通常人的响应时间要比程序长。或者，在另一个场景下，BPMN事务可能等待某些业务事件发生，像是特定订单的填写完成。这些操作通常要比更新数据库字段，或者使用事务队列存储消息，花长得多的时间完成。
 * 因为不可能将业务活动的持续时间限定为技术事务的范围，一个BPMN事务通常会生成多个ACID事务。
 * 因为一个BPMN事务可以生成多个ACID事务，就不再使用ACID特性。例如，考虑上面的流程例子。假设"book hotel（预订酒店）"与"charge credit card（信用卡付款）"操作在分开的ACID事务中处理。再假设"book hotel（预订酒店）"活动已经成功。这时，因为已经进行了预订酒店操作，而还没有进行信用卡扣款，就处在中间不一致状态（intermediary inconsistent state）。在ACID事务中，会顺序进行不同的操作，因此也处在中间不一致状态。在这里不一样的是，不一致状态在事务范围外可见。例如，如果通过外部预订服务进行预定，则使用该预订服务的其他部分将能看到酒店已被预订。这意味着，当时用业务事务时，完全不使用隔离参数（的确，当使用ACID事务时，我们通常也释放隔离，以保证高并发级别。但可以细粒度地控制，而中间不一致状态也只会存在与一小段时间内）。
-* BPMN业务事务也不使用传统方式回滚。因为它生成多个ACID事务，在BPMN事务取消时，部分ACID事务可能已经提交。这样它们没法回滚。
+* BPMN业务事务不使用传统方式回滚。因为它生成多个ACID事务，在BPMN事务取消时，部分ACID事务可能已经提交。这样它们没法回滚。
 
 因为BPMN事务天生需要长时间运行，因此就需要区别处理缺乏隔离与回滚机制。在实际使用中，通常只能通过领域特定（domain specific）的方式解决这些问题：
 
@@ -4706,7 +4714,7 @@ image::images/bpmn.transaction.subprocess.example.1.png[align="center"]
 
 **目前的限制：**
 
-* BPMN规范要求，流程引擎响应底层事务协议提交的事务。例如在底层协议中发生了取消事件，则取消事务。作为可嵌入的引擎，Flowable当前不支持这点。（查看下面关于一致性的段落，了解其后果。）
+* BPMN规范要求，流程引擎响应底层事务协议提交的事务。例如在底层协议中发生了取消事件，则取消事务。作为可嵌入的引擎，Flowable当前不支持这点。查看下面关于一致性的段落，了解其后果。
 
 **基于ACID事务与乐观锁（optimistic concurrency）的一致性：**BPMN事务在如下情况保证一致性：所有活动都成功完成；或若部分活动不能执行，则所有已完成活动都被补偿。两种方法都可以得到一致性状态。然而，认识到这一点很重要：Flowable中，BPMN事务的一致性模型，位与流程执行的一致性模型之上。Flowable以事务的方式执行流程。通过乐观锁标记处理并发。在Flowable中，BPMN的错误、取消与补偿事件，都建立在相同的ACID事务与乐观锁之上。例如，只有在实际到达时，取消结束事件才能触发补偿。如果由于服务任务抛出了未检查异常，导致其未实际到达；或者，由于底层ACID事务中的其他操作，将事务设置为rollback-only（回滚）状态，导致补偿处理器的操作不能提交；或者，当两个并行执行到达一个取消结束事件时，补偿会被两次触发，并由于乐观锁异常而失败。所有这些都是想说明，当在Flowable中实现BPMN事务时，与实施“普通”流程与子流程，需要遵守相同的规则。因此要有效地保证一致性，需要将乐观锁、事务执行模型纳入考虑范围，以实现流程。
 
@@ -4794,15 +4802,24 @@ image::images/bpmn.collapsed.call.activity.png[align="center"]
 
 [source,xml,linenums]
 ----
-<callActivity id="callSubProcess" calledElement="checkCreditProcess" >
-  <extensionElements>
-	  <flowable:in source="someVariableInMainProcess" target="nameOfVariableInSubProcess" />
-	  <flowable:out source="someVariableInSubProcess" target="nameOfVariableInMainProcess" />
-  </extensionElements>
+<callActivity id="callSubProcess" calledElement="checkCreditProcess">
+    <extensionElements>
+        <flowable:in source="someVariableInMainProcess"
+            target="nameOfVariableInSubProcess" />
+        <flowable:out source="someVariableInSubProcess"
+            target="nameOfVariableInMainProcess" />
+    </extensionElements>
 </callActivity>
 ----
 
-使用Flowable扩展，作为BPMN标准元素__dataInputAssociation__与__dataOutputAssociation__的扩展。它们需要按照BPMN 2.0标准的方式声明流程变量。
+可以通过将++inheritVariables++设置为true，将所有流程变量传递给子流程。
+
+[source,xml,linenums]
+----
+<callActivity id="callSubProcess" calledElement="checkCreditProcess" flowable:inheritVariables="true"/>
+----
+
+Flowable提供了BPMN标准元素__dataInputAssociation__与__dataOutputAssociation__(它们需要按照BPMN 2.0标准的方式声明流程变量)的扩展。
 
 也可以在这里使用表达式：
 
@@ -4818,7 +4835,7 @@ image::images/bpmn.collapsed.call.activity.png[align="center"]
 
 因此最终 z = y+5 = x+5+5
 
-调用活动元素也可以在启动的子流程实例上使用一个自定义Flowable属性扩展，'businessKey'，来设置其businessKey。
+调用活动元素也可以在子流程实例上使用一个自定义Flowable属性扩展，'businessKey'，来设置其businessKey。
 
 ----
 <callActivity id="callSubProcess" calledElement="checkCreditProcess" flowable:businessKey="${myVariable}">
@@ -4826,7 +4843,7 @@ image::images/bpmn.collapsed.call.activity.png[align="center"]
 </callActivity>
 ----
 
-将'inheritBusinessKey'属性设置为true，会将子流程的businessKey值设置为调用流程的businessKey的值。
+将'inheritBusinessKey'属性设置为++true++，会将子流程的businessKey值设置为调用流程的businessKey的值。
 
 ----
 <callActivity id="callSubProcess" calledElement="checkCreditProcess" flowable:inheritBusinessKey="true">
@@ -4880,15 +4897,15 @@ image::images/bpmn.call.activity.sub.process.png[align="center"]
 
 ==== 异步操作 Asynchronous Continuations
 
-Flowable以事务方式执行流程，并可按照你的需求配置。让我们从Flowable一般如何为事务划分范围开始介绍。如果Flowable被触发（也就是说，启动流程，完成任务，为执行发送信号），Flowable将沿流程继续，直到到达每个执行路径的等待状态。更具体地说，它以深度优先方式搜索流程图，并在每个执行分支都到达等待状态时返回。等待状态是“之后”再执行的任务，意味着Flowable将当前执行持久化，并等待再次触发。触发可以来自外部来源，例如用户任务或消息接受任务，也可以来自Flowable自身，例如定时器事件。以下面的图片说明：
+Flowable以事务方式执行流程，并可按照你的需求配置。让我们从Flowable一般如何为事务划分范围开始介绍。如果Flowable被触发（启动流程，完成任务，为执行发送信号），Flowable将沿流程继续，直到到达每个执行路径的等待状态。更具体地说，它以深度优先方式搜索流程图，并在每个执行分支都到达等待状态时返回。等待状态是“之后”再执行的任务，意味着Flowable将当前执行持久化，并等待再次触发。触发可以来自外部来源，例如用户任务或消息接受任务，也可以来自Flowable自身，例如定时器事件。以下面的图片说明：
 
-image::images/flowable.async.example.no.async.PNG[align="center"]
+image::images/async.example.no.async.PNG[align="center"]
 
 这是一个BPMN流程的片段，有一个用户任务，一个服务任务，与一个定时器事件。完成用户任务与验证地址（validate address）在同一个工作单元内，因此需要原子性地（atomically）成功或失败。这意味着如果服务任务抛出了异常，我们会想要回滚当前事务，以便执行返回到用户任务，而用户任务仍然存在于数据库中。这也是Activit的默认行为。在（1）中，应用或客户端线程完成任务。在相同的线程中，Flowable执行服务并继续，直到到达等待状态，在这个例子中，是定时器事件（2）。然后将控制权返回至调用者（3），同时提交事务（如果事务由Flowable开启）。
 
 在有的情况下，这不是我们想要的。有时我们需要在流程中，自定义地控制事务边界，以便为工作的逻辑单元划分范围。这就需要使用异步操作。考虑下面的流程（片段）：
 
-image::images/flowable.async.example.async.PNG[align="center"]
+image::images/async.example.async.PNG[align="center"]
 
 这次我们完成用户任务，生成发票，并将发票发送给客户。这次发票的生成不再是同一个工作单元的一部分，因此我们不希望当发票生成失败时，回滚用户任务。因此我们希望Flowable做的，是完成用户任务（1），提交事务，并将控制权返回给调用程序。然后我们希望在后台线程中，异步地生成发票。这个后台线程就是Flowable作业执行器（事实上是一个线程池），它周期性地将作业保存至数据库。因此在幕后，当到达"generate invoice（生成发票）"任务时，会为Flowable创建“消息”作业，以继续流程，并将其持久化到数据库中。这个作业之后会被作业执行器选中并执行。我们也会为本地的作业执行器进行提示，告知其有新作业到来，以提升性能。
 
@@ -4896,7 +4913,9 @@ image::images/flowable.async.example.async.PNG[align="center"]
 
 [source,xml,linenums]
 ----
-<serviceTask id="service1" name="Generate Invoice" flowable:class="my.custom.Delegate" flowable:async="true" />
+<serviceTask id="service1" name="Generate Invoice"
+    flowable:class="my.custom.Delegate"
+    flowable:async="true" />
 ----
 
 可以为下列BPMN任务类型指定__flowable:async__：任务，服务任务，脚本任务，业务规则任务，发送任务，接收任务，用户任务，子流程，调用活动
@@ -4909,7 +4928,7 @@ image::images/flowable.async.example.async.PNG[align="center"]
 
 ==== 失败重试 Fail Retry
 
-默认配置下，如果作业执行中有任何异常，Flowable将3次重试执行作业。对异步任务作业也是这样。有时需要更灵活的配置。可以配置两个参数：
+默认配置下，如果作业执行中有任何异常，Flowable将三次重试执行作业。对异步任务作业也是这样。有时需要更灵活的配置。可以额外配置两个参数：
 
 * 重试的次数
 * 重试的间隔
@@ -4918,10 +4937,12 @@ image::images/flowable.async.example.async.PNG[align="center"]
 
 [source,xml,linenums]
 ----
-<serviceTask id="failingServiceTask" flowable:async="true" flowable:class="org.flowable.engine.test.jobexecutor.RetryFailingDelegate">
-	<extensionElements>
-		<flowable:failedJobRetryTimeCycle>R5/PT7M</flowable:failedJobRetryTimeCycle>
-	</extensionElements>
+<serviceTask id="failingServiceTask" flowable:async="true"
+    flowable:class="org.flowable.engine.test.jobexecutor.RetryFailingDelegate">
+
+    <extensionElements>
+        <flowable:failedJobRetryTimeCycle>R5/PT7M</flowable:failedJobRetryTimeCycle>
+    </extensionElements>
 </serviceTask>
 ----
 
@@ -4958,11 +4979,12 @@ Flowable如何解决这个问题呢？Flowable使用乐观锁，基于数据进�
 
 排他作业不能与同一个流程实例中的其他排他作业同时执行。考虑上面展示的流程：如果我们将服务任务都声明为排他的，则JobExecutor将确保相关的作业都不会并发执行。相反，它将确保不论何时从特定流程实例中获取了排他作业，都将从同一个流程实例中获取所有其他的排他作业，并将它们代理至同一个工作线程。这保证了作业的顺序执行。
 
-如何启用这个特性？从近期版本开始，排他作业成为默认配置。所有异步操作与定时器事件，都因此默认成为排他的。另外，如果希望作业成为非排他的，可以使用++flowable:exclusive="false"++配置。例如，下面的服务任务是异步，但非排他的。
+如何启用这个特性？从近期版本开始，排他作业成为默认配置。所有异步操作与定时器事件，都默认为排他的。另外，如果希望作业成为非排他的，可以使用++flowable:exclusive="false"++配置。例如，下面的服务任务是异步，但非排他的。
 
 [source,xml,linenums]
 ----
-<serviceTask id="service" flowable:expression="${myService.performBooking(hotel, dates)}" flowable:async="true" flowable:exclusive="false" />
+<serviceTask id="service" flowable:expression="${myService.performBooking(hotel, dates)}"
+    flowable:async="true" flowable:exclusive="false" />
 ----
 
 这是好的解决方案么？有很多人问我们这是否是好的解决方案。他们的顾虑是，这将阻止并行“操作”，因此会有性能问题。再一次，需要考虑以下两点：
@@ -4993,7 +5015,7 @@ Flowable如何解决这个问题呢？Flowable使用乐观锁，基于数据进�
   ...
 ----
 
-在上面摘录的XML中，user(user3)直接引用用户user3，而group(group3)引用组group3。组没有默认标志。也可以使用<process>标签，名为<flowable:candidateStarterUsers>与<flowable:candidateStarterGroups>的属性。这里有一个例子：
+在上面摘录的XML中，'user(user3)'直接引用用户'user3'，而'group(group3)'引用组'group3'。组没有默认标志。也可以使用<process>标签，名为<flowable:candidateStarterUsers>与<flowable:candidateStarterGroups>的属性。这里有一个例子：
 
 [source,xml,linenums]
 ----
@@ -5022,14 +5044,18 @@ identityLinks = repositoryService.getIdentityLinksForProcessDefinition("processD
 
 [source,java,linenums]
 ----
-List<User> authorizedUsers =  identityService().createUserQuery().potentialStarter("processDefinitionId").list();
+List<User> authorizedUsers = identityService().createUserQuery()
+    .potentialStarter("processDefinitionId")
+    .list();
 ----
 
 用完全相同的方法，可以获取配置为给定流程定义的潜在启动者的组列表：
 
 [source,java,linenums]
 ----
-List<Group> authorizedGroups =  identityService().createGroupQuery().potentialStarter("processDefinitionId").list();
+List<Group> authorizedGroups = identityService().createGroupQuery()
+    .potentialStarter("processDefinitionId")
+    .list();
 ----
 
 
@@ -5038,7 +5064,6 @@ List<Group> authorizedGroups =  identityService().createGroupQuery().potentialSt
 
 === 数据对象 Data objects
 
-<<experimental,[EXPERIMENTAL]>>
 
 BPMN提供了将数据对象定义为流程或子流程元素的一部分的可能性。根据BPMN规范，可以包含复杂的XML结构，并可以从XSD定义中引入。作为Flowable支持的第一批数据对象，支持下列XSD类型：
 
