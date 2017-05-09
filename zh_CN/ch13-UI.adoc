@@ -174,56 +174,56 @@ ldap.cache.groupexpiration=180000
 
 [[flowableModelerApp]]
 
-=== Flowable Modeler application
+=== Flowable modeler应用 Flowable Modeler application
 
-The Flowable Modeler application can be used to model BPMN processes, DMN decision table, Form definitions and create app definitions. The BPMN modeler uses the same Oryx and Angular foundation as in Flowable 5, but the functionality has now been moved into a separate Modeler application. When using the Flowable Modeler application, make sure the Flowable IDM application is deployed and running as well (for authentication and authorization purposes).
+Flowable Modeler应用可以用于可视化创建：BPMN流程、DMN选择表、表单定义，以及创建应用定义。BPMN modeler使用与Flowable 5相同的Oryx与Angular架构，但是将功能转移到独立的Modeler应用中。在使用Flowable Modeler应用时，请确保Flowable IDM应用已经部署并正常运行（用于认证与授权）。
 
-When you login to the Modeler application (link:$$http://localhost:8080/flowable-modeler$$[http://localhost:8080/flowable-modeler]) with your user (or the default admin/test user), you will see the process overview screen. From here you can start creating new BPMN process models by clicking on the Create Process or Import Process button.
+使用自己的账户（或者默认的admin/test用户）登入Modeler应用后(link:$$http://localhost:8080/flowable-modeler$$[http://localhost:8080/flowable-modeler])，可以看到流程总览页面。在这里可以点击创建流程(Create Process)按钮，开始创建新的BPMN流程模型，也可以点击导入流程(Import Process)按钮。
 
 image::images/flowable_modeler_createmodel_popup.png[align="center", width="600"]
 
-When creating a process model (but also any other model), it's important to think carefully about the model key value. The model key is a unique identifier for the model across the full model repository. If you choose a model key that already exists in the model repository, an error message is shown and the model is not saved.
+在创建流程模型（以及其他模型）时，需要谨慎确定模型key。模型key是模型仓库中，该模型的唯一标识。如果使用了已经存在的模型key，则会显示错误，模型也不会保存。
 
-After creating the model with the popup, the BPMN modeling canvas is shown. The BPMN editor is very similar to the Flowable 5 BPMN editor that was part of the Explorer application. All BPMN elements supported by the Flowable engine are available to be used in the design of a process model.
+使用弹窗创建模型之后，会显示BPMN模型画布。这个BPMN编辑器与Flowable 5中（作为Explorer应用一部分的）BPMN编辑器十分相像。在设计流程模型时，Flowable引擎支持的所有BPMN元素都可以使用。
 
 image::images/flowable_modeler_design_screen.png[align="center"]
 
-The BPMN editor is divided into 4 parts:
+BPMN编辑器分为4个部分：
 
-* Palette: the palette of BPMN elements available to design a process model
-* Toolbar: actions to change the model canvas, such as zooming, layout and saving a model
-* Model canvas: the modeling canvas on which to drag and drop BPMN elements and design the process model
-* Properties panel: the properties for the main process model if no element is select and otherwise the properties of the selected BPMN element
+* 画板(Palette): 所有设计流程模型可用的BPMN元素
+* 工具条(Toolbar): 修改模型画布，如缩放、布局，以及保存等功能操作
+* 模型画布(Model canvas): 在模型画布上拖放BPMN元素，并设计流程模型
+* 参数面板(Properties panel): 如果没有选择元素，则为主流程模型的参数；否则为选中BPMN元素的参数
 
-For a User task element there's a _Referenced form_ property in the properties panel. If you select this property, a popup is opened where you can select a form definition from the repository or create a new form. When creating a new form, a similar create dialog to the process model create dialog is presented. After filling in the name and form model key, the form editor is opened.
+对于用户任务元素，在参数面板中有一个__引用表单(Referenced form)__参数。如果选择这个参数，则会弹出窗口，使你可以在仓库中选择一个表单定义，或者创建一个新的表单。如果选择创建一个新的表单，会显示一个类似于流程模型创建对话框的弹窗。填入表单名及表单key之后，就会打开表单编辑器。
 
 image::images/flowable_modeler_formdesign_screen.png[align="center"]
 
-Form fields can be dragged from the form palette on to the form canvas. In this example, a name textfield, two date fields and a remarks multiline textfield are added to the form canvas. When editing a form field, the label, id, required status and placeholder can be filled in.
+可以从表单画板中将表单字段拖入表单画布。在这个例子中，在表单画布上添加了一个name文本框，两个date日期框，以及一个remarks多行文本框。在编辑表单字段时，可以填入标签(label)，id，是否必填(required)，以及占位提示值(placeholder)。
 
 image::images/flowable_modeler_editfield_popup.png[align="center", width="600"]
 
-The id field is an important value, because a process variable will be created with the form field value using the id property value. When filling in the label property, the id property is automatically filled. If needed, you can also provide the id property value yourself by checking the override id checkbox.
+id是一个重要的参数，使用这个id，为表单字段创建流程变量。填入标签值时，会自动填入id值。如果需要的话，也可以点击覆盖id复选框(override id)，自行提供id的值。
 
-After saving the form model and closing the form editor, you are automatically navigated back to the process model (when the form editor was opened via the BPMN editor). When selecting the User task element again and clicking on the _Referenced form_ property you will see that the newly created form definition is now attached to the User task. When clicking on the _Form_ tab in the header of the Modeler application, all form definitions available in the model repository are shown.
+保存表单模型并关闭表单编辑器之后，会自动跳转回流程模型（如果表单编辑器是从BPMN编辑器打开的）。再次选择用户任务元素，并点击__引用表单__参数，就可以看到新创建的表单定义已经附加至用户任务。点击Modeler应用头部的__表单(Form)__页签，既可以看到模型仓库中保存的所有表单定义。
 
 image::images/flowable_modeler_formoverview_screen.png[align="center"]
 
-You can preview every form definition by opening the details view of a form definition. In the details view, the form name, key and description can be edited and the history of form models is available. You can also duplicate the form definition to create a new form definition with the same form fields. 
+可以打开表单定义的详情界面，预览每一个表单定义。在详情页面中，可以修改表单名、key及描述，也可以查阅表单模型的修改历史。也可以复制表单定义，创建一个具有相同表单字段的新的表单定义。
 
-Now let's open the vacation request process model in the BPMN editor again and add a Script task to the process model, that will calculate the number of days between the vacation start and end dates. Click on the _Script form_ property and fill in a value of _groovy_ to instruct the Flowable engine to use the Groovy scripting engine. Now click on the _Script_ property and fill in the script that calculates the number of days.
+接下来，再次打开BPMN编辑器中的请假(vacation request)流程模型，向流程模型中添加一个脚本任务，用于计算假期开始到结束之间的日数。点击__脚本表单(Script form)__参数，填入__groovy__，这样Flowable引擎就会使用Groovy脚本引擎。然后点击__脚本(Script)__参数，并填入用于计算日数的脚本。
 
 image::images/flowable_modeler_script_popup.png[align="center", width="600"]
 
-Now we have a _amountOfVacationDays_ process variable we can add a Decision task to the process model. A decision task can be used to execute a DMN decision table in the Flowable DMN engine. Through the _Decision table reference_ property, a new decision table model can be created and the DMN editor is opened.
+这样我们就有了一个__amountOfVacationDays__流程变量，可以在流程模型中添加一个选择任务。选择任务用于在Flowable DMN引擎中，执行DMN选择表。通过__引用选择表(Decision table reference)__参数，可以创建一个新的选择表模型，并打开DMN编辑器。
 
 image::images/flowable_modeler_dmneditor_screen.png[align="center"]
 
-The DMN editor provides a table editor with input columns, where input conditions can be defined with the process variables available in the process context, and output columns, where output variable values can be defined. In this very simple example there's one input column using the _amountOfVacationDays_ variable that checks if it's less than 10 or higher or equal to 10. When the amount of days is less than 10, an output variable _managerApprovalNeeded_ is returned with value false, and otherwise a value of true is returned. You can define multiple input columns and have multiple input conditions per rule. It's also possible to leave an input column empty, which means that it's evaluated to true for that part of the rule. You can define one or multiple output variables.
+DMN编辑器提供了一个表编辑器，包含输入列——可以使用流程上下文中可用的流程变量定义输入条件；以及输出列——可以定义输出变量。在这个很简单的例子里，使用__amountOfVacationDays__做一个输入列，检查是否少于10天，还是大于等于10天。如果天数少于10，__managerApprovalNeeded__变量返回值false。否则返回true。可以定义多个输入列，每条规则也可以有多个输入条件。也可以将一个输入列置空，意味着永远为true。也可以定义一个或多个输出变量。
 
-Another important part of the DMN decision table definition is the hit policy. Currently, Flowable supports the First and Any hit policy. With the First hit policy, when the first rule is found that evaluates to true the DMN execution will stop and its output variables are returned. For the Any hit policy, all rules will be executed and the output variables for the last rule that evaluates to true are returned.
+DMN选择表定义的另一个重要部分，是命中策略。目前，Flowable支持第一(First)与任意(Any)命中策略。对于第一命中策略，DMN会返回第一条计算为true的规则定义的输出变量，并停止计算。对于任意命中策略，会计算所有的规则，并输出计算为true的最后一条规则定义的输出变量。
 
-When the DMN editor is saved and closed, the Modeler application navigates back to the BPMN editor and the newly created DMN decision table is now attached to the Decision task. The decision task will be generated in the BPMN XML like;
+保存并关闭DMN编辑器后，Modeler应用会自动跳转回BPMN编辑器，并将新创建的DMN选择表附加至选择任务。选择任务会如下在BPMN XML中生成：
 
 [source,xml,linenums]
 ----
@@ -236,30 +236,29 @@ When the DMN editor is saved and closed, the Modeler application navigates back 
 </serviceTask>
 ----
 
-With the _managerApprovalNeeded_ variable available in the process instance context, we can now create an exclusive gateway with a sequence flow condition that evaluates the calculated value of the DMN Engine. 
+使用流程实例上下文中可用的__managerApprovalNeeded__变量，就可以创建一个排他网关，带有一个顺序流条件，使用DMN引擎的计算结果。
 
 image::images/flowable_modeler_sequenceflowcondition_popup.png[align="center", width="500"]
 
-The full BPMN process model now looks like this:
+完整的BPMN流程模型现在长这样：
 
 image::images/flowable_modeler_vacationrequest_screen.png[align="center"]
 
-With the process model completed, we can now create an app definition that combines one or more process models with all their associated models (for example, decision tables and form definitions) into a single artifact. An app definition can be exported as a BAR file (zip format) that can be deployed on the Flowable engine. When creating a vacation request app definition, the app editor will look something like the screen below.
+完成流程模型之后，就可以创建一个应用定义(app definition)，将一个或多个流程模型，以及他们关联的模型（例如，选择表和表单定义）打包为一个单独的工件。应用定义可以导出为BAR文件(zip格式)，并可以在Flowable引擎中部署。创建完成请假应用定义后，应用编辑器将如下显示。
 
 image::images/flowable_modeler_appeditor_screen.png[align="center"]
 
-In the app editor, an icon and a theme color can be selected that will be used in the Flowable Task application to show the application in the dashboard. The important step is to add the vacation request process model, and by selecting the process model, automatically include any form definitions and DMN decision tables.
+在应用编辑器中，可以选择图标和主题色，用于Flowable Task应用在面板中显示该应用。重要的步骤是添加请假流程模型，并通过选择流程模型，自动包含对应的表单定义和DMN选择表。
 
 image::images/flowable_modeler_modelselection_popup.png[align="center"]
 
-A process model can be selected by clicking on the model thumbnail. When one or more models are selected, you can close the popup, save the app definition and close it. When navigating to the details view of the newly created vacation request app definition, the following details screen is shown:
+可以在模型指纹页面点击选择流程模型。选择一个或多个模型之后，就可以关闭弹窗，保存并关闭应用定义。在详情页面查看最新创建的请假应用定义，如下所示：
 
 image::images/flowable_modeler_appdetails_screen.png[align="center"]
 
-From this view, you can download the app definition in two different formats. The first download button (with the arrow pointing downwards) can be used to
-download the app definition with the JSON model files for each included model. This makes it easy to share app definitions between different Flowable Modeler applications. The second download button (with the arrow point to upper right) will provide a BAR file of the app definition models, which can be deployed on the Flowable engine. In the BAR file, only the deployable artifacts are included, such as the BPMN 2.0 XML file and the DMN XML file, and not the JSON model files. All files in a BAR file deployed on a Flowable engine are stored in the database, so therefore only the deployable files are included.
+在这个页面中，可以以两种不同格式下载应用定义。第一个下载按钮（带有下箭头），以每个模型的JSON模型文件的格式，下载应用定义。这样就很容易在不同的Flowable Modeler应用之间共享应用定义。第二个下载按钮（带有指向右上的箭头），提供应用定义模型的BAR文件。它可以用于在Flowable引擎中部署。在Bar文件中，只包含了可以部署的工件，如BPMN 2.0 XML文件和DMN XML文件，而不会包含JSON模型文件。在Flowable引擎中部署的BAR文件中的所有文件，都保存在数据库中。因此只包含可部署文件。
 
-From the app definition details view, you can also _Publish_ the app definition directly to the Flowable engine. The Flowable Modeler uses the URL defined in the flowable-ui-app.properties file with the _deployment.api.url_ property key. By default, the deployment URL is configured so the app definition will be deployed on the Flowable Task application when it's running. However, this can be changed to use the Flowable REST application, for example. Make sure the Flowable Task application is running and click on the _Publish_ button. The app definition is now deployed as a BAR file to the Flowable Task application.
+在应用定义详情页面，也可以直接向Flowable引擎__发布(Publish)__应用定义。Flowable Modeler使用flowable-ui-app.properties文件中，__deployment.api.url__参数定义的URL。默认情况下，部署URL配置为将应用定义部署在运行的Flowable Task应用上。然而，也可以修改为，比如使用Flowable REST应用。请确保Flowable Task应用正在运行，再点击__发布__按钮。这样应用定义就会做为一个BAR文件部署到Flowable Task应用。
 
 
 [[flowableTaskApp]]
