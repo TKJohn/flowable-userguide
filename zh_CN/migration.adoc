@@ -1,4 +1,4 @@
-= Flowable迁移手册：Flowable V5到Flowable V6 (Flowable Migration Guide : Flowable V5 to Flowable V6)
+= Flowable迁移手册：Flowable V5到Flowable V6
 :doctype: book
 :docinfo1: header
 :icons: font
