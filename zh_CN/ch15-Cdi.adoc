@@ -16,7 +16,7 @@ flowable-cdi模块平衡了Flowable的可配置性与CDI(上下文和依赖注�
 <dependency>
 	<groupId>org.flowable</groupId>
 	<artifactId>flowable-cdi</artifactId>
-	<version>5.x</version>
+	<version>6.x</version>
 </dependency>
 ----
 
@@ -112,7 +112,7 @@ Flowable根据底层事务管理策略的不同，提供不同的ProcessEngineCo
 <dependency>
 	<groupId>org.springframework</groupId>
 	<artifactId>spring-context</artifactId>
-	<version>3.0.3.RELEASE</version>
+	<version>4.2.5.RELEASE</version>
 </dependency>
 ----
 
@@ -133,15 +133,15 @@ Java SE环境中的配置与<<configuration,创建一个流程引擎>>章节中�
 ----
 
      
-=== CDI的基于上下文的流程执行 Contextual Process Execution with CDI
+=== 使用CDI的基于上下文的流程执行 Contextual Process Execution with CDI
 
-本章节我们将介绍Flowable cdi扩展使用的基于上下文的流程执行模型。BPMN业务流程通常是一个长期运行的交互动作，包含用户与系统的任务。在运行时，流程分割为独立工作单元的集合，由用户与/或应用逻辑操作。在flowable-cdi中，流程实例可以关联至一个cdi作用域，这个关联代表了一个工作单元。如果工作单元很复杂这就特别有用，例如若一个用户任务由多个不同表单的复杂顺序组成，并需要在交互过程中保持"非流程作用域（non-process-scoped）"状态。
+本章节我们将介绍Flowable CDI扩展使用的基于上下文的流程执行模型。BPMN业务流程通常是一个长期运行的交互动作，包含用户与系统的任务。在运行时，流程分割为独立工作单元的集合，由用户与/或应用逻辑操作。在flowable-CDI中，流程实例可以关联至一个CDI作用域，这个关联代表了一个工作单元。如果工作单元很复杂这就特别有用，例如若一个用户任务由多个不同表单的复杂顺序组成，并需要在交互过程中保持"非流程作用域（non-process-scoped）"状态。
 
 在默认配置中，流程实例关联至"broadest（广播）"活动作用域，一开始为会话，并在会话上下文未激活时退化为请求。
 
 ==== 将一个会话关联至一个流程实例 Associating a Conversation with a Process Instance
 
-当解析@BusinessProcessScoped bean，或注入流程变量时，会依赖一个激活的cdi作用域与一个流程实例的已有关联。flowable-cdi提供了++org.flowable.cdi.BusinessProcess++ bean用于控制该关联，特别是：
+当解析@BusinessProcessScoped bean，或注入流程变量时，会依赖一个激活的CDI作用域与一个流程实例的已有关联。flowable-cdi提供了++org.flowable.cdi.BusinessProcess++ bean用于控制该关联，特别是：
 
 * __startProcessBy(...)__方法，镜像了Flowable ++RuntimeService++服务暴露的对应方法，用于启动并关联一个业务流程，
 * ++resumeProcessById(String processInstanceId)++，用于将给定id关联至流程实例，
@@ -256,8 +256,6 @@ public class BusinessTripRequest implements Serializable {
 ----
 
 ==== 接收流程事件 Receiving Process Events
-
-<<experimental,[EXPERIMENTAL]>>
 
 Flowable可以关联至CDI事件总线。这样可以使用标准CDI事件机制获取流程事件。要为Flowable启用CDI事件支持，需要在配置中启用相应的处理监听器：
 
