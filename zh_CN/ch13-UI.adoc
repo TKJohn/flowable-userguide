@@ -7,7 +7,7 @@ Flowable提供了几个web应用，以演示、介绍Flowable项目提供的功�
 * Flowable IDM: 一个身份管理应用，为所有Flowable用户界面应用提供了单点登录认证功能，并且，对于拥有IDM管理员权限的用户，提供了管理用户、组与权限的功能。
 * Flowable Modeler: 让具有建模权限的用户创建流程模型、表单、选择表与应用定义
 * Flowable Task: 一个运行时任务应用，提供了启动流程实例、编辑任务表单、完成任务，及查询流程实例与任务的功能。
-* Flowable Admin: 一个管理应用，让具有管理员权限的用户可以查询BPMN、DMN、表单及内容引擎，并提供了许多选项用于修改流程实例、任务、作业等。管理应用通过REST API连接至引擎，并与Flowable　Task应用及Flowable REST应用一同部署。
+* Flowable Admin: 一个管理应用，让具有管理员权限的用户可以查询BPMN、DMN、Form及Content引擎，并提供了许多选项用于修改流程实例、任务、作业等。管理应用通过REST API连接至引擎，并与Flowable　Task应用及Flowable REST应用一同部署。
 
 所有其他的应用都需要Flowable IDM提供认证。每个应用的WAR文件可以部署在相同的servlet容器（如Apache Tomcat）中，但也可以部署在不同的容器中。由于每个应用使用相同的cookie进行认证，因此应用需要运行在相同的域名下。
 
@@ -116,7 +116,7 @@ rest.process.app.password=test
 
 [[flowableIDMApp]]
 
-=== Flowable IDM应用 Flowable IDM application
+=== Flowable IDM应用
 
 Flowable IDM应用，用于其他三个Flowable web应用的认证与授权。因此如果你想要运行Modeler，Task或者Admin应用，就需要运行IDM应用。Flowable IDM应用是一个简单的身份管理应用，目标是为Flowable web应用提供单点登录能力，也提供了一个定义用户、组与权限的地方。
 
@@ -174,7 +174,7 @@ ldap.cache.groupexpiration=180000
 
 [[flowableModelerApp]]
 
-=== Flowable modeler应用 Flowable Modeler application
+=== Flowable Modeler应用
 
 Flowable Modeler应用可以用于可视化创建：BPMN流程、DMN选择表、表单定义，以及创建应用定义。BPMN modeler使用与Flowable 5相同的Oryx与Angular架构，但是将功能转移到独立的Modeler应用中。在使用Flowable Modeler应用时，请确保Flowable IDM应用已经部署并正常运行（用于认证与授权）。
 
@@ -248,7 +248,7 @@ image::images/flowable_modeler_vacationrequest_screen.png[align="center"]
 
 image::images/flowable_modeler_appeditor_screen.png[align="center"]
 
-在应用编辑器中，可以选择图标和主题色，用于Flowable Task应用在面板中显示该应用。重要的步骤是添加请假流程模型，并通过选择流程模型，自动包含对应的表单定义和DMN选择表。
+在应用编辑器中，可以选择图标和主题色，用于Flowable Task应用在看板(dashboard)中显示该应用。重要的步骤是添加请假流程模型，并通过选择流程模型，自动包含对应的表单定义和DMN选择表。
 
 image::images/flowable_modeler_modelselection_popup.png[align="center"]
 
@@ -263,89 +263,89 @@ image::images/flowable_modeler_appdetails_screen.png[align="center"]
 
 [[flowableTaskApp]]
 
-=== Flowable Task application
+=== Flowable Task应用
 
-The Flowable Task application is the runtime application of the Flowable project and includes the Flowable BPMN, DMN, Form and Content engines by default. With the Flowable Task application, new process instances can be started, tasks can be completed, task forms can be rendered and so on. In the previous section, the vacation request app definition was deployed on the Flowable Task application REST API, and through that deployed on the Flowable engine. If you look in the Flowable database, you can see a new deployment entry has been added to the ACT_RE_DEPLOYMENT table for the BPMN Engine. Also, new entries haven been created in the ACT_DMN_DEPLOYMENT and ACT_FO_FORM_DEPLOYMENT tables for the DMN and Form engines. 
+Flowable Task应用是Flowable项目的运行时应用，默认包含了Flowable BPMN、DMN、Form以及Content引擎。使用Flowable Task应用，可以启动新的流程实例，完成任务，渲染任务表单等等。在之前的章节中，请假应用定义已经通过Flowable Task应用REST API，部署在Flowable引擎中。如果查看Flowable数据库，就可以看到BPMN引擎的ACT_RE_DEPLOYMENT表中已经添加了新的部署实体。并且，也在DMN引擎的ACT_DMN_DEPLOYMENT，和Form引擎的ACT_FO_FORM_DEPLOYMENT表中创建了新的实体。
 
-On the dashboard on link:$$http://localhost:8080/flowable-task$$[http://localhost:8080/flowable-task], you can see a vacation request app in addition to the default Task app, and any other apps that have been deployed to the Flowable engine already. 
+在link:$$http://localhost:8080/flowable-task$$[http://localhost:8080/flowable-task]的看板中，可以看到一个请假应用，以及默认的Task应用，和其他已经在Flowable引擎中部署的应用。
 
 image::images/flowable_task_dashboard_screen.png[align="center"]
 
-When clicking on the vacation request app, the task list for the logged-in user is shown (which is probably empty for now).
+点击请假应用，会显示已登入用户的任务列表（目前很可能为空）。
 
 image::images/flowable_task_tasklist_screen.png[align="center"]
 
-When clicking on the _Processes_ tab you can choose to start a new process instance by clicking on the _Start a process_ button. The list of available process definitions within the context of this app definition is now displayed. In the general Task app this works in a similar way, but in the Task app, all process definitions deployed on the Flowable engine are shown. After selecting the vacation request process definition, the _Start process_ button can be clicked to start a new vacation request process instance.
+点击打开__流程(Process)__页签后，可以点击__启动一个流程(Start a process)__按钮，启动一个新的流程实例。这样就会显示当前应用定义上下文中，所有可用的流程定义的列表。在通用Task应用中操作类似，不过在Task应用中，会显示Flowable中部署的所有流程定义。选择请假流程定义后，可以点击__启动流程(Start process)__按钮，启动一个新的请假流程实例。
 
-The Flowable Task application automatically navigates to the process instance details view. You can see the _Provide vacation information_ task is active and, for example, comments can be added and the process instance state can be shown diagrammatically using the _Show diagram_ button. 
+Flowable Task应用将自动跳转至流程实例详情页面。可以看到，__提供请假信息(Provide vacation information)__任务已被激活，并且可以，比如，添加备注，或者使用__显示流程图(Show diagram)__按钮，图形化显示流程实例状态。
 
 image::images/flowable_task_processdetails_screen.png[align="center"]
 
-When navigating to the task list, you can also see the _Provide vacation information_ task listed there as well. The task details are shown in this view, with the vacation info form being rendered. You can also switch to the details view by clicking on the _Show details_ button. In the details view, comments can be added, users can involved in the task and attachments can be added to the task. You can also change the due date and the assignee of a task.
+转至任务列表，也可以看到__提供请假信息(Provide vacation information)任务__也在这里列出。在这个界面中显示了任务详情，以及渲染的请假信息表单。也可以点击__显示详情(Show details)__按钮，转至详情页面。在详情页面中，可以添加备注，引入用户，以及为任务添加附件。也可以修改任务的到期时间和办理人。
 
 image::images/flowable_task_taskdetails_screen.png[align="center"]
 
-Let's fill in the form and complete the task. First, select a start date and end date that have more than 10 days in between, so we can validate that a
-_Manager approval_ task is being generated. After filling in the vacation info form and clicking the _Complete_ button, the Flowable task app navigates directly to the _Manager approval_ task view. When you also complete this task (without a task form), the process instance is completed.
+让我们开始填写表单并完成任务。首先，选择一个开始日期和结束日期，间隔超过10天。这样就可以验证生成__经理审批(Manager approval)__任务。填写完毕请假信息表单后，点击__完成(Complete)__按钮，Flowable Task应用就会跳转至__经理审批(Manager approval)__任务界面。可以直接完成这个任务（不需要填写任务表单），流程实例就结束了。
 
-When navigating to the _Processes_ tab and clicking on the _Showing running processes_ section, you can select an option to show completed process instances. The list of completed process instances is now shown and when clicking on the just completed vacation request process you can see the two completed tasks.
+返回__流程(Processes)__页签，点击__显示运行中的流程(Showing running processes)__选项，可以选择显示已完成的流程实例。这样就会显示已完成的流程实例列表。点击刚才完成的请假流程，可以看到完成了两个任务。
 
 image::images/flowable_task_processhistory_screen.png[align="center"]
 
-The completed form of each task is stored in the ACT_FO_FORM_INSTANCE table of the Flowable Form engine. So it's possible to look at the values of each completed form when you navigate to the completed task.
+每个任务的完成表单(complete form)都存储在Flowable Form引擎的ACT_FO_FORM_INSTANCE表中。因此，在查看完成的任务时，就可以看到每一个完成表单的数据。
 
 image::images/flowable_task_completedform_screen.png[align="center"]
 
-Make sure to switch back to showing running processes instead of the completed ones, otherwise you won't see newly started process instances. You can also filter tasks in the task list view. There are options to search on the name of a task, the task state, only tasks for a specific process definition and change the assignment filter.
+请确保选择回显示运行中的流程，否则就不能看到新启动的流程实例。也可以在任务列表界面进行过滤。可以选择查找任务名、任务状态，特定流程定义的任务，以及指定的办理人。
 
 image::images/flowable_task_taskfilter_screen.png[align="center", width="400"]
 
-By default, the assignment filter is set to _Tasks where I am involved_. This doesn't show the tasks where you are a candidate, such as tasks that are available to a specific candidate group before they are assigned to a specific person. To show candidate tasks you can select the _Tasks where I am one of the candidates_ assignment filter option.
+默认情况下，办理人过滤设置为__我参与的任务(Tasks where I am involved)__。这样不会显示你作为候选人的任务，例如一个特定的候选组都可以选择，而没有指定给特定的办理人的任务。要显示候选任务，可以选择__我参与候选的任务(Tasks where I am one of the candidates)__。
 
 
 [[flowableAdminApp]]
 
-=== Flowable Admin application
+=== Flowable Admin应用
 
-The fourth UI application the Flowable project provides is the Flowable Admin application. This application provides ways to, for example, query deployments in the BPMN, DMN and Form Engines, but also shows the active state of a process instance with its active tasks and process variables. It also provides actions to assign a task to a different assignee and to complete an active task. The Flowable Admin application uses the REST API to communicate with the Flowable engines. By default, it is configured to connect to the Flowable Task REST API, but you can easily change this to use the Flowable REST app REST API instead. When going to link:$$http://localhost:8080/flowable-admin$$[http://localhost:8080/flowable-admin], the configuration screen is shown (which is also available by clicking on the arrow at the top right near the Flowable logo). 
+Flowable项目提供的第四个用户界面应用，是Flowable Admin应用。这个应用可以用于，例如，查询BPMN、DMN及Form引擎中的部署，也可以显示一个流程实例的激活状态，包括激活的任务和流程变量。也提供了将任务指派给不同的办理人，以及完成任务的操作。Flowable Admin应用使用REST API与Flowable引擎通信。默认情况下，配置为连接至Flowable Task REST API，但是也可以很容易的修改为连接至Flowable REST应用的REST API。访问link:$$http://localhost:8080/flowable-admin$$[http://localhost:8080/flowable-admin]时会显示配置界面（也可以直接点击Flowable logo右上方的箭头）。
 
 image:images/flowable_admin_configuration_screen.png[align="center"]
 
-For each engine, the REST endpoint can be configured with the basic authentication values. The configuration is done per engine, because it's possible to, for example, deploy the DMN Engine on a separate server from the BPMN Engine. 
+对于每一个引擎，都可以配置REST终端的基本认证信息。对每个引擎需要单独配置，因为有可能会，比如，将DMN引擎与BPMN引擎部署在不同的服务器上。
 
-When the configuration is defined with the correct values, the _Process Engine_ can be selected to administer the Flowable BPMN engine. By default, the deployments of the Flowable BPMN engine are shown.
+如果配置正确，就可以选择__流程引擎(Process Engine)__来管理Flowable BPMN引擎。默认情况下，会显示Flowable BPMN引擎的部署情况。
 
 image::images/flowable_admin_deployments_screen.png[align="center"]
 
-You can filter the deployments based on name and tenant identifier. In this view, it's also possible to deploy a new BPMN XML file or BAR file to the Flowable engine. When clicking on one of the deployments, the deployment details view is shown.
+可以使用名字及租户id过滤部署。在这个界面中，也可以为Flowable引擎部署新的BPMN XML文件，或BAR文件。点击其中一个部署，就会显示部署详情界面。
 
 image::images/flowable_admin_deploymentdetails_screen.png[align="center"]
 
-More details of a deployment are shown here and also the process definitions that are part of this deployment on which you click to get more details. It's also possible to delete a deployment here. When you want to delete a deployed app definition, this is also the way to delete the app definition from the Flowable Task app dashboard. When clicking on one of the process definitions, the process definition details view is shown.
+这里会显示部署的详细信息，以及包含的流程定义。也可以在这里删除一个部署。如果希望删除一个已部署的应用定义，也可以在Flowable Task应用看板中删除应用定义。点击其中一个流程定义，就会显示流程定义详情页面。
 
 image::images/flowable_admin_processdefinitiondetails_screen.png[align="center"]
 
-In the process definition details view, the first page of process instances is shown, together with optional decision table definitions and form definitions that are used in the process definition. For the vacation request process definition, there's one connected decision table and one connected form definition. Clicking on the decision table definition navigates the Flowable Admin application to the DMN engine. You can always navigate back to the Process engine by clicking on the _Parent Deployment ID_ link.
+在流程定义详情页面中，首先显示流程实例，以及流程定义中可能使用的选择表定义和表单定义。对于请假流程定义来说，有一个关联的选择表，以及一个关联的表单定义。点击选择表定义，就会从Flowable Admin应用跳转至DMN引擎。可以点击__父部署ID(Parent Deployment ID)__连接，返回流程引擎。
 
-In addition to the deployments and definitions, you can also query on process instances, tasks, jobs and event subscriptions in the Process engine. The views all work in a similar way to what's already been described.
+除了部署与定义之外，还可以查询；流程引擎中的流程实例、任务、作业，以及事件订阅情况。界面与前面介绍的类似。
 
 
-=== Internationalization
+=== 国际化 Internationalization
 
-The Flowable UI apps support internationalization (i18n). The project maintains the English translations. It is however possible to provide your own translation files in order to support other languages.
+Flowable用户界面应用支持国际化(internationalization, i18n)。项目维护英语版本。但也可以提供你自己的翻译文件，以支持其他语言。
 
-The link:$$https://github.com/angular-translate/angular-translate[Angular Translate] library tries to load a specific translation file based on the browser's locale located in the _i18n_ folder (present in each UI module). When a matching translation file cannot be loaded the framework will fallback to the English translation.
+link:$$https://github.com/angular-translate/angular-translate[Angular Translate]库会试着基于浏览器的语言，从__i18n__目录（在每一个用户界面应用中）下，载入对应的语言文件。如果无法加载匹配的语言文件，框架会退回使用英语版本。
 
-Mapping multiple browser locale keys to specific translations additional configuration can be provided (located in the Angular app config);
+也可以通过额外的配置，将多个浏览器语言key关联至某个语言：
 
 [source,linenums]
 ----
-// Initialize angular-translate
+// 初始化angular-translate  (Initialize angular-translate)
 $translateProvider.useStaticFilesLoader({
     prefix: './i18n/',
     suffix: '.json'
 })
 /*
+    用于将多个浏览器语言key管理安置一个angular语言key。
     This can be used to map multiple browser language keys to a
     angular translate language key.
 */
@@ -358,6 +358,6 @@ $translateProvider.useStaticFilesLoader({
 .determinePreferredLanguage();
 ----
 
-For example; your browser is configured for English (United States) and provides the language key _en-US_. Without the mapping Angular Translate will try to fetch the corresponding translation file _en-US.json_. (If this is not available it will fallback to 'en' and load the _en.json_ translation file)
+例如，你的浏览器配置为使用英语（美国）——English (United States)，并提供了语言key为__en-US__。如果不做映射配置，Angular Translate会尝试获取对应的语言文件__en-US.json__。（如果无法加载，会退回为'en'，并加载__en.json__语言文件）
 
-By uncommenting the _.registerAvailableLanguageKeys_ block you can map _en-US_ (and all other _en_ language keys) to the _en.json_ language file.
+取消注释__.registerAvailableLanguageKeys__块，就可以将__en-US__（以及所有其他的__en__语言key）映射至__en.json__语言文件。
