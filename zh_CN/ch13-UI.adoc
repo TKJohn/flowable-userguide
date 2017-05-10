@@ -1,22 +1,22 @@
 [[flowableUIApps]]
 
-== Flowable用户界面应用 Flowable UI applications
+== Flowable UI应用
 
 Flowable提供了几个web应用，以演示、介绍Flowable项目提供的功能：
 
-* Flowable IDM: 一个身份管理应用，为所有Flowable用户界面应用提供了单点登录认证功能，并且，对于拥有IDM管理员权限的用户，提供了管理用户、组与权限的功能。
-* Flowable Modeler: 让具有建模权限的用户创建流程模型、表单、选择表与应用定义
-* Flowable Task: 一个运行时任务应用，提供了启动流程实例、编辑任务表单、完成任务，及查询流程实例与任务的功能。
-* Flowable Admin: 一个管理应用，让具有管理员权限的用户可以查询BPMN、DMN、Form及Content引擎，并提供了许多选项用于修改流程实例、任务、作业等。管理应用通过REST API连接至引擎，并与Flowable　Task应用及Flowable REST应用一同部署。
+* Flowable IDM: 一个身份管理应用，为所有Flowable UI应用提供了单点登录认证功能。并且，对于拥有IDM管理员权限的用户，提供了管理用户、组与权限的功能。
+* Flowable Modeler: 让具有建模权限的用户可以创建流程模型、表单、选择表与应用定义。
+* Flowable Task: 一个运行时任务应用，提供了启动流程实例、编辑任务表单、完成任务，以及查询流程实例与任务的功能。
+* Flowable Admin: 一个管理应用，让具有管理员权限的用户可以查询BPMN、DMN、Form及Content引擎，并提供了许多选项用于修改流程实例、任务、作业等。管理应用通过REST API连接至引擎，并与Flowable Task应用及Flowable REST应用一同部署。
 
-所有其他的应用都需要Flowable IDM提供认证。每个应用的WAR文件可以部署在相同的servlet容器（如Apache Tomcat）中，但也可以部署在不同的容器中。由于每个应用使用相同的cookie进行认证，因此应用需要运行在相同的域名下。
+所有其他的应用都需要Flowable IDM提供认证。每个应用的WAR文件可以部署在相同的servlet容器（如Apache Tomcat）中，也可以部署在不同的容器中。由于每个应用使用相同的cookie进行认证，因此应用需要运行在相同的域名下。
 
 
 [[uiAppInstallation]]
 
 === 安装 Installation
 
-如前所述，所有的四个用户界面应用可以部署在同一个Tomcat服务器里，并且作为入门，这大概也是最简单的方式。也可以选择只安装Modeler应用，但是请确保Flowable IDM应用必须也要部署、运行。在这个安装指导中，我们会介绍如何将所有的四个应用安装至Tomcat服务。
+如前所述，所有的四个UI应用可以部署在同一个Tomcat服务器里，并且作为入门，这大概也是最简单的方式。也可以选择只安装Modeler应用，但是请确保Flowable IDM应用必须也要部署、运行。在这个安装指导中，我们会介绍如何将所有的四个应用安装至Tomcat服务。
 
 1. 下载最新稳定版本的link:$$http://tomcat.apache.org$$[Apache Tomcat]。
 2. 下载最新稳定版本的link:$$http://www.flowable.org/downloads.html$$[Flowable 6]。
@@ -24,15 +24,15 @@ Flowable提供了几个web应用，以演示、介绍Flowable项目提供的功�
 4. 运行bin/startup.sh（在Mac OS或Linux下），或bin/startup.bat（在Windows下）脚本，启动Tomcat服务器。
 5. 打开web浏览器，访问link:$$http://localhost:8080/flowable-modeler$$[http://localhost:8080/flowable-modeler]。
 
-这样所有的Flowable用户界面应用都将运行在H2内存数据库下，并且可以在浏览器中看到如下登入界面：
+这样所有的Flowable UI应用都将运行在H2内存数据库下，并且可以在浏览器中看到如下登入界面：
 
 image::images/flowable_idm_login_screen.png[align="center"]
 
-默认情况下，Flowable IDM应用将创建一个admin用户，具有访问所有Flowable用户界面应用的权限。你可以使用admin/test登入，这样浏览器就会跳转至Flowable Modeler应用：
+默认情况下，Flowable IDM应用将创建一个admin用户，具有访问所有Flowable UI应用所需的权限。你可以使用admin/test登入，这样浏览器就会跳转至Flowable Modeler应用：
 
 image::images/flowable_modeler_startup_screen.png[align="center"]
 
-通常，你会希望将默认的H2内存数据库配置，修改为MySQL或Postgres（或其他持久化数据库）配置。可以为每个应用修改位于该应用WEB-INF/classes/META-INF文件夹下的flowable-ui-app.properties实现。也可以简单的从一个应用拷贝至所有的flowable-ui-app.properties文件，或者从link:$$https://github.com/flowable/flowable-engine/blob/master/modules/flowable-ui-task/flowable-ui-task-app/src/main/resources/META-INF/flowable-ui-app/flowable-ui-app.properties$$[Github]获取该文件，并放在Tomcat lib目录下。用户界面应用首先会在classpath下查找flowable-ui-app.properties文件，因此可以覆盖WAR中的对应文件。要将默认配置修改为MySQL，需要如下修改配置文件：
+通常，你会希望将默认的H2内存数据库配置，修改为MySQL或Postgres（或其他持久化数据库）配置。可以为每个应用，修改位于该应用WEB-INF/classes/META-INF文件夹下的flowable-ui-app.properties实现。也可以简单的从一个应用拷贝至所有的flowable-ui-app.properties文件，或者从link:$$https://github.com/flowable/flowable-engine/blob/master/modules/flowable-ui-task/flowable-ui-task-app/src/main/resources/META-INF/flowable-ui-app/flowable-ui-app.properties$$[Github]获取该文件，并放在Tomcat lib目录下。用户界面应用首先会在classpath下查找flowable-ui-app.properties文件，因此可以屏蔽WAR中的对应文件。要将默认配置修改为MySQL，需要如下修改配置文件：
 
 [source,linenums]
 ----
@@ -73,8 +73,8 @@ datasource.password=flowable
 |datasource.max-pool-size|最大数据源池容量
 |datasource.acquire-increment|决定当池耗尽时，c3p0一次尝试获取多少个链接
 |datasource.preferred-test-query|定义用于所有连接测试的查询
-|datasource.test-connection-on-checkin|在签入池时测试链接
-|datasource.test-connection-on-checkout|在从池中签出时测试链接
+|datasource.test-connection-on-checkin|在放回池时测试链接
+|datasource.test-connection-on-checkout|在从池中取出时测试链接
 |datasource.max-idle-time|链接被放弃前，可以在池中保持未使用状态的秒数。0代表空闲连接永不过期
 |datasource.max-idle-time-excess-connections|超过最小池容量的链接，在被剔除前，可以允许保持空闲的秒数
 |email.host|Flowable Task应用email服务任务使用的email服务器地址
@@ -170,15 +170,15 @@ ldap.cache.groupexpiration=180000
 
 当配置了LDAP时，认证以及从组中获取用户将通过LDAP服务器实现。只有权限仍然从Flowable身份表中获取。因此需要确保每一个LDAP用户都在IDM应用中定义了正确的权限。
 
-如果IDM应用使用LDAP配置启动，则启动逻辑将检查在Flowable身份表中是否已经存在权限。如果没有权限（只有第一次启动时会这样），则创建4个默认权限，并使用（flowable-ui-app.properties中的）admin.userid参数值作为赋予4个权限的用户id。因此请确保admin.userid参数值设置为合法的LDAP用户，否则将没有人能够登入任何Flowable用户界面应用。
+如果IDM应用使用LDAP配置启动，则启动逻辑将检查在Flowable身份表中是否已经存在权限。如果没有权限（只有第一次启动时会这样），则创建4个默认权限，并使用（flowable-ui-app.properties中的）admin.userid参数值作为赋予4个权限的用户id。因此请确保admin.userid参数值设置为合法的LDAP用户，否则将没有人能够登入任何Flowable UI应用。
 
 [[flowableModelerApp]]
 
 === Flowable Modeler应用
 
-Flowable Modeler应用可以用于可视化创建：BPMN流程、DMN选择表、表单定义，以及创建应用定义。BPMN modeler使用与Flowable 5相同的Oryx与Angular架构，但是将功能转移到独立的Modeler应用中。在使用Flowable Modeler应用时，请确保Flowable IDM应用已经部署并正常运行（用于认证与授权）。
+Flowable Modeler应用可以用于可视化创建：BPMN流程、DMN选择表、表单定义，以及创建应用定义。BPMN Modeler使用与Flowable 5相同的Oryx与Angular架构，但是将功能转移到独立的Modeler应用中。在使用Flowable Modeler应用时，请确保Flowable IDM应用已经部署并正常运行（用于认证与授权）。
 
-使用自己的账户（或者默认的admin/test用户）登入Modeler应用后(link:$$http://localhost:8080/flowable-modeler$$[http://localhost:8080/flowable-modeler])，可以看到流程总览页面。在这里可以点击创建流程(Create Process)按钮，开始创建新的BPMN流程模型，也可以点击导入流程(Import Process)按钮。
+使用自己的账户（或者默认的admin/test用户）登入Modeler应用后(link:$$http://localhost:8080/flowable-modeler$$[http://localhost:8080/flowable-modeler])，可以看到流程总览页面。在这里可以点击创建流程(Create Process)按钮，开始创建新的BPMN流程模型。也可以点击导入流程(Import Process)按钮。
 
 image::images/flowable_modeler_createmodel_popup.png[align="center", width="600"]
 
@@ -203,9 +203,9 @@ image::images/flowable_modeler_formdesign_screen.png[align="center"]
 
 image::images/flowable_modeler_editfield_popup.png[align="center", width="600"]
 
-id是一个重要的参数，使用这个id，为表单字段创建流程变量。填入标签值时，会自动填入id值。如果需要的话，也可以点击覆盖id复选框(override id)，自行提供id的值。
+id是一个重要的参数。流程会使用这个id，为表单字段创建流程变量。填入标签值时，会自动填入id值。如果需要的话，也可以点击覆盖id复选框(override id)，自行提供id的值。
 
-保存表单模型并关闭表单编辑器之后，会自动跳转回流程模型（如果表单编辑器是从BPMN编辑器打开的）。再次选择用户任务元素，并点击__引用表单__参数，就可以看到新创建的表单定义已经附加至用户任务。点击Modeler应用头部的__表单(Form)__页签，既可以看到模型仓库中保存的所有表单定义。
+保存表单模型并关闭表单编辑器之后，会自动跳转回流程模型（如果表单编辑器是从BPMN编辑器打开的）。再次选择用户任务元素，并点击__引用表单__参数，就可以看到新创建的表单定义已经附加至用户任务。点击Modeler应用头部的__表单(Form)__页签，也可以看到模型仓库中保存的所有表单定义。
 
 image::images/flowable_modeler_formoverview_screen.png[align="center"]
 
@@ -221,7 +221,7 @@ image::images/flowable_modeler_dmneditor_screen.png[align="center"]
 
 DMN编辑器提供了一个表编辑器，包含输入列——可以使用流程上下文中可用的流程变量定义输入条件；以及输出列——可以定义输出变量。在这个很简单的例子里，使用__amountOfVacationDays__做一个输入列，检查是否少于10天，还是大于等于10天。如果天数少于10，__managerApprovalNeeded__变量返回值false。否则返回true。可以定义多个输入列，每条规则也可以有多个输入条件。也可以将一个输入列置空，意味着永远为true。也可以定义一个或多个输出变量。
 
-DMN选择表定义的另一个重要部分，是命中策略。目前，Flowable支持第一(First)与任意(Any)命中策略。对于第一命中策略，DMN会返回第一条计算为true的规则定义的输出变量，并停止计算。对于任意命中策略，会计算所有的规则，并输出计算为true的最后一条规则定义的输出变量。
+DMN选择表定义的另一个重要部分，是命中策略(Hit Policy)。目前，Flowable支持第一(First)与任意(Any)命中策略。对于第一命中策略，DMN会返回第一条计算为true的规则定义的输出变量，并停止计算。对于任意命中策略，会计算所有的规则，并输出计算为true的最后一条规则定义的输出变量。
 
 保存并关闭DMN编辑器后，Modeler应用会自动跳转回BPMN编辑器，并将新创建的DMN选择表附加至选择任务。选择任务会如下在BPMN XML中生成：
 
@@ -275,7 +275,7 @@ image::images/flowable_task_dashboard_screen.png[align="center"]
 
 image::images/flowable_task_tasklist_screen.png[align="center"]
 
-点击打开__流程(Process)__页签后，可以点击__启动一个流程(Start a process)__按钮，启动一个新的流程实例。这样就会显示当前应用定义上下文中，所有可用的流程定义的列表。在通用Task应用中操作类似，不过在Task应用中，会显示Flowable中部署的所有流程定义。选择请假流程定义后，可以点击__启动流程(Start process)__按钮，启动一个新的请假流程实例。
+点击打开__流程(Processes)__页签后，可以点击__启动一个流程(Start a process)__按钮，启动一个新的流程实例。这样就会显示当前应用定义上下文中，所有可用的流程定义的列表。在通用Task应用中操作类似，不过在Task应用中，会显示Flowable中部署的所有流程定义。选择请假流程定义后，可以点击__启动流程(Start process)__按钮，启动一个新的请假流程实例。
 
 Flowable Task应用将自动跳转至流程实例详情页面。可以看到，__提供请假信息(Provide vacation information)__任务已被激活，并且可以，比如，添加备注，或者使用__显示流程图(Show diagram)__按钮，图形化显示流程实例状态。
 
@@ -295,7 +295,7 @@ image::images/flowable_task_processhistory_screen.png[align="center"]
 
 image::images/flowable_task_completedform_screen.png[align="center"]
 
-请确保选择回显示运行中的流程，否则就不能看到新启动的流程实例。也可以在任务列表界面进行过滤。可以选择查找任务名、任务状态，特定流程定义的任务，以及指定的办理人。
+请确保选择回"显示运行中的流程"，否则就不能看到新启动的流程实例。也可以在任务列表界面进行过滤。可以选择查找任务名、任务状态，特定流程定义的任务，以及指定的办理人。
 
 image::images/flowable_task_taskfilter_screen.png[align="center", width="400"]
 
@@ -331,7 +331,7 @@ image::images/flowable_admin_processdefinitiondetails_screen.png[align="center"]
 
 === 国际化 Internationalization
 
-Flowable用户界面应用支持国际化(internationalization, i18n)。项目维护英语版本。但也可以提供你自己的翻译文件，以支持其他语言。
+Flowable UI应用支持国际化(internationalization, i18n)。项目维护英语版本。但也可以提供你自己的翻译文件，以支持其他语言。
 
 link:$$https://github.com/angular-translate/angular-translate[Angular Translate]库会试着基于浏览器的语言，从__i18n__目录（在每一个用户界面应用中）下，载入对应的语言文件。如果无法加载匹配的语言文件，框架会退回使用英语版本。
 
