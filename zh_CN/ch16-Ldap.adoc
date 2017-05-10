@@ -14,11 +14,11 @@
 
 要在你的项目中添加LDAP集成代码，简单地在pom.xml中添加下列依赖：
             
-[source,xml,linenums]            
+[source,xml,linenums]
 ----
 <dependency>
   <groupId>org.flowable</groupId>
-  <artifactId>flowable-ldap</artifactId>
+  <artifactId>flowable-ldap-configurator</artifactId>
   <version>latest.version</version>
 </dependency>
 ----
@@ -40,52 +40,57 @@
 
 === 配置 Configuration
 
-在Flowable中集成LDAP系统通过在流程引擎配置的++configurators++小节注入++org.flowable.ldap.LDAPConfigurator++完成。这个类高度可扩展：如果默认实现不能满足使用场景，可以轻松地覆盖方法，许多依赖的bean也是可插拔的。
+在Flowable中集成LDAP系统通过在流程引擎配置的++idmProcessEngineConfigurator++小节注入++org.flowable.ldap.LDAPConfigurator++完成。这个类高度可扩展：如果默认实现不能满足使用场景，可以轻松地覆盖方法，许多依赖的bean也是可插拔的。
 
 这是一个示例配置（请注意：当然，在编程式创建引擎时完全类似）。现在不需要太关注这些参数，我们会在下一章节详细介绍。
 
-[source,xml,linenums]            
+[source,xml,linenums]
 ----
-    <bean id="processEngineConfiguration" class="...SomeProcessEngineConfigurationClass">
-        ...
-        <property name="configurators">
-          <list>
-              <bean class="org.flowable.ldap.LDAPConfigurator">
-              
-                <!-- 服务器连接参数 Server connection params -->
-                <property name="server" value="ldap://localhost" />
-                <property name="port" value="33389" />
-                <property name="user" value="uid=admin, ou=users, o=flowable" />
-                <property name="password" value="pass" />
-                
-                <!-- 查询参数 Query params -->
-                <property name="baseDn" value="o=flowable" />
-                <property name="queryUserByUserId" value="(&(objectClass=inetOrgPerson)(uid={0}))" />
-                <property name="queryUserByFullNameLike" value="(&(objectClass=inetOrgPerson)(|({0}=*{1}*)({2}=*{3}*)))" />
-                <property name="queryGroupsForUser" value="(&(objectClass=groupOfUniqueNames)(uniqueMember={0}))" />
-                
-                <!-- 属性配置 Attribute config -->
-                <property name="userIdAttribute" value="uid" />
-                <property name="userFirstNameAttribute" value="cn" />
-                <property name="userLastNameAttribute" value="sn" />
-                <property name="userEmailAttribute" value="mail" />
-                
-                
-                <property name="groupIdAttribute" value="cn" />
-                <property name="groupNameAttribute" value="cn" />
-                
-              </bean>
-          </list>
+<bean id="processEngineConfiguration" class="...SomeProcessEngineConfigurationClass">
+    ...
+    <property name="idmProcessEngineConfigurator">
+      <bean class="org.flowable.ldap.LDAPConfigurator">
+
+        <property name="ldapConfiguration">
+		  <bean class="org.flowable.ldap.LDAPConfiguration">
+
+            <!-- 服务器连接参数 Server connection params -->
+            <property name="server" value="ldap://localhost" />
+            <property name="port" value="33389" />
+            <property name="user" value="uid=admin, ou=users, o=flowable" />
+            <property name="password" value="pass" />
+
+            <!-- 查询参数 Query params -->
+            <property name="baseDn" value="o=flowable" />
+            <property name="queryUserByUserId" value="(&(objectClass=inetOrgPerson)(uid={0}))" />
+            <property name="queryUserByFullNameLike" value="(&(objectClass=inetOrgPerson)(|({0}=*{1}*)({2}=*{3}*)))" />
+            <property name="queryAllUsers" value="(objectClass=inetOrgPerson)" />
+            <property name="queryGroupsForUser" value="(&(objectClass=groupOfUniqueNames)(uniqueMember={0}))" />
+            <property name="queryAllGroups" value="(objectClass=groupOfUniqueNames)" />
+
+            <!-- 属性配置 Attribute config -->
+            <property name="userIdAttribute" value="uid" />
+            <property name="userFirstNameAttribute" value="cn" />
+            <property name="userLastNameAttribute" value="sn" />
+            <property name="userEmailAttribute" value="mail" />
+
+            <property name="groupIdAttribute" value="cn" />
+            <property name="groupNameAttribute" value="cn" />
+
+          </bean>
         </property>
-    </bean>         
+      </bean>
+    </property>
+</bean>
 ----
+
 
 [[ldap_properties]]
 
 
 === 参数 Properties
 
-可以为++org.flowable.ldap.LDAPConfigurator++设置下列参数：
+可以为++org.flowable.ldap.LDAPConfiguration++设置下列参数：
 
 .LDAP配置参数
 [options="header"]
@@ -107,7 +112,11 @@
 
 |queryUserByFullNameLike|使用全名搜索用户时执行的查询。例如：(& (objectClass=inetOrgPerson) (\|({0}=*{1}*)({2}=*{3}*)) ) 。将返回LDAP中所有class为'inetOrgPerson'，并匹配first name与last name的值的对象。请注意{0}注入为firstNameAttribute（在上面定义），{1}与{3}为搜索文本，{2}为lastNameAttribute。如果对于特定的LDAP配置，只使用该查询不满足要求，则可以使用不同的LDAPQueryBuilder插件，提供比查询更高的自由度。|string|
 
+|queryAllUsers|不使用过滤器查询用户时使用的查询。例如：(objectClass=inetOrgPerson)。这里，会返回LDAP中所有'inetOrgPerson'类的对象。|string|
+
 |queryGroupsForUser|查找特定用户的组时执行的查询。例如：(&(objectClass=groupOfUniqueNames)(uniqueMember={0})) 。将返回class为'groupOfUniqueNames'，且提供的DN（匹配用户的DN）为'uniqueMember'的对象。在例子中，用户id使用{0}注入。如果对于特定的LDAP配置，只使用该查询不满足要求，则可以使用不同的LDAPQueryBuilder插件，提供比查询更高的自由度。|string|
+
+|queryAllGroups|不使用过滤器查询组时使用的查询。例如：(objectClass=groupOfUniqueNames)。这里，会返回LDAP中所有'groupOfUniqueNames'类的对象。|string|
 
 |userIdAttribute|匹配用户id的属性的名字。这个属性用于查找用户对象，并完成LDAP对象与Flowable用户对象间的映射。|string|
 |userFirstNameAttribute|匹配用户first name的属性的名字。这个属性用于查找用户对象，并完成LDAP对象与Flowable用户对象间的映射。|string|
