@@ -6,9 +6,9 @@
 
 === 异步执行器 Async Executor
 
-Flowable 5版本中，在已有的作业执行器(job executor)之外，还提供了异步执行器(async executor)。异步执行器已被许多Flowable的用户及我们的跑分证明，性能比老的作业执行器好。
+Flowable V5版本中，在已有的作业执行器(job executor)之外，还提供了异步执行器(async executor)。异步执行器已被许多Flowable的用户及我们的跑分证明，性能比老的作业执行器好。
 
-在Flowable 6（及以后）中，将只存在异步执行器。在版本6中，已经为性能优化及接口封装对异步执行器进行了完全的重构（仍然与现有API兼容）。
+从Flowable V6起，将只存在异步执行器。在V6中，已经为性能优化及接口封装，对异步执行器进行了完全的重构，当然仍然与现有API兼容。
 
 
 [[async_executor_design]]
@@ -17,19 +17,19 @@ Flowable 5版本中，在已有的作业执行器(job executor)之外，还提�
 
 有两种作业类型：定时器（例如边界事件或用户任务中的定时器）以及异步操作（带有__flowable:async="true"__属性的服务任务）。
 
-**定时器(timer)**很容易解释：它们在ACT_RU_TIMER_JOB表中持久化，并带有给定的到期日期。异步执行器中有一个线程，周期性地检查是否有需要触发的定时器（也就是说，到期日期在当前时间“之前”）。当需要触发定时器时，将会移除该定时器，并创建及插入一个异步作业(async job)。
+**定时器(timer)**很容易解释：它们在ACT_RU_TIMER_JOB表中持久化，并带有给定的到期日期。异步执行器中有一个线程，周期性地检查是否有需要触发的定时器（也就是说，到期日期在当前时间“之前”）。当需要触发定时器时，将会移除该定时器，并创建一个异步作业(async job)。
 
-**异步作业**在执行流程实例步骤时插入数据库（也就是说“在某个API调用时”）。如果当前Flowable引擎启用了异步执行器，则该异步作业将__被锁定(locked)__。这意味着会在ACT_RU_JOB表中插入一个作业条目，并设置其__lock owner(锁持有人)__与__lock expiration time(锁到期时间)__。在API调用成功后触发的事务监听器(transaction commit listener)，将会触发同一引擎中的异步执行器，让其执行该作业（因此可以保证数据库中已经保存了数据）。为了实现这个目标，异步执行器有一个（可配置的）线程池，可以从其中取出一个线程用于执行作业，并使流程可以异步进行。如果Flowable引擎未启用异步执行器，则异步作业仍会插入ACT_RU_JOB表，但不会被锁定。
+**异步作业**在执行流程实例步骤时插入数据库（也就是说，在某个API调用时）。如果当前Flowable引擎启用了异步执行器，则该异步作业将__被锁定(locked)__。这意味着会在ACT_RU_JOB表中插入一个作业条目，并设置其__lock owner(锁持有人)__与__lock expiration time(锁到期时间)__。在API调用成功后触发的事务监听器(transaction commit listener)，将会触发同一引擎中的异步执行器，让其执行该作业（因此可以保证数据库中已经保存了数据）。为了实现这个目标，异步执行器有一个（可配置的）线程池，可以从其中取出一个线程用于执行作业，并使流程可以异步进行。如果Flowable引擎未启用异步执行器，则异步作业仍会插入ACT_RU_JOB表，但不会被锁定。
 
 与检查定时器的线程类似，异步执行器中也有一个用于“获取”新的异步作业的线程。这里的异步作业，指的是表中存储，但未被锁定的作业。这个线程会为当前Flowable引擎锁定这些作业，并将其发送至异步执行器。
 
 用于执行作业的线程池从一个内存队列中获取作业。当队列满了时（可配置），作业将会被解锁，并重新插入数据库。这样，其他的异步执行器就可以重新操作它们。
 
-如果在执行作业期间发生了异常，这个异步作业将会转化为一个定时器作业，并带有一个到期日期。它将会像普通定时器作业一样被获取，并重新变回异步作业，以实现重试。当一个作业已经重试了（可配置）几次，仍然失败，则作业被视为“死亡(dead)”，并被移至ACT_RU_DEADLETTER_JOB表。“死信(deadletter)”的概念在各种其他系统中也广泛使用。管理员需要检查失败作业的异常信息，并进行相应操作。
+如果在执行作业期间发生了异常，这个异步作业将会转化为一个定时器作业，并带有一个到期日期。之后，它将会像普通定时器作业一样被获取，并重新变回异步作业，以实现重试。当一个作业已经重试了（可配置）几次，仍然失败，则作业被视为“死亡(dead)”，并被移至ACT_RU_DEADLETTER_JOB表。“死信(deadletter)”的概念在各种其他系统中也广泛使用。管理员需要检查失败作业的异常信息，并进行相应操作。
 
 流程定义与流程实例都可以被暂停。这些定义或实例所关联的暂停作业，将被移至ACT_RU_SUSPENDED_JOB表，以确保用于获取作业的查询语句中的where条件尽量少。
 
-综上所述，（对于熟悉作业/异步执行器的旧实现的人来说），主要目标是让“获取用的查询”尽可能简单。在过去（版本6以前），所有作业类型/状态使用一张表。为了满足所有使用场景，最终导致“where”条件十分庞大。现在已经解决了这个问题，我们的跑分也证明这个新设计带来了更好的性能，也更有弹性。
+综上所述：对于熟悉作业/异步执行器的旧实现的人来说，主要目标是让“获取用的查询”尽可能简单。在过去（V6以前），所有作业类型/状态使用一张表。为了满足所有使用场景，最终导致“where”条件十分庞大。现在已经解决了这个问题，我们的跑分也证明这个新设计带来了更好的性能，也更有弹性。
 
 
 
@@ -77,7 +77,7 @@ Flowable 5版本中，在已有的作业执行器(job executor)之外，还提�
 
 跑分显示消息队列相比基于线程池的异步执行器，性能出众，吞吐量大。但是，会需要额外的架构组件，当然也就增加了安装配置、维护及监控的复杂度。对于多数用户来说，基于线程池的异步执行器，性能已经足够用了。但能够知道在性能要求增长之后，仍有可用方案，也是挺好的。
 
-目前，立即可用的唯一选择是JMS和Spring。首先支持Spring的原因是，Spring提供了非常好的功能，抚平了使用线程以及处理多个消息消费者造成的伤痛。然而集成很简单，因此可以轻松改用任何其他消息队列实现及/或协议（Stomp、AMPQ等等）。我们欢迎反馈下一个应该实现什么。
+目前，立即可用的唯一选择是带有JMS的Spring。首先支持Spring的原因是，Spring提供了非常好的功能，抚平了使用线程以及处理多个消息消费者造成的伤痛。然而集成很简单，因此可以轻松改用任何其他消息队列实现或协议（Stomp、AMPQ等等）。我们欢迎反馈下一个应该实现什么。
 
 （使用消息队列后）当引擎创建一个新的异步作业时，会在消息队列中放入一条包含有作业标识的消息（处在一个事务提交监听器之下，这样就可以确保该作业条目已经提交至数据库）。之后一个消息消费者可以获取作业标识，并获取及执行该作业。异步执行器不再创建线程池，而是会在另一个单独线程中插入及查询定时器。当定时器到时触发时，将会被移至异步作业表，现在也就会同时向消息队列发送一条消息。“重置过期”线程会按照一般逻辑解锁作业，因为消息队列也可能失败。只不过不是“解锁”作业，而是重发消息。异步执行器不再轮询异步作业。
 
@@ -198,7 +198,7 @@ public class SpringJmsConfig {
 
 对于每一个流程，++BpmnParser++类都会创建一个新的++BpmnParser++实例。这个实例是所有在解析时要做的事情的容器。解析本身很简单：对于每一个BPMN 2.0元素，引擎中都有一个对应的++org.flowable.engine.parse.BpmnParseHandler++的实例。因此，解析器会将一个BPMN 2.0元素类映射至一个++BpmnParseHandler++实例。默认情况下，Flowable使用++BpmnParseHandler++实例处理所有支持的元素，并用其为流程的步骤附加执行监听器，以创建历史。
 
-可以在Flowable引擎中添加++org.flowable.engine.parse.BpmnParseHandler++的自定义实例。常见使用场景是，例如为特定步骤添加执行监听器，用于向某个事件处理队列触发事件。Flowable内部使用这种方式处理历史。要添加这种自定义处理器，需要调整Flowable配置：
+可以在Flowable引擎中添加++org.flowable.engine.parse.BpmnParseHandler++的自定义实例。常见使用场景是，例如，为特定步骤添加执行监听器，用于向某个事件处理队列触发事件。Flowable内部使用这种方式处理历史。要添加这种自定义处理器，需要调整Flowable配置：
 
 [source,xml,linenums]
 ----
@@ -273,8 +273,7 @@ public class CustomUserTaskBpmnParseHandler extends ServiceTaskParseHandler {
     super.executeParse(bpmnParse, serviceTask);
 
     // 保证异步 Make always async
-    ActivityImpl activity = findActivity(bpmnParse, serviceTask.getId());
-    activity.setAsync(true);
+    serviceTask.setAsynchronous(true);
   }
 
 }
@@ -316,7 +315,7 @@ public class CustomUserTaskBpmnParseHandler extends ServiceTaskParseHandler {
 
 === 多租户 Multitenancy
 
-总的来说，多租户是一个软件为多个不同组织提供服务的概念。其核心是数据是隔离的，一个组织不能看到其他组织的数据。在这个语境中，一个这样的组织（或部门、团队……）被称为一个__租户（tenant）__。
+总的来说，多租户是一个软件为多个不同组织提供服务的概念。其核心是数据是隔离的，一个组织不能看到其他组织的数据。在这个语境中，一个这样的组织（或部门、团队，等等）被称为一个__租户（tenant）__。
 
 请注意它与多实例安装方式有本质区别。多实例安装是指每一个组织都分别运行一个Flowable流程引擎实例（且使用不同的数据库账户）。尽管Flowable比较轻量级，运行一个流程引擎实例不会花费太多资源，但多实例安装仍然增加了复杂性与维护量。但是，在某些使用场景中，多实例安装可能是正确的解决方案。
 
@@ -713,7 +712,10 @@ List<? extends TaskInfo> taskInfos = taskInfoQueryWrapper.getTaskInfoQuery().or(
 
 === 通过覆盖标准SessionFactory自定义身份管理 Custom identity management by overriding standard SessionFactory
 
-如果不想像<<chapter_ldap,LDAP集成>>中那样，使用完整的__ProcessEngineConfigurator__实现，但仍然希望将自定义的身份管理插入框架中，那么也可以直接覆盖__ProcessEngineConfiguration__中的__SessionFactory__类。在Spring中，可以简单地通过向__ProcessEngineConfiguration__ bean定义添加下面的代码实现：
+If you do not want to use a full _ProcessEngineConfigurator_ implementation like in the  <<chapter_ldap,LDAP integration>>, but still want to plug in your custom identity management framework,  then you can also override the _IdmIdentityServiceImpl_ class or implement the _IdmIdentityService_ interface directly and use the implemented class for the _idmIdentityService_ property in the _ProcessEngineConfiguration_. In Spring this can be easily done by adding the following to the _ProcessEngineConfiguration_ bean definition:
+
+
+如果不想像<<chapter_ldap,LDAP集成>>中那样，使用完整的__ProcessEngineConfigurator__实现，但仍然希望将自定义的身份管理插入框架中，那么也可以覆盖__IdmIdentityServiceImpl__类，或者直接实现__IdmIdentityService__接口，并使用实现类作为__ProcessEngineConfiguration__中的__idmIdentityService__参数。在Spring中，可以简单地通过向__ProcessEngineConfiguration__ bean定义添加下面的代码实现：
 
 [source,xml,linenums]
 ----
@@ -721,11 +723,8 @@ List<? extends TaskInfo> taskInfos = taskInfoQueryWrapper.getTaskInfoQuery().or(
 
     ...
 
-    <property name="customSessionFactories">
-        <list>
-            <bean class="com.mycompany.MyGroupManagerFactory"/>
-            <bean class="com.mycompany.MyUserManagerFactory"/>
-        </list>
+    <property name="idmIdentityService">
+        <bean class="com.mycompany.IdmIdentityServiceBean"/>
     </property>
 
     ...
@@ -734,87 +733,21 @@ List<? extends TaskInfo> taskInfos = taskInfoQueryWrapper.getTaskInfoQuery().or(
 
 ----
 
-__MyGroupManagerFactory__与__MyUserManagerFactory__需要实现__org.flowable.engine.impl.interceptor.SessionFactory__接口。对__openSession()__的调用，需要返回实际管理身份的自定义类的实现。对于组，需要是继承__org.flowable.engine.impl.persistence.entity.GroupEntityManager__的类，对于用户管理，需要是继承__org.flowable.engine.impl.persistence.entity.UserEntityManager__的类。下面的代码样例包含了一个自定义的组管理器工厂：
-
-[source,java,linenums]
-----
-package com.mycompany;
-
-import org.flowable.engine.impl.interceptor.Session;
-import org.flowable.engine.impl.interceptor.SessionFactory;
-import org.flowable.engine.impl.persistence.entity.GroupIdentityManager;
-
-public class MyGroupManagerFactory implements SessionFactory {
-
-	@Override
-	public Class<?> getSessionType() {
-		return GroupIdentityManager.class;
-	}
-
-	@Override
-	public Session openSession() {
-		return new MyCompanyGroupManager();
-	}
-
-}
-----
-
-实际工作由这个工厂创建的__MyCompanyGroupManager__进行。但不需要覆盖__GroupEntityManager__的所有成员，只需要覆盖使用场景需要的那些即可。下面的样例展示了可能的样子（只展示一部分成员）：
-
-[source,java,linenums]
-----
-public class MyCompanyGroupManager extends GroupEntityManager {
-
-    private static Logger log = LoggerFactory.getLogger(MyCompanyGroupManager.class);
-
-    @Override
-    public List<Group> findGroupsByUser(String userId) {
-        log.debug("findGroupByUser called with userId: " + userId);
-        return super.findGroupsByUser(userId);
-    }
-
-    @Override
-    public List<Group> findGroupByQueryCriteria(GroupQueryImpl query, Page page) {
-        log.debug("findGroupByQueryCriteria called, query: " + query + " page: " + page);
-        return super.findGroupByQueryCriteria(query, page);
-    }
-
-    @Override
-    public long findGroupCountByQueryCriteria(GroupQueryImpl query) {
-        log.debug("findGroupCountByQueryCriteria called, query: " + query);
-        return super.findGroupCountByQueryCriteria(query);
-    }
-
-    @Override
-    public Group createNewGroup(String groupId) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void deleteGroup(String groupId) {
-        throw new UnsupportedOperationException();
-    }
-}
-----
-
-在适当的方法中添加你自己的实现，以插入自己的身份管理解决方案。需要自行判断要覆盖基类中的那些成员。例如下面的调用：
+__LDAPIdentityServiceImpl__类是一个介绍如何实现__IdmIdentityService__接口中方法的很好的例子。你需要自行拍段在自定义身份服务类中，需要实现什么方法。例如下面的调用：
 
 [source,java,linenums]
 ----
 long potentialOwners = identityService.createUserQuery().memberOfGroup("management").count();
 ----
 
-会调用__UserIdentityManager__接口的下列成员：
+会调用__IdmIdentityService__接口的下列成员：
 
 [source,java,linenums]
 ----
-List<User> findUserByQueryCriteria(UserQueryImpl query, Page page);
+UserQuery createUserQuery();
 ----
 
-<<chapter_ldap,LDAP集成>>中的代码包含了如何实现这些的完整示例。可以在GitHub查看代码，特别是
-link:$$https://github.com/Flowable/Flowable/blob/master/modules/flowable-ldap/src/main/java/org/flowable/ldap/LDAPGroupManager.java$$[LDAPGroupManager]
-与
-link:$$https://github.com/Flowable/Flowable/blob/master/modules/flowable-ldap/src/main/java/org/flowable/ldap/LDAPUserManager.java$$[LDAPUserManager]。
+<<chapter_ldap,LDAP集成>>中的代码包含了如何实现这些的完整示例。可以在GitHub查看代码:link:$$https://github.com/flowable/flowable-engine/blob/master/modules/flowable-ldap/src/main/java/org/flowable/ldap/LDAPIdentityServiceImpl.java$$[LDAPIdentityServiceImpl]。
 
 [[advanced.safe.bpmn.xml]]
 
@@ -838,11 +771,9 @@ link:$$https://github.com/Flowable/Flowable/blob/master/modules/flowable-ldap/sr
 [[advanced.event.logging]]
 
 
-=== 事件记录（试验性） Event logging (Experimental)
+=== 事件记录 Event logging
 
-<<experimental,[EXPERIMENTAL]>>
-
-我们引入了（试验性）的事件记录机制。记录机制基于<<eventDispatcher,Flowable引擎的事件机制>>的一般用途，并默认禁用。其思想是，来源于引擎的事件会被捕获，并创建一个包含了所有事件数据（甚至更多）的映射，提供给__org.flowable.engine.impl.event.logger.EventFlusher__，由它将这些数据刷入其他地方。默认情况下，使用简单的基于数据库的事件处理/刷入，会使用Jackson将上述映射序列化为JSON，并将其作为__EventLogEntryEntity__接口存入数据库。如果不使用事件记录，可以删除这个表。
+我们引入了事件记录机制。记录机制基于<<eventDispatcher,Flowable引擎的事件机制>>的一般用途，并默认禁用。其思想是，来源于引擎的事件会被捕获，并创建一个包含了所有事件数据（甚至更多）的映射，提供给__org.flowable.engine.impl.event.logger.EventFlusher__，由它将这些数据刷入其他地方。默认情况下，使用简单的基于数据库的事件处理/刷入，会使用Jackson将上述映射序列化为JSON，并将其作为__EventLogEntryEntity__接口存入数据库。如果不使用事件记录，可以删除这个表。
 
 要启用数据库记录：
 
@@ -879,8 +810,6 @@ runtimeService.addEventListener(databaseEventLogger);
 [[advancedSecureScripting]]
 === 安全脚本 Secure Scripting
 
-**试验性**：安全脚本功能随Flowable 5.22发布。
-
 默认情况下，使用<<bpmnScriptTask,脚本任务>>时，执行的脚本与Java代理具有相似的能力。可以完全访问JVM，永远运行（无限循环），或占用大量内存。然而，Java代理需要撰写并放在classpath的jar中，与流程定义的生命周期不同。最终用户一般不会撰写Java代理，因为这基本上是开发者的工作。
 
 然而脚本是流程定义的一部分，具有相同的生命周期。脚本任务不需要额外的jar部署步骤，而是在流程部署后就可以执行。有时，脚本任务中的脚本不是由开发者撰写的。这就有一个上面提到的问题：脚本可以完全访问JVM，也可以在执行脚本时阻塞许多系统资源。因此允许来自几乎任何人的脚本不是一个好主意。
@@ -896,7 +825,7 @@ runtimeService.addEventListener(databaseEventLogger);
 </dependency>
 ----
 
-添加这个依赖会同时引入Rhino依赖（参见link:$https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino$$[https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino]）。Rhino是一个用于JDK的javascript引擎。过去包含在JDK版本6与7中，并已被Nashorn引擎取代。然而，Rhino项目仍然在继续开发。许多功能（包括Flowable用于实现安全脚本的）都在之后才加入。在撰写本手册的时候，Nashorn**还没有**实现安全脚本功能需要的功能。
+添加这个依赖会同时引入Rhino依赖（参见link:$https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino$$[https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino]）。Rhino是一个用于JDK的javascript引擎。过去包含在JDKV6与7中，并已被Nashorn引擎取代。然而，Rhino项目仍然在继续开发。许多功能（包括Flowable用于实现安全脚本的）都在之后才加入。在撰写本手册的时候，Nashorn**还没有**实现安全脚本功能需要的功能。
 
 这意味着脚本之间可能要做一些（基本很少）改变（例如，Rhino使用__importPackage__，而Nashorn使用__load()__）。这些改变与将脚本从JDK 7切换至8相似。
 
