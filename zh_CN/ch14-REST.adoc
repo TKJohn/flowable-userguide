@@ -24,7 +24,7 @@ Flowable REST web应用使用Spring Java Configuration来启动Flowable引擎、
 
 ==== 在Tomcat中使用 Usage in Tomcat
 
-由于link:$$http://tomcat.apache.org/tomcat-7.0-doc/security-howto.html$$[Tomcat中的默认安全参数]，**默认不能使用已转义斜线符（++%2F++与++%5C++）（返回400结果）。**这可能会影响部署资源与其数据URL，因为URL可能隐含已转义斜线符。
+由于link:$$http://tomcat.apache.org/tomcat-8.0-doc/security-howto.html$$[Tomcat中的默认安全参数]，**默认不能使用已转义斜线符（++%2F++与++%5C++）（返回400结果）。**这可能会影响部署资源与其数据URL，因为URL可能隐含已转义斜线符。
 
 当发现非预期的400结果时，设置下列系统参数
 
@@ -83,7 +83,7 @@ HTTP响应的media-type总是++application/json++，除非请求的是二进制�
 
 ===== URL片段 URL fragments
 
-作为url的一部分的参数（例如，++http://host/actviti-rest/service/repository/deployments/{deploymentId}++中的deploymentId参数），如果包含特殊字符，则需要进行合适的转义（参见link:$$https://en.wikipedia.org/wiki/Percent-encoding$$[URL编码或百分号编码]）。大多数框架都内建了这个功能，但要记得考虑它。特别是对可能包含斜线符的段落（例如部署资源），就是必须的。
+作为url的一部分的参数（例如，++http://host/flowable-rest/service/repository/deployments/{deploymentId}++中的deploymentId参数），如果包含特殊字符，则需要进行合适的转义（参见link:$$https://en.wikipedia.org/wiki/Percent-encoding$$[URL编码或百分号编码]）。大多数框架都内建了这个功能，但要记得考虑它。特别是对可能包含斜线符的段落（例如部署资源），就是必须的。
 
 ===== Rest URL查询参数 Rest URL query parameters
 
@@ -276,7 +276,7 @@ GET repository/deployments
       "name": "flowable-examples.bar",
       "deploymentTime": "2010-10-13T14:54:26.750+02:00",
       "category": "examples",
-      "url": "http://localhost:8081/service/repository/deployments/10",
+      "url": "http://localhost:8081/flowable-rest/service/repository/deployments/10",
       "tenantId": null
     }
   ],
@@ -321,7 +321,7 @@ GET repository/deployments/{deploymentId}
   "name": "flowable-examples.bar",
   "deploymentTime": "2010-10-13T14:54:26.750+02:00",
   "category": "examples",
-  "url": "http://localhost:8081/service/repository/deployments/10",
+  "url": "http://localhost:8081/flowable-rest/service/repository/deployments/10",
   "tenantId" : null
 }
 ----
@@ -357,7 +357,7 @@ POST repository/deployments
   "name": "flowable-examples.bar",
   "deploymentTime": "2010-10-13T14:54:26.750+02:00",
   "category": null,
-  "url": "http://localhost:8081/service/repository/deployments/10",
+  "url": "http://localhost:8081/flowable-rest/service/repository/deployments/10",
   "tenantId" : "myTenant"
 }
 ----
@@ -1519,6 +1519,7 @@ POST runtime/process-instances
 {
    "processDefinitionId":"oneTaskProcess:1:158",
    "businessKey":"myBusinessKey",
+   "returnVariables":true,
    "variables": [
       {
         "name":"myVar",
@@ -1535,6 +1536,7 @@ POST runtime/process-instances
 {
    "processDefinitionKey":"oneTaskProcess",
    "businessKey":"myBusinessKey",
+   "returnVariables":false,
    "tenantId": "tenant1",
    "variables": [
       {
@@ -1563,6 +1565,8 @@ POST runtime/process-instances
 ----
 
 请注意这个json也接受__transientVariables__参数，与__variables__参数使用相同的结构。
+
+__returnVariables__参数用于使响应返回流程实例上下文中存在的变量。默认情况下，不会返回变量。
 
 请求体中只能使用++processDefinitionId++、++processDefinitionKey++与++message++中的一个。++businessKey++、++variables++与++tenantId++参数是可选的。如果省略了++tenantId++，则将使用默认租户。关于变量格式的更多信息可以在<<restVariables,REST变量章节>>找到。请注意提供的变量范围将被忽略，流程变量总是++local++的。
 
