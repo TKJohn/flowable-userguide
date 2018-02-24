@@ -427,7 +427,7 @@ public class ProcessEnginesServletContextListener implements ServletContextListe
 }
 ----
 
-++contextInitialized++方法委托给++ProcessEngines.init()++。它会在classpath中查找++flowable.cfg.xml++资源文件，并为每个配置分别创建++ProcessEngine++（例如多个jar都包含配置文件）。如果在classpath中有多个这样的资源文件，请确保它们都使用不同的名字。需要使用流程引擎时，可以获取通过
+++contextInitialized++方法会调用++ProcessEngines.init()++。它会在classpath中查找++flowable.cfg.xml++资源文件，并为每个配置分别创建++ProcessEngine++（例如多个jar都包含配置文件）。如果在classpath中有多个这样的资源文件，请确保它们都使用不同的名字。需要使用流程引擎时，可以获取通过：
 
 [source,java,linenums]
 ----

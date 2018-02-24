@@ -53,7 +53,7 @@ repositoryService.createDeployment()
 
 ==== 创建单独应用 Creating a single app
 
-如果不想费心保证所有流程引擎都在classpath中含有所有需要的代理类，以及保证它们都使用了正确的Spring配置，也可以考虑将Flowable rest web应用嵌入你自己的web应用，也就是说只使用一个单独的++ProcessEngine++。
+如果不想费心保证所有流程引擎都在classpath中含有所有需要的代理类，以及保证它们都使用了正确的Spring配置，也可以考虑将Flowable rest web应用嵌入你自己的web应用，这样就只有一个单独的++ProcessEngine++。
 
 
 [[versioningOfProcessDefinitions]]

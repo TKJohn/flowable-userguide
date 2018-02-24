@@ -230,7 +230,7 @@ Tomcat的JNDI资源配置在$CATALINA_BASE/conf/[enginename]/[hostname]/[warname
 
 === 创建数据库表 Creating the database tables
 
-在你的数据库中创建标的最简单方法是：
+在你的数据库中创建数据库表，最简单的方法是：
 
 * 在classpath中增加flowable-engine jar
 * 增加合适的数据库驱动

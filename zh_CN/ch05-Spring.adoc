@@ -6,7 +6,7 @@
 
 === ProcessEngineFactoryBean
 
-++ProcessEngine++可以被配置为普通的Spring bean。入口是++org.flowable.spring.ProcessEngineFactoryBean++类。这个bean处理流程引擎配置，并创建流程引擎。这意味着在Spring中，创建与设置参数与<<configuration,配置章节 configuration section>>中介绍的一样。集成Spring的配置与引擎bean为：
+++ProcessEngine++可以被配置为普通的Spring bean。集成起点是++org.flowable.spring.ProcessEngineFactoryBean++类。这个bean处理流程引擎配置，并创建流程引擎。这意味着在Spring中，创建与设置参数与<<configuration,配置章节 configuration section>>中介绍的一样。集成Spring的配置与引擎bean为：
 
 [source,xml,linenums]
 ----

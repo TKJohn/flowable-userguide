@@ -7,7 +7,7 @@
 
 ==== 安装与认证 Installation and Authentication
 
-Flowable在引擎中包含了REST API，可以通过在servlet容器如Apache Tomcat中，部署flowable-rest.war文件来安装。但是也可以在其他的web应用中使用，只要在你的应用中包含这些servlet与其映射，并在classpath中添加所有flowable-rest依赖即可。
+Flowable在引擎中包含了REST API，可以通过在servlet容器如Apache Tomcat中，部署flowable-rest.war文件来安装。但是也可以在其他的web应用中使用，只要在你的应用中包含这些servlet及其mapping，并在classpath中添加所有flowable-rest依赖即可。
 
 默认情况下Flowable引擎连接至一个H2内存数据库。可以修改WEB-INF/classes文件夹下的db.properties文件中的数据库设置。REST API使用JSON格式 (http://www.json.org) ，基于Spring MVC (http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html) 构建。
 
@@ -26,7 +26,7 @@ Flowable REST web应用使用Spring Java Configuration来启动Flowable引擎、
 
 由于link:$$http://tomcat.apache.org/tomcat-8.0-doc/security-howto.html$$[Tomcat中的默认安全参数]，**默认不能使用已转义斜线符（++%2F++与++%5C++）（返回400结果）。**这可能会影响部署资源与其数据URL，因为URL可能隐含已转义斜线符。
 
-当发现非预期的400结果时，设置下列系统参数
+当发现非预期的400结果时，设置下列系统参数:
 
 __-Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true__
 
@@ -97,7 +97,7 @@ HTTP响应的media-type总是++application/json++，除非请求的是二进制�
 |Integer|整形参数。只能包含数字型非十进制值（原文如此，下同），在-2.147.483.648至2.147.483.647之间。
 |Long|长整形参数。只能包含数字型非十进制值，在-9.223.372.036.854.775.808至9.223.372.036.854.775.807之间。
 |Boolean|boolean型参数。可以为++true++或++false++。任何其他值都会导致'++405 - 错误请求++'响应。
-|Date|日期型参数。使用ISO-8601日期格式（参考link:$$http://en.wikipedia.org/wiki/ISO_8601$$[wikipedia中的ISO-8601]），使用时间与日期组分（例如++2013-04-03T23:45Z++）。
+|Date|日期型参数。使用ISO-8601日期格式（参考link:$$http://en.wikipedia.org/wiki/ISO_8601$$[wikipedia中的ISO-8601]），使用时间与日期部分（例如++2013-04-03T23:45Z++）。
 
 |===============
 
@@ -141,7 +141,7 @@ HTTP响应的media-type总是++application/json++，除非请求的是二进制�
 [[restQueryVariable]]
 
 
-===== JSON查询变量格式
+===== JSON查询变量格式 JSON query variable format
 
 [source,json,linenums]
 ----
