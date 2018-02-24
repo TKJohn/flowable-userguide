@@ -1,5 +1,7 @@
-# flowable-userguide
+# flowable-userguide zh_CN
 Flowable userguide and translate into Chinese.
+
+Modified build.xml, and added bat scripts to run under Windows for zh_CN.
 
 
 _ORIGINAL README BELOW_

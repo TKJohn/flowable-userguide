@@ -62,19 +62,23 @@
 
 
     <target name="clean" description="Cleans up generated files.">
-        <exec dir="scripts" executable="./clean.sh" >
+        <exec dir="scripts" executable="cmd">
+            <arg value="/c"/>
+            <arg value="clean.bat"/>
             <arg value="${project.name}"/>
         </exec>
     </target>
 
     <target name="build.docs" depends="clean">
         <mkdir dir="target/html" />
-        <exec dir="scripts" executable="./generate-html.sh" >
+        <exec dir="scripts" executable="cmd">
+            <arg value="/c"/>
+            <arg value="generate-html.bat"/>
             <arg value="${project.name}"/>
         </exec>
-        <mkdir dir="src/en/${project.name}/output" />
-        <copy todir="target/html/en/${project.name}">
-            <fileset dir="src/en/${project.name}/output">
+        <mkdir dir="src/zh_CN/${project.name}/output" />
+        <copy todir="target/html/zh_CN/${project.name}">
+            <fileset dir="src/zh_CN/${project.name}/output">
                 <include name="**/**" />
             </fileset>
         </copy>

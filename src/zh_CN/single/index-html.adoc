@@ -4,7 +4,7 @@
 :docinfo1: header
 :icons: font
 :numbered:
-:source-highlighter: pygments
+:source-highlighter: pygments.rb
 :pygments-css: class
 :pygments-linenums-mode: table
 :compat-mode:
