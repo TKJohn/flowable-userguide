@@ -48,3 +48,11 @@ Questions and comments can be discussed on the on link:$$https://forum.flowable.
 === Internal implementation classes
 
 In the JAR file, all classes in packages that have +.impl.+ in them are implementation classes and should be considered internal. No stability guarantees are given on classes or interfaces that are in implementation classes.
+
+
+[[translate]]
+=== 翻译说明
+
+由 link:$$https://github.com/TKJohn$$[TKJohn] 根据 link:$$https://github.com/flowable/flowable-engine/tree/flowable-6.2.1/docs/userguide$$[官方userguide源码] 翻译至简体中文，工程发布于 link:$$https://github.com/TKJohn/flowable-userguide$$[GitHub] ，任何意见建议欢迎提issue。
+
+页面发布链接为 https://tkjohn.github.io/

@@ -1,5 +1,6 @@
 = Flowable Migration Guide : Flowable v5 to Flowable V6
 :doctype: book
+:docinfodir: ../base
 :docinfo1: header
 :icons: font
 :numbered:

@@ -68,3 +68,10 @@ Versions are denoted using a standard triplet of integers: *MAJOR.MINOR.MICRO*. 
 In general, Flowable attempts to remain "source compatible" in *MINOR* and *MICRO* releases for all non internal implementation classes. We define "source compatible" to mean an application will continue to build without error and the semantics have remained unchanged. Flowable also attempts to remain "binary compatible" in *MINOR* and *MICRO* releases. We define "binary compatible" to mean that this new version of Flowable can be dropped as a jar replacement into a compiled application and continue to function properly.
 
 In case an API change is introduced in a *MINOR* release, the strategy is that a backwards compatible version is kept in it, annotated with _@Deprecated_. Such deprecated APIs will then be removed two *MINOR* versions later.
+
+[[translate]]
+=== 翻译说明
+
+由 link:$$https://github.com/TKJohn$$[TKJohn] 根据 link:$$https://github.com/flowable/flowable-engine/tree/flowable-6.2.1/docs/userguide$$[官方userguide源码] 翻译至简体中文，工程发布于 link:$$https://github.com/TKJohn/flowable-userguide$$[GitHub] ，任何意见建议欢迎提issue。
+
+页面发布链接为 https://tkjohn.github.io/
