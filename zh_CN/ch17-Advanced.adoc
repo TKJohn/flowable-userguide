@@ -825,7 +825,7 @@ runtimeService.addEventListener(databaseEventLogger);
 </dependency>
 ----
 
-添加这个依赖会同时引入Rhino依赖（参见link:$https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino$$[https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino]）。Rhino是一个用于JDK的javascript引擎。过去包含在JDKV6与7中，并已被Nashorn引擎取代。然而，Rhino项目仍然在继续开发。许多功能（包括Flowable用于实现安全脚本的）都在之后才加入。在撰写本手册的时候，Nashorn**还没有**实现安全脚本功能需要的功能。
+添加这个依赖会同时引入Rhino依赖（参见link:$$https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino$$[https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino]）。Rhino是一个用于JDK的javascript引擎。过去包含在JDKV6与7中，并已被Nashorn引擎取代。然而，Rhino项目仍然在继续开发。许多功能（包括Flowable用于实现安全脚本的）都在之后才加入。在撰写本手册的时候，Nashorn**还没有**实现安全脚本功能需要的功能。
 
 这意味着脚本之间可能要做一些（基本很少）改变（例如，Rhino使用__importPackage__，而Nashorn使用__load()__）。这些改变与将脚本从JDK 7切换至8相似。
 

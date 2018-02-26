@@ -333,7 +333,7 @@ image::images/flowable_admin_processdefinitiondetails_screen.png[align="center"]
 
 Flowable UI应用支持国际化(internationalization, i18n)。项目维护英语版本。但也可以提供你自己的翻译文件，以支持其他语言。
 
-link:$$https://github.com/angular-translate/angular-translate[Angular Translate]库会试着基于浏览器的语言，从__i18n__目录（在每一个用户界面应用中）下，载入对应的语言文件。如果无法加载匹配的语言文件，框架会退回使用英语版本。
+link:$$https://github.com/angular-translate/angular-translate$$[Angular Translate]库会试着基于浏览器的语言，从__i18n__目录（在每一个用户界面应用中）下，载入对应的语言文件。如果无法加载匹配的语言文件，框架会退回使用英语版本。
 
 也可以通过额外的配置，将多个浏览器语言key关联至某个语言：
 

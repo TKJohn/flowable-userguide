@@ -66,7 +66,7 @@ ProcessEngines会扫描所有++flowable.cfg.xml++与++flowable-context.xml++文�
 
 === 异常策略 Exception strategy
 
-Flowable的异常基类是++org.flowable.engine.FlowableException++，这是一个未检查异常(unchecked exception)。在任何API操作时都可能会抛出这个异常，link:$$http://www.flowable.org/docs/javadocs/index.html$[javadoc]记录了每个方法可能发生的异常。例如，从++TaskService++中摘录：
+Flowable的异常基类是++org.flowable.engine.FlowableException++，这是一个未检查异常(unchecked exception)。在任何API操作时都可能会抛出这个异常，link:$$http://www.flowable.org/docs/javadocs/index.html$$[javadoc]记录了每个方法可能发生的异常。例如，从++TaskService++中摘录：
 
 [source,java,linenums]
 ----
