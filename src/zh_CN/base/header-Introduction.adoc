@@ -8,8 +8,7 @@ Flowable在link:$$http://www.apache.org/licenses/LICENSE-2.0.html$$[Apache V2 �
 
 === 下载
 
-link:$$http://flowable.org/downloads.html$$[http://flowable.org/downloads.html]
-
+link:$$http://www.flowable.org/downloads.html$$[http://www.flowable.org/downloads.html]
 [[sources]]
 
 === 源码
@@ -22,9 +21,9 @@ Flowable的发布包里包含了大部分源码，以JAR文件方式提供。Flo
 
 === 必要的软件
 
-==== JDK 7+
+==== JDK 8+
 
-Flowable需要JDK 7或以上版本。可以访问 link:$$http://www.oracle.com/technetwork/java/javase/downloads/index.html$$[Oracle Java SE downloads页面] 点击“Download JDK”按钮获取。该页面上也有安装指导。安装完成后，可以执行 +java -version+ 。能看到JDK的版本信息就说明安装成功了。
+运行Flowable需要JDK 8或以上版本。可以访问 link:$$http://www.oracle.com/technetwork/java/javase/downloads/index.html$$[Oracle Java SE downloads页面] 点击“Download JDK”按钮获取。该页面上也有安装指导。安装完成后，可以执行 +java -version+ 。能看到JDK的版本信息就说明安装成功了。
 
 ==== IDE
 
@@ -71,6 +70,6 @@ Sections marked with *[EXPERIMENTAL]* should not be considered stable.
 [[translate]]
 === 翻译说明
 
-由 link:$$https://github.com/TKJohn$$[TKJohn] 根据 link:$$https://github.com/flowable/flowable-engine/tree/flowable-6.2.1/docs/userguide$$[官方userguide源码] 翻译至简体中文，工程发布于 link:$$https://github.com/TKJohn/flowable-userguide$$[GitHub] ，任何意见建议欢迎提issue。
+由 link:$$https://github.com/TKJohn$$[TKJohn] 根据 link:$$https://github.com/flowable/flowable-engine/tree/flowable-6.3.0/docs/userguide$$[官方userguide源码] 翻译至简体中文，工程发布于 link:$$https://github.com/TKJohn/flowable-userguide$$[GitHub] ，任何意见建议欢迎提issue。
 
 页面发布链接为 https://tkjohn.github.io/
