@@ -20,7 +20,7 @@ A *case model* is always visualized as some sort of _folder_ that contains all t
 
 The elements of a plan model are called *plan items*. Each _plan item_ has a *plan item definition* that gives its type and possible configuration options at runtime. For example, in the figure above, there are three *human task* plan items and one *milestone*. Other examples of plan items are _process tasks, case tasks and stages_.
 
-After having deployed a case model to the Flowable CMMN engine, it's possible to start *case instances* based on this case model. The plan items defined in the case model similarly have *plan item instance* runtime representations that are exposed by, and can be queried using, the Flowable API.
+After having deployed a case model to the Flowable CMMN engine, it's possible to start *case instances* based on this case model. The plan items defined in the case model similarly have *plan item instance* runtime representations that are exposed by, and can be queried using, the Flowable API. Plan item instances have a state lifecycle that is defined in the CMMN 1.1 specification and is core to how the engine works. Please check out section 8.4.2 of the CMMN 1.1 specification for all the details.
 
 Plan items can have _sentries_: a plan item is said to have _entry criteria_ when a sentry "guards" its activation. These criteria specify conditions that must be satisfied to _trigger the sentry_. For example, in the figure above, the "Milestone One" plan item is _available_ after a case instance is started, but it is _activated_ (in CMMN 1.1 specification terminology: it moves from the _available_ state to the _active_ state) when both human task A and B are completed. Note that sentries can have complex expression in their _if part_, which are not visualized, allowing for much more complex functionality. Also note that there can be multiple sentries, although only one needs to be satisfied to trigger a state transition.
 
@@ -487,9 +487,9 @@ image::images/cmmn.task.png[align="center"]
 
 A human task is used to model work that needs to be done by a human, typically through a form. When the engine arrives at such a human task, a new entry is created in the task list of any users or groups assigned to that task.
 
-A human task is a plan item, which means that beyond a human task entry aso a _PlanItemInstance_ is created and it can be queried via the _PlanItemInstanceQuery_.
+A human task is a plan item, which means that beyond a human task entry also a _PlanItemInstance_ is created and it can be queried via the _PlanItemInstanceQuery_.
 
-Human tasks can be queried through the _org.flowable.task.api.TaskQuery_ API. Historic task data can be queries through the _org.flowable.task.api.history.HistoricTaskInstanceQuery_.
+Human tasks can be queried through the _org.flowable.task.api.TaskQuery_ API. Historic task data can be queried through the _org.flowable.task.api.history.HistoricTaskInstanceQuery_.
 
 Properties:
 
@@ -497,7 +497,7 @@ Properties:
 * *blocking*: a boolean value determining whether the task blocks.
 * *blockingExpression*: an expression that evaluates to a boolean indicating whether the tasks blocks.
 * *assignee* : an expression (can be a static text value) that is used to determine to who the human task is assigned.
-* *owner* : an expression (can be a static text value) that is used to determine to who is the owner of the human task.
+* *owner* : an expression (can be a static text value) that is used to determine who is the owner of the human task.
 * *candidateUsers* : an expression (can be a static text value) that resolves to a comma-separated list of Strings that is used to determine which users are candidate for this human task.
 * *candidateGroups* : an expression (can be a static text value) that resolves to a comma-separated list of Strings that is used to determine to which groups the task is assigned.
 * *form key*: an expression that determines a key when using forms. Can be retrieved via the API afterwards.
@@ -564,11 +564,109 @@ A http task is visualized as a _task_ with a rocket icon in the top left corner:
 
 image::images/cmmn.httptask.png[align="center"]
 
+==== Script Task
+
+A task of type "script", similar to its homologue in BPMN, the Script Task executes a script when the plan item instance become active.
+
+Properties:
+
+* *name*: task attribute to indicate the name of the task.
+* *type*: task attribute whose value must be "script" to indicate the type of task.
+* *scriptFormat*: extended attribute that indicate the language of the script (i.e. javascript, groovy).
+* *script*: the script to execute, defined as a string in a extension field element named "script".
+* *autoStoreVariables*: optional task attribute flag (default: false) tha indicates whether or not variables defined in the script will be stored in the Plan Item Instance context (see note below).
+* *resultVariableName*: optional task attribute that when present will store a variable with the specified name in the Plan Item instance context with the script evaluation result (see note below).
+
+A script task is visualized as a _task_ with a script icon in the top left corner:
+
+image::images/cmmn.scripttask.png[align="center"]
+
+[source,xml,linenums]
+----
+<planItem id="scriptPlanItem" name="Script Plan Item" definitionRef="myScriptTask" />
+<task name="My Script Task Item" flowable:type="script" flowable:scriptFormat="JavaScript">
+    <documentation>Optional documentation</documentation>
+    <extensionElements>
+        <flowable:field name="script">
+            <string>
+                sum = 0;
+                for ( i in inputArray ) {
+                    sum += i;
+                }
+            </string>
+        </flowable:field>
+    </extensionElements>
+</taks>
+----
+
+*Note*: The value of the *scriptFormat* attribute must be a name that is compatible with the link:$$http://jcp.org/en/jsr/detail?id=223$$[JSR-223] (scripting for the Java platform). By default, JavaScript is included in every JDK and as such doesn't need any additional JAR files. If you want to use another (JSR-223 compatible) scripting engine, it is sufficient to add the corresponding JAR to the classpath and use the appropriate name. For example, the Flowable unit tests often use Groovy because the syntax is similar to that of Java.
+
+Do note that the Groovy scripting engine is bundled with the groovy-all jar. Before Groovy version 2.0, the scripting engine was part of the regular Groovy JAR. As such, one must now add following dependency:
+
+[source,xml,linenums]
+----
+<dependency>
+    <groupId>org.codehaus.groovy</groupId>
+    <artifactId>groovy-all</artifactId>
+    <version>2.x.x<version>
+</dependency>
+----
+
+All case variables that are accessible through the PlanItem instance that arrives in the script task can be used within the script. In the example, the script variable _'inputArray'_ is in fact a case variable (an array of integers).
+
+[source,xml,linenums]
+----
+<flowable:field name="script">
+    <string>
+    sum = 0
+    for ( i in inputArray ) {
+      sum += i
+    }
+    </string>
+</flowable:field>
+----
+
+*Note*: It's also possible to set process variables in a script, simply by calling _planItemInstance.setVariable("variableName", variableValue)_. By default, no variables are stored automatically. It's possible to automatically store any variable defined in the script (for example, __sum__ in the example above) by setting the property ++autoStoreVariables++ on the ++scriptTask++ to ++true++. However, *the best practice is not to do this and use an explicit execution.setVariable() call*, as with some recent versions of the JDK, auto storing of variables does not work for some scripting languages. See link:$$http://www.jorambarrez.be/blog/2013/03/25/bug-on-jdk-1-7-0_17-when-using-scripttask-in-activiti/$$[this link] for more details.
+
+[source,xml,linenums]
+----
+<task name="Script Task" flowable:type="script" flowable:scriptFormat="groovy" flowable:autoStoreVariables="false">
+----
+
+The default for this parameter is +false+, meaning that if the parameter is omitted from the script task definition, all the declared variables will only exist during the duration of the script.
+
+Here's an example of how to set a variable in a script:
+
+[source,xml,linenums]
+----
+<flowable:field name="script">
+    <string>
+    def scriptVar = "test123"
+    planItemInstance.setVariable("myVar", scriptVar)
+    </string>
+</flowable:field>
+----
+
+The following names are reserved and *cannot be used* as variable names: *out, out:print, lang:import, context, elcontext*.
+
+*Note* The return value of a script task can be assigned to an already existing, or to a new process variable, by specifying the process variable name as a literal value for the _'flowable:resultVariable'_ attribute of a script task definition. Any existing value for a specific process variable will be overwritten by the result value of the script execution. When a result variable name is not specified, the script result value gets ignored.
+
+[source,xml,linenums]
+----
+<task name="Script Task" flowable:type="script" flowable:scriptFormat="groovy" lowable:resultVariable="myVar">
+    <flowable:field name="script">
+        <string>#{echo}</string>
+    </flowable:field>
+</task>
+----
+
+In the above example, the result of the script execution (the value of the resolved expression __'#{echo}'__) is set to the process variable named __'myVar'__ after the script completes.
+
 ==== Milestone
 
 A milestone is used to mark arriving at a certain point in the case instance. At runtime, they are represented as *MilestoneInstances* and they can be queried through the *MilestoneInstanceQuery* via the _CmmnRuntimeService_. There is also a historical counterpart via the _CmmnHistoryService_.
 
-A human task is a plan item, which means that beyond a milestone entry aso a _PlanItemInstance_ is created and it can be queried via the _PlanItemInstanceQuery_.
+A milestone is a plan item, which means that beyond a milestone entry aso a _PlanItemInstance_ is created and it can be queried via the _PlanItemInstanceQuery_.
 
 
 Properties:
@@ -669,11 +767,22 @@ A timer event listener is visualized as circle with a clock icon inside:
 
 image::images/cmmn.timereventlistener.png[align="center"]
 
-==== Item controls
+===== User Event Listener
 
-===== Repetition Rule
+A user event listener can be used when neededing to capture a user interaction that influences the proceeding of a case directly,
+instead of indirectly via impacting variables or information in the case. When the event is captured an Occur transition is triggered on the event listener.
+Like timer event listeners, it has a much simpler lifecycle that a _task_.
+
+image::images/cmmn.usereventlistener.png[align="center"]
+
+User event listeners can be queried using the _org.flowable.cmmn.api.runtime.UserEventListenerInstanceQuery_. Such a query can be created by calling the _cmmnRuntimeService.createUserEventListenerInstanceQuery()_ method. Note that a user event listener is a plan item instance under the hood, which means it can also be queried through the _org.flowable.cmmn.api.runtime.PlanItemInstanceQuery_ API.
+
+A user event listener can be completed by calling the _cmmnRuntimeService.completeUserEventListenerInstance(id)_ method.
+
+==== Item control: Repetition Rule
 
 Plan items on the case model can have a _repetition rule_, an expression that can be used to indicate a certain plan item needs to be repeated.
+When no expression is set, but the repetition is enabled (e.g. the checkbox is checked in the Flowable Modeler) or the expression is empty, a _true_ value is assumed by default.
 
 An optional _repetition counter variable_ can be set, that holds the index (one-based) of the instance. If not set, the default variable name is _repeitionCounter_.
 
@@ -686,3 +795,109 @@ Take for example the following timer event listener followed by a human task. Th
 image::images/cmmn.repeatingtimereventlistener.png[align="center"]
 
 If the timer event listener is repeating (for example _R/PT1H_), the _occur_ event will be fired every hour. When the repetition rule expression of the human task evaluates to true, a new human task instance will be created each hour.
+
+==== Item control: Manual Activation Rule
+
+Plan items on the case model can have a _manual activation rule_, an expression that can be used to indicate a certain plan item needs to be _manually activated by an end-user_.
+When no expression is set, but the manual activation is enabled (e.g. the checkbox is checked in the Flowable Modeler) or the expression is empty, a _true_ value is assumed by default.
+
+Stages and all task types can be marked for manual activation. Visually, the task or stage will get a 'play' icon (small triangle pointing to the right) to indicate an end-user will have to manually activate it: 
+
+image::images/cmmn.manual-activation.png[align="center"]
+
+Normally, when a sentry for a plan item is satisfied (or the plan item doesn't have any sentries) the plan item instance is automatically moved to the _ACTIVE_ state. When a manual activation is set though, and it evaluates to true, the plan item instance now becomes _ENABLED_ instead of _ACTIVE_. As the name implies, the idea behind this is that end-users manually have to activate the plan item instance. A typical use case is for example showing a list of buttons of potential plan item instances that can currently be started by the end user.
+
+To start an enabled plan item instance, the _startPlanItemInstance_ method of the _CmmnRuntimeService_ can be used:
+
+[source,java,linenums]
+----
+List<PlanItemInstance> enabledPlanItemInstances = cmmnRuntimeService.createPlanItemInstanceQuery()
+    .caseInstanceId(caseInstance.getId())
+    .planItemInstanceStateEnabled()
+    .list();
+    
+// ...
+        
+cmmnRuntimeService.startPlanItemInstance(planItemInstance.getId());
+----
+
+Note that the behaviour of a task only is executed when the plan item instance moves into the _ACTIVE_ state. For example, for a human task, the user task will only be created after calling the _startPlanItemInstance_ method.
+
+Plan item instances that are enabled, can be moved into the _DISABLED_ state:
+
+[source,java,linenums]
+----
+cmmnRuntimeService.disablePlanItemInstance(planItemInstance.getId());
+----
+
+Disabled plan item instances can be enabled again:
+[source,java,linenums]
+----
+cmmnRuntimeService.enablePlanItemInstance(planItemInstance.getId());
+----
+
+Note that with regards to determining stage or case instance termination, the _DISABLED_ state is seen as a 'terminal' state. This means that the case instance will terminate when only disabled plan item instances would remain.
+
+==== Item control: Required Rule
+
+Plan items on the case model can have a _required rule_, an expression that can be used to indicate a certain plan item is _required by the enclosing stage (or plan model)_. This can be used to indicate which plan items of the case model are required to be executed and which are optional.
+
+When no expression is set, but the required rule is enabled (e.g. the checkbox is checked in the Flowable Modeler) or the expression is empty, a _true_ value is assumed by default.
+
+The _required rule_ works in conjunction with the _autoComplete_ attribute on the parent stage:
+
+* If _autoComplete_ resolves to _false_ for the stage, which is also the default when nothing is set, *all* child plan item instances must be in an end state (completed, terminated, etc.) for the stage plan item instance to completed by the engine.
+* If _autoComplete_ resolves to _true_ for the stage, all child plan item instances for *which the required rule evaluates to true* need to be in an end state. If there are also no other active child plan item instances, the stage completes automatically.
+
+A _stage plan item instance_ has a *completeable* property that can be used to see whether or not the conditions for completion are satisfied.
+Take for example the following simple stage and assume that the sentry for the _required task_ evaluates to true and the other one to false. This means that the left plan item instance will be active while the right one will be in the _available_ state.
+
+image::images/cmmn.completeable-stage.png[align="center"]
+
+Calling _cmmnRuntimeService.completeStagePlanItemInstance(String stagePlanItemInstanceId)_ will not be possible for the stage (an exception will be thrown) as it has one active child plan item instance. When this user task on the left is completed, the _completeStagePlanItemInstance_ can now be called, as no child plan item instances are currently active. However, by itself the stage will not automatically complete as the right user task is in the available state.
+
+If the previous stage is changed to be *autoCompleteable* (this is visualised by a black rectangle at the bottom of the stage) and the plan item on the left is changed to be required (this is visualised using an exclamation mark), the behavior will be different:
+
+image::images/cmmn.completeable-stage02.png[align="center"]
+
+* If the left plan item instance is active (sentry is true) and the right is not (sentry is false). In this case, when the left user task is completed, the stage instance will auto complete as it has no active child plan item instances and all required plan item instances are in an end state 
+* If both the left and right user tasks are active (sentries are true). 
+** When the left user task is completed, the stage will not autocomplete as there is still a child plan item instance active.
+** When the right user task is completed, the stage will not autocomplete as the required left child plan item instance is not in an end state.
+* If the left plan item instance is not active and the right is active. In this case, when the right user task is completed the stage will not autocomplete, as the required left user task is not in an end state. It will need to become active and be completed to complete the stage. 
+
+Note that the manual activation rule works independently from the required rule. For example, given the following stage: 
+
+image::images/cmmn.completeable-stage03.png[align="center"]
+
+Here, user task D is required, and user task B is manually activated. 
+
+* If D is completed, the stage will automatically complete, as B is not required and it is not active.
+* If B would be required too, it would need to be manually started (using _cmmnRuntimeService.startPlanItemInstance(String planItemInstanceId)_) before the stage would automatically complete, even if D would be completed before the manual start of B.
+
+==== Item control: Completion Neutral Rule
+
+_Completion Neutral Rule_ is not a CMMN 1.1 Standard. The completion neutral rule impacts the interpretation of the *AVAILABLE* state of plan items that have it, when evaluating whether or not a Stage containing such plan items can complete.
+
+Following the specification, a stage with a plan item in state *AVAILABLE* does not complete unless its _autoComplete_ attribute is set _true_.
+But an _autoCompletable_ stage would _ignore_, for the purposes of completing, *all* plan items in _ENABLE_ and _AVAILABLE_ state that are _not required_ (*requiredRule* not present or evaluates to _false_).
+
+_Completion Neutral_ offers the flexibility to mark only some containing plan items without setting the containing parent stage as _autoComplete_.
+
+_Required Rule_ takes precedence when plan items that having both rules, both evaluate to _true_.
+
+As a summary:
+
+* a plan item configured to be _"completion neutral"_ will not prevent a stage from completing if its in *AVAILABLE* state (i.e. waiting for a entry criteria sentry),
+meaning that such a plan item is neutral with respect to its parent stage completion evaluation.
+
+* a stage will remain *ACTIVE* on any of these conditions:
+    1. It has at least one plan item in *ACTIVE* state
+    2. It has at least one plan item with _requiredRule_ in *AVAILABLE* or *ENABLE* state
+    3. If it isn't _autoComplete_ and has at least one plan item on *ENABLED* state (irrespectively on its _requiredRule_)
+    4. If it isn't _autoComplete_ and has at least one plan item on *AVAILABLE* state that is *not* _completionNeutral_
+
+* a stage will *COMPLETE* if:
+    1. It contains *no* plan items or all child plan items are in a _Terminal_ or _Semi-terminal_ state (CLOSED, COMPLETED, DISABLED, FAILED)
+    2. If it isn't _autoComplete_, all remaining plan items (not _Terminal_ or _Semi-terminal_ state) are in *AVAILABLE* state and are _completionNeutral_ and not _required_
+    3. If is is _autoComplete_, all remaining plan items (not _Terminal_ or _Semi-terminal) are _not required_ in *ENABLED* or *AVAILABLE* state (regardless of its completion neutrality)
