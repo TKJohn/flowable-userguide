@@ -6,7 +6,7 @@
 
 Flowable为Flowable引擎提供了REST API，可以通过在servlet容器（如Apache Tomcat）中部署flowable-rest.war文件来安装。另外，也可以通过在应用中引入servlet（包括对应的映射），并将所有flowable-rest的依赖加入classpath的方式使用。
 
-默认情况下Flowable引擎会连接至一个H2内存数据库。可以通过__WEB-INF/META-INF/flowable-app__目录下的flowable-app.properties文件修改数据库设置。REST API使用JSON格式(http://www.json.org)，并基于Spring MVC(http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html)构建。
+默认情况下Flowable引擎会连接至一个H2内存数据库。可以通过__WEB-INF/META-INF/flowable-app__目录下的flowable-app.properties文件修改数据库设置。REST API使用JSON格式( http://www.json.org )，并基于Spring MVC( http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html )构建。
 
 默认情况下访问任何REST资源都需要具有__rest-access-api__权限的合法用户。如果需要任何合法用户都可以访问REST API，可以将__flowable.rest.app.authentication-mode__设置为__any-user__（这也是之前版本Flowable的默认设置）。
 
@@ -25,7 +25,7 @@ flowable.rest.app.admin.last-name=Admin
 
 **建议使用基础认证时，同时使用HTTPS。**
 
-[[_configuration]]
+[[_configuration_2]]
 ==== 配置
 
 Flowable REST web应用使用Spring Java Configuration来启动Flowable引擎，使用Spring security定义基础认证安全，并为为特定的变量处理定义了变量转换。
