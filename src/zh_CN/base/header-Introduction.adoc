@@ -29,7 +29,7 @@ Flowable的发布包里包含了大部分源码，以JAR文件方式提供。Flo
 
 可以自行选择用于Flowable开发的IDE。如果想要使用Flowable Designer，则需要Eclipse Mars或Neon。
 到 link:$$http://www.eclipse.org/downloads/$$[Eclipse下载页面]选择Eclipse版本并下载。解压下载的文件，
-然后执行++eclipse++目录下的eclipse文件。手册后续有专门一章介绍如何<<eclipseDesignerInstallation,安装我们的Eclipse Designer插件>>。
+然后执行++eclipse++文件夹下的eclipse文件。手册后续有专门一章介绍如何<<eclipseDesignerInstallation,安装我们的Eclipse Designer插件>>。
 
 
 [[reporting.problems]]
