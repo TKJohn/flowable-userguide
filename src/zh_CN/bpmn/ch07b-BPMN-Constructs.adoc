@@ -1165,7 +1165,7 @@ A cancel boundary event is visualized as a typical intermediate event (circle wi
 image::images/bpmn.boundary.cancel.event.png[align="center"]
 
 
-[[bpmnBoundarySignalEventXml]]
+[[bpmnBoundaryCancelEventXml]]
 
 
 ===== XML representation
@@ -1371,7 +1371,7 @@ An intermediate catching message event is visualized as a typical intermediate e
 image::images/bpmn.intermediate.message.catch.event.png[align="center"]
 
 
-[[bpmnIntermediateSignalEventXml]]
+[[bpmnIntermediateMessageEventXml]]
 
 
 ===== XML representation
@@ -1490,7 +1490,7 @@ An asynchronous signal event would look like this:
 ----
 
 
-[[bpmnIntermediateSignalEventExample]]
+[[bpmnIntermediateThrowSignalEventExample]]
 
 
 ===== Example
@@ -1547,7 +1547,7 @@ An intermediate compensation throw event is visualized as a typical intermediate
 image::images/bpmn.intermediate.compensation.throw.event.png[align="center"]
 
 
-[[bpmnIntermediateThrowSignalEventXml]]
+[[bpmnIntermediateThrowCompensationEventXml]]
 
 
 ===== XML representation
@@ -4096,7 +4096,7 @@ The process instance will wait until a signal is received, for example from Came
 * receive task name
 
 
-[[bpmnCamelTaskAsyncPingPong]]
+[[bpmnCamelInstantiateWorkflowFromCamelRoute]]
 
 
 ===== Instantiate workflow from Camel route
@@ -4970,7 +4970,7 @@ To sum it up: while ACID transactions offer a generic solution to such problems 
 *Consistency on top of ACID transactions and optimistic concurrency:* A BPMN transaction guarantees consistency in the sense that either all activities compete successfully, or if some activity cannot be performed, the effects of all other successful activities are compensated. So, either way, we end up in a consistent state. However, it is important to recognize that in Flowable, the consistency model for BPMN transactions is superposed on top of the consistency model for process execution. Flowable executes processes in a transactional way. Concurrency is addressed using optimistic locking. In Flowable, BPMN error, cancel and compensation events are built on top of the same ACID transactions and optimistic locking. For example, a cancel end event can only trigger compensation if it is actually reached. It is not reached if some undeclared exception is thrown by a service task before. Or, the effects of a compensation handler cannot be committed if some other participant in the underlying ACID transaction sets the transaction to the state rollback-only. Or, when two concurrent executions reach a cancel end event, compensation might be triggered twice and fail with an optimistic locking exception. All of this is to say that when implementing BPMN transactions in Flowable, the same set of rules apply as when implementing "ordinary" processes and sub-processes. So, to effectively guarantee consistency, it is important to implement processes in a way that does take the optimistic, transactional execution model into consideration.
 
 
-[[bpmnEventSubprocessGraphicalNotation]]
+[[bpmnTransactionSubprocessGraphicalNotation]]
 
 
 ===== Graphical Notation
@@ -4980,7 +4980,7 @@ A transaction sub-process is visualized as a an <<bpmnSubProcessGraphicalNotatio
 image::images/bpmn.transaction.subprocess.png[align="center"]
 
 
-[[bpmnEventSubprocessXMLRepresentation]]
+[[bpmnTransactionSubprocessXMLRepresentation]]
 
 
 ===== XML representation
@@ -4995,7 +4995,7 @@ A transaction sub-process is represented in XML using the +transaction+ tag:
 ----
 
 
-[[bpmnEventSubprocessExample]]
+[[bpmnTransactionSubprocessExample]]
 
 
 ===== Example

@@ -84,10 +84,7 @@ See the https://docs.spring.io/spring-boot/docs/current/reference/html/executabl
 As the Flowable UI apps are Spring Boot applications you can use all the properties Spring Boot provides.
 In order to provide custom configuration for the apps have a look at the https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html[Externalized Configuration] section of the Spring Boot documentation.
 
-[TIP]
------
-You can also use YAML based properties.
------
+TIP: You can also use YAML based properties.
 
 .Common UI App Properties
 [cols="4*",options="header"]
