@@ -5,8 +5,9 @@ Modified build.xml, and added bat scripts to run under Windows for zh_CN.
 
 Referring to [asciidoctor-pdf](https://github.com/asciidoctor/asciidoctor-pdf#support-for-non-latin-languages), for generating PDF in Chinese, the [asciidoctor-pdf-cjk-kai_gen_gothic](https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic) is also needed. Check the URLs for more details.
 
+Referring to [pygments.rb](https://github.com/tmm1/pygments.rb), python 2.x should be installed.
   
-_ORIGINAL README BELOW_
+_*ORIGINAL README BELOW*_
 
 
 About
