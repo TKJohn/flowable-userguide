@@ -745,7 +745,7 @@ void addEventListener(FlowableEventListener listenerToAdd, FlowableEventType... 
 |ENTITY_INITIALIZED|新的实体已经创建并完全初始化。如果任何子实体作为该实体的一部分被创建，本事件会在子实体创建/初始化后触发，与 +$$ENTITY_CREATE$$+ 事件相反。|+org.flowable...FlowableEntityEvent+
 |ENTITY_UPDATED|实体已经更新。该实体包含在本事件里。|+org.flowable...FlowableEntityEvent+
 |ENTITY_DELETED|实体已经删除。该实体包含在本事件里。|+org.flowable...FlowableEntityEvent+
-|ENTITY_SUSPENDED|实体已经挂起。该实体包含在本事件里。ProcessDefinitions（流程定义）, ProcessInstances（流程实例）与Tasks（任务）会分发本事件。|+org.flowable...FlowableEntityEvent+
+|ENTITY_SUSPENDED|实体已经暂停。该实体包含在本事件里。ProcessDefinitions（流程定义）, ProcessInstances（流程实例）与Tasks（任务）会分发本事件。|+org.flowable...FlowableEntityEvent+
 |ENTITY_ACTIVATED|实体已经激活。该实体包含在本事件里。ProcessDefinitions, ProcessInstances与Tasks会分发本事件。|+org.flowable...FlowableEntityEvent+
 |JOB_EXECUTION_SUCCESS|作业已经成功执行。该作业包含在本事件里。|+org.flowable...FlowableEntityEvent+
 |JOB_EXECUTION_FAILURE|作业执行失败。该作业与异常包含在本事件里。|+org.flowable...FlowableEntityEvent+ 及 +org.flowable...FlowableExceptionEvent+
