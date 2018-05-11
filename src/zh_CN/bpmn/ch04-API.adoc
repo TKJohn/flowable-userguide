@@ -274,7 +274,7 @@ public static class FetchDataServiceTask implements JavaDelegate {
 
 'Process Data（处理数据）'可以获取response瞬时变量，解析并将其相关数据存储在实际流程变量中，因为之后还需要使用它们。
 
-离开排他网关的顺序流的条件，不关注使用的是持久化还是瞬时变量（在这个例子中__status__是瞬时变量）：
+离开排他网关的顺序流上的条件表达式，不关注使用的是持久化还是瞬时变量（在这个例子中__status__是瞬时变量）：
 
 [source,xml,linenums]
 ----
