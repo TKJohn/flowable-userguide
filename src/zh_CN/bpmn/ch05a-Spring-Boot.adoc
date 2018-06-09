@@ -13,13 +13,13 @@ Flowable与Spring Boot的集成是我们与Spring的提交者共同开发的。
 [[_compatibility]]
 ==== 兼容性
 
-Flowable使用同一个starter支持Spring Boot 2.0及1.5。主要支持Spring Boot 2.0。所以监控(actuator) endpoint只支持2.0。Flowable的starter直接饮用spring boot starter，所以如果需要使用1.5版的spring boot starter，需要自行定义。
+Flowable使用同一个starter支持Spring Boot 2.0及1.5。主要支持Spring Boot 2.0。所以监控(actuator) endpoint只支持2.0。Flowable的starter直接引用Spring Boot starter，所以如果需要使用1.5版的Spring Boot starter，需要自行定义。
 
 [[_getting_started_2]]
 ==== 开始
 
 Spring Boot提倡约定大于配置。要开始工作，只需在项目中添加__flowable-spring-boot-starter__或__flowable-spring-boot-starter-rest__依赖。如果不需要引入所有的引擎，可以查看其它的<<springBootFlowableStarter, Flowable starter>>。
-例如在Maven中：
+如使用Maven：
 
 
 [source,xml,linenums]
@@ -48,7 +48,7 @@ public class MyApplication {
 }
 ----
 
-Flowable需要数据库来存储数据。运行上面的代码，会得到异常提示，指出需要在classpath中添加数据库驱动依赖。现在添加H2数据库依赖：
+Flowable需要数据库来存储数据。运行上面的代码会得到异常提示，指出需要在classpath中添加数据库驱动依赖。现在添加H2数据库依赖：
 
 [source,xml,linenums]
 ----
@@ -239,7 +239,7 @@ spring.datasource.password=flowable
 </dependency>
 ----
 
-应用这次启动后，可以看到使用了MySQL作为数据库（也使用了HikariCP连接池框架）：
+这次应用启动后，可以看到使用了MySQL作为数据库（并使用HikariCP连接池框架）：
 
 ----
 org.flowable.engine.impl.db.DbSqlSession   : performing create on engine with resource org/flowable/db/create/flowable.mysql.create.engine.sql
@@ -449,7 +449,7 @@ class Person {
 }
 ----
 
-默认情况下，如果没有使用内存数据库，不会自动创建数据库表。在classpath中创建__application.properties__文件并加入下列参数：
+默认情况下，如果没有使用内存数据库则不会自动创建数据库表。在classpath中创建__application.properties__文件并加入下列参数：
 
 ----
 spring.jpa.hibernate.ddl-auto=update
@@ -466,7 +466,7 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
 }
 ----
 
-这是一个Spring存储组件(repository)，提供了直接可用的增删改查。我们添加了通过username查找Person的方法。Spring会基于约定自动实现它（也就是使用names属性）。
+这是一个Spring repository，提供了直接可用的增删改查。我们添加了通过username查找Person的方法。Spring会基于约定自动实现它（也就是使用names属性）。
 
 现在进一步增强我们的服务：
 
@@ -557,7 +557,7 @@ public class MyRestController {
     }
 ----
 
-最后，为了使用Spring-JPA-Flowable集成，我们在流程定义中，将Person JPA对象的ID指派为任务办理人：
+最后，为了试用Spring-JPA-Flowable集成，我们在流程定义中，将Person JPA对象的ID指派为任务办理人：
 
 [source,xml,linenums]
 ----
@@ -581,7 +581,7 @@ curl http://localhost:8080/tasks?assignee=1
 [[springBootActuatorEndpoint]]
 ==== Flowable Actuator Endpoint
 
-Flowable提供了Spring Boot Actuator端点，可以提供正在运行的流程的信息。
+Flowable提供了Spring Boot Actuator Endpoint，以提供正在运行的流程的信息。
 默认情况下``flowable``端点映射至``/actuator/flowable``。
 Spring Boot默认只提供``info``与``health``端点。要启用``flowable``端点，需要在``application.properties``中添加``management.endpoint.flowable.enabled=true``。
 
@@ -777,7 +777,7 @@ flowable.mail.server.use-tls=false # 使用或禁用STARTTLS加密。
 flowable.mail.server.username= # 邮件服务器的登陆用户名。如果为空，则不需要登录。
 
 # Actuator
-management.endpoint.flowable.cache.time-to-live=0ms # 响应缓存的最大时间。
+management.endpoint.flowable.cache.time-to-live=0ms # 缓存响应的最大时间。
 management.endpoint.flowable.enabled=true # 是否启用flowable端点。
 
 ----
@@ -840,7 +840,7 @@ management.endpoint.flowable.enabled=true # 是否启用flowable端点。
 [[springBootFlowableAutoConfiguration]]
 ==== Flowable自动配置类
 
-这是Flowable提供的所有自动配置类的列表，并包括了文档及源码的连接。记得查看你的应用的状况报告，以确认具体启用了哪些功能。（使用--debug或-Ddebug或在Actuator应用中启动应用，并使用``conditions``端点）。
+这是Flowable提供的所有自动配置类的列表，并包括了文档及源码的连接。记得查看你的应用的conditions报告，以确认具体启用了哪些功能。（使用--debug或-Ddebug或在Actuator应用中启动应用，并使用``conditions``端点）。
 
 [cols=*,options="header"]
 |===
@@ -930,7 +930,7 @@ Flowable引擎使用Liquibase管理数据库版本。
 ===== 自定义引擎配置
 
 实现__org.flowable.spring.boot.EngineConfigurationConfigurer<T>__接口，可以获取引擎配置对象。其中__T__是具体引擎配置的Spring类型。
-这样可以在参数尚未提供配置时，进行高级配置，或简化配置。
+这样可以在参数尚未公开时，进行高级配置，或简化配置。
 例如：
 
 [source, java, linenums]
@@ -944,7 +944,7 @@ public class MyConfigurer implements EngineConfigurationConfigurer<SpringProcess
 }
 ----
 
-在Spring Boot配置中使用__@Bean__发布该类的实例，这样实例会在流程引擎创建前调用。
+在Spring Boot配置中使用__@Bean__发布该类的实例，这样配置类会在流程引擎创建前调用。
 
 [TIP]
 ====
