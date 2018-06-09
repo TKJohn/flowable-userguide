@@ -582,8 +582,8 @@ curl http://localhost:8080/tasks?assignee=1
 ==== Flowable Actuator Endpoint
 
 Flowable提供了Spring Boot Actuator Endpoint，以提供正在运行的流程的信息。
-默认情况下``flowable``端点映射至``/actuator/flowable``。
-Spring Boot默认只提供``info``与``health``端点。要启用``flowable``端点，需要在``application.properties``中添加``management.endpoint.flowable.enabled=true``。
+默认情况下 `flowable` 端点映射至 `/actuator/flowable` 。
+Spring Boot默认只提供 `info` 与 `health` 端点。要启用 `flowable` 端点，需要在 `application.properties` 中添加 `management.endpoint.flowable.enabled=true` 。
 
 `curl http://localhost:8080/actuator/flowable`
 
@@ -615,7 +615,7 @@ Spring Boot默认只提供``info``与``health``端点。要启用``flowable``端
 [[springBootInfoContributor]]
 ==== Flowable Info Contributor
 
-Flowable也提供了Spring Boot的``InfoContributor``：
+Flowable也提供了Spring Boot的 `InfoContributor` ：
 
 `curl http://localhost:8080/actuator/info`
 
@@ -840,7 +840,7 @@ management.endpoint.flowable.enabled=true # 是否启用flowable端点。
 [[springBootFlowableAutoConfiguration]]
 ==== Flowable自动配置类
 
-这是Flowable提供的所有自动配置类的列表，并包括了文档及源码的连接。记得查看你的应用的conditions报告，以确认具体启用了哪些功能。（使用--debug或-Ddebug或在Actuator应用中启动应用，并使用``conditions``端点）。
+这是Flowable提供的所有自动配置类的列表，并包括了文档及源码的连接。记得查看你的应用的conditions报告，以确认具体启用了哪些功能。（使用--debug或-Ddebug或在Actuator应用中启动应用，并使用 `conditions` 端点）。
 
 [cols=*,options="header"]
 |===
@@ -910,9 +910,9 @@ management.endpoint.flowable.enabled=true # 是否启用flowable端点。
 ==== 使用Liquibase
 
 Flowable引擎使用Liquibase管理数据库版本。
-因此Spring Boot的``LiquibaseAutoConfiguration``会自动启用。
+因此Spring Boot的 `LiquibaseAutoConfiguration` 会自动启用。
 然而，如果你并未使用Liquibase，则应用将无法启动，并抛出异常。
-因此Flowable将``spring.liquibase.enabled``设置为``false``，也即如果需要使用Liquibase，则需手动启用它。
+因此Flowable将 `spring.liquibase.enabled` 设置为 `false` ，也即如果需要使用Liquibase，则需手动启用它。
 
 ==== 扩展阅读
 
@@ -984,11 +984,11 @@ public class MyConfigurer implements EngineConfigurationConfigurer<SpringProcess
 [[_configuring_async_executors]]
 ===== 配置异步执行器
 
-流程及CMMN引擎使用专门的``AsyncExecutor``，并可使用``flowable.{engine}.async.executor``参数组进行配置。
-其中``engine``代表``process``或``cmmn``。
+流程及CMMN引擎使用专门的 `AsyncExecutor` ，并可使用 `flowable.{engine}.async.executor` 参数组进行配置。
+其中 `engine` 代表 `process` 或 `cmmn` 。
 
-默认情况下，``AsyncExecutor``共享同一个Spring ``TaskExecutor``及``SpringRejectedJobsHandler``。
-如果需要为引擎提供专门的执行器，则需要使用``@Process``及``@Cmmn``定义的bean。
+默认情况下， `AsyncExecutor` 共享同一个Spring `TaskExecutor` 及 `SpringRejectedJobsHandler` 。
+如果需要为引擎提供专门的执行器，则需要使用 `@Process` 及 `@Cmmn` 定义的bean。
 
 可以使用如下方法配置自定义的执行器：
 
@@ -1010,12 +1010,12 @@ public class MyConfiguration {
     }
 }
 ----
-<1> 流程引擎将使用``SimpleAsyncTaskExecutor``作为异步执行器
-<2> CMMN引擎将使用``SyncTaskExecutor``作为异步执行器
+<1> 流程引擎将使用 `SimpleAsyncTaskExecutor` 作为异步执行器
+<2> CMMN引擎将使用 `SyncTaskExecutor` 作为异步执行器
 
 [IMPORTANT]
 ======
-如果使用了自定义的``TaskExecutor``bean，则Flowable将不会再创建自己的bean。
-也就是说如果使用``@Process``定义了bean，也需要使用``@Cmmn``或``@Primary``再定义一个bean。否则Cmmn异步执行器将使用流程引擎所用的bean。
+如果使用了自定义的 `TaskExecutor` bean，则Flowable将不会再创建自己的bean。
+也就是说如果使用 `@Process` 定义了bean，也需要使用 `@Cmmn` 或 `@Primary` 再定义一个bean。否则Cmmn异步执行器将使用流程引擎所用的bean。
 ======
 
