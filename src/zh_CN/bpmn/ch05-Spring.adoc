@@ -22,7 +22,7 @@
 
 请注意++processEngineConfiguration++ bean现在使用++org.flowable.spring.SpringProcessEngineConfiguration++类。
 
-
+[[_transactions]]
 === 事务
 
 我们会逐步说明(Flowable)发行版里，Spring示例中的++SpringTransactionIntegrationTest++。下面是我们示例中使用的Spring配置文件（SpringTransactionIntegrationTest-context.xml）。下面的小节包含了dataSource(数据源)，transactionManager(事务管理器)，processEngine(流程引擎)以及Flowable引擎服务。
@@ -220,7 +220,7 @@ Spring bean配置（上面已经展示过）为：
 </beans>
 ----
 
-
+[[_automatic_resource_deployment]]
 === 自动部署资源
 
 集成Spring也提供了部署资源的特殊方式。在流程引擎配置中，可以指定一组资源。当创建流程引擎时，会扫描并部署这些资源。可以用过滤器阻止重复部署：只有当资源确实发生变化时，才会重新部署至Flowable数据库。在Spring容器经常重启（例如测试时）的时候，这很有用。
@@ -311,7 +311,7 @@ public class MyBusinessProcessTest {
 ----
 
 
-
+[[_jpa_with_hibernate_4_2_x]]
 === 通过Hibernate 4.2.x使用JPA
 
 要在Flowable引擎的服务任务或者监听器逻辑中使用Hibernate 4.2.x JPA，需要添加Spring ORM的额外依赖。对Hibernate 4.1.x或更低则不需要。需要添加的依赖为：
