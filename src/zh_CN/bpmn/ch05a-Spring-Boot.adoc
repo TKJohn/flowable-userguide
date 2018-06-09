@@ -914,6 +914,7 @@ Flowable引擎使用Liquibase管理数据库版本。
 然而，如果你并未使用Liquibase，则应用将无法启动，并抛出异常。
 因此Flowable将 `spring.liquibase.enabled` 设置为 `false` ，也即如果需要使用Liquibase，则需手动启用它。
 
+[[_further_reading]]
 ==== 扩展阅读
 
 很明显还有很多Spring Boot相关的内容还没有提及，如非常简单的JTA集成、构建能在主流应用服务器上运行的WAR文件。也还有很多Spring Boot集成：
