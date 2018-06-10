@@ -1,22 +1,22 @@
 [[chDeployment]]
 
-== Deployment
+== 部署
 
-=== Business archives
+=== 业务存档
 
-To deploy processes, they have to be wrapped in a business archive (BAR).  A business archive is the unit of deployment to a Flowable engine. A business archive is equivalent to a ZIP file.  It can contain  BPMN 2.0 processes, form definitions, DMN rules and any other type of file. In general, a business archive contains a collection of named resources.
+要部署流程，需要将它们包装在业务存档(BAR, Business archive)里。业务存档是Flowable引擎的部署单元，也就是一个ZIP文件。可以包含BPMN 2.0流程、表单定义、DMN规则，与其他类型的文件。总的来说，业务存档包含一组具名资源。
 
-When a business archive is deployed, it is scanned for BPMN files with a +.bpmn20.xml+ or +.bpmn+ extension. Each of those will be processed and may contain multiple process definitions.
-When the DMN engine is activated,  +.dmn+ files are also parsed, and with the form engine activated, +.form+ files are handled.
+当部署业务存档时，会扫描具有++.bpmn20.xml++或++.bpmn++扩展名的BPMN文件。每一个这种文件都会被处理，并可以包含多个流程定义。
+当启用DMN引擎时，也会解析++.dmn++。当启用表单引擎时，会处理++.form++文件。
 
 [NOTE]
 ====
-Java classes present in the business archive *will not be added to the classpath*. All custom classes used in process definitions in the business archive (for example, Java service tasks or event listener implementations) must be made available on the Flowable engine classpath in order to run the processes.
+业务存档中的Java类**不会添加至classpath**。业务存档中，所有流程定义使用的自定义类（例如Java服务任务或者事件监听器），都需要放在运行流程的flowable引擎的classpath内。
 ====
 
-==== Deploying programmatically
+==== 编程方式部署
 
-Deploying a business archive from a ZIP file can be done like this:
+从ZIP文件部署业务存档，可以这样做：
 
 [source,java,linenums]
 ----
@@ -30,13 +30,15 @@ repositoryService.createDeployment()
 
 ----
 
-It's also possible to build a deployment from individual resources. See the javadocs for more details.
+也可以为单个资源构建部署。查看javadoc以获取更多信息。
 
-=== External resources
+=== 外部资源
 
-Process definitions live in the Flowable database. These process definitions can reference delegation classes when using Service Tasks or execution listeners or Spring beans from the Flowable configuration file. These classes and the Spring configuration file have to be available to all process engines that may execute the process definitions.
+流程定义保存在Flowable数据库中。这些流程定义在使用服务任务、执行监听器，或执行Flowable配置文件中定义的Spring bean时，可以引用委托类。这些类及Spring配置文件都需要在可能运行这个流程定义的流程引擎中可用。
 
-==== Java classes
+==== Java类
+
+所有流程中用到的自定义类（例如服务任务、事件监听器、任务监听器等中，用到的JavaDelegate），在流程启动时，都需要存在于引擎的classpath中。
 
 All custom classes that are used in your process (for example, JavaDelegates used in Service Tasks or event-listeners, TaskListeners and so on) should be present on the engine's classpath when an instance of the process is started.
 
