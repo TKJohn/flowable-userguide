@@ -1,49 +1,51 @@
 [[bpmnConstructs]]
 
-== BPMN 2.0 Constructs
+== BPMN 2.0结构
 
-This chapter covers the BPMN 20 constructs supported by Flowable, as well as custom extensions to the BPMN standard.
+本章节介绍Flowable支持的BPMN 2.0结构，以及Flowable对BPMN标准的自定义扩展。
+
 
 [[bpmnCustomExtensions]]
 
 
-=== Custom extensions
+=== 自定义扩展
 
-The BPMN 2.0 standard is a good thing for all parties involved. End-users don't suffer from vendor lock-in that comes from depending on a proprietary solution. Frameworks, and particularly open-source frameworks such as Flowable, can implement a solution that has the same (and often better implemented ;-) features as those of a big vendor.  Thanks to the BPMN 2.0 standard, the transition from such a big vendor solution towards Flowable can be an easy and smooth path.
+BPMN 2.0标准对流程的所有的参与者都很有用。最终用户不会因为依赖专有解决方案，而被供应商“绑架”。Flowable之类的开源框架，也可以提供与大型供应商的解决方案相同（经常是更好;-）的实现。有了BPMN 2.0标准，从大型供应商解决方案向Flowable的迁移，可以十分简单平滑。
 
-The downside of a standard, however, is the fact that it is always the result of many discussions and compromises between different companies (and often visions). As a developer reading the BPMN 2.0 XML of a process definition, sometimes it feels like certain constructs or ways to do things are very cumbersome. As Flowable puts ease of development as a top-priority, we introduced something called the *'Flowable BPMN extensions'*. These 'extensions' are new constructs or ways to simplify certain constructs that are not part of the BPMN 2.0 specification.
+缺点则是标准通常是不同公司（不同观点）大量讨论与妥协的结果。作为阅读BPMN 2.0 XML流程定义的开发者，有时会觉得某些结构或方法十分笨重。Flowable将开发者的感受放在最高优先，因此引入了一些**'Flowable BPMN扩展（extensions）'**。这些“扩展”并不在BPMN 2.0规格中，有些是新结构，有些是对特定结构的简化。
 
-Although the BPMN 2.0 specification clearly states that it was designed for custom extension, we make sure that:
+尽管BPMN 2.0规格明确指出可以支持自定义扩展，我们仍做了如下保证：
 
-* There *always* must be a simple transformation to the *standard way of doing things*, as a prerequisite of such a custom extension. So when you decide to use a custom extension, you don't have to be concerned that there is no way back.
-* When using a custom extension, it is always clearly indicated by giving the new XML element, attribute, and so on, the *flowable:* namespace prefix. Note that the Flowable engine also supports the *activiti:* namespace prefix.
+* 自定义扩展**保证是**在**标准方式**的基础上进行简化。因此当你决定使用自定义扩展时，不用担心无路可退（仍然可以用标准方式）。
+* 使用自定义扩展时，总是通过**flowable:**命名空间前缀，明确标识出XML元素、属性等。请注意Flowable引擎也支持**activiti:**命名空间前缀。
 
-Whether you want to use a custom extension or not is completely up to you. Several factors will influence this decision (graphical editor usage, company policy, and so on). We only provide them as we believe that some points in the standard can be done in a simpler or more efficient way. Feel free to give us (positive or negative) feedback on our extensions, or to post new ideas for custom extensions. Who knows, some day your idea might pop up in the specification!
+因此是否使用自定义扩展，完全取决于你自己。有些其他因素会影响选择（图形化编辑器的使用，公司策略，等等）。我们提供扩展，只是因为相信标准中的某些地方可以用更简单或效率更高的方式处理。请不要吝啬给我们反馈你对扩展的评价（正面的或负面的），也可以给我们提供关于自定义扩展的新想法。说不定某一天，你的想法会成为标准的一部分！
 
 
 [[bpmnEvents]]
 
-=== Events
+=== 事件
 
-Events are used to model something that happens during the lifetime of a process. Events are always visualized as a circle. In BPMN 2.0, there exist two main event categories: _catching_ and _throwing_ events.
+事件（event）通常用于为流程生命周期中发生的事情建模。事件总是图形化为圆圈。在BPMN 2.0中，有两种主要的事件分类：__捕获（catching）__与__抛出（throwing）__事件。
 
-* *Catching:* when process execution arrives at the event, it will wait for a trigger to happen. The type of trigger is defined by the inner icon or the type declaration in the XML. Catching events are visually differentiated from a throwing event by the inner icon that is not filled (it's just white).
-* *Throwing:* when process execution arrives at the event, a trigger is fired. The type of trigger is defined by the inner icon or the type declaration in the XML. Throwing events are visually differentiated from a catching event by the inner icon that is filled with black.
+* **捕获:** 当流程执行到达这个事件时，会等待直到触发器动作。触发器的类型由其中的图标，或者说XML中的类型声明而定义。捕获事件与抛出事件显示上的区别，是其内部的图标没有填充（即是白色的）。
+* **抛出:** 当流程执行到达这个事件时，会触发一个触发器。触发器的类型，由其中的图标，或者说XML中的类型声明而定义。抛出事件与捕获事件显示上的区别，是其内部的图标填充为黑色。
 
 [[eventDefinitions]]
 
 
-==== Event Definitions
+==== 事件定义
 
-Event definitions define the semantics of an event. Without an event definition, an event "does nothing special". For instance, a start event without an event definition has nothing to specify what exactly starts the process. If we add an event definition to the start event (for example, a timer event definition), we declare what "type" of event starts the process (in the case of a timer event definition, the fact that a certain point in time is reached).
+事件定义（event definition），用于定义事件的语义。没有事件定义的话，事件就“不做什么特别的事情”。例如，一个没有事件定义的开始事件，并不限定具体是什么启动了流程。如果为这个开始事件添加事件定义（例如定时器事件定义），就声明了启动流程的“类型”（例如对于定时器事件定义，就是到达了特定的时间点）。
 
 
 [[timerEventDefinitions]]
 
 
-==== Timer Event Definitions
+==== 定时器事件定义
 
-Timer events are events that are triggered by a defined timer. They can be used as <<bpmnTimerStartEvent,start event>>, <<bpmnIntermediateCatchingEvent,intermediate event>> or <<bpmnTimerBoundaryEvent,boundary event>>. The behavior of the time event depends on the business calendar used. Every timer event has a default business calendar, but the business calendar can also be given as part of the timer event definition.
+定时器事件（timer event definition），是由定时器所触发的事件。可以用于<<bpmnTimerStartEvent,开始事件>>，<<bpmnIntermediateCatchingEvent,中间事件>>，或<<bpmnTimerBoundaryEvent,边界事件>>。定时器事件的行为取决于所使用的业务日历（business calendar）。定时器事件有默认的业务日历，但也可以为每个定时器事件定义，单独定义业务日历。
+
 
 [source,xml,linenums]
 ----
@@ -51,12 +53,12 @@ Timer events are events that are triggered by a defined timer. They can be used 
     ...
 </timerEventDefinition>
 ----
-Where businessCalendarName points to a business calendar in the process engine configuration. When business calendar is omitted, default business calendars are used.
 
-The timer definition must have exactly one element from the following:
+其中businessCalendarName指向流程引擎配置中的业务日历。如果省略业务日历定义，则使用默认业务日历。
 
-* *timeDate*. This format specifies a fixed date in link:$$http://en.wikipedia.org/wiki/ISO_8601#Dates$$[ISO 8601] format, when trigger will be fired. For example:
+定时器定义必须且只能包含下列的一种元素：
 
+* **timeDate**。这个元素指定了link:$$http://en.wikipedia.org/wiki/ISO_8601#Dates$$[ISO 8601]格式的固定时间。在这个时间就会触发触发器。例如：
 
 [source,xml,linenums]
 ----
@@ -65,8 +67,7 @@ The timer definition must have exactly one element from the following:
 </timerEventDefinition>
 ----
 
-
-* *timeDuration*. To specify how long the timer should run before it is fired, a _timeDuration_ can be specified as a sub-element of _timerEventDefinition_. The format used is the link:$$http://en.wikipedia.org/wiki/ISO_8601#Durations$$[ISO 8601] format (as required by the BPMN 2.0 specification). For example (interval lasting 10 days):
+* **timeDuration**。要定义定时器需要等待多长时间再触发，可以用__timerEventDefinition__的子元素__timeDuration__。使用link:$$http://en.wikipedia.org/wiki/ISO_8601#Durations$$[ISO 8601]格式（BPMN 2.0规范要求）。例如（等待10天）：
 
 [source,xml,linenums]
 ----
@@ -75,11 +76,12 @@ The timer definition must have exactly one element from the following:
 </timerEventDefinition>
 ----
 
-* *timeCycle*. Specifies a repeating interval, which can be useful for starting process periodically, or for sending multiple reminders for overdue user task. A time cycle element can be in one of two formats. First, is the format of recurring time duration as specified by link:$$http://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals$$[ISO 8601] standard. Example (3 repeating intervals, each lasting 10 hours):
+* **timeCycle**。指定重复周期，可用于周期性启动流程，或者为超期用户任务多次发送提醒。这个元素可以使用两种格式。第一种是按照link:$$http://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals$$[ISO 8601]标准定义的循环时间周期。例如（三次重复间隔，每次间隔为10小时）：
 
-It is also possible to specify the _endDate_ as an optional attribute on the _timeCycle_ or either in the end of the time expression as follows: +R3/PT10H/${EndDate}+.
-When the endDate is reached, the application will stop creating other jobs for this task.
-It accepts as a value either static values link:$$http://en.wikipedia.org/wiki/ISO_8601#Dates$$[ISO 8601] standard, for example, _"2015-02-25T16:42:11+00:00"_, or variables, for example, _${EndDate}_
+* 也可以使用__timeCycle__的可选属性__endDate__，或者像这样直接写在时间表达式的结尾：++R3/PT10H/${EndDate}++。
+当到达endDate时，应用会停止，并为该任务创建其他作业。
+可以使用link:$$http://en.wikipedia.org/wiki/ISO_8601#Dates$$[ISO 8601]标准的常量，如__"2015-02-25T16:42:11+00:00"__。也可以使用变量，如__${EndDate}__
+
 
 [source,xml,linenums]
 ----
@@ -95,11 +97,11 @@ It accepts as a value either static values link:$$http://en.wikipedia.org/wiki/I
 </timerEventDefinition>
 ----
 
-If both are specified, then the endDate specified as attribute will be used by the system.
+如果同时使用了两种格式，则系统会使用以属性方式定义的endDate。
 
-Currently, only the _BoundaryTimerEvents_ and _CatchTimerEvent_ support _EndDate_ functionality.
+目前只有__BoundaryTimerEvents__与__CatchTimerEvent__可以使用__EndDate__。
 
-Additionally, you can specify time cycle using cron expressions; the example below shows trigger firing every 5 minutes, starting at full hour:
+另外，也可以使用cron表达式指定定时周期。下面的例子展示了一个整点启动，每5分钟触发的触发器：
 
 
 ----
@@ -107,15 +109,13 @@ Additionally, you can specify time cycle using cron expressions; the example bel
 ----
 
 
-Please see link:$$http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html$$[this tutorial] for using cron expressions.
+请参考link:$$http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html$$[这个教程]了解如何使用cron表达式。
 
-*Note:* The first symbol denotes seconds, not minutes as in normal Unix cron.
+**请注意:** 与普通的Unix cron不同，第一个符号代表的是秒，而不是分钟。
 
-The recurring time duration is better suited for handling relative timers, which are calculated with respect to some particular point in time (for example, the time when a user task was started), while cron expressions can handle absolute timers, which is particularly useful for <<timerStartEventDescription,timer start events>>.
+重复时间周期更适合使用相对时间，也就是从某个特定时间点开始计算（比如用户任务开始的时间）。而cron表达式可以使用绝对时间，因此更适合用于<<timerStartEventDescription,定时启动事件>>。
 
-
-You can use expressions for timer event definitions, and by doing so, you can influence the timer definition
-based on process variables. The process variables must contain the ISO 8601 (or cron for cycle type) string for appropriate timer type.
+可以在定时事件定义中使用表达式，也就是使用流程变量控制定时。这个流程变量必须是包含合适时间格式的字符串，ISO 8601（或者对于循环类型，cron）。
 
 [source,xml,linenums]
 ----
@@ -127,14 +127,18 @@ based on process variables. The process variables must contain the ISO 8601 (or 
 ----
 
 *Note:* timers are only fired when the async executor is enabled (_asyncExecutorActivate_ must be set to +true+ in the +flowable.cfg.xml+, because the async executor is disabled by default).
+**请注意：**定时器只有在异步执行器启用时才能触发（需要在++flowable.cfg.xml++中，将__asyncExecutorActivate__设置为++true++。因为默认情况下异步执行器都是禁用的）。
+
 
 
 [[bpmnErrorEventDefinition]]
 
 
-==== Error Event Definitions
+==== 错误事件定义
 
-*Important note:* a BPMN error is NOT the same as a Java exception. In fact, the two have nothing in common. BPMN error events are a way of modeling _business exceptions_. Java exceptions are handled in <<serviceTaskExceptionHandling,their own specific way>>.
+（error event definition）
+
+**重要提示：** BPMN错误与Java异常**不**是一回事。事实上，这两者毫无共同点。BPMN错误事件是建模__业务异常（business exceptions）__的方式。而Java异常会按<<serviceTaskExceptionHandling,它们自己的方式>>处理。
 
 [source,xml,linenums]
 ----
@@ -147,26 +151,30 @@ based on process variables. The process variables must contain the ISO 8601 (or 
 [[bpmnSignalEventDefinition]]
 
 
-==== Signal Event Definitions
+==== 信号事件定义
 
-Signal events are events that reference a named signal. A signal is an event of global scope (broadcast semantics) and is delivered to all active handlers (waiting process instances/catching signal events).
+信号事件（signal event），是引用具名信号的事件。信号是全局范围（广播）的事件，并会被传递给所有激活的处理器（等待中的流程实例/捕获信号事件 catching signal events）。
 
-A signal event definition is declared using the +signalEventDefinition+ element. The attribute +signalRef+ references a +signal+ element declared as a child element of the +definitions+ root element. The following is an excerpt of a process where a signal event is thrown and caught by intermediate events.
+使用++signalEventDefinition++元素声明信号事件定义。其++signalRef++属性引用一个++signal++元素，该++signal++元素需要声明为++definitions++根元素的子元素。下面摘录一个流程，使用中间事件（intermediate event）抛出与捕获信号事件。
+
 
 [source,xml,linenums]
 ----
 <definitions... >
     <!-- declaration of the signal -->
+    <!-- 声明信号 -->
     <signal id="alertSignal" name="alert" />
 
     <process id="catchSignal">
         <intermediateThrowEvent id="throwSignalEvent" name="Alert">
             <!-- signal event definition -->
+            <!-- 信号事件定义 -->
             <signalEventDefinition signalRef="alertSignal" />
         </intermediateThrowEvent>
         ...
         <intermediateCatchEvent id="catchSignalEvent" name="On Alert">
             <!-- signal event definition -->
+            <!-- 信号事件定义 -->
             <signalEventDefinition signalRef="alertSignal" />
         </intermediateCatchEvent>
         ...
@@ -174,16 +182,14 @@ A signal event definition is declared using the +signalEventDefinition+ element.
 </definitions>
 ----
 
-
-The ++signalEventDefinition++s reference the same +signal+ element.
+两个++signalEventDefinition++引用同一个++signal++元素。
 
 
 [[bpmnSignalEventDefinitionThrow]]
 
+===== 抛出信号事件
 
-===== Throwing a Signal Event
-
-A signal can either be thrown by a process instance using a BPMN construct or programmatically using java API. The following methods on the +org.flowable.engine.RuntimeService+ can be used to throw a signal programmatically:
+信号可以由流程实例使用BPMN结构抛出（throw），也可以通过编程方式使用Java API抛出。下面++org.flowable.engine.RuntimeService++中的方法可以用编程方式抛出信号：
 
 [source,java,linenums]
 ----
@@ -191,23 +197,22 @@ RuntimeService.signalEventReceived(String signalName);
 RuntimeService.signalEventReceived(String signalName, String executionId);
 ----
 
-The difference between +signalEventReceived(String signalName)+ and +signalEventReceived(String signalName, String executionId)+ is that the first method throws the signal globally to all subscribed handlers (broadcast semantics) and the second method delivers the signal to a specific execution only.
+++signalEventReceived(String signalName)++与++signalEventReceived(String signalName, String executionId)++的区别，是前者在全局范围为所有已订阅处理器抛出信号（广播），而后者只为指定的执行传递信号。
+
 
 
 [[bpmnSignalEventDefinitionCatch]]
 
+===== 捕获信号事件
 
-===== Catching a Signal Event
-
-A signal event can be caught by an intermediate catch signal event or a signal boundary event.
+可以使用信号捕获中间事件（intermediate catch signal event）或者信号边界事件（signal boundary event）捕获信号事件。
 
 
 [[bpmnSignalEventDefinitionQuery]]
 
+===== 查询信号事件订阅
 
-===== Querying for Signal Event subscriptions
-
-It's possible to query for all executions that have subscribed to a specific signal event:
+可以查询订阅了某一信号事件的所有执行：
 
 [source,java,linenums]
 ----
@@ -216,61 +221,63 @@ It's possible to query for all executions that have subscribed to a specific sig
       .list();
 ----
 
-We can then use the +signalEventReceived(String signalName, String executionId)+ method to deliver the signal to these executions.
+可以使用++signalEventReceived(String signalName, String executionId)++方法为这些执行传递这个信号。
 
 
 [[bpmnSignalEventDefinitionScope]]
 
 
-===== Signal event scope
+===== 信号事件的范围
 
-By default, signals are _broadcast process engine wide_. This means that you can throw a signal event in a process instance, and other process instances with different process definitions can react on the occurrence of this event.
+默认情况下，信号事件在__流程引擎全局广播__。这意味着你可以在一个流程实例中抛出一个信号事件，而不同流程定义的不同流程实例都会响应这个事件。
 
-However, sometimes it is desirable to react to a signal event only within the _same process instance_. A use case, for example, is a synchronization mechanism in the process instance when two or more activities are mutually exclusive.
+但有时也会希望只在__同一个流程实例__中响应信号事件。例如，在流程实例中使用异步机制，而两个或多个活动彼此互斥的时候。
 
-To restrict the _scope_ of the signal event, add the (non-BPMN 2.0 standard!) _scope attribute_ to the signal event definition:
+要限制信号事件的__范围（scope）__，在信号事件定义中添加（非BPMN 2.0标准！）__scope属性__：
+
 
 [source,xml,linenums]
 ----
 <signal id="alertSignal" name="alert" flowable:scope="processInstance"/>
 ----
 
-The default value for this is attribute is _"global"_.
+这个属性的默认值为__"global（全局）"__。
 
 
 [[bpmnSignalEventDefinitionExample]]
 
 
-===== Signal Event example(s)
+===== 信号事件示例
 
-The following is an example of two separate processes communicating using signals. The first process is started if an insurance policy is updated or changed. After the changes have been reviewed by a human participant, a signal event is thrown, signaling that a policy has changed:
+下面是一个不同流程通过信号通信的例子。第一个流程在保险政策更新或变更时启动。在变更由人工审核之后，会抛出信号事件，指出政策已经发生了变更：
 
 image::images/bpmn.signal.event.throw.png[align="center"]
 
-This event can now be caught by all process instances that are interested. The following is an example of a process subscribing to the event.
+这个事件可以被所有感兴趣的流程实例捕获。下面是一个订阅这个事件的流程的例子。
 
 image::images/bpmn.signal.event.catch.png[align="center"]
 
-*Note:* it's important to understand that a signal event is broadcast to *all* active handlers. This means, in the case of the example given above, that all instances of the process catching the signal will receive the event. In this scenario, this is what we want. However, there are also situations where the broadcast behavior is unintended. Consider the following process:
+**请注意：**要理解信号事件会广播给**所有**激活的处理器，这很重要。这意味着在上面的例子中，所有订阅这个信号的流程实例都会接收这个信号。在这个例子中这就是我们期望的。然而，有的情况下，不希望使用广播方式。考虑下面的流程：
+
 
 image::images/bpmn.signal.event.warning.1.png[align="center"]
 
 
-The pattern described in the process above is not supported by BPMN. The idea is that the error thrown while performing the "do something" task is caught by the boundary error event, propagated to the parallel path of execution using the signal throw event and then interrupt the "do something in parallel" task. So far, Flowable would perform as expected. The signal would be propagated to the catching boundary event and interrupt the task. *However, due to the broadcast semantics of the signal, it would also be propagated to all other process instances that have subscribed to the signal event.* In this case, this might not be what we want.
+Flowable不支持上面流程中描述的模式。我们的想法是，在执行"do something"任务时抛出的错误，由错误边界事件捕获，并通过信号抛出事件传播至执行的并行分支，最终中断"do something in parallel"任务。到目前为止Flowable会按照预期效果执行。**然而，由于信号的广播效应，它也会被传播至所有其他订阅了这个信号事件的流程实例。**这可能并非我们希望的效果。
 
-*Note:* the signal event does not perform any kind of correlation to a specific process instance. On the contrary, it is broadcast to all process instances. If you need to deliver a signal to a specific process instance only, perform the correlation manually and use  +signalEventReceived(String signalName, String executionId)+ along with the appropriate <<bpmnSignalEventDefinitionQuery,query mechanisms>>.
+**请注意：**信号事件与特定的流程实例无关，而是会广播给所有流程实例。如果你需要只为某一特定的流程实例传递信号，则需要使用++signalEventReceived(String signalName, String executionId)++手动建立关联，并使用适当的的<<bpmnSignalEventDefinitionQuery,查询机制>>。
 
-Flowable does have a way to fix this by adding the _scope_ attribute to the signal event set to _processInstance_.
+Flowable提供了解决的方法。可以在信号事件上添加__scope__属性，并将其设置为__processInstance__。
 
 
 [[bpmnMessageEventDefinition]]
 
 
-==== Message Event Definitions
+==== 消息事件定义
 
-Message events are events that reference a named message. A message has a name and a payload. Unlike a signal, a message event is always directed at a single receiver.
+消息事件（message event），是指引用具名消息的事件。消息具有名字与载荷。与信号不同，消息事件只有一个接收者。
 
-A message event definition is declared using the +messageEventDefinition+ element. The attribute +messageRef+ references a +message+ element declared as a child element of the +definitions+ root element. The following is an excerpt of a process where two message events is declared and referenced by a start event and an intermediate catching message event.
+消息事件定义使用++messageEventDefinition++元素声明。其++messageRef++属性引用一个++message++元素，该++message++元素需要声明为++definitions++根元素的子元素。下面摘录一个流程，声明了两个消息事件，并由开始事件与消息捕获中间事件（intermediate catching message event）引用。
 
 [source,xml,linenums]
 ----
@@ -302,11 +309,12 @@ A message event definition is declared using the +messageEventDefinition+ elemen
 [[bpmnMessageEventDefinitionThrow]]
 
 
-===== Throwing a Message Event
+===== 抛出消息事件
 
-As an embeddable process engine, Flowable is not concerned with actually receiving a message. This would be environment dependent and entail platform-specific activities, such as connecting to a JMS (Java Messaging Service) Queue/Topic or processing a Webservice or REST request. The reception of messages is therefore something you have to implement as part of the application or infrastructure into which the process engine is embedded.
+作为嵌入式的流程引擎，Flowable并不关心实际如何接收消息。因为这可能与环境相关，或需要进行平台定义的操作。例如连接至JMS（Java Messaging Service，Java消息服务）队列（Queue）/主题（Topic），或者处理Webservice或者REST请求。因此接收消息需要作为应用的一部分，或者是流程引擎所嵌入的基础框架中的一部分，由你自行实现。
 
-After you have received a message inside your application, you must decide what to do with it. If the message should trigger the start of a new process instance, choose between the following methods offered by the runtime service:
+在应用中接收到消息后，需要决定如何处理它。如果这个消息需要启动新的流程实例，可以选择一种由runtime服务提供的方法：
+
 
 [source,java,linenums]
 ----
@@ -316,9 +324,9 @@ ProcessInstance startProcessInstanceByMessage(String messageName, String busines
     Map<String, Object> processVariables);
 ----
 
-These methods start a process instance using the referenced message.
+这些方法使用消息启动流程实例。
 
-If the message needs to be received by an existing process instance, you first have to correlate the message to a specific process instance (see next section) and then trigger the continuation of the waiting execution. The runtime service offers the following methods for triggering an execution based on a message event subscription:
+如果需要由已有的流程实例接收消息，需要首先将消息与特定的流程实例关联（查看后续章节），然后触发等待中的执行，让流程继续进行。runtime服务提供了下列方法，可以触发订阅了消息事件的执行：
 
 [source,java,linenums]
 ----
@@ -330,9 +338,9 @@ void messageEventReceived(String messageName, String executionId, HashMap<String
 [[bpmnMessageEventDefinitionQuery]]
 
 
-===== Querying for Message Event subscriptions
+===== 查询消息事件订阅
 
-* In the case of a message start event, the message event subscription is associated with a particular _process definition_. Such message subscriptions can be queried using a ++ProcessDefinitionQuery++:
+* 对于消息启动事件（message start event），消息事件的订阅与的__流程定义__相关。可以使用++ProcessDefinitionQuery++查询这种类型的消息订阅：
 
 [source,java,linenums]
 ----
@@ -341,11 +349,10 @@ ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQ
       .singleResult();
 ----
 
-Since there can only be one process definition for a specific message subscription, the query always returns zero or one result. If a process definition is updated,
-only the newest version of the process definition has a subscription to the message event.
+因为一个消息只能被一个流程定义订阅，因此这个查询总是返回0或1个结果。如果流程定义更新了，只有该流程定义的最新版本会订阅这个消息事件。
 
-* In the case of an intermediate catch message event, the message event subscription is associated with a
-particular _execution_. Such message event subscriptions can be queried using a ++ExecutionQuery++:
+* 对于消息捕获中间事件（intermediate catch message event），消息事件的订阅与__执行__相关。可以使用++ExecutionQuery++查询这种类型的消息订阅：
+
 
 [source,java,linenums]
 ----
@@ -355,19 +362,19 @@ Execution execution = runtimeService.createExecutionQuery()
       .singleResult();
 ----
 
-Such queries are called correlation queries and usually require knowledge about the processes (in this case, that there will be at most one process instance for a given orderId).
+这种查询通常都会有关联查询，并且通常需要了解流程的情况（在这个例子里，对于给定的orderId，至多只有一个流程实例）。
 
 
 [[bpmnMessageEventDefinitionExample]]
 
 
-===== Message Event example(s)
+===== 消息事件示例
 
-The following is an example of a process that can be started using two different messages:
+下面是一个流程的例子，可以使用两种不同的消息启动：
 
 image::images/bpmn.start.message.event.example.1.png[align="center"]
 
-This is useful if the process needs alternative ways to react to different start events, but eventually continues in a uniform way.
+在流程需要通过不同的方式启动，但是后续使用统一的方式处理时，就可以使用这种方法。
 
 
 [[bpmnStartEvents]]
