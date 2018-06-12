@@ -380,15 +380,15 @@ image::images/bpmn.start.message.event.example.1.png[align="center"]
 [[bpmnStartEvents]]
 
 
-==== Start Events
+==== 启动事件
 
-A start event indicates where a process starts. The type of start event (process starts on arrival of message, on specific time intervals, and so on), defining _how_ the process is started, is shown as a small icon in the visual representation of the event. In the XML representation, the type is given by the declaration of a sub-element.
+启动事件（start event）是流程的起点。启动事件的类型（流程在消息到达时启动，在指定的时间间隔后启动，等等），定义了流程__如何__启动，并显示为启动事件中的小图标。在XML中，类型由子元素声明来定义。
 
-Start events *are always catching*: conceptually the event is (at any time) waiting until a certain trigger happens.
+启动事件**随时捕获**：启动事件（保持）等候，直到特定的触发器被触发。
 
-In a start event, the following Flowable-specific properties can be specified:
+在启动事件中，可以使用下列Flowable自定义参数：
 
-* *initiator*: identifies the variable name in which the authenticated user ID will be stored when the process is started.  For example:
+* *initiator*: 指明保存认证用户（authenticated user）ID用的变量名。在流程启动时，操作用户的ID会保存在这个变量中。例如：
 
 [source,xml,linenums]
 ----
@@ -396,6 +396,7 @@ In a start event, the following Flowable-specific properties can be specified:
 ----
 
 The authenticated user must be set with the method +IdentityService.setAuthenticatedUserId(String)+ in a try-finally block, like this:
+认证用户必须在try-finally块中调用++IdentityService.setAuthenticatedUserId(String)++方法设置。像这样：
 
 [source,java,linenums]
 ----
@@ -408,35 +409,34 @@ try {
 
 ----
 
-This code is baked into the Flowable application, so it works in combination with <<forms>>.
-
+这段代码已经集成在Flowable应用中，可以在<<forms,表单>>中使用。
 
 [[bpmnNoneStartEvent]]
 
 
-==== None Start Event
+==== 空启动事件
 
 [[noneStartEventDescription]]
 
 
-===== Description
+===== 描述
 
-A 'none' start event technically means that the trigger for starting the process instance is unspecified. This means that the engine cannot anticipate when the process instance must be started. The none start event is used when the process instance is started through the API by calling one of the _startProcessInstanceByXXX_ methods.
+“空”启动事件（none Start Event），指的是未指定启动流程实例触发器的启动事件。引擎将无法预知何时启动流程实例。空启动事件用于流程实例通过调用下列__startProcessInstanceByXXX__ API方法启动的情况。
 
 [source,java,linenums]
 ----
 ProcessInstance processInstance = runtimeService.startProcessInstanceByXXX();
 ----
 
-_Note:_ a sub-process always has a none start event.
+__请注意：__子流程（sub-process）必须有空启动事件。
 
 
 [[noneStartEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-A none start event is visualized as a circle with no inner icon (in other words, no trigger type).
+空启动事件用空心圆圈表示，中间没有图标（也就是说，没有触发器）。
 
 image::images/bpmn.none.start.event.png[align="center"]
 
@@ -444,9 +444,9 @@ image::images/bpmn.none.start.event.png[align="center"]
 [[noneStartEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-The XML representation of a none start event is the normal start event declaration without any sub-element (other start event types all have a sub-element declaring the type).
+空启动事件的XML表示格式，就是普通的启动事件声明，而没有任何子元素（其他种类的启动事件都有用于声明其类型的子元素）。
 
 [source,xml,linenums]
 ----
@@ -457,9 +457,9 @@ The XML representation of a none start event is the normal start event declarati
 [[noneStartEventCustomExtension]]
 
 
-===== Custom extensions for the none start event
+===== 空启动事件的自定义扩展
 
-*formKey*: references a form definition that users have to fill in when starting a new process instance.  More information can be found in <<forms,the forms section>> Example:
+*formKey*: 引用表单定义，用户需要在启动新流程实例时填写该表单。可以在<<forms,表单章节>>找到更多信息。例如：
 
 [source,xml,linenums]
 ----
@@ -470,28 +470,28 @@ The XML representation of a none start event is the normal start event declarati
 [[bpmnTimerStartEvent]]
 
 
-==== Timer Start Event
+==== 定时器启动事件
 
 [[timerStartEventDescription]]
 
 
-===== Description
+===== 描述
 
-A timer start event is used to create process instances at given time. It can be used both for processes that should start only once and for processes that should start in specific time intervals.
+定时器启动事件（timer start event）在指定时间创建流程实例。在流程只需要启动一次，或者流程需要在特定的时间间隔重复启动时，都可以使用。
 
-_Note:_ a sub-process cannot have a timer start event.
+__请注意：__子流程不能有定时器启动事件。
 
-_Note:_ a start timer event is scheduled as soon as process is deployed. There is no need to call startProcessInstanceByXXX, although calling start process methods is not restricted and will cause one more starting of the process at the time of startProcessInstanceByXXX invocation.
+__请注意：__定时器启动事件，在流程部署的同时就开始计时。不需要调用startProcessInstanceByXXX就会在时间启动。调用startProcessInstanceByXXX时会在定时启动之外额外启动一个流程。
 
-_Note:_ when a new version of a process with a start timer event is deployed, the job corresponding with the previous timer will be removed. The reasoning is that normally it is not desirable to keep automatically starting new process instances of the old version of the process.
+__请注意：__当部署带有定时器启动事件的流程的更新版本时，上一版本的定时器作业会被移除。这是因为通常并不希望旧版本的流程仍然自动启动新的流程实例。
 
 
 [[timerStartEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-A timer start event is visualized as a circle with clock inner icon.
+定时器启动事件，用其中有一个钟表图标的圆圈来表示。
 
 image::images/bpmn.clock.start.event.png[align="center"]
 
@@ -499,12 +499,11 @@ image::images/bpmn.clock.start.event.png[align="center"]
 [[timerStartEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-The XML representation of a timer start event is the normal start event declaration, with timer definition sub-element. Please refer to <<timerEventDefinitions,timer definitions>> for configuration details.
+定时器启动事件的XML表示格式，是普通的启动事件声明加上定时器定义子元素。请参考<<timerEventDefinitions,定时器定义>>了解详细配置方法。
 
-
-Example: process will start 4 times, in 5 minute intervals, starting on 11th march 2011, 12:13
+示例：流程会启动4次，间隔5分钟，从2011年3月11日，12:13开始
 
 [source,xml,linenums]
 ----
@@ -515,7 +514,7 @@ Example: process will start 4 times, in 5 minute intervals, starting on 11th mar
 </startEvent>
 ----
 
-Example: process will start once, on selected date
+示例：流程会在设定的时间启动一次
 
 [source,xml,linenums]
 ----
@@ -530,22 +529,22 @@ Example: process will start once, on selected date
 [[bpmnMessageStartEvent]]
 
 
-==== Message Start Event
+==== 消息启动事件
 
 [[messageStartEventDescription]]
 
 
-===== Description
+===== 描述
 
-A <<bpmnMessageEventDefinition,message>> start event can be used to start a process instance using a named message. This effectively allows us to _select_ the right start event from a set of alternative start events using the message name.
+<<bpmnMessageEventDefinition,消息>>启动事件（message start event）使用具名消息启动流程实例。消息名用于__选择__正确的启动事件。
 
-When *deploying* a process definition with one or more message start events, the following considerations apply:
+当**部署**具有一个或多个消息启动事件的流程定义时，会做如下判断：
 
-* The name of the message start event must be unique across a given process definition. A process definition must not have multiple message start events with the same name. Flowable throws an exception upon deployment of a process definition containing two or more message start events referencing the same message, or if two or more message start events reference messages with the same message name.
-* The name of the message start event must be unique across all deployed process definitions. Flowable throws an exception upon deployment of a process definition containing one or more message start events referencing a message with the same name as a message start event already deployed by a different process definition.
-* Process versioning: Upon deployment of a new version of a process definition, the start message subscriptions of the previous version are removed.
+* 给定流程定义中，消息启动事件的名字必须是唯一的。一个流程定义不得包含多个同名的消息启动事件。如果流程定义中有两个或多个消息启动事件引用同一个消息，或者两个或多个消息启动事件引用了具有相同消息名字的消息，则Flowable会在部署这个流程定义时抛出异常。
+* 在所有已部署的流程定义中，消息启动事件的名字必须是唯一的。如果在流程定义中，一个或多个消息启动事件引用了已经部署的另一流程定义中消息启动事件的消息名，则Flowable会在部署这个流程定义时抛出异常。
+* 流程版本：在部署流程定义的新版本时，会取消上一版本的消息订阅，即使新版本中并没有这个消息事件）。
 
-When *starting* a process instance, a message start event can be triggered using the following methods on the ++RuntimeService++:
+在**启动**流程实例时，可以使用下列++RuntimeService++中的方法，触发消息启动事件：
 
 [source,java,linenums]
 ----
@@ -555,25 +554,24 @@ ProcessInstance startProcessInstanceByMessage(String messageName, String busines
     Map<String, Object< processVariables);
 ----
 
+++messageName++是由++message++元素的++name++属性给定的名字。++messageEventDefinition++的++messageRef++属性会引用++message++元素。当**启动**流程实例时，会做如下判断：
 
-The +messageName+ is the name given in the +name+ attribute of the +message+ element referenced by the +messageRef+ attribute of the +messageEventDefinition+. The following considerations apply when *starting* a process instance:
-
-* Message start events are only supported on top-level processes. Message start events are not supported on embedded sub processes.
-* If a process definition has multiple message start events, +runtimeService.startProcessInstanceByMessage(...)+ allows to select the appropriate start event.
-* If a process definition has multiple message start events and a single none start event, +runtimeService.startProcessInstanceByKey(...)+ and +runtimeService.startProcessInstanceById(...)+ starts a process instance using the none start event.
-* If a process definition has multiple message start events and no none start event, +runtimeService.startProcessInstanceByKey(...)+ and +runtimeService.startProcessInstanceById(...)+ throw an exception.
-* If a process definition has a single message start event, +runtimeService.startProcessInstanceByKey(...)+ and +runtimeService.startProcessInstanceById(...)+ start a new process instance using the message start event.
-* If a process is started from a call activity, message start event(s) are only supported if
-** in addition to the message start event(s), the process has a single none start event
-** the process has a single message start event and no other start events.
+* 只有顶层流程（top-level process）才支持消息启动事件。嵌入式子流程不支持消息启动事件。
+* 如果一个流程定义中有多个消息启动事件，可以使用++runtimeService.startProcessInstanceByMessage(...)++选择合适的启动事件。
+* 如果一个流程定义中有多个消息启动事件与一个空启动事件，则++runtimeService.startProcessInstanceByKey(...)++与++runtimeService.startProcessInstanceById(...)++会使用空启动事件启动流程实例。
+* 如果一个流程定义中有多个消息启动事件而没有空启动事件，则++runtimeService.startProcessInstanceByKey(...)++与++runtimeService.startProcessInstanceById(...)++会抛出异常。
+* 如果一个流程定义中只有一个消息启动事件，则++runtimeService.startProcessInstanceByKey(...)++与++runtimeService.startProcessInstanceById(...)++会使用这个消息启动事件启动新流程实例。
+* 如果流程由调用活动（call activity）启动，则只有在下列情况下才支持消息启动事件
+** 除了消息启动事件之外，流程还有唯一的空启动事件
+** 或者流程只有唯一的消息启动事件，而没有其他启动事件。
 
 
 [[messageStartEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-A message start event is visualized as a circle with a message event symbol. The symbol is unfilled, to represent the catching (receiving) behavior.
+消息启动事件用其中有一个消息事件标志的圆圈表示。这个标志并未填充，用以表示捕获（接收）行为。
 
 image::images/bpmn.start.message.event.png[align="center"]
 
@@ -581,9 +579,9 @@ image::images/bpmn.start.message.event.png[align="center"]
 [[messageStartEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-The XML representation of a message start event is the normal start event declaration with a messageEventDefinition child-element:
+消息启动事件的XML表示格式，为普通启动事件声明加上messageEventDefinition子元素：
 
 [source,xml,linenums]
 ----
