@@ -608,26 +608,25 @@ image::images/bpmn.start.message.event.png[align="center"]
 [[bpmnSignalStartEvent]]
 
 
-==== Signal Start Event
+==== 信号启动事件
 
 [[bpmnSignalStartEventDescription]]
 
 
-===== Description
+===== 描述
 
-A <<bpmnSignalEventDefinition,signal>> start event can be used to start a process instance using a named signal. The signal can be 'fired' from within a process instance using the intermediary signal throw event or through the API (__runtimeService.signalEventReceivedXXX__ methods). In both cases, all process definitions that have a signal start event with the same name will be started.
+<<bpmnSignalEventDefinition,信号>>启动事件（signal start event），使用具名信号启动流程实例。这个信号可以由流程实例中的信号抛出中间事件（intermediary signal throw event），或者API（__runtimeService.signalEventReceivedXXX__方法）触发。两种方式都会启动所有拥有相同名字信号启动事件的流程定义。
 
-Note that in both cases, it is also possible to choose between a synchronous and asynchronous starting of the process instances.
+请注意可以选择异步还是同步启动流程实例。
 
-The +signalName+ that must be passed in the API is the name given in the +name+ attribute of the +signal+ element referenced by the +signalRef+ attribute of the +signalEventDefinition+.
-
+需要为API传递的++signalName++，是由++signal++元素的++name++属性决定的名字。++signal++元素由++signalEventDefinition++的++signalRef++属性引用。
 
 [[signalStartEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-A signal start event is visualized as a circle with a signal event symbol. The symbol is unfilled, to represent the catching (receiving) behavior.
+信号启动事件用其中有一个信号事件标志的圆圈表示。这个标志并未填充，用以表示捕获（接收）行为。
 
 image::images/bpmn.start.signal.event.png[align="center"]
 
@@ -635,9 +634,9 @@ image::images/bpmn.start.signal.event.png[align="center"]
 [[signalStartEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-The XML representation of a signal start event is the normal start event declaration with a signalEventDefinition child-element:
+信号启动事件的XML表示格式，为普通启动事件声明，加上signalEventDefinition子元素：
 
 
 [source,xml,linenums]
@@ -658,24 +657,23 @@ The XML representation of a signal start event is the normal start event declara
 [[bpmnErrorStartEvent]]
 
 
-==== Error Start Event
+==== 错误启动事件
 
 [[errorStartEventDescription]]
 
 
-===== Description
+===== 描述
 
-An <<bpmnErrorEventDefinition,error>> start event can be used to trigger an Event Sub-Process. *An error start event cannot be used for starting a process instance*.
+<<bpmnErrorEventDefinition,错误>>启动事件（error start event），可用于触发事件子流程（Event Sub-Process）。**错误启动事件不能用于启动流程实例**。
 
-An error start event is always interrupting.
-
+错误启动事件总是中断。
 
 [[errorStartEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-An error start event is visualized as a circle with an error event symbol. The symbol is unfilled, to represent the catching (receiving) behavior.
+错误启动事件用其中有一个错误事件标志的圆圈表示。这个标志并未填充，用以表示捕获（接收）行为。
 
 image::images/bpmn.start.error.event.png[align="center"]
 
@@ -683,9 +681,9 @@ image::images/bpmn.start.error.event.png[align="center"]
 [[errorStartEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-The XML representation of an error start event is the normal start event declaration with an errorEventDefinition child-element:
+错误启动事件的XML表示格式，为普通启动事件声明加上errorEventDefinition子元素：
 
 [source,xml,linenums]
 ----
