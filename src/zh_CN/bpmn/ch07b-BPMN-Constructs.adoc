@@ -696,30 +696,29 @@ image::images/bpmn.start.error.event.png[align="center"]
 [[bpmnEndEvent]]
 
 
-==== End Events
+==== 结束事件
 
-An end event signifies the end of a path in a process or sub-process. An end event is *always throwing*. This means that when process execution arrives at an end event, a _result_ is thrown. The type of result is depicted by the inner black icon of the event. In the XML representation, the type is given by the declaration of a sub-element.
+结束事件（end event）标志着流程或子流程中一个分支的结束。结束事件**总是抛出（型）事件**。这意味着当流程执行到达结束事件时，会抛出一个__结果__。结果的类型由事件内部的黑色图标表示。在XML表示中，类型由子元素声明给出。
 
 
 [[bpmnNoneEndEvent]]
 
 
-==== None End Event
+==== 空结束事件
 
 [[noneEndEventDescription]]
 
 
-===== Description
+===== 描述
 
-A 'none' end event means that the _result_ thrown when the event is reached is unspecified. As such, the engine will not do anything extra besides ending the current path of execution.
-
+“空”结束事件(none end event)，意味着当到达这个事件时，没有特别指定抛出的__结果__。因此，引擎除了结束当前执行分支之外，不会多做任何事情。
 
 [[bpmnNoneEndEventDescription]]
 
 
-===== Graphical notation
+===== 图示
 
-A none end event is visualized as a circle with a thick border with no inner icon (no result type).
+空结束事件，用其中没有图标（没有结果类型）的粗圆圈表示。
 
 image::images/bpmn.none.end.event.png[align="center"]
 
@@ -727,9 +726,9 @@ image::images/bpmn.none.end.event.png[align="center"]
 [[bpmnNoneStartEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-The XML representation of a none end event is the normal end event declaration, without any sub-element (other end event types all have a sub-element declaring the type).
+空事件的XML表示格式为普通结束事件声明，没有任何子元素（其它种类的结束事件都有子元素，用于声明其类型）。
 
 
 [source,xml,linenums]
@@ -741,22 +740,22 @@ The XML representation of a none end event is the normal end event declaration, 
 [[bpmnErrorEndEvent]]
 
 
-==== Error End Event
+==== 错误结束事件
 
 [[bpmnErrorEndEventDescription]]
 
 
-===== Description
+===== 描述
 
-When process execution arrives at an *error end event*, the current path of execution ends and an error is thrown. This error can <<bpmnBoundaryErrorEvent,caught by a matching intermediate boundary error event>>. If no matching boundary error event is found, an exception will be thrown.
+当流程执行到达**错误结束事件（error end event）**时，结束执行的当前分支，并抛出错误。这个错误可以<<bpmnBoundaryErrorEvent, 由匹配的错误边界中间事件捕获>>。如果找不到匹配的错误边界事件，将会抛出异常。
 
 
 [[bpmnErrorEndEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-An error end event is visualized as a typical end event (circle with thick border), with the error icon inside. The error icon is completely black, to indicate its throwing semantics.
+错误结束事件事件用内部有一个错误图标的标准结束事件（粗圆圈）表示。错误图标是全黑的，代表抛出的含义。
 
 image::images/bpmn.error.end.event.png[align="center"]
 
@@ -764,9 +763,9 @@ image::images/bpmn.error.end.event.png[align="center"]
 [[bpmnErrorEndEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-An error end event is represented as an end event, with an _errorEventDefinition_ child element.
+错误结束事件表示为结束事件，加上__errorEventDefinition__子元素：
 
 [source,xml,linenums]
 ----
@@ -776,7 +775,7 @@ An error end event is represented as an end event, with an _errorEventDefinition
 
 ----
 
-The _errorRef_ attribute can reference an _error_ element that is defined outside the process:
+__errorRef__属性可以引用在流程外定义的__error__元素：
 
 [source,xml,linenums]
 ----
@@ -786,7 +785,7 @@ The _errorRef_ attribute can reference an _error_ element that is defined outsid
 ...
 ----
 
-The *errorCode* of the _error_ will be used to find the matching catching boundary error event. If the _errorRef_ doesn't match any defined _error_, then the _errorRef_ is used as a shortcut for the _errorCode_. This is a Flowable specific shortcut. More concretely, the following snippets are equivalent in functionality.
+__error__的**errorCode**用于查找匹配的错误捕获边界事件。如果__errorRef__不匹配任何已定义的__error__，则该__errorRef__会用做__errorCode__的快捷方式。这个快捷方式是Flowable特有的。下面的代码片段在功能上是相同的。
 
 [source,xml,linenums]
 ----
@@ -800,7 +799,7 @@ The *errorCode* of the _error_ will be used to find the matching catching bounda
 ...
 ----
 
-is equivalent with
+与下面的代码功能相同
 
 [source,xml,linenums]
 ----
@@ -809,30 +808,30 @@ is equivalent with
 </endEvent>
 ----
 
-Note that the _errorRef_ must comply with the BPMN 2.0 schema, and must be a valid QName.
+请注意__errorRef__必须遵从BPMN 2.0概要（schema），且必须是合法的QName。
 
 [[bpmnTerminateEndEvent]]
 
-==== Terminate End Event
+==== 终止结束事件
 
-===== Description
+===== 描述
 
-When a _terminate end event_ is reached, the current process instance or sub-process will be terminated. Conceptually, when an execution arrives at a terminate end event, the first _scope_ (process or sub-process) will be determined and ended. Note that in BPMN 2.0, a sub-process can be an embedded sub-process, call activity, event sub-process or transaction sub-process. This rule applies in general: when, for example, there is a multi-instance call activity or embedded sub-process, only that instance will end, the other instances and the process instance are not affected.
+当到达__终止结束事件（terminate end event）__时，当前的流程实例或子流程会被终止。也就是说，当执行到达终止结束事件时，会判断第一个__范围 scope__（流程或子流程）并终止它。请注意在BPMN 2.0中，子流程可以是嵌入式子流程，调用活动，事件子流程，或事务子流程。有一条通用规则：当存在多实例的调用过程或嵌入式子流程时，只会终止一个实例，其他的实例与流程实例不会受影响。
 
-There is an optional attribute _terminateAll_ that can be added. When _true_, regardless of the placement of the terminate end event in the process definition and regardless of being in a sub-process (even nested), the (root) process instance will be terminated.
+可以添加一个可选属性__terminateAll__。当其为__true__时，无论该终止结束事件在流程定义中的位置，也无论它是否在子流程（甚至是嵌套子流程）中，都会终止（根）流程实例。
 
-===== Graphical notation
+===== 图示
 
-A cancel end event visualized as a typical end event (circle with thick outline), with a full black circle inside.
+终止结束事件用内部有一个全黑圆的标准结束事件（粗圆圈）表示。
 
 image::images/bpmn.terminate.end.event.png[align="center"]
 
 
-===== XML representation
+===== XML表示
 
-A terminate end event is represented as an end event, with a _terminateEventDefinition_ child element.
+终止结束事件，表示为结束事件，加上__terminateEventDefinition__子元素。
 
-Note that the _terminateAll_ attribute is optional (and _false_ by default).
+请注意__terminateAll__属性是可选的（默认为__false__）。
 
 [source,xml,linenums]
 ----
@@ -843,22 +842,23 @@ Note that the _terminateAll_ attribute is optional (and _false_ by default).
 
 [[bpmnCancelEndEvent]]
 
-==== Cancel End Event
+==== 取消结束事件
 
 [[bpmnCancelEndEventDescription]]
 
 
-===== Description
+===== 描述
 
 The cancel end event can only be used in combination with a BPMN transaction sub-process. When the cancel end event is reached, a cancel event is thrown which must be caught by a cancel boundary event. The cancel boundary event then cancels the transaction and triggers compensation.
+取消结束事件（cancel end event），只能与BPMN事务子流程（BPMN transaction subprocess）一起使用。当到达取消结束事件时，会抛出取消事件，且必须由取消边界事件（cancel boundary event）捕获。取消边界事件将取消事务，并触发补偿（compensation）。
 
 
 [[bpmnCancelEndEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-A cancel end event is visualized as a typical end event (circle with thick outline), with the cancel icon inside. The cancel icon is completely black, to indicate its throwing semantics.
+取消结束事件用内部有一个取消图标的标准结束事件（粗圆圈）表示。取消图标是全黑的，代表抛出的含义。
 
 image::images/bpmn.cancel.end.event.png[align="center"]
 
@@ -866,10 +866,9 @@ image::images/bpmn.cancel.end.event.png[align="center"]
 [[bpmnCancelEndEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-
-A cancel end event is represented as an end event, with a _cancelEventDefinition_ child element.
+取消结束事件，表示为结束事件，加上__cancelEventDefinition__子元素。
 
 [source,xml,linenums]
 ----
@@ -882,11 +881,11 @@ A cancel end event is represented as an end event, with a _cancelEventDefinition
 [[bpmnBoundaryEvent]]
 
 
-==== Boundary Events
+==== 边界事件
 
-Boundary events are _catching_ events that are attached to an activity (a boundary event can never be throwing). This means that while the activity is running, the event is _listening_ for a certain type of trigger. When the event is _caught_, the activity is interrupted and the sequence flow going out of the event is followed.
+边界事件（boundary event）是__捕获型__事件，依附在活动（activity）上。边界事件永远不会抛出。这意味着当活动运行时，事件将__监听__特定类型的触发器。当__捕获__到事件时，会终止活动，并沿该事件的出口顺序流继续。
 
-All boundary events are defined in the same way:
+所有的边界事件都用相同的方式定义：
 
 [source,xml,linenums]
 ----
@@ -895,33 +894,32 @@ All boundary events are defined in the same way:
 </boundaryEvent>
 ----
 
-A boundary event is defined with
+边界事件由下列元素定义：
 
-* A unique identifier (process-wide)
-* A reference to the activity to which the event is attached through the *attachedToRef* attribute.
- Note that a boundary event is defined on the same level as the activities to which they are attached (in other words, no inclusion of the boundary event inside the activity).
-* An XML sub-element of the form _XXXEventDefinition_ (for example, _TimerEventDefinition_, _ErrorEventDefinition_, and so on) defining the type of the boundary event. See the specific boundary event types for more details.
+* （流程范围内）唯一的标识符
+* 由**attachedToRef**属性定义的，对该事件所依附的活动的引用。请注意边界事件及其所依附的活动，应定义在相同级别（也就是说，边界事件并不包含在活动内）。
+* 定义了边界事件的类型的，形如__XXXEventDefinition__的XML子元素（例如__TimerEventDefinition__，__ErrorEventDefinition__，等等）。查阅特定的边界事件类型，以了解更多细节。
 
 
 [[bpmnTimerBoundaryEvent]]
 
 
-==== Timer Boundary Event
+==== 定时器边界事件
 
 [[timerBoundaryEventDescription]]
 
 
-===== Description
+===== 描述
 
-A timer boundary event acts as a stopwatch and alarm clock. When an execution arrives at the activity where the boundary event is attached, a timer is started. When the timer fires (for example, after a specified interval), the activity is interrupted and the sequence flow going out of the boundary event is followed.
+定时器边界事件（timer boundary event）的行为像是跑表与闹钟。当执行到达边界事件所依附的活动时，将启动定时器。当定时器触发时（例如在特定时间间隔后），可以中断活动，并沿着边界事件的出口顺序流继续执行。
 
 
 [[bpmnTimerBoundaryEventGraphicalNotation]]
 
 
-===== Graphical Notation
+===== 图示
 
-A timer boundary event is visualized as a typical boundary event (circle on the border), with the timer icon on the inside.
+定时器边界事件用内部有一个定时器图标的标准边界事件（圆圈）表示。
 
 image::images/bpmn.boundary.timer.event.png[align="center"]
 
@@ -929,9 +927,9 @@ image::images/bpmn.boundary.timer.event.png[align="center"]
 [[bpmnTimerBoundaryEventXml]]
 
 
-===== XML Representation
+===== XML表示
 
-A timer boundary event is defined as a <<bpmnBoundaryEvent,regular boundary event>>. The specific type sub-element in this case is a *timerEventDefinition* element.
+定时器边界事件与<<bpmnBoundaryEvent,一般边界事件>>一样定义。其中类型子元素为**timerEventDefinition**元素。
 
 [source,xml,linenums]
 ----
@@ -942,30 +940,30 @@ A timer boundary event is defined as a <<bpmnBoundaryEvent,regular boundary even
 </boundaryEvent>
 ----
 
-Please refer to <<timerEventDefinitions,timer event definition>> for details on timer configuration.
+请参考<<timerEventDefinitions, 定时器事件定义>>了解定时器配置的细节。
 
-In the graphical representation, the line of the circle is dotted as you can see in the example above:
+在图示中圆圈画为虚线，如下：
 
 image::images/bpmn.non.interrupting.boundary.timer.event.png[align="center"]
 
-A typical use case is sending an escalation email after a period of time, but without affecting the normal process flow.
+中断与非中断定时器事件是不同的。非中断意味着最初的活动**不会**被中断，而会保持原样。默认为中断行为。在XML表示中，__cancelActivity__属性设置为false。
 
-There is a key difference between the interrupting and non interrupting timer event. Non-interrupting means the original activity is *not* interrupted but stays as it was. The interrupting behavior is the default. In the XML representation, the _cancelActivity_ attribute is set to false:
+一个典型使用场景，是在一段时间之后发送提醒邮件，但不影响正常的流程流向。
 
 [source,xml,linenums]
 ----
 <boundaryEvent id="escalationTimer" cancelActivity="false" attachedToRef="firstLineSupport"/>
 ----
 
-*Note:* boundary timer events are only fired when the async executor is enabled (_asyncExecutorActivate_ needs to be set to +true+ in the +flowable.cfg.xml+, since the async executor is disabled by default).
+**请注意：**定时器边界事件只有在异步执行器（async executor）启用时才能触发（也就是说，需要在++flowable.cfg.xml++中，将__asyncExecutorActivate__设置为++true++。因为异步执行器默认情况下是禁用的。）
 
 
 [[bpmnKnownIssueBoundaryEvent]]
 
 
-===== Known issue with boundary events
+===== 边界事件的已知问题
 
-There is a known issue regarding concurrency when using boundary events of any type. Currently, it is not possible to have multiple outgoing sequence flows attached to a boundary event. A solution to this problem is to use one outgoing sequence flow that goes to a parallel gateway.
+所有类型的边界事件，都有一个关于并发的已知问题：不能在边界事件上附加多个出口顺序流。这个问题的解决方案，是使用一条出口顺序流，指向并行网关。
 
 image::images/bpmn.known.issue.boundary.event.png[align="center"]
 
@@ -973,35 +971,35 @@ image::images/bpmn.known.issue.boundary.event.png[align="center"]
 [[bpmnBoundaryErrorEvent]]
 
 
-==== Error Boundary Event
+==== 错误边界事件
 
 [[bpmnBoundaryErrorEventDescription]]
 
 
-===== Description
+===== 描述
 
-An intermediate _catching_ error on the boundary of an activity, or *boundary error event* for short, catches errors that are thrown within the scope of the activity on which it is defined.
+在活动边界上的错误__捕获__中间（事件），或简称**错误边界事件（error boundary event）**，捕获其所依附的活动范围内抛出的错误。
 
 Defining a boundary error event makes most sense on an <<bpmnSubProcess,embedded sub-process>>, or a <<bpmnCallActivity,call activity>>, as a sub-process creates a scope for all activities inside the sub-process. Errors are thrown by <<bpmnErrorEndEvent,error end events>>. Such an error will propagate its parent scopes upwards until a scope is found on which a boundary error event is defined that matches the error event definition.
+在<<bpmnSubProcess,嵌入式子流程>>或者<<bpmnCallActivity,调用活动>>上定义错误边界事件最有意义，因为子流程的范围会包括其中的所有活动。错误由<<bpmnErrorEndEvent,错误结束事件>>抛出。这样的错误会逐层向其上级父范围传播，直到在范围内找到一个错误边界事件，匹配错误事件定义。
 
-When an error event is caught, the activity on which the boundary event is defined is destroyed, also destroying all current executions within (concurrent activities, nested sub-processes, and so on). Process execution continues following the outgoing sequence flow of the boundary event.
-
+当捕获错误事件时，会销毁边界事件定义所在的活动，同时销毁其中所有的当前执行（例如，并行活动，嵌套子流程，等等）。流程执行将沿着边界事件的出口顺序流继续。
 
 [[bpmnBoundaryErrorEventgraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-A boundary error event is visualized as a typical intermediate event (circle with smaller circle inside) on the boundary, with the error icon inside. The error icon is white, to indicate its _catch_ semantics.
+错误边界事件用内部有一个错误图标的标准中间事件（两层圆圈）表示。错误图标是白色的，代表__捕获__的含义。
 
 image::images/bpmn.boundary.error.event.png[align="center"]
 
 [[bpmnBoundaryErrorEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-A boundary error event is defined as a typical <<bpmnBoundaryEvent,boundary event>>:
+错误边界事件与标准<<bpmnBoundaryEvent, 边界事件>>一样定义：
 
 [source,xml,linenums]
 ----
@@ -1010,7 +1008,7 @@ A boundary error event is defined as a typical <<bpmnBoundaryEvent,boundary even
 </boundaryEvent>
 ----
 
-As with the <<bpmnErrorEndEvent,error end event>>, the _errorRef_ references an error defined outside the process element:
+在<<bpmnBoundaryEvent,边界事件>>中，__errorRef__引用一个流程元素外定义的错误：
 
 [source,xml,linenums]
 ----
@@ -1021,48 +1019,48 @@ As with the <<bpmnErrorEndEvent,error end event>>, the _errorRef_ references an 
 
 ----
 
-The *errorCode* is used to match the errors that are caught:
+**errorCode**用于匹配捕获的错误：
 
-* If _errorRef_ is omitted, the boundary error event will catch *any error event*, regardless of the errorCode of the _error_.
-* If an _errorRef_ is provided and it references an existing _error_, the boundary event will *only catch errors with the same error code*.
-* If an _errorRef_ is provided, but no _error_ is defined in the BPMN 2.0 file, then the *errorRef is used as errorCode* (similar for with error end events).
+* 如果省略了__errorRef__，错误边界事件会捕获**所有错误事件**，无论__error__的errorCode是什么。
+* 如果提供了__errorRef__，并且其引用了存在的__error__，则边界事件**只会捕获相同错误代码的错误**。
+* 如果提供了__errorRef__，但BPMN 2.0文件中没有定义__error__，则**errorRef会用作errorCode**（与错误结束事件类似）。
 
 
 [[bpmnBoundaryErrorEventExample]]
 
 
-===== Example
+===== 示例
 
-The following example process shows how an error end event can be used. When the _'Review profitability'_ user task is completed by saying that not enough information is provided, an error is thrown. When this error is caught on the boundary of the sub-process, all active activities within the _'Review sales lead'_ sub-process are destroyed (even if _'Review customer rating'_ had not yet been completed), and the _'Provide additional details'_ user task is created.
+下面的示例流程展示了如何使用错误结束事件。当__'Review profitability (审核盈利能力)'__用户任务完成，并指出提供的信息不足时，会抛出错误。当这个错误被子流程边界捕获时，__'Review sales lead (审核销售线索)'__子流程中的所有运行中活动都会被销毁（即使__'Review customer rating 审核客户等级'__还没有完成），并会创建__'Provide additional details (提供更多信息)'__用户任务。
 
 image::images/bpmn.boundary.error.example.png[align="center"]
 
-This process is shipped as example in the demo setup. The process XML and unit test can be found in the _org.flowable.examples.bpmn.event.error_ package.
+这个流程作为演示配置的示例提供。可以在__org.flowable.examples.bpmn.event.error__包中找到流程XML与单元测试。
 
 
 [[bpmnBoundarySignalEvent]]
 
 
-==== Signal Boundary Event
+==== 信号边界事件
 
 [[bpmnBoundarySignalEventDescription]]
 
 
-===== Description
+===== 描述
 
-An attached intermediate _catching_ <<bpmnSignalEventDefinition,signal>> on the boundary of an activity, or *boundary signal event* for short, catches signals with the same signal name as the referenced signal definition.
+依附在活动边界上的<<bpmnSignalEventDefinition,信号>>捕获中间（事件），或简称**信号边界事件（signal boundary event）**，捕获与其信号定义具有相同名称的信号。
 
-*Note:* contrary to other events, such as the boundary error event, a boundary signal event doesn't only catch signal events thrown from the scope to which it is attached. On the contrary, a signal event has global scope (broadcast semantics), meaning that the signal can be thrown from any place, even from a different process instance.
+**请注意：**与其他事件例如错误边界事件不同的是，信号边界事件不只是捕获其所依附范围抛出的信号。信号边界事件为全局范围（广播）的，意味着信号可以从任何地方抛出，甚至可以是不同的流程实例。
 
-*Note:* contrary to other events, such as the error event, a signal is not consumed if it is caught. If you have two active signal boundary events catching the same signal event, both boundary events are triggered, even if they are part of different process instances.
+**请注意：**与其他事件（如错误事件）不同，信号在被捕获后不会被消耗。如果有两个激活的信号边界事件，捕获相同的信号事件，则两个边界事件都会被触发，哪怕它们不在同一个流程实例里。
 
 
 [[bpmnBoundarySignalEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-A boundary signal event is visualized as a typical intermediate event (circle with smaller circle inside) on the boundary, with the signal icon inside. The signal icon is white (unfilled), to indicate its _catch_ semantics.
+信号边界事件，用内部有一个信号图标的标准中间事件（两层圆圈）表示。信号图标是白色的，代表__捕获__的含义。
 
 image::images/bpmn.boundary.signal.event.png[align="center"]
 
@@ -1070,9 +1068,9 @@ image::images/bpmn.boundary.signal.event.png[align="center"]
 [[bpmnBoundarySignalEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-A boundary signal event is defined as a typical <<bpmnBoundaryEvent,boundary event>>:
+信号边界事件与标准<<bpmnBoundaryEvent,边界事件>>一样定义：
 
 [source,xml,linenums]
 ----
@@ -1085,42 +1083,42 @@ A boundary signal event is defined as a typical <<bpmnBoundaryEvent,boundary eve
 [[bpmnBoundarySignalEventExample]]
 
 
-===== Example
+===== 示例
 
-See the section on <<bpmnSignalEventDefinition,signal event definitions>>.
+参见<<bpmnSignalEventDefinition,信号事件定义>>章节。
 
 
 [[bpmnBoundaryMessageEvent]]
 
 
-==== Message Boundary Event
+==== 消息边界事件
 
 [[bpmnBoundaryMessageEventDescription]]
 
 
-===== Description
+===== 描述
 
-An attached intermediate _catching_ <<bpmnMessageEventDefinition,message>> on the boundary of an activity, or *boundary message event* for short, catches messages with the same message name as the referenced message definition.
+在活动边界上的<<bpmnMessageEventDefinition,消息>>__捕获__中间（事件），或简称**消息边界事件（message boundary event）**，捕获与其消息定义具有相同消息名的消息。
 
 
 [[bpmnBoundaryMessageEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-A boundary message event is visualized as a typical intermediate event (circle with smaller circle inside) on the boundary, with the message icon inside. The message icon is white (unfilled), to indicate its _catch_ semantics.
+消息边界事件，用内部有一个消息图标的标准中间事件（两层圆圈）表示。信号图标是白色的，代表__捕获__的含义。
 
 image::images/bpmn.boundary.message.event.png[align="center"]
 
-Note that boundary message event can be both interrupting (right-hand side) and non-interrupting (left-hand side).
+请注意消息边界事件既可以是中断型的（右图），也可以是非中断型的（左图）。
 
 
 [[bpmnBoundaryMessageEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-A boundary message event is defined as a typical <<bpmnBoundaryEvent,boundary event>>:
+消息边界事件与标准<<bpmnBoundaryEvent,边界事件>>一样定义：
 
 [source,xml,linenums]
 ----
@@ -1133,37 +1131,37 @@ A boundary message event is defined as a typical <<bpmnBoundaryEvent,boundary ev
 [[bpmnBoundaryMessageEventExample]]
 
 
-===== Example
+===== 示例
 
-See the section on <<bpmnMessageEventDefinition,message event definitions>>.
+参见<<bpmnMessageEventDefinition,消息事件定义>>章节。
 
 
 [[bpmnBoundaryCancelEvent]]
 
 
-==== Cancel Boundary Event
+==== 取消边界事件
 
 [[bpmnBoundaryCancelEventDescription]]
 
 
-===== Description
+===== 描述
 
-An attached intermediate _catching_ cancel event on the boundary of a transaction sub-process, or *boundary cancel event* for short, is triggered when a transaction is canceled. When the cancel boundary event is triggered, it first interrupts all active executions in the current scope. Next, it starts compensation for all active compensation boundary events in the scope of the transaction. Compensation is performed synchronously, in other words, the boundary event waits before compensation is completed before leaving the transaction. When compensation is completed, the transaction sub-process is left using any sequence flows running out of the cancel boundary event.
+依附在事务子流程边界上的取消__捕获__中间事件，或简称**取消边界事件（cancel boundary event）**，在事务取消时触发。当取消边界事件触发时，首先会中断当前范围的所有活动执行。接下来，启动事务范围内所有有效的的补偿边界事件（compensation boundary event）。补偿会同步执行，也就是说在离开事务前，边界事件会等待补偿完成。当补偿完成时，沿取消边界事件的任何出口顺序流离开事务子流程。
 
 
-*Note:* Only a single cancel boundary event is allowed for a transaction sub-process.
+**请注意：**一个事务子流程只允许使用一个取消边界事件。
 
-*Note:* If the transaction sub-process hosts nested sub-processes, compensation is only triggered for sub-processes that have completed successfully.
+**请注意：**如果事务子流程中有嵌套的子流程，只会对成功完成的子流程触发补偿。
 
-*Note:* If a cancel boundary event is placed on a transaction sub-process with multi instance characteristics, if one instance triggers cancellation, the boundary event cancels all instances.
+**请注意：**如果取消边界事件放置在具有多实例特性的事务子流程上，如果一个实例触发了取消，则边界事件将取消所有实例。
 
 
 [[bpmnBoundaryCancelEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-A cancel boundary event is visualized as a typical intermediate event (circle with smaller circle inside) on the boundary, with the cancel icon inside. The cancel icon is white (unfilled), to indicate its _catching_ semantics.
+取消边界事件，用内部有一个取消图标的标准中间事件（两层圆圈）表示。取消图标是白色的（未填充），代表__捕获__的含义。
 
 image::images/bpmn.boundary.cancel.event.png[align="center"]
 
@@ -1171,50 +1169,50 @@ image::images/bpmn.boundary.cancel.event.png[align="center"]
 [[bpmnBoundaryCancelEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-A cancel boundary event is defined as a typical <<bpmnBoundaryEvent,boundary event>>:
+取消边界事件与标准<<bpmnBoundaryEvent,边界事件>>一样定义：
 
 [source,xml,linenums]
 ----
 <boundaryEvent id="boundary" attachedToRef="transaction" >
-          <cancelEventDefinition />
+    <cancelEventDefinition />
 </boundaryEvent>
 ----
 
-As the cancel boundary event is always interrupting, the +cancelActivity+ attribute is not required.
+因为取消边界事件总是中断型的，因此没有++cancelActivity++属性。
 
 
 [[bpmnBoundaryCompensationEvent]]
 
 
-==== Compensation Boundary Event
+==== 补偿边界事件
 
 [[bpmnBoundaryCompensationEventDescription]]
 
 
-===== Description
+===== 描述
 
-An attached intermediate _catching_ compensation on the boundary of an activity or *compensation boundary event* for short, can be used to attach a compensation handler to an activity.
+依附在活动边界上的补偿__捕获__中间（事件），或简称**补偿边界事件（compensation boundary event）**，可以为活动附加补偿处理器。
 
-The compensation boundary event must reference a single compensation handler using a directed association.
+补偿边界事件必须使用直接关联的方式引用单个的补偿处理器。
 
-A compensation boundary event has a different activation policy from other boundary events. Other boundary events, such as the signal boundary event, are activated when the activity they are attached to is started. When the activity is finished, they are deactivated and the corresponding event subscription is canceled. The compensation boundary event is different. The compensation boundary event is activated when the activity it is attached to *completes successfully*. At this point, the corresponding subscription to the compensation events is created. The subscription is removed either when a compensation event is triggered or when the corresponding process instance ends. From this, it follows:
+补偿边界事件与其它边界事件的活动策略不同。其它边界事件，例如信号边界事件，在其依附的活动启动时激活；当该活动结束时会被解除，并取消相应的事件订阅。而补偿边界事件不是这样。补偿边界事件在其依附的活动**成功完成**时激活，同时创建补偿事件的相应订阅。当补偿事件被触发，或者相应的流程实例结束时，才会移除订阅。请考虑下列因素：
 
-* When compensation is triggered, the compensation handler associated with the compensation boundary event is invoked the same number of times the activity it is attached to completed successfully.
-* If a compensation boundary event is attached to an activity with multiple instance characteristics, a compensation event subscription is created for each instance.
-*	If a compensation boundary event is attached to an activity that is contained inside a loop, a compensation event subscription is created each time the activity is executed.
-* If the process instance ends, the subscriptions to compensation events are canceled.
+* 当补偿被触发时，会调用补偿边界事件关联的补偿处理器。调用次数与其依附的活动成功完成的次数相同。
+* 如果补偿边界事件依附在具有多实例特性的活动上，则会为每一个实例创建补偿事件订阅。
+* 如果补偿边界事件依附在位于循环内部的活动上，则每次该活动执行时，都会创建一个补偿事件订阅。
+* 如果流程实例结束，则取消补偿事件的订阅。
 
-*Note:* the compensation boundary event is not supported on embedded sub-processes.
+**请注意：**嵌入式子流程不支持补偿边界事件。
 
 
 [[bpmnBoundaryCompensationEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-A compensation boundary event is visualized as a typical intermediate event (circle with smaller circle inside) on the boundary, with the compensation icon inside. The compensation icon is white (unfilled), to indicate its _catching_ semantics. In addition to a compensation boundary event, the following figure shows a compensation handler associated with the boundary event using a unidirectional association:
+补偿边界事件，用内部有一个补偿图标的标准中间事件（两层圆圈）表示。补偿图标是白色的（未填充），代表__捕获__的含义。另外，补偿边界事件使用单向连接关联补偿处理器，如下图所示：
 
 image::images/bpmn.boundary.compensation.event.png[align="center"]
 
@@ -1222,9 +1220,9 @@ image::images/bpmn.boundary.compensation.event.png[align="center"]
 [[bpmnBoundaryCompensationEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-A compensation boundary event is defined as a typical <<bpmnBoundaryEvent,boundary event>>:
+补偿边界事件与标准<<bpmnBoundaryEvent,边界事件>>一样定义：
 
 [source,xml,linenums]
 ----
@@ -1238,15 +1236,15 @@ A compensation boundary event is defined as a typical <<bpmnBoundaryEvent,bounda
 <serviceTask id="undoBookHotel" isForCompensation="true" flowable:class="..." />
 ----
 
-As the compensation boundary event is activated after the activity has completed successfully, the +cancelActivity+ attribute is not supported.
+补偿边界事件在活动完成后才激活，因此不支持++cancelActivity++属性。
 
 
 [[bpmnIntermediateCatchingEvent]]
 
 
-==== Intermediate Catching Events
+==== 捕获中间事件
 
-All intermediate catching events are defined in the same way:
+所有的捕获中间事件（intermediate catching events）都使用相同方式定义：
 
 [source,xml,linenums]
 ----
@@ -1255,31 +1253,31 @@ All intermediate catching events are defined in the same way:
 </intermediateCatchEvent>
 ----
 
-An intermediate catching event is defined with:
+捕获中间事件由下列元素定义:
 
-* A unique identifier (process-wide)
-* An XML sub-element of the form _XXXEventDefinition_ (for example, _TimerEventDefinition_) defining the type of the intermediate catching event. See the specific catching event types for more details.
+* （流程范围内）唯一的标识符
+* 定义了捕获中间事件类型的，形如__XXXEventDefinition__的XML子元素（例如__TimerEventDefinition__等）。查阅特定中间捕获事件类型，以了解更多细节。
 
 
 [[bpmnTimerIntermediateEvent]]
 
 
-==== Timer Intermediate Catching Event
+==== 定时器捕获中间事件
 
 [[bpmnTimerIntermediateEventDescription]]
 
 
-===== Description
+===== 描述
 
-A timer intermediate event acts as a stopwatch. When an execution arrives at a catching event activity, a timer is started. When the timer fires (for example, after a specified interval), the sequence flow going out of the timer intermediate event is followed.
+定时器捕获中间事件（timer intermediate catching event）的行为像是跑表。当执行到达捕获事件时，启动定时器；当定时器触发时（例如在一段时间间隔后），沿定时器中间事件的出口顺序流继续执行。
 
 
 [[bpmnTimerIntermediateEventGraphicalNotation]]
 
 
-===== Graphical Notation
+===== 图示
 
-A timer intermediate event is visualized as an intermediate catching event, with the timer icon on the inside.
+定时器中间事件用内部有定时器图标的中间捕获事件表示。
 
 image::images/bpmn.intermediate.timer.event.png[align="center"]
 
@@ -1287,9 +1285,9 @@ image::images/bpmn.intermediate.timer.event.png[align="center"]
 [[bpmnTimerIntermediateEventXml]]
 
 
-===== XML Representation
+===== XML表示
 
-A timer intermediate event is defined as an <<bpmnIntermediateCatchingEvent,intermediate catching event>>. The specific type sub-element is, in this case, a *timerEventDefinition* element.
+定时器中间事件与<<bpmnIntermediateCatchingEvent, 捕获中间事件>>一样定义。子元素为**timerEventDefinition**。
 
 [source,xml,linenums]
 ----
@@ -1300,30 +1298,30 @@ A timer intermediate event is defined as an <<bpmnIntermediateCatchingEvent,inte
 </intermediateCatchEvent>
 ----
 
-See <<timerEventDefinitions,timer event definitions>> for configuration details.
+查看<<timerEventDefinitions,定时器事件定义>>了解详细配置。
 
 
 [[bpmnIntermediateSignalEvent]]
 
 
-==== Signal Intermediate Catching Event
+==== 信号捕获中间事件
 
 [[bpmnIntermediateSignalEventDescription]]
 
 
-===== Description
+===== 描述
 
-An intermediate _catching_ <<bpmnSignalEventDefinition,signal>> event catches signals with the same signal name as the referenced signal definition.
+<<bpmnSignalEventDefinition,信号>>__捕获__中间事件（signal intermediate catching event），捕获与其引用的信号定义具有相同信号名称的信号。
 
-*Note:* contrary to other events, such as an error event, a signal is not consumed if it is caught. If you have two active signal boundary events catching the same signal event, both boundary events are triggered, even if they are part of different process instances.
+**请注意：**与其他事件如错误事件不同，信号在被捕获后不会被消耗。如果有两个激活的信号中间事件，捕获相同的信号事件，则两个中间事件都会被触发，哪怕它们不在同一个流程实例里。
 
 
 [[bpmnIntermediateSignalEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-An intermediate signal catch event is visualized as a typical intermediate event (circle with smaller circle inside), with the signal icon inside. The signal icon is white (unfilled), to indicate its _catch_ semantics.
+信号捕获中间事件用内部有信号图标的标准中间事件（两层圆圈）表示。信号图标是白色的（未填充），代表__捕获__的含义。
 
 image::images/bpmn.intermediate.signal.catch.event.png[align="center"]
 
@@ -1331,9 +1329,9 @@ image::images/bpmn.intermediate.signal.catch.event.png[align="center"]
 [[bpmnIntermediateSignalEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-A signal intermediate event is defined as an <<bpmnIntermediateCatchingEvent,intermediate catching event>>. The specific type sub-element is in this case a *signalEventDefinition* element.
+信号中间事件与<<bpmnIntermediateCatchingEvent,捕获中间事件>>一样定义。子元素为**signalEventDefinition**。
 
 [source,xml,linenums]
 ----
@@ -1346,30 +1344,29 @@ A signal intermediate event is defined as an <<bpmnIntermediateCatchingEvent,int
 [[bpmnIntermediateSignalEventExample]]
 
 
-===== Example
+===== 示例
 
-See the section on <<bpmnSignalEventDefinition,signal event definitions>>.
-
+参阅<<bpmnSignalEventDefinition,信号事件定义>>章节。
 
 [[bpmnIntermediateMessageEvent]]
 
 
-==== Message Intermediate Catching Event
+==== 消息捕获中间事件
 
 [[bpmnIntermediateMessageEventDescription]]
 
 
-===== Description
+===== 描述
 
-An intermediate _catching_ <<bpmnMessageEventDefinition,message>> event catches messages with a specified name.
+<<bpmnMessageEventDefinition,消息>>__捕获__中间事件（message intermediate catching event），捕获特定名字的消息。
 
 
 [[bpmnIntermediateMessageEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-An intermediate catching message event is visualized as a typical intermediate event (circle with smaller circle inside), with the message icon inside. The message icon is white (unfilled), to indicate its _catch_ semantics.
+消息捕获中间事件用内部有消息图标的标准中间事件（两层圆圈）表示。消息图标是白色的（未填充），代表__捕获__的含义。
 
 image::images/bpmn.intermediate.message.catch.event.png[align="center"]
 
@@ -1377,9 +1374,9 @@ image::images/bpmn.intermediate.message.catch.event.png[align="center"]
 [[bpmnIntermediateMessageEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-A message intermediate event is defined as an <<bpmnIntermediateCatchingEvent,intermediate catching event>>. The specific type sub-element is in this case a *messageEventDefinition* element.
+消息中间事件与<<bpmnIntermediateCatchingEvent,捕获中间事件>>一样定义。子元素为**messageEventDefinition**。
 
 [source,xml,linenums]
 ----
@@ -1392,17 +1389,17 @@ A message intermediate event is defined as an <<bpmnIntermediateCatchingEvent,in
 [[bpmnIntermediateMessageEventExample]]
 
 
-===== Example
+===== 示例
 
-See the section on <<bpmnMessageEventDefinition,message event definitions>>.
+参阅<<bpmnMessageEventDefinition,消息事件定义>>章节。
 
 
 [[bpmnIntermediateThrowEvent]]
 
 
-==== Intermediate Throwing Event
+==== 抛出中间事件
 
-All intermediate throwing events are defined in the same way:
+所有的抛出中间事件（intermediate throwing evnet）都使用相同方式定义：
 
 [source,xml,linenums]
 ----
@@ -1411,21 +1408,21 @@ All intermediate throwing events are defined in the same way:
 </intermediateThrowEvent>
 ----
 
-An intermediate throwing event is defined with:
+抛出中间事件由下列元素定义:
 
-* A unique identifier (process-wide)
-* An XML sub-element of the form _XXXEventDefinition_ (for example, _signalEventDefinition_) defining the type of the intermediate throwing event. See the specific throwing event types for more details.
+* （流程范围内）唯一的标识符
+* 定义了抛出中间事件类型的，形如__XXXEventDefinition__的XML子元素（例如__signalEventDefinition__等）。查阅特定中间抛出事件类型，以了解更多细节。
 
 [[bpmnIntermediateThrowNoneEvent]]
 
 
-==== Intermediate Throwing None Event
+==== 空抛出中间事件
 
-The following process diagram shows a simple example of an intermediate none event, which is often used to indicate some state achieved in the process.
+下面的流程图展示了空抛出中间事件（intermediate throwing none event）的简单例子。其用于指示流程已经到达了某种状态。
 
 image::images/bpmn.intermediate.none.event.png[align="center"]
 
-This can be a good hook to monitor some KPIs, by adding an <<executionListeners,execution listener>>.
+添加一个<<executionListeners,执行监听器>>后，空中间事件就可以成为很好的监视某些KPI（Key Performance Indicators 关键绩效指标）的钩子。
 
 [source,xml,linenums]
 ----
@@ -1437,34 +1434,32 @@ This can be a good hook to monitor some KPIs, by adding an <<executionListeners,
 
 ----
 
-
-Here you can add some of your own code to maybe send some event to your BAM tool or DWH. The engine itself doesn't do anything in that case, it just passes through.
+你也可以添加一些自己的代码，将部分事件发送给你的BAM（Business Activity Monitoring 业务活动监控）工具，或者DWH（Data Warehouse 数据仓库）。在这种情况下，引擎本身不会做任何事情，只是从中穿过。
 
 
 [[bpmnIntermediateThrowSignalEvent]]
 
 
-==== Signal Intermediate Throwing Event
+==== 信号抛出中间事件
 
 [[bpmnIntermediateThrowSignalEventDescription]]
 
 
-===== Description
+===== 描述
 
-An intermediate _throwing_ <<bpmnSignalEventDefinition,signal>> event throws a signal event for a defined signal.
+<<bpmnSignalEventDefinition,信号>>__抛出__中间事件（signal intermediate throwing event），抛出所定义信号的信号事件。
 
-In Flowable, the signal is broadcast to all active handlers (in other words, all catching signal events). Signals can be published synchronously or asynchronously.
+在Flowable中，信号会广播至所有的激活的处理器（也就是说，所有的信号捕获事件）。可以同步或异步地发布信号。
 
-* In the default configuration, the signal is delivered *synchronously*. This means that the throwing process instance waits until the signal is delivered to all catching process instances. The catching process instances are also notified in the same transaction as the throwing process instance, which means that if one of the notified instances produces a technical error (throws an exception), all involved instances fail.
-* A signal can also be delivered *asynchronously*. In this case it is determined which handlers are active at the time the throwing signal event is reached. For each active handler, an asynchronous notification message (Job) is stored and delivered by the JobExecutor.
-
+* 在默认配置中，信号**同步**地传递。这意味着抛出信号的流程实例会等待，直到信号传递至所有的捕获信号的流程实例。所有的捕获流程实例也会在与抛出流程实例相同的事务中，也就是说如果收到通知的流程实例中，有一个实例产生了技术错误（抛出异常），则所有相关的实例都会失败。
+* 信号也可以**异步**地传递。这是由到达抛出信号事件时的发送处理器来决定的。对于每个激活的处理器，JobExecutor会为其存储并传递一个异步通知消息(asynchronous notification message),即作业（Job）。
 
 [[bpmnIntermediateThrowSignalEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-An intermediate signal throw event is visualized as a typical intermediate event (circle with smaller circle inside), with the signal icon inside. The signal icon is black (filled), to indicate its _throw_ semantics.
+消息抛出中间事件用内部有信号图标的标准中间事件（两层圆圈）表示。信号图标是黑色的（已填充），代表__抛出__的含义。
 
 image::images/bpmn.intermediate.signal.throw.event.png[align="center"]
 
@@ -1472,9 +1467,9 @@ image::images/bpmn.intermediate.signal.throw.event.png[align="center"]
 [[bpmnIntermediateThrowSignalEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-A signal intermediate event is defined as an <<bpmnIntermediateThrowEvent,intermediate throwing event>>. The specific type sub-element is in this case a *signalEventDefinition* element.
+信号中间事件与<<bpmnIntermediateThrowEvent,抛出中间事件>>一样定义。子元素为**signalEventDefinition**。
 
 [source,xml,linenums]
 ----
@@ -1483,7 +1478,7 @@ A signal intermediate event is defined as an <<bpmnIntermediateThrowEvent,interm
 </intermediateThrowEvent>
 ----
 
-An asynchronous signal event would look like this:
+异步信号事件这样定义：
 
 [source,xml,linenums]
 ----
@@ -1496,56 +1491,56 @@ An asynchronous signal event would look like this:
 [[bpmnIntermediateThrowSignalEventExample]]
 
 
-===== Example
+===== 示例
 
-See the section on <<bpmnSignalEventDefinition,signal event definitions>>.
+参阅<<bpmnSignalEventDefinition,信号事件定义>>章节。
 
 
 [[bpmnIntermediateThrowCompensationEvent]]
 
 
-==== Compensation Intermediate Throwing Event
+==== 补偿抛出中间事件
 
 [[bpmnIntermediateThrowCompensationEventDescription]]
 
 
-===== Description
+===== 描述
 
-An intermediate _throwing_ compensation event can be used to trigger compensation.
+补偿__抛出__中间事件（compensation intermediate throwing event）用于触发补偿。
 
-*Triggering compensation:* Compensation can either be triggered for a designated activity or for the scope that hosts the compensation event. Compensation is performed through execution of the compensation handler associated with an activity.
+**触发补偿：**既可以为设计的活动触发补偿，也可以为补偿事件所在的范围触发补偿。补偿由活动所关联的补偿处理器执行。
 
-* When compensation is thrown for an activity, the associated compensation handler is executed the same number of times the activity completed successfully.
-* If compensation is thrown for the current scope, all activities within the current scope are compensated, which includes activities on concurrent branches.
-* Compensation is triggered hierarchically: if the activity to be compensated is a sub-process, compensation is triggered for all activities contained in the sub-process. If the sub-process has nested activities, compensation is thrown recursively. However, compensation is not propagated to the "upper levels" of the process: if compensation is triggered within a sub-process, it is not propagated to activities outside of the sub-process scope. The BPMN specification states that compensation is triggered for activities at "the same level of sub-process".
-* In Flowable, compensation is performed in reverse order of execution. This means that whichever activity completed last is compensated first, and so on.
-* The intermediate throwing compensation event can be used to compensate transaction sub-processes that competed successfully.
+* 活动抛出补偿时，活动关联的补偿处理器将执行的次数，为活动成功完成的次数。
+* 抛出补偿时，当前范围中所有的活动，包括并行分支上的活动都会被补偿。
+* 补偿分层触发：如果将要被补偿的活动是一个子流程，则该子流程中所有的活动都会触发补偿。如果该子流程有嵌套的活动，则会递归地抛出补偿。然而，补偿不会传播至流程的**上层**：如果子流程中触发了补偿，该补偿不会传播至子流程范围外的活动。BPMN规范指出，对“与子流程在相同级别”的活动触发补偿。
+* 在Flowable中，补偿按照执行的相反顺序运行。这意味着最后完成的活动会第一个补偿。
+* 可以使用补偿抛出中间事件补偿已经成功完成的事务子流程。
 
-*Note:* If compensation is thrown within a scope that contains a sub-process, and the sub-process contains activities with compensation handlers, compensation is only propagated to the sub-process if it has completed successfully when compensation is thrown. If some of the activities nested inside the sub-process have completed and have attached compensation handlers, the compensation handlers are not executed if the sub-process containing these activities is not completed yet. Consider the following example:
+**请注意：**如果抛出补偿的范围中有一个子流程，而该子流程包含有关联了补偿处理器的活动，则当抛出补偿时，只有该子流程成功完成时，补偿才会传播至该子流程。如果子流程内嵌套的部分活动已经完成，并附加了补偿处理器，但包含这些活动的子流程还没有完成，则这些补偿处理器仍不会执行。参考下面的例子：
 
 image::images/bpmn.throw.compensation.example1.png[align="center"]
 
-In this process we have two concurrent executions: one executing the embedded sub-process and one executing the "charge credit card" activity. Let's assume both executions are started and the first concurrent execution is waiting for a user to complete the "review bookings" task. The second execution performs the "charge credit card" activity and an error is thrown, which causes the "cancel reservations" event to trigger compensation. At this point the parallel sub-process is not yet completed which means that the compensation event is not propagated to the sub-process and consequently the "cancel hotel reservation" compensation handler is not executed. If the user task (and therefore the embedded sub-process) completes before the "cancel reservations" is performed, compensation is propagated to the embedded sub-process.
+在这个流程中，有两个并行的执行：一个执行嵌入子流程，另一个执行“charge credit card（信用卡付款）”活动。假定两个执行都已开始，且第一个执行正等待用户完成“review bookings（检查预定）”任务。第二个执行进行了“charge credit card（信用卡付款）”活动的操作，抛出了错误，导致“cancel reservations（取消预订）”事件触发补偿。这时并行子流程还未完成，意味着补偿不会传播至该子流程，因此不会执行“cancel hotel reservation（取消酒店预订）”补偿处理器。而如果“cancel reservations（取消预订）”运行前，这个用户任务（因此该嵌入式子流程也）已经完成，则补偿会传播至该嵌入式子流程。
 
-*Process variables:* When compensating an embedded sub-process, the execution used for executing the compensation handlers has access to the local process variables of the sub-process in the state they were in when the sub-process completed execution. To achieve this, a snapshot of the process variables associated with the scope execution (execution created for executing the sub-process) is taken. From this, a couple of implications follow:
+**流程变量：**当补偿嵌入式子流程时，用于执行补偿处理器的执行，可以访问子流程的局部流程变量在子流程完成时的值。为此，会对范围执行（为执行子流程所创建的执行）所关联的流程变量进行快照。意味着：
 
-* The compensation handler does not have access to variables added to concurrent executions created inside the sub-process scope.
-* Process variables associated with executions higher up in the hierarchy (for instance, process variables associated with the process instance execution) are not contained in the snapshot: the compensation handler has access to these process variables in the state they are in when compensation is thrown.
-* A variable snapshot is only taken for embedded sub-processes, not for other activities.
+* 补偿执行器无法访问子流程范围内并行执行所添加的变量。
+* 上层执行所关联的流程变量（例如流程实例关联的流程变量）不在该快照中。因为补偿处理器可以直接访问这些流程变量在抛出补偿时的值。
+* 只会为嵌入式子流程进行变量快照。其他活动不会进行变量快照。
 
-*Current limitations:*
+**目前的限制：**
 
-* +waitForCompletion="false"+ is currently unsupported. When compensation is triggered using the intermediate throwing compensation event, the event is only left after compensation completed successfully.
-* Compensation itself is currently performed by concurrent executions. The concurrent executions are started in reverse order to which the compensated activities completed.
-* Compensation is not propagated to sub-process instances spawned by call activities.
+* 目前不支持++waitForCompletion="false"++。当补偿抛出中间事件触发补偿时，只有在补偿成功完成时，才会离开该事件。
+* 补偿由并行执行运行。并行执行会按照补偿活动完成的逆序启动。
+* 补偿不会传播至调用活动（call activity）生成的子流程。
 
 
 [[bpmnIntermediateThrowCompensationEventGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
-An intermediate compensation throw event is visualized as a typical intermediate event (circle with smaller circle inside), with the compensation icon inside. The compensation icon is black (filled), to indicate its _throw_ semantics.
+补偿抛出中间事件用内部有补偿图标的标准中间事件（两层圆圈）表示。补偿图标是黑色的（已填充），代表__抛出__的含义。
 
 image::images/bpmn.intermediate.compensation.throw.event.png[align="center"]
 
@@ -1553,9 +1548,9 @@ image::images/bpmn.intermediate.compensation.throw.event.png[align="center"]
 [[bpmnIntermediateThrowCompensationEventXml]]
 
 
-===== XML representation
+===== XML表示
 
-A compensation intermediate event is defined as an <<bpmnIntermediateThrowEvent,intermediate throwing event>>. The specific type sub-element is in this case a *compensateEventDefinition* element.
+补偿中间事件与<<bpmnIntermediateThrowEvent,抛出中间事件>>一样定义。子元素为**compensateEventDefinition**。
 
 [source,xml,linenums]
 ----
@@ -1564,7 +1559,7 @@ A compensation intermediate event is defined as an <<bpmnIntermediateThrowEvent,
 </intermediateThrowEvent>
 ----
 
-In addition, the optional argument +activityRef+ can be used to trigger compensation of a specific scope or activity:
+另外，++activityRef++可选项用于为指定的范围或活动触发补偿：
 
 [source,xml,linenums]
 ----
@@ -1618,7 +1613,7 @@ Sequence flows need to have a process-unique *id* and references to an existing 
 [[condSeqFlowDescription]]
 
 
-===== Description
+===== 描述
 
 A sequence flow can have a condition defined on it. When a BPMN 2.0 activity is left, the default behavior is to evaluate the conditions on the outgoing sequence flows. When a condition evaluates to _true_, that outgoing sequence flow is selected. When multiple sequence flows are selected that way, multiple _executions_ will be generated and the process will be continued in a parallel way.
 
@@ -1628,7 +1623,7 @@ A sequence flow can have a condition defined on it. When a BPMN 2.0 activity is 
 [[conditionalSequenceFlowGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
 A conditional sequence flow is visualized as a regular sequence flow, with a small diamond at the beginning. The condition expression is shown next to the sequence flow.
 
@@ -1638,7 +1633,7 @@ image::images/bpmn.conditional.sequence.flow.png[align="center"]
 [[conditionalSequenceFlowXml]]
 
 
-===== XML representation
+===== XML表示
 
 A conditional sequence flow is represented in XML as a regular sequence flow, containing a *conditionExpression* sub-element. Note that currently only _tFormalExpressions_ are supported, Omitting the _xsi:type=""_ definition will simply default to the only supported type of expressions.
 
@@ -1685,7 +1680,7 @@ image::images/bpmn.uel-expression.on.seq.flow.png[align="center"]
 [[bpmnDefaultSequenceFlowDescription]]
 
 
-===== Description
+===== 描述
 
 All BPMN 2.0 tasks and gateways can have a *default sequence flow*. This sequence flow is only selected as the outgoing sequence flow for that activity if and only if none of the other sequence flows could be selected. Conditions on a default sequence flow are always ignored.
 
@@ -1693,7 +1688,7 @@ All BPMN 2.0 tasks and gateways can have a *default sequence flow*. This sequenc
 [[bpmnDefaultSequenceFlowGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
 A default sequence flow is visualized as a regular sequence flow, with a 'slash' marker at the beginning.
 
@@ -1703,7 +1698,7 @@ image::images/bpmn.default.sequence.flow.png[align="center"]
 [[bpmnDefaultSequenceFlowXmlRepresentation]]
 
 
-===== XML representation
+===== XML表示
 
 A default sequence flow for a certain activity is defined by the *default attribute* on that activity. The following XML snippet shows an example of an exclusive gateway that has as default sequence flow, _flow 2_. Only when _conditionA_ and _conditionB_ both evaluate to false, will it be chosen as the outgoing sequence flow for the gateway.
 
@@ -1746,7 +1741,7 @@ image::images/bpmn.gateway.png[align="center"]
 [[exclusiveGatewayDescription]]
 
 
-===== Description
+===== 描述
 
 An exclusive gateway (also called the _XOR gateway_ or more technical the __exclusive data-based gateway__), is used to model a *decision* in the process. When the execution arrives at this gateway, all outgoing sequence flows are evaluated in the order in which they are defined. The first sequence flow whose condition evaluates to true (or doesn't have a condition set, conceptually having a _'true'_ defined on the sequence flow) is selected for continuing the process.
 
@@ -1756,7 +1751,7 @@ An exclusive gateway (also called the _XOR gateway_ or more technical the __excl
 [[exclusiveGatewayGraphNotation]]
 
 
-===== Graphical notation
+===== 图示
 
 An exclusive gateway is visualized as a typical gateway (a diamond shape) with an 'X' icon inside, referring to the _XOR_ semantics. Note that a gateway without an icon inside defaults to an exclusive gateway. The BPMN 2.0 specification does not permit use of both the diamond with and without an X in the same process definition.
 
@@ -1766,7 +1761,7 @@ image::images/bpmn.exclusive.gateway.notation.png[align="center"]
 [[exclusiveGatewayXML]]
 
 
-===== XML representation
+===== XML表示
 
 The XML representation of an exclusive gateway is straight-forward: one line defining the gateway and condition expressions defined on the outgoing sequence flows. See the section on <<bpmnConditionalSequenceFlow,conditional sequence flow>> to see which options are available for such expressions.
 
@@ -1802,7 +1797,7 @@ Which is represented in XML as follows:
 [[bpmnParallelGatewayDescription]]
 
 
-===== Description
+===== 描述
 
 Gateways can also be used to model concurrency in a process. The most straightforward gateway to introduce concurrency in a process model, is the *Parallel Gateway*, which allows you to _fork_ into multiple paths of execution or _join_ multiple incoming paths of execution.
 
@@ -1820,7 +1815,7 @@ Note that a parallel gateway can have *both fork and join behavior*, if there ar
 [[bpmnParallelGatewayGraphicalNotation]]
 
 
-===== Graphical Notation
+===== 图示
 
 A parallel gateway is visualized as a gateway (diamond shape) with the 'plus' symbol inside, referring to the 'AND' semantics.
 
@@ -1829,7 +1824,7 @@ image::images/bpmn.parallel.gateway.png[align="center"]
 [[bpmnParallelGatewayXML]]
 
 
-===== XML representation
+===== XML表示
 
 Defining a parallel gateway needs one line of XML:
 
@@ -1902,7 +1897,7 @@ image::images/bpmn.unbalanced.parallel.gateway.png[align="center"]
 [[bpmnInclusiveGatewayDescription]]
 
 
-===== Description
+===== 描述
 
 The *Inclusive Gateway* can be seen as a combination of an exclusive and a parallel gateway. Like an exclusive gateway you can define conditions on outgoing sequence flows and the inclusive gateway will evaluate them. But the main difference is that the inclusive gateway can take more than one sequence flow, like the parallel gateway.
 
@@ -1918,7 +1913,7 @@ Note that an inclusive gateway can have *both fork and join behavior*, if there 
 [[bpmnInclusiveGatewayGraphicalNotation]]
 
 
-===== Graphical Notation
+===== 图示
 
 An inclusive gateway is visualized as a gateway (diamond shape) with the 'circle' symbol inside.
 
@@ -1928,7 +1923,7 @@ image::images/bpmn.inclusive.gateway.png[align="center"]
 [[bpmnInclusiveGatewayXML]]
 
 
-===== XML representation
+===== XML表示
 
 Defining an inclusive gateway needs one line of XML:
 
@@ -2007,7 +2002,7 @@ Note that an inclusive gateway does not need to be 'balanced' (a matching number
 [[eventBasedGatewayDescription]]
 
 
-===== Description
+===== 描述
 
 The Event-based Gateway provides a way to take a decision based on events. Each outgoing sequence flow of the gateway needs to be connected to an intermediate catching event. When process execution reaches an Event-based Gateway, the gateway acts like a wait state: execution is suspended. In addition, for each outgoing sequence flow, an event subscription is created.
 
@@ -2021,7 +2016,7 @@ Note the sequence flows running out of an Event-based Gateway are different from
 [[eventBasedGatewayGraphNotation]]
 
 
-===== Graphical notation
+===== 图示
 
 An Event-based Gateway is visualized as a diamond shape like other BPMN gateways with a special icon inside.
 
@@ -2031,7 +2026,7 @@ image::images/bpmn.event.based.gateway.notation.png[align="center"]
 [[eventBasedGatewayXML]]
 
 
-===== XML representation
+===== XML表示
 
 The XML element used to define an Event-based Gateway is +eventBasedGateway+.
 
@@ -2039,7 +2034,7 @@ The XML element used to define an Event-based Gateway is +eventBasedGateway+.
 [[eventBasedGatewayExample]]
 
 
-===== Example(s)
+===== 示例(s)
 
 The following process is an example of a process with an Event-based Gateway. When the execution arrives at the Event-based Gateway, process execution is suspended. In addition, the process instance subscribes to the alert signal event and creates a timer that fires after 10 minutes. This effectively causes the process engine to wait for ten minutes for a signal event. If the signal occurs within 10 minutes, the timer is cancelled and execution continues after the signal. If the signal is not fired, execution continues after the timer and the signal subscription is canceled.
 
@@ -2105,7 +2100,7 @@ image::images/bpmn.event.based.gateway.example.png[align="center"]
 [[bpmnUserTaskDescription]]
 
 
-===== Description
+===== 描述
 
 A 'user task' is used to model work that needs to be done by a human. When the process execution arrives at such a user task, a new task is created in the task list of any users or groups assigned to that task.
 
@@ -2113,7 +2108,7 @@ A 'user task' is used to model work that needs to be done by a human. When the p
 [[bpmnUserTaskGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
 A user task is visualized as a typical task (rounded rectangle), with a small user icon in the left upper corner.
 
@@ -2123,7 +2118,7 @@ image::images/bpmn.user.task.png[align="center"]
 [[bpmnUserTaskXml]]
 
 
-===== XML representation
+===== XML表示
 
 A user task is defined in XML as follows. The _id_ attribute is required, the _name_ attribute is optional.
 
@@ -2435,7 +2430,7 @@ public class FakeLdapService {
 [[bpmnScriptTaskDescription]]
 
 
-===== Description
+===== 描述
 
 A script task is an automatic activity. When a process execution arrives at the script task, the corresponding script is executed.
 
@@ -2443,7 +2438,7 @@ A script task is an automatic activity. When a process execution arrives at the 
 [[bpmnScriptTaskGraphicalNotation]]
 
 
-===== Graphical Notation
+===== 图示
 
 A script task is visualized as a typical BPMN 2.0 task (rounded rectangle), with a small 'script' icon in the top-left corner of the rectangle.
 
@@ -2453,7 +2448,7 @@ image::images/bpmn.scripttask.png[align="center"]
 [[bpmnScriptTaskXml]]
 
 
-===== XML representation
+===== XML表示
 
 A script task is defined by specifying the *script* and the *scriptFormat*.
 
@@ -2552,7 +2547,7 @@ It is also possible when using _javascript_ as the scripting language to use '_s
 [[bpmnJavaServiceTaskDescription]]
 
 
-===== Description
+===== 描述
 
 
 A Java service task is used to invoke an external Java class.
@@ -2561,7 +2556,7 @@ A Java service task is used to invoke an external Java class.
 [[bpmnJavaServiceTaskGraphicalNotation]]
 
 
-===== Graphical Notation
+===== 图示
 
 A service task is visualized as a rounded rectangle with a small gear icon in the top-left corner.
 
@@ -2571,7 +2566,7 @@ image::images/bpmn.java.service.task.png[align="center"]
 [[bpmnJavaServiceTaskXML]]
 
 
-===== XML representation
+===== XML表示
 
 There are four ways of declaring how to invoke Java logic:
 
@@ -3195,7 +3190,7 @@ public class StartProcessInstanceTestDelegateWithInjection {
 [[bpmnWebserviceTaskDescription]]
 
 
-===== Description
+===== 描述
 
 A Web Service task is used to synchronously invoke an external Web service.
 
@@ -3203,7 +3198,7 @@ A Web Service task is used to synchronously invoke an external Web service.
 [[bpmnWebserviceTaskGraphicalNotation]]
 
 
-===== Graphical Notation
+===== 图示
 
 A Web Service task is visualized in the same way as a Java service task.
 
@@ -3213,7 +3208,7 @@ image::images/bpmn.web.service.task.png[align="center"]
 [[bpmnWebserviceTaskXML]]
 
 
-===== XML representation
+===== XML表示
 
 To use a Web service we need to import its operations and complex types. This can be done automatically by using the import tag pointing to the WSDL of the Web service:
 
@@ -3360,7 +3355,7 @@ Alternatively, we can use the simplistic approach that is much more straightforw
 [[bpmnBusinessRuleTaskDescription]]
 
 
-===== Description
+===== 描述
 
 A Business Rule task is used to synchronously execute one or more rules. Flowable uses Drools Expert, the Drools rule engine to execute business rules. Currently, the .drl files containing the business rules have to be deployed together with the process definition that defines a business rule task to execute those rules. This means that all .drl files that are used in a process have to be packaged in the process BAR file, as for task forms and so on. For more information about creating business rules for Drools Expert, please refer to the Drools documentation at link:$$http://www.jboss.org/drools/documentation$$[JBoss Drools]
 
@@ -3370,7 +3365,7 @@ If you want to plug in your own implementation of the rule task, for example, be
 [[bpmnBusinessRuleTaskGraphicalNotation]]
 
 
-===== Graphical Notation
+===== 图示
 
 A Business Rule task is visualized the with a table icon.
 
@@ -3380,7 +3375,7 @@ image::images/bpmn.business.rule.task.png[align="center"]
 [[bpmnBusinessRuleTaskXML]]
 
 
-===== XML representation
+===== XML表示
 
 To execute one or more business rules that are deployed in the same BAR file as the process definition, we need to define the input and result variables. For the input variable definition, a list of process variables can be defined separated by a comma. The output variable definition can only contain one variable name that will be used to store the output objects of the executed business rules in a process variable. Note that the result variable will contain a List of objects. If no result variable name is specified by default, org.flowable.engine.rules.OUTPUT is used.
 
@@ -3503,7 +3498,7 @@ The Email task is configured by <<serviceTaskFieldInjection,field injection>>. A
 [[bpmnEmailTaskExampleUsage]]
 
 
-===== Example usage
+===== 示例 usage
 
 The following XML snippet shows an example of using the Email Task.
 
@@ -3694,7 +3689,7 @@ Here 'task7' is the 'id' of the service task. To override this behavior, set 're
 [[bpmnHttpTaskExampleUsage]]
 
 
-===== Example usage
+===== 示例 usage
 
 The following XML snippet shows an example of using the Http Task.
 
@@ -3833,7 +3828,7 @@ The Mule task is configured by <<serviceTaskFieldInjection,field injection>>. Al
 [[bpmnMuleTaskExampleUsage]]
 
 
-===== Example usage
+===== 示例 usage
 
 The following XML snippet shows an example of using the Mule Task.
 
@@ -4138,7 +4133,7 @@ from("direct:startWithInitiatorHeader")
 [[bpmnManualTaskDescription]]
 
 
-===== Description
+===== 描述
 
 A _Manual Task_ defines a task that is external to the BPM engine. It's used to model work that is done by somebody, which the engine does not need to know of, nor is there a system or user interface. For the engine, a manual task is handled as a *pass-through activity*, automatically continuing the process from the moment process execution arrives into it.
 
@@ -4146,7 +4141,7 @@ A _Manual Task_ defines a task that is external to the BPM engine. It's used to 
 [[bpmnManualTaskGraphicalNotation]]
 
 
-===== Graphical Notation
+===== 图示
 
 A manual task is visualized as a rounded rectangle, with a little 'hand' icon in the upper left corner
 
@@ -4156,7 +4151,7 @@ image::images/bpmn.manual.task.png[align="center"]
 [[bpmnManualTaskXml]]
 
 
-===== XML representation
+===== XML表示
 
 [source,xml,linenums]
 ----
@@ -4172,19 +4167,19 @@ image::images/bpmn.manual.task.png[align="center"]
 [[bpmnReceiveTaskDescription]]
 
 
-===== Description
+===== 描述
 
 A Receive Task is a simple task that waits for the arrival of a certain message. Currently, we have only implemented Java semantics for this task. When process execution arrives at a Receive Task, the process state is committed to the persistence store. This means that the process will stay in this wait state until a specific message is received by the engine, which triggers the continuation of the process past the Receive Task.
 
 
-===== Graphical notation
+===== 图示
 
 A Receive Task is visualized as a task (rounded rectangle) with a message icon in the top left corner. The message is white (a black message icon would have send semantics)
 
 image::images/bpmn.receive.task.png[align="center"]
 
 
-===== XML representation
+===== XML表示
 
 [source,xml,linenums]
 ----
@@ -4214,7 +4209,7 @@ runtimeService.trigger(execution.getId());
 [[bpmnShellTaskDescription]]
 
 
-===== Description
+===== 描述
 
 The Shell task allows you to run shell scripts and commands. Note that the Shell task is *not* an 'official' task of BPMN 2.0 spec (and doesn't have a dedicated icon as a consequence).
 
@@ -4251,7 +4246,7 @@ The Shell task is configured by <<serviceTaskFieldInjection,field injection>>. A
 [[bpmnShellTaskExampleUsage]]
 
 
-===== Example usage
+===== 示例 usage
 
 The following XML snippet shows an example of using the Shell Task. It runs the shell script "cmd /c echo EchoTest", waits for it to be terminated and puts the result in _resultVar_:
 
@@ -4535,7 +4530,7 @@ It is also possible to use <<serviceTaskFieldInjection,field injection>> to pass
 [[bpmnMultiInstanceDescription]]
 
 
-===== Description
+===== 描述
 
 A _multi-instance activity_ is a way of defining repetition for a certain step in a business process. In programming concepts, a multi-instance is equivalent to the *for each* construct: it allows you to execute a certain step, or even a complete sub-process, for each item in a given collection, *sequentially or in parallel*.
 
@@ -4570,7 +4565,7 @@ Additionally, each of the created executions will have an execution-local variab
 [[bpmnMultiInstanceGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
 If an activity is multi-instance, this is indicated by three short lines at the bottom of the activity. Three _vertical_ lines indicates that the instances will be executed in parallel, while three _horizontal_ lines indicate sequential execution.
 
@@ -4580,7 +4575,7 @@ image::images/bpmn.multi.instance.png[align="center"]
 [[bpmnMultiInstanceXml]]
 
 
-===== XML representation
+===== XML表示
 
 To make an activity multi-instance, the activity XML element must have a +multiInstanceLoopCharacteristics+ child element.
 
@@ -4746,7 +4741,7 @@ Note that the same applies when the _multiInstanceLoopCharacteristics_ are defin
 [[bpmnCompensationHandlerDescription]]
 
 
-===== Description
+===== 描述
 
 If an activity is used for compensating the effects of another activity, it can be declared to be a _compensation handler_. Compensation handlers do not exist in normal flows and are only executed when a compensation event is thrown.
 
@@ -4758,7 +4753,7 @@ A compensation handler must be associated with a compensation boundary event usi
 [[bpmnCompensationHandlerGraphicalNotation]]
 
 
-===== Graphical notation
+===== 图示
 
 If an activity is a compensation handler, the compensation event icon is displayed in the center bottom area. The following excerpt from a process diagram shows a service task with an attached compensation boundary event, which is associated to a compensation handler. Notice the compensation handler icon in the bottom canter area of the "cancel hotel reservation" service task.
 
@@ -4768,7 +4763,7 @@ image::images/bpmn.boundary.compensation.event.png[align="center"]
 [[bpmnCompensationHandlerXml]]
 
 
-===== XML representation
+===== XML表示
 
 In order to declare an activity to be a compensation handler, we need to set the attribute +isForCompensation+ to true:
 
@@ -4791,7 +4786,7 @@ In order to declare an activity to be a compensation handler, we need to set the
 [[bpmnSubProcessDescription]]
 
 
-===== Description
+===== 描述
 
 A _Sub-Process_ is an activity that contains other activities, gateways, events, and so on, which in itself forms a process that is part of the bigger process. A _Sub-Process_ is completely defined inside a parent process (that's why it's often called an _embedded_ Sub-Process).
 
@@ -4809,7 +4804,7 @@ Using a Sub-Process does impose some constraints:
 [[bpmnSubProcessGraphicalNotation]]
 
 
-===== Graphical Notation
+===== 图示
 
 A Sub-Process is visualized as a typical activity (a rounded rectangle). If the Sub-Process is _collapsed_, only the name and a plus-sign are displayed, giving a high-level overview of the process:
 
@@ -4827,7 +4822,7 @@ image::images/bpmn.subprocess.with.boundary.timer.png[align="center"]
 [[bpmnSubProcessXML]]
 
 
-===== XML representation
+===== XML表示
 
 A Sub-Process is defined by the _subProcess_ element. All activities, gateways, events, and son on, that are part of the Sub-Process, need to be enclosed within this element.
 
@@ -4853,7 +4848,7 @@ A Sub-Process is defined by the _subProcess_ element. All activities, gateways, 
 [[bpmnEventSubprocessDescription]]
 
 
-===== Description
+===== 描述
 
 The Event Sub-Process is new in BPMN 2.0. An Event Sub-Process is a sub-process that is triggered by an event. An Event Sub-Process can be added at the process level or at any sub-process level. The event used to trigger an event sub-process is configured using a start event. From this, it follows that 'none start events' are not supported for Event Sub-Processes. An Event Sub-Process might be triggered using events, such as message events, error events, signal events, timer events, or compensation events. The subscription to the start event is created when the scope (process instance or sub-process) hosting the Event Sub-Process is created. The subscription is removed when the scope is destroyed.
 
@@ -4869,7 +4864,7 @@ An Event Sub-Process must not have any incoming or outgoing sequence flows. As a
 [[bpmnEventSubprocessGraphicalNotation]]
 
 
-===== Graphical Notation
+===== 图示
 
 An Event Sub-Process can be visualized as an <<bpmnSubProcessGraphicalNotation,embedded sub-process>> with a dotted outline.
 
@@ -4879,7 +4874,7 @@ image::images/bpmn.subprocess.eventSubprocess.png[align="center"]
 [[bpmnEventSubprocessXMLRepresentation]]
 
 
-===== XML representation
+===== XML表示
 
 An Event Sub-Process is represented using XML in the same way as an embedded sub-process. In addition the attribute +triggeredByEvent+ must have the value ++true++:
 
@@ -4894,7 +4889,7 @@ An Event Sub-Process is represented using XML in the same way as an embedded sub
 [[bpmnEventSubprocessExample]]
 
 
-===== Example
+===== 示例
 
 The following is an example of an Event Sub-Process triggered using an Error Start Event. The Event Sub-Process is located at the "process level", in other words, is scoped to the process instance:
 
@@ -4935,7 +4930,7 @@ These two differences can help you decide whether a boundary event or an embedde
 ==== Transaction sub-process
 
 
-===== Description
+===== 描述
 
 A transaction sub-process is an embedded sub-process that can be used to group multiple activities to a transaction. A transaction is a logical unit of work that allows to group a set of individual activities, such that they either succeed or fail collectively.
 
@@ -4976,7 +4971,7 @@ To sum it up: while ACID transactions offer a generic solution to such problems 
 [[bpmnTransactionSubprocessGraphicalNotation]]
 
 
-===== Graphical Notation
+===== 图示
 
 A transaction sub-process is visualized as a an <<bpmnSubProcessGraphicalNotation,embedded sub-process>> with a double outline.
 
@@ -4986,7 +4981,7 @@ image::images/bpmn.transaction.subprocess.png[align="center"]
 [[bpmnTransactionSubprocessXMLRepresentation]]
 
 
-===== XML representation
+===== XML表示
 
 A transaction sub-process is represented in XML using the +transaction+ tag:
 
@@ -5001,7 +4996,7 @@ A transaction sub-process is represented in XML using the +transaction+ tag:
 [[bpmnTransactionSubprocessExample]]
 
 
-===== Example
+===== 示例
 
 The following is an example of a transaction sub-process:
 
@@ -5016,7 +5011,7 @@ image::images/bpmn.transaction.subprocess.example.2.png[align="center"]
 [[bpmnCallActivityDescription]]
 
 
-===== Description
+===== 描述
 
 BPMN 2.0 makes a distinction between a regular _<<bpmnSubProcess,sub-process>>_, often also called _embedded sub-process_, and the call activity, which looks very similar. From a conceptual point of view, both will call a sub-process when the process execution arrives at the activity.
 
@@ -5028,7 +5023,7 @@ When process execution arrives at the _call activity_, a new execution is create
 [[bpmnCallActivityGraphicalNotation]]
 
 
-===== Graphical Notation
+===== 图示
 
 A call activity is visualized in the same way as a <<bpmnSubProcessGraphicalNotation,sub-process>>, but with a thick border (collapsed and expanded). Depending on the modeling tool, a call activity can also be expanded, but the default visualization is the collapsed sub-process representation.
 
@@ -5038,7 +5033,7 @@ image::images/bpmn.collapsed.call.activity.png[align="center"]
 [[bpmnCallActivityXMLRepresentation]]
 
 
-===== XML representation
+===== XML表示
 
 A call activity is a regular activity, which requires a _calledElement_ that references a process definition by its *key*. In practice, this means that the *ID of the process* is used in the _calledElement_.
 
@@ -5128,7 +5123,7 @@ like in the following example:
 
 By default the `sameDeployment` attribute is set to false.
 
-===== Example
+===== 示例
 
 The following process diagram shows a simple handling of an order. As the checking of the customer's credit could be common to many other processes, the _check credit step_ is modeled here as a call activity.
 
