@@ -1572,22 +1572,21 @@ image::images/bpmn.intermediate.compensation.throw.event.png[align="center"]
 [[bpmnSequenceFlow]]
 
 
-=== Sequence Flow
+=== 顺序流
 
 [[sequenceFlowDescription]]
 
 
-==== Description
+==== 描述
 
-A sequence flow is the connector between two elements of a process. After an element is visited during process execution, all outgoing sequence flows will be followed. This means that the default nature of BPMN 2.0 is to be parallel: two outgoing sequence flows will create two separate, parallel paths of execution.
-
+顺序流（sequence flow）是流程中两个元素间的连接器。在流程执行过程中，一个元素被访问后，会沿着其所有出口顺序流继续执行。这意味着BPMN 2.0的默认是并行执行的：两个出口顺序流就会创建两个独立的、并行的执行路径。
 
 [[sequenceFlowGraphicalNotation]]
 
 
-==== Graphical notation
+==== 图示
 
-A sequence flow is visualized as an arrow going from the source element towards the target element. The arrow always points towards the target.
+顺序流，用从源元素指向目标元素的箭头表示。箭头总是指向目标元素。
 
 image::images/bpmn.sequence.flow.png[align="center"]
 
@@ -1595,9 +1594,10 @@ image::images/bpmn.sequence.flow.png[align="center"]
 [[sequenceFlowXml]]
 
 
-==== XML representation
+==== XML表示
 
 Sequence flows need to have a process-unique *id* and references to an existing *source* and *target* element.
+顺序流需要有流程唯一的**id**，并引用存在的**源**与**目标**元素。
 
 [source,xml,linenums]
 ----
@@ -1608,16 +1608,18 @@ Sequence flows need to have a process-unique *id* and references to an existing 
 [[bpmnConditionalSequenceFlow]]
 
 
-==== Conditional sequence flow
+==== 条件顺序流
+
+Conditional sequence flow
 
 [[condSeqFlowDescription]]
 
 
 ===== 描述
 
-A sequence flow can have a condition defined on it. When a BPMN 2.0 activity is left, the default behavior is to evaluate the conditions on the outgoing sequence flows. When a condition evaluates to _true_, that outgoing sequence flow is selected. When multiple sequence flows are selected that way, multiple _executions_ will be generated and the process will be continued in a parallel way.
+在顺序流上可以定义条件（conditional sequence flow）。当离开BPMN 2.0活动时，默认行为是计算其每个出口顺序流上的条件。当条件计算为__true__时，选择该出口顺序流。如果该方法选择了多条顺序流，则会生成多个__执行__，流程会以并行方式继续。
 
-*Note:* the above holds for BPMN 2.0 activities (and events), but not for gateways. Gateways will handle sequence flows with conditions in specific ways, depending on the gateway type.
+**请注意：**上面的介绍针对BPMN 2.0活动（与事件），但不适用于网关（gateway）。不同类型的网关，会用不同的方式处理带有条件的顺序流。
 
 
 [[conditionalSequenceFlowGraphicalNotation]]
@@ -1625,7 +1627,7 @@ A sequence flow can have a condition defined on it. When a BPMN 2.0 activity is 
 
 ===== 图示
 
-A conditional sequence flow is visualized as a regular sequence flow, with a small diamond at the beginning. The condition expression is shown next to the sequence flow.
+条件顺序流用起点带有小菱形的顺序流表示。在顺序流旁显示条件表达式。
 
 image::images/bpmn.conditional.sequence.flow.png[align="center"]
 
@@ -1635,7 +1637,8 @@ image::images/bpmn.conditional.sequence.flow.png[align="center"]
 
 ===== XML表示
 
-A conditional sequence flow is represented in XML as a regular sequence flow, containing a *conditionExpression* sub-element. Note that currently only _tFormalExpressions_ are supported, Omitting the _xsi:type=""_ definition will simply default to the only supported type of expressions.
+条件顺序流的XML表示格式为含有**conditionExpression（条件表达式）**子元素的普通顺序流。请注意目前只支持__tFormalExpressions__。可以省略__xsi:type=""__定义，默认为唯一支持的表达式类型。
+
 
 [source,xml,linenums]
 ----
@@ -1646,9 +1649,9 @@ A conditional sequence flow is represented in XML as a regular sequence flow, co
 </sequenceFlow>
 ----
 
-Currently, conditionalExpressions can *only be used with UEL*. Detailed information about these can be found in the section on <<apiExpressions,Expressions>>. The expression used should resolve to a boolean value, otherwise an exception is thrown while evaluating the condition.
+目前conditionalExpressions**只能使用UEL**。详细信息可以在<<apiExpressions,表达式>>章节找到。使用的表达式需要能解析为boolean值，否则当计算条件时会抛出异常。
 
-* The example below references the data of a process variable, in the typical JavaBean style through getters.
+* 下面的例子，通过典型的JavaBean的方式，使用getter引用流程变量的数据。
 
 [source,xml,linenums]
 ----
@@ -1657,7 +1660,7 @@ Currently, conditionalExpressions can *only be used with UEL*. Detailed informat
 </conditionExpression>
 ----
 
-* This example invokes a method that resolves to a boolean value.
+* 这个例子调用了一个解析为boolean值的方法。
 
 [source,xml,linenums]
 ----
@@ -1666,8 +1669,7 @@ Currently, conditionalExpressions can *only be used with UEL*. Detailed informat
 </conditionExpression>
 ----
 
-
-The Flowable distribution contains the following example process using value and method expressions (see __org.flowable.examples.bpmn.expression)__:
+Flowable发行版中包含了下列示例流程，用于展示值表达式与方法表达式的使用（参见__org.flowable.examples.bpmn.expression__）。
 
 image::images/bpmn.uel-expression.on.seq.flow.png[align="center"]
 
@@ -1675,7 +1677,7 @@ image::images/bpmn.uel-expression.on.seq.flow.png[align="center"]
 [[bpmnDefaultSequenceFlow]]
 
 
-==== Default sequence flow
+==== 默认顺序流
 
 [[bpmnDefaultSequenceFlowDescription]]
 
@@ -1683,6 +1685,7 @@ image::images/bpmn.uel-expression.on.seq.flow.png[align="center"]
 ===== 描述
 
 All BPMN 2.0 tasks and gateways can have a *default sequence flow*. This sequence flow is only selected as the outgoing sequence flow for that activity if and only if none of the other sequence flows could be selected. Conditions on a default sequence flow are always ignored.
+所有的BPMN 2.0任务与网关都可以使用**默认顺序流（default sequence flow）**。只有当没有其他顺序流可以选择时，才会选择默认顺序流作为活动的出口顺序流。流程会忽略默认顺序流上的条件。
 
 
 [[bpmnDefaultSequenceFlowGraphicalNotation]]
@@ -1690,7 +1693,7 @@ All BPMN 2.0 tasks and gateways can have a *default sequence flow*. This sequenc
 
 ===== 图示
 
-A default sequence flow is visualized as a regular sequence flow, with a 'slash' marker at the beginning.
+默认顺序流用起点带有“斜线”标记的一般顺序流表示。
 
 image::images/bpmn.default.sequence.flow.png[align="center"]
 
@@ -1700,7 +1703,7 @@ image::images/bpmn.default.sequence.flow.png[align="center"]
 
 ===== XML表示
 
-A default sequence flow for a certain activity is defined by the *default attribute* on that activity. The following XML snippet shows an example of an exclusive gateway that has as default sequence flow, _flow 2_. Only when _conditionA_ and _conditionB_ both evaluate to false, will it be chosen as the outgoing sequence flow for the gateway.
+活动的默认顺序流由该活动的**default属性**定义。下面的XML片段展示了一个排他网关（exclusive gateway），带有默认顺序流__flow 2__。只有当__conditionA__与__conditionB__都计算为false时，才会选择默认顺序流作为网关的出口顺序流。
 
 [source,xml,linenums]
 ----
@@ -1718,17 +1721,18 @@ A default sequence flow for a certain activity is defined by the *default attrib
 ----
 
 
-Which corresponds with the following graphical representation:
+对应下面的图示：
 
+image::images/bpmn.default.sequence.flow.example.png[align="center"]
 
 [[bpmnGateways]]
 
 
-=== Gateways
+=== 网关
 
-A gateway is used to control the flow of execution (or as the BPMN 2.0 describes, the _tokens_ of execution). A gateway is capable of _consuming_ or _generating_ tokens.
+网关（gateway）用于控制执行的流向（或者按BPMN 2.0的用词：执行的__“标志（token）”__）。网关可以__消费（consuming）__与__生成（generating）__标志。
 
-A gateway is graphically visualized as a diamond shape, with an icon inside. The icon shows the type of gateway.
+网关用其中带有图标的菱形表示。该图标显示了网关的类型。
 
 image::images/bpmn.gateway.png[align="center"]
 
@@ -1736,16 +1740,16 @@ image::images/bpmn.gateway.png[align="center"]
 [[bpmnExclusiveGateway]]
 
 
-==== Exclusive Gateway
+==== 排他网关
 
 [[exclusiveGatewayDescription]]
 
 
 ===== 描述
 
-An exclusive gateway (also called the _XOR gateway_ or more technical the __exclusive data-based gateway__), is used to model a *decision* in the process. When the execution arrives at this gateway, all outgoing sequence flows are evaluated in the order in which they are defined. The first sequence flow whose condition evaluates to true (or doesn't have a condition set, conceptually having a _'true'_ defined on the sequence flow) is selected for continuing the process.
+排他网关（exclusive gateway）（也叫__异或网关 XOR gateway__，或者更专业的，__基于数据的排他网关 exclusive data-based gateway__），用于对流程中的**决策**建模。当执行到达这个网关时，会按照所有出口顺序流定义的顺序对它们进行计算。选择第一个条件计算为true的顺序流（当没有设置条件时，认为顺序流为__true__）继续流程。
 
-*Note that the semantics of the outgoing sequence flow is different in this case to that of the general case in BPMN 2.0. While, in general, all sequence flows whose condition evaluates to true are selected to continue in a parallel way, only one sequence flow is selected when using the exclusive gateway. If multiple sequence flows have a condition that evaluates to true, the first one defined in the XML (and only that one!) is selected for continuing the process. If no sequence flow can be selected, an exception will be thrown.*
+**请注意这里出口顺序流的含义与BPMN 2.0中的一般情况不一样。一般情况下，会选择所有条件计算为true的顺序流，并行执行。而使用排他网关时，只会选择一条顺序流。当多条顺序流的条件都计算为true时，会且仅会选择在XML中最先定义的顺序流继续流程。如果没有可选的顺序流，会抛出异常。**
 
 
 [[exclusiveGatewayGraphNotation]]
@@ -1753,7 +1757,7 @@ An exclusive gateway (also called the _XOR gateway_ or more technical the __excl
 
 ===== 图示
 
-An exclusive gateway is visualized as a typical gateway (a diamond shape) with an 'X' icon inside, referring to the _XOR_ semantics. Note that a gateway without an icon inside defaults to an exclusive gateway. The BPMN 2.0 specification does not permit use of both the diamond with and without an X in the same process definition.
+排他网关用内部带有'X'图标的标准网关（菱形）表示，'X'图标代表__异或__的含义。请注意内部没有图标的网关默认为排他网关。BPMN 2.0规范不允许在同一个流程中混合使用有及没有X的菱形标志。
 
 image::images/bpmn.exclusive.gateway.notation.png[align="center"]
 
@@ -1763,13 +1767,13 @@ image::images/bpmn.exclusive.gateway.notation.png[align="center"]
 
 ===== XML表示
 
-The XML representation of an exclusive gateway is straight-forward: one line defining the gateway and condition expressions defined on the outgoing sequence flows. See the section on <<bpmnConditionalSequenceFlow,conditional sequence flow>> to see which options are available for such expressions.
+排他网关的XML表示格式很简洁：一行定义网关的XML。条件表达式定义在其出口顺序流上。查看<<bpmnConditionalSequenceFlow,条件顺序流>>章节了解这种表达式的可用选项。
 
-Take, for example, the following model:
+以下面的模型为例：
 
 image::images/bpmn.exclusive.gateway.png[align="center"]
 
-Which is represented in XML as follows:
+其XML表示如下：
 
 [source,xml,linenums]
 ----
@@ -1792,24 +1796,23 @@ Which is represented in XML as follows:
 [[bpmnParallelGateway]]
 
 
-==== Parallel Gateway
+==== 并行网关
 
 [[bpmnParallelGatewayDescription]]
 
 
 ===== 描述
 
-Gateways can also be used to model concurrency in a process. The most straightforward gateway to introduce concurrency in a process model, is the *Parallel Gateway*, which allows you to _fork_ into multiple paths of execution or _join_ multiple incoming paths of execution.
+网关也可以建模流程中的并行执行。在流程模型中引入并行的最简单的网关，就是**并行网关（parallel gateway）**。它可以将执行__分支（fork）__为多条路径，也可以__合并（join）__多条入口路径的执行。
 
-The functionality of the parallel gateway is based on the incoming and outgoing sequence flow:
+并行网关的功能取决于其入口与出口顺序流：
 
-* *fork:* all outgoing sequence flows are followed in parallel, creating one concurrent execution for each sequence flow.
-* *join:* all concurrent executions arriving at the parallel gateway wait in the gateway until an execution has arrived for each of the incoming sequence flows. Then the process continues past the joining gateway.
+* **分支：**所有的出口顺序流都并行执行，为每一条顺序流创建一个并行执行。
+* **合并：**所有到达并行网关的并行执行都会在网关处等待，直到每一条入口顺序流都到达了有个执行。然后流程经过该合并网关继续。
 
+请注意，如果并行网关同时具有多条入口与出口顺序流，可以**同时具有分支与合并的行为**。在这种情况下，网关首先合并所有入口顺序流，然后分裂为多条并行执行路径。
 
-Note that a parallel gateway can have *both fork and join behavior*, if there are multiple incoming and outgoing sequence flows for the same parallel gateway. In this case, the gateway will first join all incoming sequence flows before splitting into multiple concurrent paths of executions.
-
-*An important difference with other gateway types is that the parallel gateway does not evaluate conditions. If conditions are defined on the sequence flows connected with the parallel gateway, they are simply ignored.*
+**与其他网关类型有一个重要区别：并行网关不计算条件。如果连接到并行网关的顺序流上定义了条件，会直接忽略该条件。**
 
 
 [[bpmnParallelGatewayGraphicalNotation]]
@@ -1817,7 +1820,7 @@ Note that a parallel gateway can have *both fork and join behavior*, if there ar
 
 ===== 图示
 
-A parallel gateway is visualized as a gateway (diamond shape) with the 'plus' symbol inside, referring to the 'AND' semantics.
+并行网关，用内部带有'加号'图标的网关（菱形）表示，代表__与（AND）__的含义。
 
 image::images/bpmn.parallel.gateway.png[align="center"]
 
@@ -1826,7 +1829,7 @@ image::images/bpmn.parallel.gateway.png[align="center"]
 
 ===== XML表示
 
-Defining a parallel gateway needs one line of XML:
+定义并行网关只需要一行XML：
 
 [source,xml,linenums]
 ----
@@ -1834,9 +1837,9 @@ Defining a parallel gateway needs one line of XML:
 ----
 
 
-The actual behavior (fork, join or both), is defined by the sequence flow connected to the parallel gateway.
+实际行为（分支，合并或两者皆有），由连接到该并行网关的顺序流定义。
 
-For example, the model above comes down to the following XML:
+例如，上面的模型表示为下面的XML：
 
 [source,xml,linenums]
 ----
@@ -1863,7 +1866,7 @@ For example, the model above comes down to the following XML:
 ----
 
 
-In the example above, after the process is started, two tasks will be created:
+在上面的例子中，当流程启动后会创建两个任务：
 
 [source,java,linenums]
 ----
@@ -1882,40 +1885,43 @@ Task task2 = tasks.get(1);
 assertEquals("Ship Order", task2.getName());
 ----
 
+当这两个任务完成后，第二个并行网关会合并这两个执行。由于它只有一条出口顺序流，因此就不会再创建并行执行路径，而只是激活__Archive Order(存档订单)__任务。
 
-When these two tasks are completed, the second parallel gateway will join the two executions and since there is only one outgoing sequence flow, no concurrent paths of execution will be created, and only the _Archive Order_ task will be active.
-
-Note that a parallel gateway does not need to be 'balanced' (a matching number of incoming/outgoing sequence flow for corresponding parallel gateways). A parallel gateway will simply wait for all incoming sequence flows and create a concurrent path of execution for each outgoing sequence flow, not influenced by other constructs in the process model. So, the following process is legal in BPMN 2.0:
+请注意并行网关不需要“平衡”（也就是说，前后对应的两个并行网关，其入口/出口顺序流的数量不需要一致）。每个并行网关都会简单地等待所有入口顺序流，并为每一条出口顺序流创建并行执行，而不受流程模型中的其他结构影响。因此，下面的流程在BPMN 2.0中是合法的：
 
 image::images/bpmn.unbalanced.parallel.gateway.png[align="center"]
 
 [[bpmnInclusiveGateway]]
 
 
-==== Inclusive Gateway
+==== 包容网关
 
 [[bpmnInclusiveGatewayDescription]]
 
 
 ===== 描述
 
-The *Inclusive Gateway* can be seen as a combination of an exclusive and a parallel gateway. Like an exclusive gateway you can define conditions on outgoing sequence flows and the inclusive gateway will evaluate them. But the main difference is that the inclusive gateway can take more than one sequence flow, like the parallel gateway.
+可以把**包容网关（inclusive gateway）**看做排他网关与并行网关的组合。与排他网关一样，可以在包容网关的出口顺序流上定义条件，包容网关会计算条件。然而主要的区别是，包容网关与并行网关一样，可以同时选择多于一条出口顺序流。
 
-The functionality of the inclusive gateway is based on the incoming and outgoing sequence flows:
+包容网关的功能取决于其入口与出口顺序流：
 
-* *fork:* all outgoing sequence flow conditions are evaluated and for the sequence flow conditions that evaluate to true the flows are followed in parallel, creating one concurrent execution for each sequence flow.
-* *join:* all concurrent executions arriving at the inclusive gateway wait at the gateway until an execution has arrived for each of the incoming sequence flows that have a process token. This is an important difference with the parallel gateway. So, in other words, the inclusive gateway will only wait for the incoming sequence flows that will be executed. After the join, the process continues past the joining inclusive gateway.
+* **分支：**流程会计算所有出口顺序流的条件。对于每一条计算为true的顺序流，流程都会创建一个并行执行。
+* **合并：**所有到达包容网关的并行执行，都会在网关处等待。直到每一条具有流程标志（process token）的入口顺序流，都有一个执行到达。这是与并行网关的重要区别。换句话说，包容网关只会等待可以被执行的入口顺序流。在合并后，流程穿过合并并行网关继续。
 
+请注意，如果包容网关同时具有多条入口与出口顺序流，可以**同时具有分支与合并的行为**。在这种情况下，网关首先合并所有具有流程标志的入口顺序流，然后为每一个条件计算为true的出口顺序流分裂出并行执行路径。
 
-Note that an inclusive gateway can have *both fork and join behavior*, if there are multiple incoming and outgoing sequence flows for the same inclusive gateway. In this case, the gateway will first join all incoming sequence flows that have a process token, before splitting into multiple concurrent paths of executions for the outgoing sequence flows that have a condition that evaluates to true.
-
+[quote, 译者附（翻译自alfresco文档 http://docs.alfresco.com/process-services1.6/topics/inclusive_gateway.html）]
+____
+包容网关的汇聚行为比并行网关更复杂。所有到达包容网关的并行执行，都会在网关等待，直到所有“可以到达”包容网关的执行都“到达”包容网关。
+判断方法为：计算当前流程实例中的所有执行，检查从其位置是否有一条到达包容网关的路径（忽略顺序流上的任何条件）。如果存在这样的执行（可到达但尚未到达），则不会触发包容网关的汇聚行为。
+____
 
 [[bpmnInclusiveGatewayGraphicalNotation]]
 
 
 ===== 图示
 
-An inclusive gateway is visualized as a gateway (diamond shape) with the 'circle' symbol inside.
+包容网关，用内部带有'圆圈'图标的网关（菱形）表示。
 
 image::images/bpmn.inclusive.gateway.png[align="center"]
 
@@ -1925,17 +1931,16 @@ image::images/bpmn.inclusive.gateway.png[align="center"]
 
 ===== XML表示
 
-Defining an inclusive gateway needs one line of XML:
+定义包容网关需要一行XML：
 
 [source,xml,linenums]
 ----
 <inclusiveGateway id="myInclusiveGateway" />
 ----
 
+实际行为（分支，合并或两者皆有），由连接到该包容网关的顺序流定义。
 
-The actual behavior (fork, join or both), is defined by the sequence flows connected to the inclusive gateway.
-
-For example, the model above comes down to the following XML:
+例如，上面的模型表现为下面的XML：
 
 [source,xml,linenums]
 ----
@@ -1965,8 +1970,7 @@ For example, the model above comes down to the following XML:
 <endEvent id="theEnd" />
 ----
 
-
-In the example above, after the process is started, two tasks will be created if the process variables paymentReceived == false and shipOrder == true. If only one of these process variables equals true, only one task will be created. If no condition evaluates to true an exception is thrown. This can be prevented by specifying a default outgoing sequence flow. In the following example one task will be created, the ship order task:
+在上面的例子中，当流程启动后，如果流程变量paymentReceived == false且shipOrder == true，会创建两个任务。如果只有一个流程变量等于true，则只会创建一个任务。如果没有条件计算为true，会抛出异常（可通过指定默出口顺序流避免）。在下面的例子中，只会创建ship order（传递订单）一个任务：
 
 [source,java,linenums]
 ----
@@ -1988,29 +1992,31 @@ Task task = tasks.get(0);
 assertEquals("Ship Order", task.getName());
 ----
 
-
-When this task is completed, the second inclusive gateway will join the two executions and as there is only one outgoing sequence flow, no concurrent paths of execution will be created, and only the _Archive Order_ task will be active.
+当这个任务完成后，第二个包容网关会合并这两个执行。并且由于它只有一条出口顺序流，所有不会再创建并行执行路径，而只会激活__Archive Order(存档订单)__任务。
 
 Note that an inclusive gateway does not need to be 'balanced' (a matching number of incoming/outgoing sequence flow for corresponding inclusive gateways). An inclusive gateway will simply wait for all incoming sequence flow and create a concurrent path of execution for each outgoing sequence flow, not influenced by other constructs in the process model.
 
+请注意包容网关不需要“平衡”（也就是说，对应的包容网关，其入口/出口顺序流的数量不需要匹配）。包容网关会简单地等待所有入口顺序流，并为每一条出口顺序流创建并行执行，不受流程模型中的其他结构影响。
+
+请注意包容网关不需要“平衡”（也就是说，前后对应的两个包容网关，其入口/出口顺序流的数量不需要一致）。每个包容网关都会简单地等待所有入口顺序流，并为每一条出口顺序流创建并行执行，不受流程模型中的其他结构影响。
 
 [[bpmnEventbasedGateway]]
 
 
-==== Event-based Gateway
+==== 基于事件的网关
 
 [[eventBasedGatewayDescription]]
 
 
 ===== 描述
 
-The Event-based Gateway provides a way to take a decision based on events. Each outgoing sequence flow of the gateway needs to be connected to an intermediate catching event. When process execution reaches an Event-based Gateway, the gateway acts like a wait state: execution is suspended. In addition, for each outgoing sequence flow, an event subscription is created.
+基于事件的网关（event-based gateway）提供了根据事件做选择的方式。网关的每一条出口顺序流都需要连接至一个捕获中间事件。当流程执行到达基于事件的网关时，与等待状态类似，网关会暂停执行，并且为每一条出口顺序流创建一个事件订阅。
 
-Note the sequence flows running out of an Event-based Gateway are different from ordinary sequence flows. These sequence flows are never actually "executed". On the contrary, they allow the process engine to determine which events an execution arriving at an Event-based Gateway needs to subscribe to. The following restrictions apply:
+请注意：基于事件的网关的出口顺序流与一般的顺序流不同。这些顺序流从不实际**执行**。相反，它们用于告知流程引擎：当执行到达一个基于事件的网关时，需要订阅什么事件。有以下限制：
 
-* An Event-based Gateway must have two or more outgoing sequence flows.
-* An Event-based Gateway must only be connected to elements of type +intermediateCatchEvent+ (Receive Tasks after an Event-based Gateway are not supported by Flowable).
-* An +intermediateCatchEvent+ connected to an Event-based Gateway must have a single incoming sequence flow.
+* 一个基于事件的网关，必须有两条或更多的出口顺序流。
+* 基于事件的网关，只能连接至++intermediateCatchEvent（捕获中间事件）++类型的元素（Flowable不支持在基于事件的网关之后连接“接收任务 Receive Task”）。
+* 连接至基于事件的网关的++intermediateCatchEvent++，必须只有一个入口顺序流。
 
 
 [[eventBasedGatewayGraphNotation]]
@@ -2018,7 +2024,7 @@ Note the sequence flows running out of an Event-based Gateway are different from
 
 ===== 图示
 
-An Event-based Gateway is visualized as a diamond shape like other BPMN gateways with a special icon inside.
+基于事件的网关，用内部带有特殊图标的网关（菱形）表示。
 
 image::images/bpmn.event.based.gateway.notation.png[align="center"]
 
@@ -2028,15 +2034,17 @@ image::images/bpmn.event.based.gateway.notation.png[align="center"]
 
 ===== XML表示
 
-The XML element used to define an Event-based Gateway is +eventBasedGateway+.
+用于定义基于事件的网关的XML元素为++eventBasedGateway++。
 
 
 [[eventBasedGatewayExample]]
 
 
-===== 示例(s)
+===== 示例
 
 The following process is an example of a process with an Event-based Gateway. When the execution arrives at the Event-based Gateway, process execution is suspended. In addition, the process instance subscribes to the alert signal event and creates a timer that fires after 10 minutes. This effectively causes the process engine to wait for ten minutes for a signal event. If the signal occurs within 10 minutes, the timer is cancelled and execution continues after the signal. If the signal is not fired, execution continues after the timer and the signal subscription is canceled.
+
+下面是一个带有基于事件的网关的示例流程。当执行到达基于事件的网关时，流程执行暂停。流程实例订阅alert信号事件，并创建一个10分钟后触发的定时器。流程引擎会等待10分钟，并同时等待信号事件。如果信号在10分钟内触发，则会取消定时器，流程沿着信号继续执行，激活Handle alert用户任务。如果10分钟内没有触发信号，则会继续执行，并取消信号订阅。
 
 image::images/bpmn.event.based.gateway.example.png[align="center"]
 
