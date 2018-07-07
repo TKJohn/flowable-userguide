@@ -2098,19 +2098,19 @@ image::images/bpmn.event.based.gateway.example.png[align="center"]
 [[bpmnTask]]
 
 
-=== Tasks
+=== 任务
 
 [[bpmnUserTask]]
 
 
-==== User Task
+==== 用户任务
 
 [[bpmnUserTaskDescription]]
 
 
 ===== 描述
 
-A 'user task' is used to model work that needs to be done by a human. When the process execution arrives at such a user task, a new task is created in the task list of any users or groups assigned to that task.
+“用户任务（user task）”用于对需要人工执行的任务进行建模。当流程执行到达用户任务时，会为指派至该任务的用户或组的任务列表创建一个新任务。
 
 
 [[bpmnUserTaskGraphicalNotation]]
@@ -2118,7 +2118,7 @@ A 'user task' is used to model work that needs to be done by a human. When the p
 
 ===== 图示
 
-A user task is visualized as a typical task (rounded rectangle), with a small user icon in the left upper corner.
+用户任务用左上角有一个小用户图标的标准任务（圆角矩形）表示。
 
 image::images/bpmn.user.task.png[align="center"]
 
@@ -2128,14 +2128,14 @@ image::images/bpmn.user.task.png[align="center"]
 
 ===== XML表示
 
-A user task is defined in XML as follows. The _id_ attribute is required, the _name_ attribute is optional.
+用户任务在XML中如下定义。其中__id__是必须属性，__name__是可选属性。
 
 [source,xml,linenums]
 ----
 <userTask id="theTask" name="Important task" />
 ----
 
-A user task can also have a description. In fact, any BPMN 2.0 element can have a description. A description is defined by adding the *documentation* element.
+也可以为用户任务添加描述（description）。事实上任何BPMN 2.0元素都可以有描述。描述由**documentation**元素定义。
 
 [source,xml,linenums]
 ----
@@ -2146,8 +2146,7 @@ A user task can also have a description. In fact, any BPMN 2.0 element can have 
   </documentation>
 ----
 
-
-The description text can be retrieved from the task in the standard Java way:
+可以使用标准Java方式获取描述文本：
 
 [source,java,linenums]
 ----
@@ -2158,26 +2157,26 @@ task.getDescription()
 [[bpmnUserTaskDueDate]]
 
 
-===== Due Date
+===== 到期日期
 
-Each task has a field indicating the due date of that task. The Query API can be used to query for tasks that are due on, before or after a given date.
+每个任务都可以使用一个字段标志该任务的到期日期（due date）。可以使用查询API，查询在给定日期前或后到期的任务。
 
-There is an activity extension that allows you to specify an expression in your task-definition to set the initial due date of a task when it is created. The expression *should always resolve to a +java.util.Date+, +java.util.String (ISO8601 formatted)+, ISO8601 time-duration (for example, PT50M) or +null+*. For example, you could use a date that was entered in a previous form in the process or calculated in a previous Service Task. If a time-duration is used, the due-date is calculated based on the current time and incremented by the given period. For example, when "PT30M" is used as dueDate, the task is due in thirty minutes from now.
+可以在任务定义中使用扩展指定表达式，以在任务创建时设定到期日期。该表达式**必须解析为++java.util.Date++，++java.util.String (ISO8601格式)++，ISO8601时间长度（例如PT50M），或者++null++**。例如，可以使用在流程里前一个表单中输入的日期，或者由前一个服务任务计算出的日期。如果使用的是时间长度，则到期日期基于当前时间加上给定长度计算。例如当dueDate使用“PT30M”时，任务在从现在起30分钟后到期。
 
 [source,xml,linenums]
 ----
 <userTask id="theTask" name="Important task" flowable:dueDate="${dateVariable}"/>
 ----
 
-The due date of a task can also be altered using the +TaskService+ or in ++TaskListener++s using the passed +DelegateTask+.
+任务的到期日期也可以使用++TaskService++，或者在++TaskListener++中使用传递的++DelegateTask++修改。
 
 
 [[bpmnUserTaskAssignment]]
 
 
-===== User assignment
+===== 用户指派
 
-A user task can be directly assigned to a user. This is done by defining a *humanPerformer* sub element. Such a _humanPerformer_ definition needs a *resourceAssignmentExpression* that actually defines the user. Currently, only *formalExpressions* are supported.
+用户任务可以直接指派（assign）给用户。可以定义**humanPerformer**子元素来实现。__humanPerformer__需要**resourceAssignmentExpression**来实际定义用户。目前，只支持**formalExpressions**。
 
 [source,xml,linenums]
 ----
@@ -2194,16 +2193,16 @@ A user task can be directly assigned to a user. This is done by defining a *huma
   </userTask>
 ----
 
-*Only one* user can be assigned as the human performer for the task. In Flowable terminology, this user is called the *assignee*. Tasks that have an assignee are not visible in the task lists of other people and can be found in the *personal task list* of the assignee instead.
+**只能指定一个**用户作为任务的__humanPerformer__。在Flowable术语中，这个用户被称作**办理人（assignee）**。拥有办理人的任务，在其他人的任务列表中不可见，而只能在该办理人的**个人任务列表**中看到。
 
-Tasks directly assigned to users can be retrieved through the TaskService as follows:
+可以通过TaskService获取特定用户办理的任务：
 
 [source,java,linenums]
 ----
 List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 ----
 
-Tasks can also be put in the *candidate task list* of people. In this case, the *potentialOwner* construct must be used. The usage is similar to the _humanPerformer_ construct. Do note that it is necessary to specify if it is a user or a group defined for each element in the formal expression (the engine cannot guess this).
+任务也可以放在用户的**候选任务列表**中。在这个情况下，需要使用**potentialOwner（潜在用户）**结构。用法与__humanPerformer__结构类似。请注意需要指定表达式中的每一个元素为用户还是组（引擎无法自行判断）。
 
 [source,xml,linenums]
 ----
@@ -2220,17 +2219,16 @@ Tasks can also be put in the *candidate task list* of people. In this case, the 
   </userTask>
 ----
 
-Tasks defined with the _potential owner_ construct can be retrieved as follows (or a similar _TaskQuery_ usage as for the tasks with an assignee):
+可用如下方法获取定义了__potentialOwner__结构的任务：
 
 [source,java,linenums]
 ----
  List<Task> tasks = taskService.createTaskQuery().taskCandidateUser("kermit");
 ----
 
+将获取所有kermit作为**候选用户**的任务，也就是说，表达式含有__user(kermit)__的任务。同时也将获取所有**指派给kermit为其成员的组**的任务（例如，kermit时__management__组的成员，且任务指派给__management__组）。组在运行时解析，并可通过<<apiEngine,身份服务>>管理。
 
-This will retrieve all tasks where kermit is a *candidate user*, in other words, the formal expression contains _user(kermit)_. This will also retrieve all tasks that are *assigned to a group of which kermit is a member* (for example, _group(management)_, if kermit is a member of that group and the Flowable identity component is used). The user's groups are resolved at runtime and these can be managed through the <<apiEngine,IdentityService>>.
-
-If no specifics are given as to whether the given text string is a user or group, the engine defaults to group. The following would be the same as when _group(accountancy) was declared_.
+如果并未指定给定字符串是用户还是组，引擎默认其为组。下列代码与__声明group(accountancy)__效果一样。
 
 [source,xml,linenums]
 ----
@@ -2241,55 +2239,57 @@ If no specifics are given as to whether the given text string is a user or group
 [[bpmnUserTaskUserAssignmentExtension]]
 
 
-===== Flowable extensions for task assignment
+===== 用于任务指派的Flowable扩展
 
-It is clear that user and group assignments are quite cumbersome for use cases where the assignment is not complex. To avoid these complexities, <<bpmnCustomExtensions,custom extensions>> on the user task are possible.
+很明显，当指派关系不复杂时，这种用户与组的指派方式十分笨重。为避免这种复杂性，可以在用户任务上使用<<bpmnCustomExtensions,自定义扩展>>。
 
-* *assignee attribute*: this custom extension allows direct assignment of a given user to a task.
+* **assignee（办理人）属性**：这个自定义扩展用于直接将用户指派至用户任务。
 
 [source,xml,linenums]
 ----
 <userTask id="theTask" name="my task" flowable:assignee="kermit" />
 ----
 
-This is exactly the same as using a *humanPerformer* construct as defined <<bpmnUserTaskAssignment,above>>.
+与<<bpmnUserTaskAssignment,上面>>定义的**humanPerformer**结构效果完全相同。
 
-* *candidateUsers attribute*: this custom extension makes a given user a candidate for a task.
+* **candidateUsers（候选用户）属性**：这个自定义扩展用于为任务指定候选用户。
 
 [source,xml,linenums]
 ----
 <userTask id="theTask" name="my task" flowable:candidateUsers="kermit, gonzo" />
 ----
 
-This is exactly the same as using the *potentialOwner* construct as defined <<bpmnUserTaskAssignment,above>>. Note that it is not necessary to use the _user(kermit)_ declaration, as with the case of the _potential owner_ construct, since the attribute can only be used for users.
 
-* *candidateGroups attribute*: this custom extension makes a given group a candidate for a task.
+与使用<<bpmnUserTaskAssignment,上面>>定义的**potentialOwner**结构效果完全相同。请注意不需要像在__potentialOwner__中一样，使用__user(kermit)__的声明，因为这个属性只能用于用户。
+
+
+* **candidateGroups（候选组）attribute**：这个自定义扩展用于为任务指定候选组。
 
 [source,xml,linenums]
 ----
 <userTask id="theTask" name="my task" flowable:candidateGroups="management, accountancy" />
 ----
 
-This is exactly the same as using a *potentialOwner* construct as defined <<bpmnUserTaskAssignment,above>>. Note that it is not necessary to use the _group(management)_ declaration, as with the case of the _potential owner_ construct, since the attribute can only be used for groups.
+与使用<<bpmnUserTaskAssignment,上面>>定义的**potentialOwner**结构效果完全相同。请注意不需要像在__potentialOwner__中一样，使用__group(management)__的声明，因为这个属性只能用于组。
 
-* _candidateUsers_ and _candidateGroups_ can both be defined on the same user task.
+* 可以定义在一个用户任务上同时定义__candidateUsers__与__candidateGroups__。
 
-Note: Although Flowable provides an identity management component, which is exposed through the <<apiEngine,IdentityService>>, no check is made whether a provided user is known by the identity component. This is to allow Flowable to integrate with existing identity management solutions when it is embedded in an application.
-
+请注意：尽管Flowable提供了<<apiEngine,IdentityService>>身份管理组件，但并不会检查给定的用户是否实际存在。这是为了便于将Flowable嵌入应用时，与已有的身份管理解决方案进行集成。
 
 [[bpmnUserTaskUserCustomIdentityLinkAssignmentExtension]]
 
 
-===== Custom identity link types
+===== 自定义身份关联类型
 
-The BPMN standard supports a single assigned user or *humanPerformer* or a set of users that form a potential pool of *potentialOwners*, as defined in <<bpmnUserTaskAssignment,User assignment>>. In addition, Flowable defines <<bpmnUserTaskUserAssignmentExtension,extension attribute elements>> for the User Task that can represent the task *assignee* or *candidate owner*.
+在<<bpmnUserTaskAssignment,用户指派>>中已经介绍过，BPMN标准支持单个指派用户即**hunamPerformer**，或者由一组用户构成**potentialOwners**潜在用户池。另外，Flowable为用户任务定义了<<bpmnUserTaskUserAssignmentExtension,扩展属性元素>>，用于代表任务的**办理人**或者**候选用户**。
 
-The supported Flowable identity link types are:
+Flowable支持的身份关联（identity link）类型有：
 
 [source,java,linenums]
 ----
 public class IdentityLinkType {
-  /* Flowable native roles */
+  /* Flowable原生角色 
+   * Flowable native roles */
   public static final String ASSIGNEE = "assignee";
   public static final String CANDIDATE = "candidate";
   public static final String OWNER = "owner";
@@ -2298,9 +2298,10 @@ public class IdentityLinkType {
 }
 ----
 
-The BPMN standard and Flowable example authorization identities are *user* and *group*. As mentioned in the previous section, the Flowable identity management implementation is not intended for production use, but should be extended depending on the supported authorization scheme.
 
-If additional link types are required, custom resources can be defined as extension elements with the following syntax:
+BPMN标准及Flowable示例中，身份认证是**用户**与**组**。在前一章节提到过，Flowable的身份管理实现并不适用于生产环境，而需要在支持的认证概要下自行扩展。
+
+如果需要添加额外的关联类型，可按照下列语法，使用自定义资源作为扩展元素：
 
 [source,xml,linenums]
 ----
@@ -2315,7 +2316,7 @@ If additional link types are required, custom resources can be defined as extens
 </userTask>
 ----
 
-The custom link expressions are added to the _TaskDefinition_ class:
+自定义关联表达式添加至__TaskDefinition__类：
 
 [source,java,linenums]
 ----
@@ -2346,9 +2347,9 @@ public void addCustomGroupIdentityLinkExpression(
 }
 ----
 
-These are populated at runtime by the _UserTaskActivityBehavior handleAssignments_ method.
+这些方法将在运行时，由__UserTaskActivityBehavior handleAssignments__方法调用。
 
-Finally, the _IdentityLinkType_ class must be extended to support the custom identity link types:
+最后，需要扩展__IdentityLinkType__类，以支持自定义身份关联类型：
 
 [source,java,linenums]
 ----
@@ -2366,9 +2367,9 @@ public class IdentityLinkType extends org.flowable.engine.task.IdentityLinkType 
 [[bpmnUserTaskUserCustomAssignmentTaskListeners]]
 
 
-===== Custom Assignment via task listeners
+===== 通过任务监听器自定义指派
 
-If the previous approaches are not sufficient, it is possible to delegate to custom assignment logic using a <<taskListeners,task listener>> on the create event:
+如果上面的方式仍不能满足要求，可以在创建事件（create event）上使用<<taskListeners,任务监听器>>，调用自定义指派逻辑：
 
 [source,xml,linenums]
 ----
@@ -2379,15 +2380,17 @@ If the previous approaches are not sufficient, it is possible to delegate to cus
 </userTask>
 ----
 
-The +DelegateTask+ that is passed to the +TaskListener+ implementation can set the assignee and candidate-users/groups:
+传递至++TaskListener++的++DelegateTask++，可用于设置办理人与候选用户/组：
 
 [source,java,linenums]
 ----
 public class MyAssignmentHandler implements TaskListener {
 
   public void notify(DelegateTask delegateTask) {
+    // 在这里执行自定义身份查询
     // Execute custom identity lookups here
 
+    // 然后调用如下命令
     // and then for example call following methods:
     delegateTask.setAssignee("kermit");
     delegateTask.addCandidateUser("fozzie");
@@ -2398,21 +2401,21 @@ public class MyAssignmentHandler implements TaskListener {
 }
 ----
 
-When using Spring, it is possible to use the custom assignment attributes as described in the section above, and delegate to a Spring bean using a <<taskListeners,task listener>> with an <<springExpressions,expression>> that listens to task _create_ events. In the following example, the assignee will be set by calling the +findManagerOfEmployee+ on the +ldapService+ Spring bean. The _emp_ parameter that is passed, is a process variable>.
+当使用Spring时，可以按上面章节的介绍使用自定义指派属性，并交由使用<<taskListeners,任务监听器>>、带有<<springExpressions,表达式>>的Spring bean，监听任务__创建__事件。在下面的例子中，通过调用++ldapService++ Spring bean的++findManagerOfEmployee++方法设置办理人。传递的__emp__参数是一个流程变量。
 
 [source,xml,linenums]
 ----
 <userTask id="task" name="My Task" flowable:assignee="${ldapService.findManagerForEmployee(emp)}"/>
 ----
 
-This also works similarly for candidate users and groups:
+也可以用于候选用户与组：
 
 [source,xml,linenums]
 ----
 <userTask id="task" name="My Task" flowable:candidateUsers="${ldapService.findAllSales()}"/>
 ----
 
-Note that this will only work if the return type of the invoked method is +String+ or +Collection<String>+ (for candidate users and groups):
+请注意调用方法的返回类型必须是++String++或++Collection<String>++（候选用户或组）：
 
 [source,java,linenums]
 ----
