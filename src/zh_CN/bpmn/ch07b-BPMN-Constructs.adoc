@@ -1684,7 +1684,6 @@ image::images/bpmn.uel-expression.on.seq.flow.png[align="center"]
 
 ===== 描述
 
-All BPMN 2.0 tasks and gateways can have a *default sequence flow*. This sequence flow is only selected as the outgoing sequence flow for that activity if and only if none of the other sequence flows could be selected. Conditions on a default sequence flow are always ignored.
 所有的BPMN 2.0任务与网关都可以使用**默认顺序流（default sequence flow）**。只有当没有其他顺序流可以选择时，才会选择默认顺序流作为活动的出口顺序流。流程会忽略默认顺序流上的条件。
 
 
@@ -1994,8 +1993,6 @@ assertEquals("Ship Order", task.getName());
 
 当这个任务完成后，第二个包容网关会合并这两个执行。并且由于它只有一条出口顺序流，所有不会再创建并行执行路径，而只会激活__Archive Order(存档订单)__任务。
 
-Note that an inclusive gateway does not need to be 'balanced' (a matching number of incoming/outgoing sequence flow for corresponding inclusive gateways). An inclusive gateway will simply wait for all incoming sequence flow and create a concurrent path of execution for each outgoing sequence flow, not influenced by other constructs in the process model.
-
 请注意包容网关不需要“平衡”（也就是说，对应的包容网关，其入口/出口顺序流的数量不需要匹配）。包容网关会简单地等待所有入口顺序流，并为每一条出口顺序流创建并行执行，不受流程模型中的其他结构影响。
 
 请注意包容网关不需要“平衡”（也就是说，前后对应的两个包容网关，其入口/出口顺序流的数量不需要一致）。每个包容网关都会简单地等待所有入口顺序流，并为每一条出口顺序流创建并行执行，不受流程模型中的其他结构影响。
@@ -2041,8 +2038,6 @@ image::images/bpmn.event.based.gateway.notation.png[align="center"]
 
 
 ===== 示例
-
-The following process is an example of a process with an Event-based Gateway. When the execution arrives at the Event-based Gateway, process execution is suspended. In addition, the process instance subscribes to the alert signal event and creates a timer that fires after 10 minutes. This effectively causes the process engine to wait for ten minutes for a signal event. If the signal occurs within 10 minutes, the timer is cancelled and execution continues after the signal. If the signal is not fired, execution continues after the timer and the signal subscription is canceled.
 
 下面是一个带有基于事件的网关的示例流程。当执行到达基于事件的网关时，流程执行暂停。流程实例订阅alert信号事件，并创建一个10分钟后触发的定时器。流程引擎会等待10分钟，并同时等待信号事件。如果信号在10分钟内触发，则会取消定时器，流程沿着信号继续执行，激活Handle alert用户任务。如果10分钟内没有触发信号，则会继续执行，并取消信号订阅。
 
@@ -2347,7 +2342,7 @@ public void addCustomGroupIdentityLinkExpression(
 }
 ----
 
-这些方法将在运行时，由__UserTaskActivityBehavior handleAssignments__方法调用。
+这些方法将在运行时，由__UserTaskActivityBehavior__的__handleAssignments__方法调用。
 
 最后，需要扩展__IdentityLinkType__类，以支持自定义身份关联类型：
 
@@ -2436,14 +2431,14 @@ public class FakeLdapService {
 [[bpmnScriptTask]]
 
 
-==== Script Task
+==== 脚本任务
 
 [[bpmnScriptTaskDescription]]
 
 
 ===== 描述
 
-A script task is an automatic activity. When a process execution arrives at the script task, the corresponding script is executed.
+脚本任务（script task）是自动执行的活动。当流程执行到达脚本任务时，会执行相应的脚本。
 
 
 [[bpmnScriptTaskGraphicalNotation]]
@@ -2451,7 +2446,7 @@ A script task is an automatic activity. When a process execution arrives at the 
 
 ===== 图示
 
-A script task is visualized as a typical BPMN 2.0 task (rounded rectangle), with a small 'script' icon in the top-left corner of the rectangle.
+脚本任务用左上角有一个小“脚本”图标的标准BPMN 2.0任务（圆角矩形）表示。
 
 image::images/bpmn.scripttask.png[align="center"]
 
@@ -2461,7 +2456,7 @@ image::images/bpmn.scripttask.png[align="center"]
 
 ===== XML表示
 
-A script task is defined by specifying the *script* and the *scriptFormat*.
+脚本任务使用**script**与**scriptFormat**元素定义。
 
 [source,xml,linenums]
 ----
@@ -2475,10 +2470,9 @@ A script task is defined by specifying the *script* and the *scriptFormat*.
 </scriptTask>
 ----
 
+**scriptFormat**属性的值，必须是兼容link:$$http://jcp.org/en/jsr/detail?id=223$$[JSR-223]（Java平台脚本）的名字。默认情况下，JavaScript包含在每一个JDK中，因此不需要添加任何JAR文件。如果想使用其它（兼容JSR-223的）脚本引擎，则需要在classpath中添加相应的jar，并使用适当的名字。例如，Flowable单元测试经常使用Groovy，因为其语法与Java十分相似。
 
-The value of the *scriptFormat* attribute must be a name that is compatible with the link:$$http://jcp.org/en/jsr/detail?id=223$$[JSR-223] (scripting for the Java platform). By default, JavaScript is included in every JDK and as such doesn't need any additional JAR files. If you want to use another (JSR-223 compatible) scripting engine, it is sufficient to add the corresponding JAR to the classpath and use the appropriate name. For example, the Flowable unit tests often use Groovy because the syntax is similar to that of Java.
-
-Do note that the Groovy scripting engine is bundled with the groovy-all jar. Before Groovy version 2.0, the scripting engine was part of the regular Groovy JAR. As such, one must now add following dependency:
+请注意Groovy脚本引擎与groovy-all jar捆绑在一起。在Groovy 2.0版本以前，脚本引擎是Groovy JAR的一部分。因此，必须添加如下依赖：
 
 [source,xml,linenums]
 ----
@@ -2493,9 +2487,9 @@ Do note that the Groovy scripting engine is bundled with the groovy-all jar. Bef
 [[bpmnScriptTaskVariables]]
 
 
-===== Variables in scripts
+===== 脚本中的变量
 
-All process variables that are accessible through the execution that arrives in the script task can be used within the script. In the example, the script variable _'inputArray'_ is in fact a process variable (an array of integers).
+到达脚本引擎的执行中，所有的流程变量都可以在脚本中使用。在这个例子里，脚本变量__'inputArray'__实际上就是一个流程变量（一个integer的数组）。
 
 [source,xml,linenums]
 ----
@@ -2507,16 +2501,17 @@ All process variables that are accessible through the execution that arrives in 
 </script>
 ----
 
-It's also possible to set process variables in a script, simply by calling _execution.setVariable("variableName", variableValue)_. By default, no variables are stored automatically (*Note: in some older releases this was the case!*). It's possible to automatically store any variable defined in the script (for example, __sum__ in the example above) by setting the property ++autoStoreVariables++ on the ++scriptTask++ to ++true++. However, *the best practice is not to do this and use an explicit execution.setVariable() call*, as with some recent versions of the JDK, auto storing of variables does not work for some scripting languages. See link:$$http://www.jorambarrez.be/blog/2013/03/25/bug-on-jdk-1-7-0_17-when-using-scripttask-in-activiti/$$[this link] for more details.
+也可以简单地调用__execution.setVariable("variableName", variableValue)__，在脚本中设置流程变量。默认情况下，变量不会自动储存（**请注意，在一些早期版本中是会储存的！**）。可以将++scriptTask++的++autoStoreVariables++参数设置为++true++，以自动保存任何在脚本中定义的变量（例如上例中的__sum__）。然而，**最佳实践不是这么做，而是应该显式调用execution.setVariable()**，因为在JDK近期的一些版本中，某些脚本语言不能自动保存变量。查看link:$$http://www.jorambarrez.be/blog/2013/03/25/bug-on-jdk-1-7-0_17-when-using-scripttask-in-activiti/$$[这个链接]了解更多信息。
+
 
 [source,xml,linenums]
 ----
 <scriptTask id="script" scriptFormat="JavaScript" flowable:autoStoreVariables="false">
 ----
 
-The default for this parameter is +false+, meaning that if the parameter is omitted from the script task definition, all the declared variables will only exist during the duration of the script.
+这个参数的默认值为++false++。也就是说如果在脚本任务定义中忽略这个参数，则脚本声明的所有变量将只在脚本执行期间有效。
 
-Here's an example of how to set a variable in a script:
+在脚本中设置变量的例子：
 
 [source,xml,linenums]
 ----
@@ -2526,15 +2521,15 @@ Here's an example of how to set a variable in a script:
 </script>
 ----
 
-Note: the following names are reserved and *cannot be used* as variable names: *out, out:print, lang:import, context, elcontext*.
+请注意：下列名字是保留字，**不能用于**变量名：**out，out:print，lang:import，context，elcontext**。
 
 
 [[bpmnScriptTaskResultValue]]
 
 
-===== Script results
+===== 脚本任务的结果
 
-The return value of a script task can be assigned to an already existing, or to a new process variable, by specifying the process variable name as a literal value for the _'flowable:resultVariable'_ attribute of a script task definition. Any existing value for a specific process variable will be overwritten by the result value of the script execution. When a result variable name is not specified, the script result value gets ignored.
+脚本任务的返回值，可以通过为脚本任务定义的__'flowable:resultVariable'__属性设置为流程变量。可以是已经存在的，或者新的流程变量。如果指定为已存在的流程变量，则流程变量的值会被脚本执行的结果值覆盖。如果不指定结果变量名，则脚本结果值将被忽略。
 
 [source,xml,linenums]
 ----
@@ -2543,25 +2538,24 @@ The return value of a script task can be assigned to an already existing, or to 
 </scriptTask>
 ----
 
-In the above example, the result of the script execution (the value of the resolved expression __'#{echo}'__) is set to the process variable named __'myVar'__ after the script completes.
+在上面的例子中，脚本执行的结果（解析表达式__'#{echo}'__的值），将在脚本完成后，设置为名为__'myVar'__的流程变量。
 
-===== Security
+===== 安全性
 
-It is also possible when using _javascript_ as the scripting language to use '_secure scripting_'. See the <<advancedSecureScripting, secure scripting section>>.
+当使用__javascript__作为脚本语言时，可以使用__“安全脚本（secure scripting）”__。参见<<advancedSecureScripting, 安全脚本章节>>。
 
 
 [[bpmnJavaServiceTask]]
 
 
-==== Java Service Task
+==== Java服务任务
 
 [[bpmnJavaServiceTaskDescription]]
 
 
 ===== 描述
 
-
-A Java service task is used to invoke an external Java class.
+Java服务任务（Java service task）用于调用Java类。
 
 
 [[bpmnJavaServiceTaskGraphicalNotation]]
@@ -2569,7 +2563,7 @@ A Java service task is used to invoke an external Java class.
 
 ===== 图示
 
-A service task is visualized as a rounded rectangle with a small gear icon in the top-left corner.
+服务任务用左上角有一个小齿轮图标的圆角矩形表示。
 
 image::images/bpmn.java.service.task.png[align="center"]
 
@@ -2579,16 +2573,14 @@ image::images/bpmn.java.service.task.png[align="center"]
 
 ===== XML表示
 
-There are four ways of declaring how to invoke Java logic:
+有四种方法声明如何调用Java逻辑：
 
+* 指定实现了JavaDelegate或ActivityBehavior的类
+* 调用解析为委托对象（delegation object）的表达式
+* 调用方法表达式（method expression）
+* 对值表达式（value expression）求值
 
-* Specifying a class that implements JavaDelegate or ActivityBehavior
-* Evaluating an expression that resolves to a delegation object
-* Invoking a method expression
-* Evaluating a value expression
-
-
-To specify a class that is called during process execution, the fully qualified classname needs to be provided by the *'flowable:class'* attribute.
+使用**'flowable:class'**属性提供全限定类名（fully qualified classname），指定流程执行时调用的类。
 
 [source,xml,linenums]
 ----
@@ -2598,18 +2590,18 @@ To specify a class that is called during process execution, the fully qualified 
 ----
 
 
-See <<bpmnJavaServiceTaskImplementation,the implementation section>> for more details on how to use such a class.
+查看<<bpmnJavaServiceTaskImplementation,实现章节>>，了解使用这种类的更多信息。
 
-It's also possible to use an expression that resolves to an object. This object must follow the same rules as objects that are created when the +flowable:class+ attribute is used (see <<bpmnJavaServiceTaskImplementation,further>>).
+也可以使用解析为对象的表达式。该对象必须遵循的规则，与使用++flowable:class++创建的对象规则相同（查看<<bpmnJavaServiceTaskImplementation,更多>>）。
 
 [source,xml,linenums]
 ----
 <serviceTask id="serviceTask" flowable:delegateExpression="${delegateExpressionBean}" />
 ----
 
-Here, the +delegateExpressionBean+ is a bean that implements the +JavaDelegate+ interface, defined in, for example, the Spring container.
+++delegateExpressionBean++是一个实现了++JavaDelegate++接口的bean，定义在Spring容器中。
 
-To specify a UEL method expression that should be evaluated, use the attribute *flowable:expression*.
+使用**flowable:expression**属性指定需要计算的UEL方法表达式。
 
 [source,xml,linenums]
 ----
@@ -2618,9 +2610,9 @@ To specify a UEL method expression that should be evaluated, use the attribute *
              flowable:expression="#{printer.printMessage()}" />
 ----
 
-Method ++printMessage++ (without parameters) will be called on the named object named ++printer++.
+将在名为++printer++的对象上调用++printMessage++方法（不带参数）。
 
-It's also possible to pass parameters with a method used in the expression.
+也可以为表达式中使用的方法传递变量。
 
 [source,xml,linenums]
 ----
@@ -2629,9 +2621,9 @@ It's also possible to pass parameters with a method used in the expression.
              flowable:expression="#{printer.printMessage(execution, myVar)}" />
 ----
 
-Method +printMessage+ will be called on the object named +printer+. The first parameter passed is the +DelegateExecution+, which is available in the expression context, by default, available as +execution+. The second parameter passed is the value of the variable with name +myVar+ in the current execution.
+将在名为++printer++的对象上调用++printMessage++方法。传递的第一个参数为++DelegateExecution++，名为++execution++，在表达式上下文中默认可用。传递的第二个参数，是当前执行中，名为++myVar++变量的值。
 
-To specify a UEL value expression that should be evaluated, use the attribute *flowable:expression*.
+可以使用**flowable:expression**属性指定需要计算的UEL值表达式。
 
 [source,xml,linenums]
 ----
@@ -2640,17 +2632,17 @@ To specify a UEL value expression that should be evaluated, use the attribute *f
              flowable:expression="#{split.ready}" />
 ----
 
-The getter method of property ++ready++, ++getReady++ (without parameters), will be called on the named bean called ++split++. The named objects are resolved in the execution's process variables and (if applicable) in the Spring context.
+会调用名为++split++的bean的++ready++参数的getter方法，++getReady++（不带参数）。该对象会被解析为执行的流程变量或（如果可用的话）Spring上下文中的bean。
 
 
 [[bpmnJavaServiceTaskImplementation]]
 
 
-===== Implementation
+===== 实现
 
-To implement a class that can be called during process execution, the class needs to implement the _org.flowable.engine.delegate.JavaDelegate_ interface and provide the required logic in the _execute_ method. When process execution arrives at this particular step, it will execute the logic defined in that method and leave the activity in the default BPMN 2.0 way.
+要实现可以在流程执行中调用的类，需要实现__org.flowable.engine.delegate.JavaDelegate__接口，并在__execute__方法中提供所需逻辑。当流程执行到达该活动时，会执行方法中定义的逻辑，并按照BPMN 2.0的默认方法离开活动。
 
-Let's create, for example, a Java class that can be used to change a process variable String to uppercase. This class needs to implement the _org.flowable.engine.delegate.JavaDelegate_ interface, which requires us to implement the _execute(DelegateExecution)_ method. It's this operation that will be called by the engine and which needs to contain the business logic. Process instance information, such as process variables, can be accessed and manipulated through the link:$$http://www.flowable.org/javadocs/org/flowable/engine/delegate/DelegateExecution.html$$[DelegateExecution] interface (click on the link for a detailed Javadoc of its operations).
+下面是一个Java类的示例，用于将流程变量String改为大写。这个类需要实现__org.flowable.engine.delegate.JavaDelegate__接口，因此需要实现__execute(DelegateExecution)__方法。这个方法就是引擎将调用的方法，需要实现业务逻辑。可以通过link:$$http://flowable.org/javadocs/org/flowable/engine/delegate/DelegateExecution.html$$[DelegateExecution]接口（点击链接获取该接口操作的详细Javadoc）访问流程实例信息，如流程变量等。
 
 [source,java,linenums]
 ----
@@ -2665,30 +2657,32 @@ public class ToUppercase implements JavaDelegate {
 }
 ----
 
-Note: there will be *only one instance of the Java class created for the serviceTask on which it is defined*. All process instances share the same class instance that will be used to call _execute(DelegateExecution)_. This means that the class must not use any member variables and must be thread-safe, as it can be executed simultaneously from different threads. This also influences the way <<serviceTaskFieldInjection,Field injection>> is handled.
 
-The classes that are referenced in the process definition (by using ++flowable:class++) are *NOT instantiated during deployment*. Only when a process execution arrives for the first time at the point in the process where the class is used, an instance of that class will be created. If the class cannot be found, an +FlowableException+ will be thrown. The reasoning for this is that the environment (and more specifically, the __classpath__) when you are deploying is often different from the actual runtime environment. For example, when using _ant_ or the business archive upload in the Flowable app to deploy processes, the classpath will not automatically contain the referenced classes.
+请注意：**只会为serviceTask上定义的Java类创建一个实例**。所有流程实例共享同一个类实例，用于调用__execute(DelegateExecution)__。这意味着该类不能有任何成员变量，并需要是线程安全的，因为它可能会在不同线程中同时执行。这也影响了<<serviceTaskFieldInjection,字段注入>>的使用方法。（译者注：原文可能较老，不正确。5.21中，flowable:class指定的类，会在流程实例启动时，为每个活动分别进行实例化。不过，当该活动在流程中重复执行，或者为多实例时，使用的都会是同一个类实例。）
 
-<<internal,[INTERNAL: non-public implementation classes]>> It is also possible to provide a class that implements the _org.flowable.engine.impl.delegate.ActivityBehavior_ interface. Implementations then have access to more powerful engine functionality, for example, to influence the control flow of the process. Note however that this is not a very good practice and should be avoided as much as possible. So, it is advisable to use the _ActivityBehavior_ interface only for advanced use cases and if you know exactly what you're doing.
+在流程定义中引用（如++flowable:class++）的类，**不会在部署时实例化**。只有当流程执行第一次到达该类使用的地方时，才会创建该类的实例。如果找不到这个类，会抛出++FlowableException++。这是因为部署时的环境（更准确的说__classpath__），与实际运行的环境经常不一样。例如当使用__ant__或者Flowable应用中业务存档上传的方式部署的流程，其classpath中不会自动包含流程引用的类。
+
+<<internal,[内部：非公开实现类]>>也可以使用实现了__org.flowable.engine.impl.delegate.ActivityBehavior__接口的类。该实现可以访问更强大的引擎功能，例如，可以影响流程的控制流程。请注意这并不是很好的实践，需要避免这么使用。建议只有在高级使用场景下，并且你确知在做什么的时候，才使用__ActivityBehavior__接口。
 
 
 [[serviceTaskFieldInjection]]
 
 
-===== Field Injection
+===== 字段注入
 
-It's possible to inject values into the fields of the delegated classes. The following types of injection are supported:
+可以为委托类的字段注入值。支持下列注入方式：
 
-* Fixed string values
-* Expressions
+* 字符串常量
+* 表达式
 
-If available, the value is injected through a public setter method on your delegated class, following the Java Bean naming conventions (for example, field +firstName+ has setter ++setFirstName(...)++). If no setter is available for that field, the value of the private member will be set on the delegate. SecurityManagers in some environments don't allow modification of private fields, so it's safer to expose a public setter-method for the fields you want to have injected.
+如果可以的话，会按照Java Bean命名约定（例如，++firstName++成员使用setter ++setFirstName(...)++），通过委托类的公有setter方法，注入变量。如果该字段没有可用的setter，会直接设置该委托类的私有成员的值。有的环境中，SecurityManagers不允许修改私有字段，因此为想要注入的字段暴露一个公有setter方法，是更安全的做法。
 
-*Regardless of the type of value declared in the process-definition, the type of the setter/private field on the injection target should always be +org.flowable.engine.delegate.Expression+. When the expression is resolved, it can be cast to the appropriate type.*
+**不论在流程定义中声明的是什么类型的值，注入对象的setter/私有字段的类型，总是++org.flowable.engine.delegate.Expression++。解析表达式后，可以被转型为合适的类型。**
 
 Field injection is supported when using the _'flowable:class'_ attribute. Field injection is also possible when using the _flowable:delegateExpression_ attribute, however special rules with regards to thread-safety apply (see next section).
+当使用__'actviiti:class'__属性时，支持字段注入。也可以在使用__flowable:delegateExpression__属性时，进行字段注入。然而考虑到线程安全，需要遵循特殊的规则（参见下一章节）。
 
-The following code snippet shows how to inject a constant value into a field declared on the class. Note that we need to *declare an 'extensionElements' XML element before the actual field injection declarations*, which is a requirement of the BPMN 2.0 XML Schema.
+下面的代码片段展示了如何为类中声明的字段注入常量值。请注意按照BPMN 2.0 XML概要的要求，**在实际字段注入声明前，需要先声明'extensionElements'XML元素**。
 
 [source,xml,linenums]
 ----
@@ -2701,7 +2695,7 @@ The following code snippet shows how to inject a constant value into a field dec
 </serviceTask>
 ----
 
-The class +ToUpperCaseFieldInjected+ has a field +text+ that is of type +org.flowable.engine.delegate.Expression+. When calling +text.getValue(execution)+, the configured string value +Hello World+ will be returned:
+++ToUpperCaseFieldInjected++类有一个字段++text++，为++org.flowable.engine.delegate.Expression++类型。当调用++text.getValue(execution)++时，会返回配置的字符串++Hello World++：
 
 [source,java,linenums]
 ----
@@ -2716,7 +2710,7 @@ public class ToUpperCaseFieldInjected implements JavaDelegate {
 }
 ----
 
-Alternatively, for long texts (for example, an inline e-mail) the _'flowable:string'_ sub element can be used:
+另外，对于较长文本（例如邮件正文），可以使用__'flowable:string'__子元素：
 
 [source,xml,linenums]
 ----
@@ -2733,9 +2727,9 @@ Alternatively, for long texts (for example, an inline e-mail) the _'flowable:str
 </serviceTask>
 ----
 
-To inject values that are dynamically resolved at runtime, expressions can be used. Those expressions can use process variables or Spring defined beans (if Spring is used). As noted in <<bpmnJavaServiceTaskImplementation,Service Task Implementation>>, an instance of the Java class is shared among all process-instances in a service task when using the _flowable:class_ attribute. To have dynamic injection of values in fields, you can inject value and method expressions in a +org.flowable.engine.delegate.Expression+ that can be evaluated/invoked using the +DelegateExecution+ passed in the +execute+ method.
+可以使用表达式在运行时动态解析注入的值。这种表达式可以使用流程变量，或者（如果使用Spring）Spring定义的bean。像<<bpmnJavaServiceTaskImplementation,服务任务实现>>中提到的，当服务任务中使用__flowable:class__属性时，该Java类的实例在所有流程实例中共享。要动态地为字段注入值，可以在++org.flowable.engine.delegate.Expression++中注入值或方法表达式，它们会通过++execute++方法传递的++DelegateExecution++计算/调用。
 
-The example class below uses the injected expressions and resolves them using the current +DelegateExecution+. A _genderBean_ method call is used while passing the _gender_ variable. Full code and test can be found in +org.flowable.examples.bpmn.servicetask.JavaServiceTaskTest.testExpressionFieldInjection+
+下面的示例类使用了注入的表达式，并使用当前的++DelegateExecution++解析它们。调用__genderBean__方法时传递的是__gender__变量。完整的代码与测试可以在++org.flowable.examples.bpmn.servicetask.JavaServiceTaskTest.testExpressionFieldInjection++中找到
 
 [source,xml,linenums]
 ----
@@ -2771,7 +2765,7 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 ----
 
 
-Alternatively, you can also set the expressions as an attribute instead of a child-element, to make the XML less verbose.
+另外，为避免XML太过冗长，可以将表达式设置为属性，而不是子元素。
 
 [source,xml,linenums]
 ----
@@ -2781,19 +2775,19 @@ Alternatively, you can also set the expressions as an attribute instead of a chi
 
 [[serviceTaskFieldInjectionThreadSafety]]
 
-===== Field injection and thread safety
+===== 字段注入与线程安全
 
-In general, using service tasks with Java delegates and field injections are thread-safe. However, there are a few situations where thread-safety is not guaranteed, depending on the setup or environment Flowable is running in.
+通常情况下，在服务任务中使用Java委托与字段注入是线程安全的。然而，有些情况下不能保证线程安全。这取决于设置，或Flowable运行的环境。
 
-With the _flowable:class_ attribute, using field injection is always thread safe. For each service task that references a certain class, a new instance will be instantiated and fields will be injected once when the instance is created. Reusing the same class multiple times in different tasks or process definitions is no problem.
+当使用__flowable:class__属性时，使用字段注入总是线程安全的（译者注：仍不完全安全，如对于多实例服务任务，使用的是同一个实例）。对于引用了某个类的每一个服务任务，都会实例化新的实例，并且在创建实例时注入一次字段。在不同的任务或流程定义中多次使用同一个类没有问题。
 
-When using the _flowable:expression_ attribute, use of field injection is not possible. Parameters are passed via method calls and these are always thread-safe.
+当使用__flowable:expression__属性时，不能使用字段注入。只能通过方法调用传递变量。总是线程安全的。
 
-When using the _flowable:delegateExpression_ attribute, the thread-safety of the delegate instance will depend on how the expression is resolved. If the delegate expression is reused in various tasks or process definitions, and the expression always returns the same instance, using field injection *is not thread-safe*. Let's look at a few examples to clarify.
+当使用__flowable:delegateExpression__属性时，委托实例的线程安全性，取决于表达式解析的方式。如果该委托表达式在多个任务或流程定义中重复使用，并且表达式总是返回相同的示例，则字段注入**不是线程安全的**。让我们看几个例子。
 
-Suppose the expression is _${factory.createDelegate(someVariable)}_, where factory is a Java bean known to the engine (for example, a Spring bean when using the Spring integration) that creates a new instance each time the expression is resolved. When using field injection in this case, there is no problem with regards to thread-safety: each time the expression is resolved, the fields are injected in this new instance.
+假设表达式为__${factory.createDelegate(someVariable)}__，其中factory为引擎可用的Java bean（例如使用Spring集成时的Spring bean），并在每次表达式解析时创建新的实例。这种情况下，使用字段注入时，没有线程安全性问题：每次表达式解析时，都会注入新实例的字段。
 
-However, suppose the expression is _${someJavaDelegateBean}_ that resolves to an implementation of the JavaDelegate class and we're running in an environment that creates singleton instances of each bean (such as Spring, but many others too). When using this expression in different tasks or process definitions, the expression will always be resolved to the same instance. In this case, using field injection is not thread-safe. For example:
+然而，如果表达式为__${someJavaDelegateBean}__，解析为JavaDelegate的实现，并且在创建单例的环境（如Spring）中运行。当在不同的任务或流程定义中使用这个表达式时，表达式总会解析为相同的实例。这种情况下，使用字段注入不是线程安全的。例如：
 
 [source,xml,linenums]
 ----
@@ -2812,25 +2806,25 @@ However, suppose the expression is _${someJavaDelegateBean}_ that resolves to an
 </serviceTask>
 ----
 
-This example snippet has two service tasks that use the same delegate expression, but inject different values for the _Expression_ field. *If the expression resolves to the same instance, there can be race conditions in concurrent scenarios* when it comes to injecting the field _someField_ when the processes are executed.
+这段示例代码有两个服务任务，使用同一个委托表达式，但是__expression__字段填写不同的值。**如果该表达式解析为相同的实例，就会在并发场景下，注入__someField__字段时出现竞争条件**。
 
-The easiest solution to solve this is to either:
+最简单的解决方法是：
 
-* rewrite the Java delegate to use an expression and passing the required data to the delegate via a method arguments.
-* return a new instance of the delegate class each time the delegate expression is resolved. For example, when using Spring, this means that the scope of the bean must be set to *prototype* (such as by adding the @Scope(SCOPE_PROTOTYPE) annotation to the delegate class).
+* 使用表达式代替直接使用Java委托，并将所需数据通过方法参数传递给委托。
+* 或者，在每次委托表达式解析时，返回委托类的新实例。这意味着这个bean的scope必须是**prototype（原型）**（例如在委托类上加上@Scope(SCOPE_PROTOTYPE)注解）。
 
-As of Flowable v5.22, the process engine configuration can be set in a way to disable the use of field injection on delegate expressions, by setting the value of the _delegateExpressionFieldInjectionMode_ property (which takes one of the values in the _org.flowable.engine.imp.cfg.DelegateExpressionFieldInjectionMode_ enum).
+在Flowable 5.22版本中，可以通过配置流程引擎配置，禁用在委托表达式上使用字段注入。需要设置__delegateExpressionFieldInjectionMode__参数（取__org.flowable.engine.imp.cfg.DelegateExpressionFieldInjectionMode__枚举中的值）。
 
-Following settings are possible:
+可使用下列选项：
 
-* *DISABLED* : fully disables field injection when using delegate expressions. No field injection will be attempted. This is the safest mode when it comes to thread-safety.
-* *COMPATIBILITY*: in this mode, the behavior will be exactly as it was before v5.21: field injection is possible when using delegate expressions and an exception will be thrown when the fields are not defined on the delegate class. This is, of course, the least safe mode with regards to thread-safety, but it can be necessary for backwards compatibility or can be used safely when the delegate expression is used only on one task in a set of process definitions (and thus no concurrent race conditions can happen).
-* *MIXED*: Allows injection when using delegateExpressions, but will not throw an exception when the fields are not defined on the delegate. This allows for mixed behaviors, where some delegates have injection (for example, because they are not singletons) and some don't.
+* **DISABLED（禁用）**：当使用委托表达式时，完全禁用字段注入。不会再尝试进行字段注入。这是最安全的方式，保证线程安全。
+* **COMPATIBILITY（兼容）**：在这个模式下，行为与V5.21之前完全一样：可以在委托表达式中使用字段注入，如果委托类中没有定义该字段，会抛出异常。这是最不线程安全的模式，但可以保证历史版本兼容性，也可以在委托表达式只在一个任务中使用的时候（因此不会产生并发竞争条件），安全使用。
+* **MIXED（混合）**：可以在使用委托表达式时注入，但当委托中没有定义字段时，不会抛出异常。这样可以在部分委托（比如不是单例的实例）中使用注入，而在部分委托中不使用注入。
 
-* *The default mode for Flowable version 5.x is COMPATIBILITY.*
-* *The default mode for Flowable version 6.x is MIXED.*
+* **Flowable 5.x版本的默认模式为COMPATIBILITY**。
+* **Flowable 6.x版本的默认模式为MIXED**。
 
-As an example, suppose that we're using _MIXED_ mode and we're using Spring integration. Suppose that we have the following beans in the Spring configuration:
+例如，假设使用__MIXED__模式，并使用Spring集成，在Spring配置中定义了如下bean：
 
 [source,xml,linenums]
 ----
@@ -2842,7 +2836,7 @@ As an example, suppose that we're using _MIXED_ mode and we're using Spring inte
   scope="prototype" />
 ----
 
-The first bean is a regular Spring bean and thus a singleton. The second one has _prototype_ as scope, and the Spring container will return a new instance every time the bean is requested.
+第一个bean是一般的Spring bean，因此是单例的。第二个bean的scope为__prototype__，因此每次请求这个bean时，Spring容器都会返回一个新实例。
 
 Given the following process definition:
 
@@ -2881,9 +2875,9 @@ Given the following process definition:
 </serviceTask>
 ----
 
-We've got four service tasks, where the first and the second use the _${prototypeDelegateExpressionBean}_ delegate expression and the third and fourth use the _${singletonDelegateExpressionBean}_ delegate expression.
+有四个服务任务，第一、二个使用__${prototypeDelegateExpressionBean}__委托表达式，第三、四个使用__${singletonDelegateExpressionBean}__委托表达式。
 
-Let's look at the prototype bean first:
+先看原型bean：
 
 [source,java,linenums]
 ----
@@ -2912,9 +2906,9 @@ public class PrototypeDelegateExpressionBean implements JavaDelegate {
 }
 ----
 
-When we check the _INSTANCE_COUNT_ after running a process instance of the process definition above, we'll get _two_ back, as a new instance is created every time _${prototypeDelegateExpressionBean}_ is resolved. Fields can be injected without any problem here and we can see the three _Expression_ member fields here.
+在运行上面流程定义的流程实例后，__INSTANCE_COUNT__的值为__2__。这是因为每次解析__${prototypeDelegateExpressionBean}__时，都会创建新实例。可以看到三个__Expression__成员字段的注入没有任何问题。
 
-The singleton bean, however, looks slightly different:
+单例bean则有一点区别：
 
 [source,java,linenums]
 ----
@@ -2945,15 +2939,15 @@ public class SingletonDelegateExpressionBean implements JavaDelegate {
 }
 ----
 
-The _INSTANCE_COUNT_ will always be _one_ here, as it is a singleton. In this delegate, there are no _Expression_ member fields. This is possible as we're running in _MIXED_ mode. In _COMPATIBILITY_ mode, this would throw an exception as it expects the member fields to be there. _DISABLED_ mode would also work for this bean, but it would disallow the use the prototype bean above that does use field injection.
+在对于单例bean，__INSTANCE_COUNT__总是__1__。在这个委托中，没有__Expression__成员字段（使用__MIXED__模式）。而在__COMPATIBILITY__模式下，就会抛出异常，因为需要有成员字段。这个bean也可以使用__DISABLED__模式，但会禁用上面进行了字段注入的原型bean。
 
-In this delegate code, the *org.flowable.engine.delegate.DelegateHelper* class is used, which has some useful utility methods to execute the same logic, but in a thread-safe way when the delegate is a singleton. Instead of injecting the _Expression_, it is fetched via the _getFieldExpression_ method. This means that when it comes to the service task XML, the fields are defined exactly the same as for the singleton bean. If you look at the XML snippet above, you can see they are equal in definition and only the implementation logic differs.
+在委托的代码里，使用了**org.flowable.engine.delegate.DelegateHelper**。它提供了一些有用的工具方法，用于执行相同的逻辑，并且在单例中是线程安全的。与注入__Expression__不同，它通过__getFieldExpression__读取。这意味着在服务任务的XML里，字段定义与单例bean完全相同。查看上面的XML代码，可以看到定义是相同的，只是实现逻辑不同。
 
-Technical note: the _getFieldExpression_ will introspect the BpmnModel and create the Expression on the fly when the method is executed, making it thread-safe.
+技术提示：__getFieldExpression__直接读取BpmnModel，并在方法执行时创建表达式，因此是线程安全的。
 
+* 在Flowable V5.x版本中，（由于架构缺陷）不能在__ExecutionListener__或__TaskListener__中使用DelegateHelper。要保证监听器的线程安全，仍需使用表达式，或确保每次解析委托表达式时，都创建新实例。
+* 在Flowable V6.x版本中，在__ExecutionListener__或__TaskListener__中可以使用DelegateHelper。例如在V6.x版本中，下列代码可以使用**DelegateHelper**：
 
-* For Flowable v5.x, the DelegateHelper cannot be used for an _ExecutionListener_ or _TaskListener_ (due to an architectural flaw). To make thread-safe instances of those listeners, use either an expression or make sure a new instance is created every time the delegate expression is resolved.
-* For Flowable V6.x the DelegateHelper does work in _ExecutionListener_ and _TaskListener_ implementations. For example, in V6.x, the following code can be written, using the *DelegateHelper*:
 
 [source,xml,linenums]
 ----
@@ -2966,7 +2960,7 @@ Technical note: the _getFieldExpression_ will introspect the BpmnModel and creat
 </extensionElements>
 ----
 
-Where _testExecutionListener_ resolves to an instance implementing the ExecutionListener interface:
+其中__testExecutionListener__解析为ExecutionListener接口的一个实现的实例：
 
 [source,java,linenums]
 ----
@@ -2991,12 +2985,12 @@ public class TestExecutionListener implements ExecutionListener {
 [[serviceTaskResultValue]]
 
 
-===== Service task results
+===== 服务任务的结果
 
-The return value of a service execution (for service task using expression only) can be assigned to an existing or to a new process variable by specifying the process variable name as a literal value for the _'flowable:resultVariable'_ attribute of a service task definition.
-Any existing value for a specific process variable will be overwritten by the result value of the service execution.
-If _`flowable:useLocalScopeForResultVariable'_ is used, then the variable will be assigned to a local variable.
-When a result variable name is not specified, the service execution result value gets ignored.
+服务执行的返回值（仅对使用表达式的服务任务），可以通过为服务任务定义的__'flowable:resultVariable'__属性设置为流程变量。可以是已经存在的，或者新的流程变量。
+如果指定为已存在的流程变量，则流程变量的值会被服务执行的结果值覆盖。
+如果使用__`flowable:useLocalScopeForResultVariable'__，则会将结果值设置为局部变量。
+如果不指定结果变量名，则服务任务的结果值将被忽略。
 
 [source,xml,linenums]
 ----
@@ -3005,14 +2999,14 @@ When a result variable name is not specified, the service execution result value
     flowable:resultVariable="myVar" />
 ----
 
-In the example above, the result of the service execution (the return value of the __'doSomething()'__ method invocation on an object is made available under the name __'myService'__, either in the process variables or as a Spring bean) is set to the process variable named __'myVar'__ after the service execution completes.
+在上例中，服务执行的结果（流程变量或Spring bean中，使用__'myService'__名字所获取的对象，调用__'doSomething()'__方法的返回值），在服务执行完成后，会设置为名为__'myVar'__的流程变量。
 
 [[serviceTaskTriggerable]]
 
 
-===== Triggerable
+===== 可触发
 
-A common pattern is to trigger an external serviced by sending a JMS message or do a HTTP call and have the process instance go into a wait state. Then at some point the external service will return a response and the process instance continues to the next activity. With default BPMN you would need to model a service task and a receive task. This however introduces some racing conditions because the external service response could be returned before the process instance is persisted and the receive task is active. To solve this, Flowable supports a triggerable attribute on a service task that transforms the single service task in a task that will execute the service logic and then will wait for an external trigger before it continues to the next activity in the process definition. If the async attribute is also set to true for a triggerable service task, the process instance state is first persisted and then the service task logic will be executed in an async job. In BPMN XML an async triggerable service task would be implemented like this:
+一种常见的模式是发送JMS消息或HTTP调用触发外部服务，然后流程实例进入等待状态。之后外部系统会回复响应，流程实例继续执行下一个活动。在默认的BPMN中，需要使用服务任务和接收任务（receive task）。但是这样会引入竞争条件：外部服务的响应可能会早于流程实例持久化及接收任务激活。为了解决这个问题，Flowable为服务任务增加了triggerable（可触发）属性，可以将服务任务转变为执行服务逻辑，并在继续执行之前等待外部触发的任务。如果在可触发服务任务上同时设置异步（async 为 true），则流程实例会先持久化，然后在异步作业中执行服务任务逻辑。在BPMN XML中，可以这样实现可触发服务任务：
 
 [source,xml,linenums]
 ----
@@ -3022,23 +3016,21 @@ A common pattern is to trigger an external serviced by sending a JMS message or 
     flowable:async="true" />
 ----
 
-When the external service wants to trigger the waiting process instance again, this can be done synchronously and asynchronously. To prevent optimistic lock exceptions, the asynchronous trigger would be the best solution. By default an async job is exclusive, which means that the process instance will be locked and it's guaranteed that no other activity on the process instance can interfere with the trigger logic. The RuntimeService triggerAsync methods can be used to trigger the waiting process instance in an asynchronous way. Of course it's also still possible to do this in an synchronous way using the trigger methods of the RuntimeService.
-
+外部服务可以同步或异步地触发等待中的流程实例。为了避免乐观锁异常，最好使用异步触发。默认情况下，异步作业是排他的，也就是说流程实例会被锁定，以保证流程实例中的其他活动不会影响到触发器的逻辑。可以使用RuntimeService的triggerAsync方法，异步地触发等待中的流程实例。当然还是可以使用RuntimeService的trigger方法，同步地触发。
 
 [[serviceTaskExceptionHandling]]
 
 
-===== Handling exceptions
+===== 处理异常
 
-When custom logic is executed, it is often necessary to catch certain business exceptions and handle them inside the surrounding process. Flowable provides different options to do that.
-
+当执行自定义逻辑时，通常需要捕获并在流程中处理特定的业务异常。Flowable提供了多种选择。
 
 [[serviceTaskBpmnErrors]]
 
 
-====== Throwing BPMN Errors
+====== 抛出BPMN错误
 
-It is possible to throw BPMN Errors from user code inside Service Tasks or Script Tasks. In order to do this, a special FlowableException called _BpmnError_ can be thrown in JavaDelegates, scripts, expressions and delegate expressions. The engine will catch this exception and forward it to an appropriate error handler, for example, a Boundary Error Event or an Error Event Sub-Process.
+可以在服务任务或脚本任务的用户代码中抛出BPMN错误。可以在Java委托、脚本、表达式与委托表达式中，抛出特殊的FlowableException：__BpmnError__。引擎会捕获这个异常，并将其转发至合适的错误处理器，如错误边界事件或错误事件子流程。
 
 [source,java,linenums]
 ----
@@ -3055,15 +3047,15 @@ public class ThrowBpmnErrorDelegate implements JavaDelegate {
 }
 ----
 
-The constructor argument is an error code, which will be used to determine the error handler that is responsible for the error. See <<bpmnBoundaryErrorEvent,Boundary Error Event>> for information on how to catch a BPMN Error.
+构造函数的参数是错误代码。错误代码决定了处理这个错误的错误处理器。参见<<bpmnBoundaryErrorEvent,错误边界事件>>了解如何捕获BPMN错误。
 
-This mechanism should be used *only for business faults* that will be handled by a Boundary Error Event or Error Event Sub-Process modeled in the process definition. Technical errors should be represented by other exception types and are not usually handled inside a process.
+这个机制**只应该用于业务错误**，需要通过流程中定义的错误边界事件或错误事件子流程处理。技术错误应该通过其他异常类型表现，并且通常不在流程内部处理。
 
 [[exceptionMapping]]
 
-====== Exception mapping
+====== 异常映射
 
-It's also possible to directly map a Java exception to business exception by using the +mapException+ extension. Single mapping is the simplest form:
+也可以使用++mapException++扩展，直接将Java异常映射至业务异常（错误）。单映射是最简单的形式：
 
 [source,xml,linenums]
 ----
@@ -3075,10 +3067,10 @@ It's also possible to directly map a Java exception to business exception by usi
 </serviceTask>
 
 ----
-In above code, if an instance of +org.flowable.SomeException+ is thrown in the service task, it will be caught and converted to a BPMN exception with the given errorCode. From this point on, it will be handled exactly like a normal BPMN exception.
-Any other exception will be treated as if there is no mapping in place. It will be propagated to the API caller.
 
-One can map all the child exceptions of a certain exception in a single line by using +includeChildExceptions+ attribute.
+在上面的代码中，如果服务任务抛出++org.flowable.SomeException++的实例，引擎会捕获该异常，并将其转换为带有给定errorCode的BPMN错误。然后就可以像普通BPMN错误完全一样地处理。其他的异常没有映射，仍将抛出至API调用处。
+
+也可以在单行中使用++includeChildExceptions++属性，映射特定异常的所有子异常。
 
 [source,xml,linenums]
 ----
@@ -3090,11 +3082,11 @@ One can map all the child exceptions of a certain exception in a single line by 
 </serviceTask>
 
 ----
-The above code will cause Flowable to convert any direct or indirect descendent of +SomeException+ to a BPMN error with the given error code.
-+includeChildExceptions+ will be considered "false" when not given.
 
+上面的代码中，Flowable会将++SomeException++的任何直接或间接的子类，转换为带有指定错误代码的BPMN错误。
+当未指定++includeChildExceptions++时，视为“false”。
 
-The most generic mapping is a default map, which is a map with no class. It will match any Java exception:
+默认映射最泛用。默认映射是一个不指定类的映射，可以匹配任何Java异常：
 
 [source,xml,linenums]
 ----
@@ -3105,18 +3097,19 @@ The most generic mapping is a default map, which is a map with no class. It will
 </serviceTask>
 ----
 
-The mappings are checked in order, from top to bottom, and the first match found will be followed, except for the default map. The default map is selected only after all maps have been checked unsuccessfully.
-Only the first map with no class will be considered as a default map. +includeChildExceptions+ is ignored with a default map.
+除了默认映射，会按照从上至下的顺序检查映射，使用第一个匹配的映射。只在所有映射都不能成功匹配时使用默认映射。
+只有第一个不指定类的映射会作为默认映射。默认映射忽略++includeChildExceptions++。
 
 
 [[serviceTaskExceptionSequenceFlow]]
 
 
-====== Exception Sequence Flow
+====== 异常顺序流
 
-<<internal, [INTERNAL: non-public implementation classes]>>
+<<internal, [内部：非公开实现类]>>
 
-Another option is to route process execution through a different path when some exception occurs. The following example shows how this is done.
+
+也可以选择在发生异常时，将流程执行路由至另一条路径。下面是一个例子。
 
 [source,xml,linenums]
 ----
@@ -3129,7 +3122,7 @@ Another option is to route process execution through a different path when some 
 <sequenceFlow id="exception" sourceRef="javaService" targetRef="fixException" />
 ----
 
-Here, the service task has two outgoing sequence flows, named +exception+ and +no-exception+. The sequence flow ID will be used to direct process flow if there's an exception:
+服务任务有两条出口顺序流，命名为++exception++与++no-exception++。在发生异常时，使用顺序流ID控制流程流向：
 
 [source,java,linenums]
 ----
@@ -3155,9 +3148,9 @@ public class ThrowsExceptionBehavior implements ActivityBehavior {
 [[serviceTaskCallActivitiService]]
 
 
-===== Using a Flowable service from within a JavaDelegate
+===== 在JavaDelegate中使用Flowable服务
 
-For some use cases, it might be necessary to use the Flowable services from within a Java service task (for example, starting a process instance through the RuntimeService, if the callActivity doesn't suit your needs).
+有的时候，需要在Java服务任务中使用Flowable服务（例如调用活动（call activity）不满足需要的场景下，使用RuntimeService启动流程实例）。
 
 [source,java,linenums]
 ----
@@ -3171,9 +3164,9 @@ public class StartProcessInstanceTestDelegate implements JavaDelegate {
 }
 ----
 
-All of the Flowable service APIs are available through this interface.
+可以使用这个接口访问所有Flowable服务API。
 
-All data changes that occur as an effect of using these API calls will be part of the current transaction. This also works in environments with dependency injection, such as Spring and CDI with or without a JTA enabled datasource. For example, the following snippet of code will do the same as the snippet above, but now the RuntimeService is injected rather than being fetched through the _org.flowable.engine.EngineServices_ interface.
+使用这些API调用造成的所有数据变更都在当前事务中。在依赖注入的环境（如Spring或CDI，无论使用或不使用激活JTA的数据源）下也可以使用这个接口。例如，下面的代码片段与上面的代码具有相同功能，但通过注入而不是__org.flowable.engine.EngineServices__接口获得RuntimeService。
 
 [source,java,linenums]
 ----
@@ -3190,28 +3183,26 @@ public class StartProcessInstanceTestDelegateWithInjection {
 }
 ----
 
-*Important technical note:* because the service call is being done as part of the current transaction, any data that was produced or altered _before_ the service task is executed is not yet flushed to the database. All API calls work on the database data, which means that these uncommitted changes are not 'visible' within the API call of the service task.
-
+**重要技术提示：**由于服务调用是在当前事务中完成的，因此在服务任务执行前产生或修改的数据尚未存入数据库。所有API调用都基于数据库数据处理，这意味着这些未提交的修改在服务任务的API调用中“不可见”。
 
 [[bpmnWebserviceTask]]
 
 
-==== Web Service Task
+==== Web服务任务
 
 [[bpmnWebserviceTaskDescription]]
 
 
 ===== 描述
 
-A Web Service task is used to synchronously invoke an external Web service.
-
+Web服务任务（Web service task）用于同步地调用外部的Web服务。
 
 [[bpmnWebserviceTaskGraphicalNotation]]
 
 
 ===== 图示
 
-A Web Service task is visualized in the same way as a Java service task.
+Web服务任务与Java服务任务图标一样。
 
 image::images/bpmn.web.service.task.png[align="center"]
 
@@ -3222,6 +3213,7 @@ image::images/bpmn.web.service.task.png[align="center"]
 ===== XML表示
 
 To use a Web service we need to import its operations and complex types. This can be done automatically by using the import tag pointing to the WSDL of the Web service:
+使用Web服务之前，需要导入其操作及复杂的类型。可以使用导入标签（import tag）指向Web服务的WSDL，自动处理：
 
 [source,xml,linenums]
 ----
@@ -3230,7 +3222,7 @@ To use a Web service we need to import its operations and complex types. This ca
 	namespace="http://webservice.flowable.org/" />
 ----
 
-The previous declaration tells Flowable to import the definitions, but it doesn't create the item definitions and messages for you. Let's suppose we want to invoke a specific method called 'prettyPrint', therefore we will need to create the corresponding message and item definitions for the request and response messages:
+按照上面的声明，Flowable会导入定义，但不会创建条目定义（item definition）与消息。如果需要调用一个名为'prettyPrint'的方法，则需要先为请求及回复消息创建对应的消息与条目定义：
 
 [source,xml,linenums]
 ----
@@ -3241,7 +3233,7 @@ The previous declaration tells Flowable to import the definitions, but it doesn'
 <itemDefinition id="prettyPrintCountResponseItem" structureRef="counter:prettyPrintCountResponse" />
 ----
 
-Before declaring the service task, we have to define the BPMN interfaces and operations that actually reference the Web service ones. Basically, we define and 'interface' and the required 'operations'. For each operation we reuse the previous defined message for 'in' and 'out'. For example, the following declaration defines the 'counter' interface and the 'prettyPrintCountOperation' operation:
+在声明服务任务前，需要定义实际引用Web服务的BPMN接口与操作。基本上，是定义“接口”与所需的“操作”。对每一个操作都可以重复使用之前定义的“传入”与“传出”消息。例如，下面的声明定义了“counter”接口及“prettyPrintCountOperation”操作：
 
 [source,xml,linenums]
 ----
@@ -3254,7 +3246,7 @@ Before declaring the service task, we have to define the BPMN interfaces and ope
 </interface>
 ----
 
-Then we can declare a Web Service Task by using the ##WebService implementation and a reference to the Web service operation.
+这样就可以使用##WebService实现，声明Web服务任务，并引用Web服务操作。
 
 [source,xml,linenums]
 ----
@@ -3267,9 +3259,9 @@ Then we can declare a Web Service Task by using the ##WebService implementation 
 [[bpmnWebserviceTaskIOSpecification]]
 
 
-===== Web Service Task IO Specification
+===== Web服务任务IO规范
 
-Unless we are using the simplistic approach for data input and output associations (see below), each Web Service Task needs to declare an IO Specification that specifies the inputs and outputs of the task. The approach is pretty straightforward and BPMN 2.0 complaint, for our prettyPrint example we define the input and output sets according to the previously declared item definitions:
+除非使用简化方法处理输入与输出数据关联（见下），否则需要为每个Web服务任务声明IO规范，指出任务的输入与输出是什么。这个方法很简单，也兼容BPMN 2.0。在prettyPrint例子中，根据之前声明的条目定义，定义输入与输出：
 
 [source,xml,linenums]
 ----
@@ -3288,14 +3280,14 @@ Unless we are using the simplistic approach for data input and output associatio
 [[bpmnWebserviceTaskDataInputAssociation]]
 
 
-===== Web Service Task data input associations
+===== Web服务任务数据输入关联
 
-There are 2 ways of specifying data input associations:
+有两种指定数据输入关联的方式：
 
-* Using expressions
-* Using the simplistic approach
+* 使用表达式
+* 使用简化方法
 
-To specify the data input association using expressions, we need to define the source and target items and specify the corresponding assignments between the fields of each item. In the following example we assign prefix and suffix fields for the items:
+使用表达式指定数据输入关联，需要定义源及目标条目，并指定每个条目与字段的关联。下面的例子中，我们针对每个条目，指定prefix与suffix字段：
 
 [source,xml,linenums]
 ----
@@ -3313,7 +3305,7 @@ To specify the data input association using expressions, we need to define the s
 </dataInputAssociation>
 ----
 
-On the other hand, we can use the simplistic approach, which is much more straightforward. The 'sourceRef' element is a Flowable variable name and the 'targetRef' element is a property of the item definition. In the following example, we assign the 'prefix' field the value of the variable 'PrefixVariable', and the 'suffix' field the value of the variable 'SuffixVariable'.
+也可以使用更简单明了的简化方法。'sourceRef'元素是一个Flowable变量名，'targetRef'是条目定义的参数。在下面的例子里，将'PrefixVariable'变量的值关联至'prefix'字段，并将'SuffixVariable'变量的值关联至'suffix'字段。
 
 [source,xml,linenums]
 ----
@@ -3330,15 +3322,16 @@ On the other hand, we can use the simplistic approach, which is much more straig
 [[bpmnWebserviceTaskDataOutputAssociation]]
 
 
-===== Web Service Task data output associations
+===== Web服务任务数据输出关联
 
-There are 2 ways of specifying data out associations:
-
-* Using expressions
-* Using the simplistic approach
+有两种指定数据输出关联的方式：
 
 
-To specify the data out association using expressions we need to define the target variable and the source expression. The approach is pretty straightforward and similar to data input associations:
+* 使用表达式
+* 使用简化方法
+
+
+使用表达式指定数据输出关联，需要定义目标变量及源表达式。这种方法很简单，与数据输入关联类似：
 
 [source,xml,linenums]
 ----
@@ -3348,7 +3341,7 @@ To specify the data out association using expressions we need to define the targ
 </dataOutputAssociation>
 ----
 
-Alternatively, we can use the simplistic approach that is much more straightforward. The 'sourceRef' element is a property of the item definition and the 'targetRef' element is a Flowable variable name. The approach is pretty simple and similar to data input associations:
+也可以使用更简单明了的简化方法。'sourceRef'是条目定义的参数，'targetRef'元素是Flowable变量名。这种方法很简单，与数据输入关联类似：
 
 [source,xml,linenums]
 ----
