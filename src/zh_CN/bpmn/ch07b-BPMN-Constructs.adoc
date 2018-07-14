@@ -161,19 +161,16 @@ BPMN 2.0标准对流程的所有的参与者都很有用。最终用户不会因
 [source,xml,linenums]
 ----
 <definitions... >
-    <!-- declaration of the signal -->
     <!-- 声明信号 -->
     <signal id="alertSignal" name="alert" />
 
     <process id="catchSignal">
         <intermediateThrowEvent id="throwSignalEvent" name="Alert">
-            <!-- signal event definition -->
             <!-- 信号事件定义 -->
             <signalEventDefinition signalRef="alertSignal" />
         </intermediateThrowEvent>
         ...
         <intermediateCatchEvent id="catchSignalEvent" name="On Alert">
-            <!-- signal event definition -->
             <!-- 信号事件定义 -->
             <signalEventDefinition signalRef="alertSignal" />
         </intermediateCatchEvent>
@@ -849,8 +846,7 @@ image::images/bpmn.terminate.end.event.png[align="center"]
 
 ===== 描述
 
-The cancel end event can only be used in combination with a BPMN transaction sub-process. When the cancel end event is reached, a cancel event is thrown which must be caught by a cancel boundary event. The cancel boundary event then cancels the transaction and triggers compensation.
-取消结束事件（cancel end event），只能与BPMN事务子流程（BPMN transaction subprocess）一起使用。当到达取消结束事件时，会抛出取消事件，且必须由取消边界事件（cancel boundary event）捕获。取消边界事件将取消事务，并触发补偿（compensation）。
+取消结束事件（cancel end event）只能与BPMN事务子流程（BPMN transaction subprocess）一起使用。当到达取消结束事件时，会抛出取消事件，且必须由取消边界事件（cancel boundary event）捕获。取消边界事件将取消事务，并触发补偿（compensation）。
 
 
 [[bpmnCancelEndEventGraphicalNotation]]
@@ -980,8 +976,7 @@ image::images/bpmn.known.issue.boundary.event.png[align="center"]
 
 在活动边界上的错误__捕获__中间（事件），或简称**错误边界事件（error boundary event）**，捕获其所依附的活动范围内抛出的错误。
 
-Defining a boundary error event makes most sense on an <<bpmnSubProcess,embedded sub-process>>, or a <<bpmnCallActivity,call activity>>, as a sub-process creates a scope for all activities inside the sub-process. Errors are thrown by <<bpmnErrorEndEvent,error end events>>. Such an error will propagate its parent scopes upwards until a scope is found on which a boundary error event is defined that matches the error event definition.
-在<<bpmnSubProcess,嵌入式子流程>>或者<<bpmnCallActivity,调用活动>>上定义错误边界事件最有意义，因为子流程的范围会包括其中的所有活动。错误由<<bpmnErrorEndEvent,错误结束事件>>抛出。这样的错误会逐层向其上级父范围传播，直到在范围内找到一个错误边界事件，匹配错误事件定义。
+在<<bpmnSubProcess,嵌入式子流程>>或者<<bpmnCallActivity,调用活动>>上定义错误边界事件最有意义，因为子流程的范围会包括其中的所有活动。错误可以由<<bpmnErrorEndEvent,错误结束事件>>抛出。这样的错误会逐层向其上级父范围传播，直到在范围内找到一个匹配错误事件定义的错误边界事件。
 
 当捕获错误事件时，会销毁边界事件定义所在的活动，同时销毁其中所有的当前执行（例如，并行活动，嵌套子流程，等等）。流程执行将沿着边界事件的出口顺序流继续。
 
@@ -2283,8 +2278,7 @@ Flowable支持的身份关联（identity link）类型有：
 [source,java,linenums]
 ----
 public class IdentityLinkType {
-  /* Flowable原生角色 
-   * Flowable native roles */
+  /* Flowable内置角色 */
   public static final String ASSIGNEE = "assignee";
   public static final String CANDIDATE = "candidate";
   public static final String OWNER = "owner";
@@ -2383,10 +2377,8 @@ public class MyAssignmentHandler implements TaskListener {
 
   public void notify(DelegateTask delegateTask) {
     // 在这里执行自定义身份查询
-    // Execute custom identity lookups here
 
-    // 然后调用如下命令
-    // and then for example call following methods:
+    // 然后调用如下命令：
     delegateTask.setAssignee("kermit");
     delegateTask.addCandidateUser("fozzie");
     delegateTask.addCandidateGroup("management");
@@ -2501,7 +2493,7 @@ image::images/bpmn.scripttask.png[align="center"]
 </script>
 ----
 
-也可以简单地调用__execution.setVariable("variableName", variableValue)__，在脚本中设置流程变量。默认情况下，变量不会自动储存（**请注意，在一些早期版本中是会储存的！**）。可以将++scriptTask++的++autoStoreVariables++参数设置为++true++，以自动保存任何在脚本中定义的变量（例如上例中的__sum__）。然而，**最佳实践不是这么做，而是应该显式调用execution.setVariable()**，因为在JDK近期的一些版本中，某些脚本语言不能自动保存变量。查看link:$$http://www.jorambarrez.be/blog/2013/03/25/bug-on-jdk-1-7-0_17-when-using-scripttask-in-activiti/$$[这个链接]了解更多信息。
+也可以简单地调用__execution.setVariable("variableName", variableValue)__，在脚本中设置流程变量。默认情况下，变量不会自动储存（**请注意，在一些早期版本中是会储存的！**）。可以将++scriptTask++的++autoStoreVariables++参数设置为++true++，以自动保存任何在脚本中定义的变量（例如上例中的__sum__）。然而这并不是最佳实践。**最佳实践是显式调用execution.setVariable()**，因为在JDK近期的一些版本中，某些脚本语言不能自动保存变量。查看link:$$http://www.jorambarrez.be/blog/2013/03/25/bug-on-jdk-1-7-0_17-when-using-scripttask-in-activiti/$$[这个链接]了解更多信息。
 
 
 [source,xml,linenums]
@@ -2679,8 +2671,7 @@ public class ToUppercase implements JavaDelegate {
 
 **不论在流程定义中声明的是什么类型的值，注入对象的setter/私有字段的类型，总是++org.flowable.engine.delegate.Expression++。解析表达式后，可以被转型为合适的类型。**
 
-Field injection is supported when using the _'flowable:class'_ attribute. Field injection is also possible when using the _flowable:delegateExpression_ attribute, however special rules with regards to thread-safety apply (see next section).
-当使用__'actviiti:class'__属性时，支持字段注入。也可以在使用__flowable:delegateExpression__属性时，进行字段注入。然而考虑到线程安全，需要遵循特殊的规则（参见下一章节）。
+__'flowable:class'__属性支持字段注入。也可以在使用__flowable:delegateExpression__属性时，进行字段注入。然而考虑到线程安全，需要遵循特殊的规则（参见下一章节）。
 
 下面的代码片段展示了如何为类中声明的字段注入常量值。请注意按照BPMN 2.0 XML概要的要求，**在实际字段注入声明前，需要先声明'extensionElements'XML元素**。
 
@@ -2797,7 +2788,7 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
     </extensionElements>
 </serviceTask>
 
-<!-- other process definition elements -->
+<!-- 其它流程定义元素 -->
 
 <serviceTask id="serviceTask2" flowable:delegateExpression="${someJavaDelegateBean}">
     <extensionElements>
@@ -2838,7 +2829,7 @@ public class ReverseStringsFieldInjected implements JavaDelegate {
 
 第一个bean是一般的Spring bean，因此是单例的。第二个bean的scope为__prototype__，因此每次请求这个bean时，Spring容器都会返回一个新实例。
 
-Given the following process definition:
+在以下流程定义中：
 
 [source,xml,linenums]
 ----
@@ -3016,7 +3007,7 @@ public class TestExecutionListener implements ExecutionListener {
     flowable:async="true" />
 ----
 
-外部服务可以同步或异步地触发等待中的流程实例。为了避免乐观锁异常，最好使用异步触发。默认情况下，异步作业是排他的，也就是说流程实例会被锁定，以保证流程实例中的其他活动不会影响到触发器的逻辑。可以使用RuntimeService的triggerAsync方法，异步地触发等待中的流程实例。当然还是可以使用RuntimeService的trigger方法，同步地触发。
+外部服务可以同步或异步地触发等待中的流程实例。为了避免乐观锁异常，最好使用异步触发。默认情况下，异步作业是排他的，也就是说流程实例会被锁定，以保证流程实例中的其他活动不会影响到触发器的逻辑。可以使用RuntimeService的triggerAsync方法，异步触发等待中的流程实例。当然还是可以使用RuntimeService的trigger方法，同步触发。
 
 [[serviceTaskExceptionHandling]]
 
@@ -3166,7 +3157,7 @@ public class StartProcessInstanceTestDelegate implements JavaDelegate {
 
 可以使用这个接口访问所有Flowable服务API。
 
-使用这些API调用造成的所有数据变更都在当前事务中。在依赖注入的环境（如Spring或CDI，无论使用或不使用激活JTA的数据源）下也可以使用这个接口。例如，下面的代码片段与上面的代码具有相同功能，但通过注入而不是__org.flowable.engine.EngineServices__接口获得RuntimeService。
+使用这些API调用造成的所有数据变更都在当前事务中。在依赖注入的环境（如Spring或CDI，无论是否使用启用JTA的数据源）下也可以使用这个接口。例如，下面的代码片段与上面的代码具有相同功能，但通过注入而不是__org.flowable.engine.EngineServices__接口获得RuntimeService。
 
 [source,java,linenums]
 ----
@@ -3212,7 +3203,6 @@ image::images/bpmn.web.service.task.png[align="center"]
 
 ===== XML表示
 
-To use a Web service we need to import its operations and complex types. This can be done automatically by using the import tag pointing to the WSDL of the Web service:
 使用Web服务之前，需要导入其操作及复杂的类型。可以使用导入标签（import tag）指向Web服务的WSDL，自动处理：
 
 [source,xml,linenums]

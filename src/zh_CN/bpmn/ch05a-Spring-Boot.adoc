@@ -529,6 +529,7 @@ public CommandLineRunner init(final MyService myService) {
 
 RestController也有小改动（只展示新方法），以配合上面的修改。HTTP POST使用body传递办理人用户名：
 
+[source,java,linenums]
 ----
 @RestController
 public class MyRestController {

@@ -461,17 +461,13 @@ Flowable支持SLF4J的映射诊断上下文特性。下列基本信息会与需�
 
 默认情况下这些信息都不会被日志记录，但可以通过配置logger，按照你想要的格式，与其他日志信息一起显示。例如在Log4j中进行如下简单的格式定义，就可以让logger显示上述信息：
 
-None of this information is logged by default. The logger can be configured to show them in your desired format, extra to the usual logged messages. For example in
-Log4j the following sample layout definition causes the logger to show the above mentioned information:
-
 [source,properties,linenums]
 ----
 log4j.appender.consoleAppender.layout.ConversionPattern=ProcessDefinitionId=%X{mdcProcessDefinitionID}
 executionId=%X{mdcExecutionId} mdcProcessInstanceID=%X{mdcProcessInstanceID} mdcBusinessKey=%X{mdcBusinessKey} %m%n
 ----
 
-在日志中包含的信息需要进行实时监测时（如使用日志分析器），会很有帮助。
-This is useful when the logs contain information that needs to checked in real time, by means of a log analyzer, for example.
+如果需要使用日志中包含的信息进行实时监测（如使用日志分析器），就会很有帮助。
 
 
 [[eventDispatcher]]
@@ -515,8 +511,8 @@ public class MyEventListener implements FlowableEventListener {
 
   @Override
   public boolean isFailOnException() {
-    // The logic in the onEvent method of this listener is not critical, exceptions
-    // can be ignored if logging fails...
+    // onEvent方法中的逻辑并不重要，可以忽略日志失败异常……
+    
     return false;
   }
 }

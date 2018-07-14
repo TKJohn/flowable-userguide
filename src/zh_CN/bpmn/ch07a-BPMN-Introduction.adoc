@@ -212,21 +212,21 @@ ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("fina
 ----
 public static void main(String[] args) {
 
-  // Create Flowable process engine
+  // 创建Flowable流程引擎
   ProcessEngine processEngine = ProcessEngineConfiguration
     .createStandaloneProcessEngineConfiguration()
     .buildProcessEngine();
 
-  // Get Flowable services
+  // 获取Flowable服务
   RepositoryService repositoryService = processEngine.getRepositoryService();
   RuntimeService runtimeService = processEngine.getRuntimeService();
 
-  // Deploy the process definition
+  // 部署流程定义
   repositoryService.createDeployment()
     .addClasspathResource("FinancialReportProcess.bpmn20.xml")
     .deploy();
 
-  // Start a process instance
+  // 启动流程实例
   runtimeService.startProcessInstanceByKey("financialReport");
 }
 ----
@@ -346,46 +346,38 @@ public class TenMinuteTutorial {
 
   public static void main(String[] args) {
 
-    // Create Flowable process engine
     // 创建Flowable流程引擎 
     ProcessEngine processEngine = ProcessEngineConfiguration
       .createStandaloneProcessEngineConfiguration()
       .buildProcessEngine();
 
-    // Get Flowable services
     // 获取Flowable服务
     RepositoryService repositoryService = processEngine.getRepositoryService();
     RuntimeService runtimeService = processEngine.getRuntimeService();
 
-    // Deploy the process definition
     // 部署流程定义
     repositoryService.createDeployment()
       .addClasspathResource("FinancialReportProcess.bpmn20.xml")
       .deploy();
 
-    // Start a process instance
     // 启动流程实例
     String procId = runtimeService.startProcessInstanceByKey("financialReport").getId();
 
-    // Get the first task
     // 获取第一个任务
     TaskService taskService = processEngine.getTaskService();
     List<Task> tasks = taskService.createTaskQuery().taskCandidateGroup("accountancy").list();
     for (Task task : tasks) {
       System.out.println("Following task is available for accountancy group: " + task.getName());
 
-      // claim it
       // 申领任务
       taskService.claim(task.getId(), "fozzie");
     }
 
-    // Verify Fozzie can now retrieve the task
     // 验证Fozzie获取了任务
     tasks = taskService.createTaskQuery().taskAssignee("fozzie").list();
     for (Task task : tasks) {
       System.out.println("Task for fozzie: " + task.getName());
 
-      // Complete the task
       // 完成任务
       taskService.complete(task.getId());
     }
@@ -393,7 +385,6 @@ public class TenMinuteTutorial {
     System.out.println("Number of tasks for fozzie: "
             + taskService.createTaskQuery().taskAssignee("fozzie").count());
 
-    // Retrieve and claim the second task
     // 获取并申领第二个任务
     tasks = taskService.createTaskQuery().taskCandidateGroup("management").list();
     for (Task task : tasks) {
@@ -401,13 +392,11 @@ public class TenMinuteTutorial {
       taskService.claim(task.getId(), "kermit");
     }
 
-    // Completing the second task ends the process
     // 完成第二个任务并结束流程
     for (Task task : tasks) {
       taskService.complete(task.getId());
     }
 
-    // verify that the process is actually finished
     // 验证流程已经结束
     HistoryService historyService = processEngine.getHistoryService();
     HistoricProcessInstance historicProcessInstance =
