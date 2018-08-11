@@ -3585,9 +3585,9 @@ Http任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，将服务任�
 可以使用自定义的实现，覆盖Http任务的默认行为。
 需要扩展org.flowable.http.HttpActivityBehavior，并覆盖perform()方法。
 
-需要在任务定义中设置'httpActivityBehaviorClass'字段（默认值为'org.flowable.http.impl.HttpActivityBehaviorImpl'）。
+需要在任务定义中设置__httpActivityBehaviorClass__字段（默认值为 __org.flowable.http.impl.HttpActivityBehaviorImpl__）。
 
-当前使用的默认实现'HttpActivityBehaviorImpl'基于Apache Http Client。尽管Apache Http Client可以使用很多方法自定义，但我们并没有在Http客户端配置中使用全部选项。
+当前使用的默认实现__HttpActivityBehaviorImpl__基于Apache Http Client。尽管Apache Http Client可以使用很多方法自定义，但我们并没有在Http客户端配置中使用全部选项。
 
 参考 link:$$http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/apache/http/impl/client/HttpClientBuilder.html$$[Http Client builder] 创建自定义客户端。
 
@@ -3634,25 +3634,25 @@ Authorization: Basic aGFRlc3Q=
 例如：400, 404, 500, 503 +
 例如：400, 5XX
 |handleStatusCodes|否|逗号分隔的Http状态码，将令任务抛出BpmnError，并可用错误边界事件捕获。 +
-BpmnError的错误码为'HTTP<statuscode>'。 +
-例如，404状态码会将错误码设置为'HTTP404'。 +
-仅当'disallowRedirects'字段设置为true时，3XX状态码才会被抛出。若同一个状态码在'handleStatusCodes'及'failStatusCodes'中都有配置，则'handleStatusCodes'生效。 +
+BpmnError的错误码为__HTTP<statuscode>__。 +
+例如，404状态码会将错误码设置为__HTTP404__。 +
+仅当__disallowRedirects__字段设置为true时，3XX状态码才会被抛出。若同一个状态码在__handleStatusCodes__及__failStatusCodes__中都有配置，则__handleStatusCodes__生效。 +
 例如：400, 404, 500, 503 +
 例如：3XX, 4XX, 5XX +
-|ignoreException|否|是否忽略异常。异常将被捕获，并存储在名为'<taskId>.errorMessage'的变量中。
-|saveRequestVariables|否|是否保存请求变量。+
+|ignoreException|否|是否忽略异常。异常将被捕获，并存储在名为__<taskId>.errorMessage__的变量中。
+|saveRequestVariables|否|是否保存请求变量。 +
 默认情况下，只会保存将响应相关的变量。
 |saveResponseParameters|否|是否保存全部的响应变量，包括HTTP状态码，响应头等。 +
 默认情况下，只会将响应体保存为变量。
 |resultVariablePrefix|否|执行变量名的前缀。 +
-如果不设置前缀，变量名为'<taskId>'.'fieldName'。 +
-例如，对于id为'task7'的任务，其请求URL将保存为'task7.requestUrl'。
+如果不设置前缀，变量名为__<taskId>.fieldName__。 +
+例如，对于id为__task7__的任务，其请求URL将保存为__task7.requestUrl__。
 |saveResponseParametersTransient|否|若为true，则会将响应体变量（如果设置了保存响应头，状态码，也包括在内）设置为瞬时变量。
 |saveResponseVariableAsJson|否|若为true，则响应体会保存为JSON变量，而非String。如果HTTP服务返回JSON，并且想使用点注记方式使用字段（如__myResponse.user.name__），这个配置就很有用。
 |httpActivityBehaviorClass|否|org.flowable.http.HttpActivityBehavior类的自定义扩展的全限定类名。
 |===============
 
-除了上面提到的字段，使用'saveResponseParameters'还会在执行成功后设置下列变量。
+除了上面提到的字段，使用__saveResponseParameters__还会在执行成功后设置下列变量。
 
 [options="header"]
 |===============
@@ -3670,9 +3670,9 @@ Content-Length: 777
 
 ===== 结果变量
 
-请注意上述执行变量名都会使用'resultVariablePrefix'前缀。
-例如，可以在其他活动中，使用'task7.responseStatusCode'获取响应状态码。
-其中'task7'是服务任务的'id'。可以设置'resultVariablePrefix'覆盖这个行为。
+请注意上述执行变量名都会使用__resultVariablePrefix__前缀。
+例如，可以在其他活动中，使用__task7.responseStatusCode__获取响应状态码。
+其中__task7__是服务任务的__id__。可以设置__resultVariablePrefix__覆盖这个行为。
 
 [[bpmnHttpTaskExampleUsage]]
 
@@ -3716,12 +3716,13 @@ Content-Length: 777
 默认情况下，当发生链接、IO或其他未处理的异常时，Http任务抛出FlowableException。
 默认情况下，不会处理任何重定向/客户端/服务端错误状态码。
 
-可以设置'failStatusCodes'及/或'handleStatusCodes'字段，配置Http任务处理异常及Http状态的方式。参见<<bpmnHttpTaskConfiguration>>。
+可以设置__failStatusCodes__及/或__handleStatusCodes__字段，配置Http任务处理异常及Http状态的方式。参见<<bpmnHttpTaskConfiguration>>。
 
-由'handleStatusCodes'抛出的BpmnError与其他BPMN异常一样，需要由对应的错误边界事件处理。
+由__handleStatusCodes__抛出的BpmnError与其他BPMN异常一样，需要由对应的错误边界事件处理。
 下面是一些Http任务错误处理及重试的例子。
 
-====== '400'及5XX失败，异步执行，并按照failedJobRetryTimeCycle重试的Http任务
+====== __400__及5XX失败，异步执行，并按照failedJobRetryTimeCycle重试的Http任务
+
 [source,xml,linenums]
 ----
 <serviceTask id="failGet" name="Fail test" flowable:async="true" flowable:type="http">
@@ -3740,7 +3741,7 @@ Content-Length: 777
 </serviceTask>
 ----
 
-====== 将'400'处理为BmpnError
+====== 将__400__处理为BmpnError
 [source,xml,linenums]
 ----
 <serviceTask id="handleGet" name="HTTP Task" flowable:type="http">
@@ -3785,40 +3786,41 @@ Content-Length: 777
 [[bpmnMuleTask]]
 
 
-==== Mule Task
+==== Mule任务
 
-The mule task allows you to send messages to Mule, enhancing the integration features of Flowable. Note that the Mule task is *not* an 'official' task of the BPMN 2.0 spec (and doesn't have a dedicated icon as a consequence). Hence, in Flowable the mule task is implemented as a dedicated service task.
+Mule任务可以向Mule发送消息，增强Flowable的集成特性。请注意Mule任务**不是**BPMN 2.0规范的“官方”任务（所以也没有专用图标）。因此，在Flowable中，Mule任务实现为一种特殊的服务任务。
 
 [[bpmnMuleTaskUsage]]
 
 
-===== Defining an Mule Task
+===== 定义Mule任务
 
-The Mule task is implemented as a dedicated <<bpmnJavaServiceTask,Service Task>> and is defined by setting _'mule'_ for the _type_ of the service task.
+Mule任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，将服务任务的__type__定义为__'mule'__进行设置。
 
 [source,xml,linenums]
 ----
 <serviceTask id="sendMule" flowable:type="mule">
 ----
 
-The Mule task is configured by <<serviceTaskFieldInjection,field injection>>. All the values for these properties can contain EL expression, which are resolved at runtime during process execution. Following properties can be set:
+Mule任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数的值可以使用EL表达式，将在流程执行运行时解析。可以设置下列参数：
+
 
 [options="header"]
 |===============
 |参数|必填?|描述
-|endpointUrl|yes|The Mule endpoint you want to invoke.
-|language|yes|The language you want to use to evaluate the payloadExpression field.
-|payloadExpression|yes|An expression that will be the message's payload.
-|resultVariable|否|The name of the variable which will store the result of the invocation.
+|endpointUrl|是|希望调用的Mule终端（endpoint）。
+|language|是|计算payloadExpression字段所用的语言。
+|payloadExpression|是|消息载荷的表达式。
+|resultVariable|否|存储调用结果的变量名。
 
 |===============
 
 [[bpmnMuleTaskExampleUsage]]
 
 
-===== 示例 usage
+===== 示例
 
-The following XML snippet shows an example of using the Mule Task.
+下面的XML代码片段是使用Mule任务的例子。
 
 [source,xml,linenums]
 ----
@@ -3841,24 +3843,25 @@ The following XML snippet shows an example of using the Mule Task.
 [[bpmnCamelTask]]
 
 
-==== Camel Task
+==== Camel任务
 
-The Camel task allows you to send messages to and receive messages from Camel, and thereby enhances the integration features of Flowable. Note that the Camel task is *not* an 'official' task of the BPMN 2.0 spec (and doesn't have a dedicated icon as a consequence). Hence, in Flowable the Camel task is implemented as a dedicated service task. Also note that you must include the Flowable Camel module in your project to use the Camel task functionality.
+Camel任务（Camel task）可以向Camel发送消息，增强Flowable的集成特性。请注意Camel任务**不是**BPMN 2.0规范的“官方”任务（所以也没有专用图标）。因此，在Flowable中，Camel任务实现为一种特殊的服务任务。还请注意，需要在项目中包含Flowable Camel模块才能使用Camel任务。
 
 
 [[bpmnCamelTaskUsage]]
 
 
-===== Defining a Camel Task
+===== 定义Camel任务
 
-The Camel task is implemented as a dedicated <<bpmnJavaServiceTask,Service Task>> and is defined by setting _'camel'_ for the _type_ of the service task.
+Camel任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，将服务任务的__type__定义为__'camel'__进行设置。
+
 
 [source,xml,linenums]
 ----
 <serviceTask id="sendCamel" flowable:type="camel">
 ----
 
-The process definition itself needs nothing other than the camel type definition on a service task. The integration logic is all delegated to the Camel container. By default, the Flowable engine looks for a camelContext bean in the Spring container. The camelContext bean defines the Camel routes that will be loaded by the Camel container. In the following example, the routes are loaded from a specific Java package, but you can also define routes directly in the Spring configuration itself.
+只需要在流程定义的服务任务上定义Camel类型即可。集成逻辑都通过Camel容器委托。默认情况下Flowable引擎在Spring容器中查找camelContext Bean。camelContext Bean定义由Camel容器装载的Camel路由。在下面的例子中，按照指定的Java包装载路由。但也可以自行在Spring配置中直接定义路由。
 
 [source,xml,linenums]
 ----
@@ -3869,9 +3872,9 @@ The process definition itself needs nothing other than the camel type definition
 </camelContext>
 ----
 
-For more documentation about Camel routes you can look on the link:$$http://camel.apache.org/$$[Camel website]. The basic concepts are demonstrated through a few small samples below. In the first sample, we will do the simplest form of Camel call from a Flowable workflow. Let's call it SimpleCamelCall.
+可以在link:$$http://camel.apache.org/$$[Camel网站]找到关于Camel路由的更多文档。下面只通过几个小例子展示基本概念。在第一个例子中，在Flowable工作流中进行最简单的Camel调用。叫做SimpleCamelCall。
 
-If you want to define multiple Camel context beans or want to use a different bean name, this can be overridden in the Camel task definition like this:
+如果想要定义多个Camel上下文Bean，或想使用不同的Bean名字，可以在Camel任务定义中像这样覆盖：
 
 [source,xml,linenums]
 ----
@@ -3886,9 +3889,9 @@ If you want to define multiple Camel context beans or want to use a different be
 [[bpmnCamelTaskSimpleCamelCall]]
 
 
-===== Simple Camel Call example
+===== 简单Camel调用示例
 
-All the files related to this example can be found in the org.flowable.camel.examples.simpleCamelCall package of flowable-camel module. The target simply activates a specific Camel route. First of all, we need a Spring context that contains the introduction to the routes as mentioned previously. The following serves this purpose:
+这个例子相关的所有文件，都可以在flowable-camel模块的org.flowable.camel.examples.simpleCamelCall包中找到。目标是简单地启动一个Camel路由。首先需要一个配置了上面提到的路由的Spring上下文。下面的代码实现这个目的：
 
 [source,xml,linenums]
 ----
@@ -3910,19 +3913,19 @@ public class SimpleCamelCallRoute extends RouteBuilder {
 }
 ----
 
-The route just logs the message body and nothing more. Notice the format of the from endpoint. It consists of three parts:
+路由只是记录消息体，不做更多事情。请注意from终端（endpoint）的格式，包含冒号分隔的三个部分：
 
 
 [options="header"]
 |===============
-|Endpoint URL Part|Description
-|flowable|refers to the engine endpoint
-|SimpleCamelCallProcess|name of the process
-|simpleCall|name of the Camel service in the process
+|终端URL部分|描述
+|flowable|指向引擎终端
+|SimpleCamelCallProcess|流程名
+|simpleCall|流程中Camel服务的名字
 
 |===============
 
-OK, our route is now properly configured and accessible to Camel. Now comes the workflow part. The workflow looks like:
+现在已经配置好路由，可以访问Camel。下面需要像这样定义工作流：
 
 [source,xml,linenums]
 ----
@@ -3941,10 +3944,9 @@ OK, our route is now properly configured and accessible to Camel. Now comes the 
 [[bpmnCamelTaskPingPong]]
 
 
-===== Ping Pong example
+===== 连通性测试示例
 
-Our example worked, but nothing is really transferred between Camel and Flowable so there is not much merit in it. In this example, we try to send and receive data to and from Camel. We send a string, Camel concatenates something to it and returns back the result. The sender part is trivial, we send our message in the form of a variable to Camel Task. Here is our caller code:
-
+示例已经可以工作，但实际上Camel与Flowable之间并没有通信，因此没有太多价值。在这个例子里，将试着从Camel接收与发送消息。我们将发送一个字符串，Camel在其上附加一些文字并返回作为结果。发送部分比较普通，即以变量的格式将信息发送给Camel服务。这是我们的调用代码：
 
 [source,java,linenums]
 ----
@@ -3964,7 +3966,7 @@ public void testPingPong() {
 ----
 
 
-The variable "input" is actually the input for the Camel route, and outputMap is there to capture the result back from Camel. The process could be something like this:
+“input”变量是实际上是Camel路由的输入，而outputMap用于捕获Camel传回的结果。流程像是这样：
 
 [source,xml,linenums]
 ----
@@ -3980,7 +3982,8 @@ The variable "input" is actually the input for the Camel route, and outputMap is
 
 ----
 
-Note that SaveOutput Service task stores the value of "Output" variable from the context to the previously mentioned OutputMap. Now we have to know how the variables are sent to Camel and returned back. Here comes the notion of Camel behavior into play. The way variables are communicated to Camel is configurable via CamelBehavior. Here we use the default one in our sample, a short description of the other ones comes afterwards. With similar code you can configure the desired Camel behavior:
+请注意SaveOutput服务任务会从上下文中取出“Output”变量，并存储至上面提到的OutputMap。现在需要了解变量如何发送至Camel，以及如何返回。这就需要了解Camel行为（Behavior）的概念。变量与Camel通信的方式可以通过CamelBehavior配置。在这个例子里使用默认配置，其它配置在后面会进行简短介绍。可以使用类似的代码配置期望的Camel行为：
+
 
 [source,xml,linenums]
 ----
@@ -3991,7 +3994,7 @@ Note that SaveOutput Service task stores the value of "Output" variable from the
 </serviceTask>
 ----
 
-If you do not give a specific behavior, then org.flowable.camel.impl.CamelBehaviorDefaultImpl will be set. This behavior copies the variables to Camel properties of the same name. In return, regardless of selected behavior, if the Camel message body is a map, then each of its elements is copied as a variable, else the whole object is copied into a specific variable with the name of "camelBody". Knowing this, this Camel route concludes our second example:
+如果不指定行为，则会设置为org.flowable.camel.impl.CamelBehaviorDefaultImpl。这个行为会将变量复制到相同名字的Camel参数。无论选择什么行为，对于返回值：如果Camel消息体是一个map，则其中的每个元素都将复制为变量；否则整个对象将复制为名为"camelBody"的特定变量。以第二个例子作为Camel路由的总结：
 
 [source,java,linenums]
 ----
@@ -4001,10 +4004,9 @@ public void configure() throws Exception {
 }
 ----
 
-In this route, the string "world" is concatenated to the end of the property named "input" and the result will be set in the message body. It's accessible by checking the "camelBody" variable in the Java service task and copied to "outputMap". Now that the example with its default behavior works, let's see what the other possibilities are. In starting every Camel route, the Process Instance ID will be copied into a Camel property with the specific name of "PROCESS_ID_PROPERTY". It's later used for correlating the process instance and Camel route. Also, it can be exploited in the Camel route.
+在这个路由中，字符串"world"会在结尾连接上名为“input”的参数，并将结果作为消息体返回。可以通过Java服务任务访问"camelBody"变量。也可以访问“outputMap”获取。除了这个例子中使用的默认行为之外，我们还可以看看其他的方式。在每个Camel路由开始时，流程实例ID会复制为名为"PROCESS_ID_PROPERTY"的Camel参数。之后会用于将流程实例与Camel路由相关联。也可以在Camel路由中直接使用。
 
-
-There are three different behaviors already available out of the box in Flowable. The behavior can be overwritten by a specific phrase in the route URL. Here's an example of overriding the already defined behavior in the URL:
+Flowable提供了三种不同的行为。可以通过修改路由URL中特定的部分覆写行为。这里有个在URL中覆写已有行为的例子：
 
 [source,java,linenums]
 ----
@@ -4012,49 +4014,52 @@ from("flowable:asyncCamelProcess:serviceTaskAsync2?copyVariablesToProperties=tru
 
 ----
 
-The following table provides an overview of three available Camel behaviors:
+下表展示了三种可用的Camel行为：
 
 [options="header"]
 |===============
-|Behavior|In URL|Description
-|CamelBehaviorDefaultImpl|copyVariablesToProperties|Copy Flowable variables as Camel properties
-|CamelBehaviorCamelBodyImpl|copyCamelBodyToBody|Copy only the Flowable variable named "camelBody" as the Camel message body
-|CamelBehaviorBodyAsMapImpl|copyVariablesToBodyAsMap|Copy all the Flowable variables in a map as the Camel message body
+|行为|URL中|描述
+|CamelBehaviorDefaultImpl|copyVariablesToProperties|将Flowable变量复制为Camel参数。
+|CamelBehaviorCamelBodyImpl|copyCamelBodyToBody|只将名为"camelBody"的Flowable变量复制为Camel消息体。
+|CamelBehaviorBodyAsMapImpl|copyVariablesToBodyAsMap|将一个map中的所有Flowable变量复制为Camel消息体。
 
 |===============
 
+上表展示了Flowable变量如何传递给Camel。下表展示Camel变量如何返回至Flowable。需要在路由URL中进行配置。
 
-The above table describes how Flowable variables are going to be transferred to Camel. The following table describes how the Camel variables are returned back to Flowable. This can only be configured in route URLs.
 
 [options="header"]
 |===============
-|URL|Description
-|Default|If Camel body is a map, copy each element as a Flowable variable, otherwise copy the whole Camel body as a "camelBody" Flowable variable
-|copyVariablesFromProperties|Copy Camel properties as Flowable variables of the same name
-|copyCamelBodyToBodyAsString|As for default, but if camelBody is not a map, first convert it to String and then copy it into "camelBody"
-|copyVariablesFromHeader|Additionally copy Camel headers to Flowable variables of the same names
+|URL|描述
+|Default|如果Camel消息体是一个map，则将其中每一对象复制为Flowable变量；否则将整个Camel消息体复制为"camelBody" Flowable变量。
+|copyVariablesFromProperties|将Camel参数以同名复制为Flowable变量。
+|copyCamelBodyToBodyAsString|与default相同，但如果Camel消息体不是map，则首先将其转换为字符串，然后再复制为"camelBody"。
+|copyVariablesFromHeader|额外地，将Camel头复制为Flowable的同名变量。
 
 |===============
 
-===== Returning back the variables
-What is mentioned above about passing variables only holds for the initiating side of the variable transfer, whether you're coming from from Camel to Flowable or from Flowable to Camel. +
-It is important to note that because of the special non-blocking behavior of Flowable, variables are not automatically returned back from Flowable to Camel.
-For that to happen, a special syntax is available. There can be one or more parameters in a Camel route URL with the format of +var.return.someVariableName+.
-All variables having a name equal to one of these parameters (without +var.return+ part) will be considered as output variables and will be copied back as Camel properties with the same names. +
-For example in a route like:
+===== 返回变量
+
+上面提到的变量传递，不论是从Camel到Flowable还是反向，都只用于变量传递的起始侧。
+要特别注意，由于Flowable的行为是非阻塞的，Flowable不会自动向Camel返回变量。
+为此提供了特殊的语法。可以在Camel路由URL中，以++var.return.someVariableName++的格式，指定一个或多个参数。与这些参数同名（但没有++var.return++部分）的变量会作为输出变量。因此将会以相同的名字复制回Camel参数。 +
+例如在如下路由中：
+
+
 ----
 from("direct:start").to("flowable:process?var.return.exampleVar").to("mock:result");
 ----
 
-A Flowable variable with the name of +exampleVar+ will be considered as an output variable and will be copied back as a property in Camel with the same name.
+名为++exampleVar++的Flowable变量会作为输出变量。因此会以同名复制回Camel参数。
 
 
 [[bpmnCamelTaskAsyncPingPong]]
 
 
-===== Asynchronous Ping Pong example
+===== 异步连通性测试示例
 
-All the previous examples were synchronous. The process instance waits until the Camel route is concluded and returned. In some cases, we might need the Flowable process instance to continue. For such purposes, the asynchronous capability of the Camel service task is useful. You can make use of this feature by setting the _async_ property of the Camel service task to true.
+上面的例子全都是同步的。流程实例等待，直到Camel路由结束并返回。有时，需要Flowable流程实例继续运行。这时可以使用Camel服务任务的异步功能。可以将Camel服务任务的__async__参数设置为true，启用这个功能。
+
 
 [source,xml,linenums]
 ----
@@ -4062,14 +4067,15 @@ All the previous examples were synchronous. The process instance waits until the
 ----
 
 
-By setting this feature, the specified Camel route is activated asynchronously by the Flowable job executor. When you define a queue in the Camel route, the Flowable process instance will continue with the activities defined after the Camel service task in the process definition. The Camel route will be executed fully asynchronously from the process execution. If you want to wait for a response of the Camel service task somewhere in your process definition, you can use a receive task.
+设置这个参数后，Camel路由会由Flowable作业执行器异步启动。如果在Camel路由中定义了队列，Flowable流程实例会继续执行流程定义中Camel服务任务之后的活动。Camel路由会与流程执行完全异步地执行。如果需要在流程定义的某处等待Camel服务任务的响应，可以使用接收任务（receive task）。
 
 [source,xml,linenums]
 ----
 <receiveTask id="receiveAsyncPing" name="Wait State" />
 ----
 
-The process instance will wait until a signal is received, for example from Camel. In Camel you can send a signal to the process instance by sending a message to the proper Flowable endpoint.
+流程实例会等待，直到接收到来自Camel的信号。可以在Camel中向特定的Flowable终端发送消息，来为流程实例发送信号。
+
 
 [source,java,linenums]
 ----
@@ -4077,33 +4083,33 @@ The process instance will wait until a signal is received, for example from Came
 ----
 
 
-* constant string "flowable"
-* process name
-* receive task name
+* “flowable”字符串常量
+* 流程名
+* 接收任务名
 
 
 [[bpmnCamelInstantiateWorkflowFromCamelRoute]]
 
 
-===== Instantiate workflow from Camel route
+===== 使用Camel路由实例化工作流
 
-In all the previous examples, the Flowable process instance is started first and the Camel route was started from the process instance. It is also possible to do things the other way around, with a process instance being started or invoked from an already started Camel route. It's very similar to signalling a receive task. Here's a sample route:
+上面的例子都是先启动Flowable流程实例，然后在流程实例中启动Camel路由。也可以反过来，在已经启动的Camel路由中启动或调用流程实例。类似于为接收任务发送消息。例如，一个简单的路由：
 
 [source,java,linenums]
 ----
 from("direct:start").to("flowable:camelProcess");
 ----
 
-As you can see, the URL has two parts: the first is the constant string "flowable" and the second is the name of the process definition. Obviously, the process definition should already be deployed to the Flowable engine.
+可以看到，URL包含两部分：第一部分是“flowable”字符串常量，第二部分是流程定义的名字。当然，需要提前在Flowable引擎中部署这个流程定义。
 
-It is also possible to set the initiator of the process instance to some authenticated user ID that is provided in a Camel header. To achieve this, first of all, an initiator variable must be specified in the process definition:
+也可以在Camel头中，将流程实例起动人设置为某个已认证用户ID。为此，首先需要在流程定义中指定启动人变量：
 
 [source,xml,linenums]
 ----
 <startEvent id="start" flowable:initiator="initiator" />
 ----
 
-Then given that the user ID is contained in a Camel header named _CamelProcessInitiatorHeader_, the Camel route could be defined as follows:
+然后使用Camel头__CamelProcessInitiatorHeader__指定用户ID。Camel路由定义如下：
 
 [source,java,linenums]
 ----
@@ -4116,14 +4122,14 @@ from("direct:startWithInitiatorHeader")
 [[bpmnManualTask]]
 
 
-==== Manual Task
+==== 手动任务
 
 [[bpmnManualTaskDescription]]
 
 
 ===== 描述
 
-A _Manual Task_ defines a task that is external to the BPM engine. It's used to model work that is done by somebody, which the engine does not need to know of, nor is there a system or user interface. For the engine, a manual task is handled as a *pass-through activity*, automatically continuing the process from the moment process execution arrives into it.
+__手动任务（manual task）__定义在BPM引擎之外的任务。它用于建模引擎不需要了解，也不需要提供系统或用户界面的工作。对于引擎来说，手动任务将按**直接穿过活动**处理，在流程执行到达手动任务时，自动继续执行流程。
 
 
 [[bpmnManualTaskGraphicalNotation]]
@@ -4131,7 +4137,7 @@ A _Manual Task_ defines a task that is external to the BPM engine. It's used to 
 
 ===== 图示
 
-A manual task is visualized as a rounded rectangle, with a little 'hand' icon in the upper left corner
+手动任务用左上角有一个小“手”图标的标准BPMN 2.0任务（圆角矩形）表示。
 
 image::images/bpmn.manual.task.png[align="center"]
 
@@ -4150,19 +4156,18 @@ image::images/bpmn.manual.task.png[align="center"]
 [[bpmnReceiveTask]]
 
 
-==== Java Receive Task
+==== Java接收任务
 
 [[bpmnReceiveTaskDescription]]
 
 
 ===== 描述
 
-A Receive Task is a simple task that waits for the arrival of a certain message. Currently, we have only implemented Java semantics for this task. When process execution arrives at a Receive Task, the process state is committed to the persistence store. This means that the process will stay in this wait state until a specific message is received by the engine, which triggers the continuation of the process past the Receive Task.
-
+接收任务（receive task），是等待特定消息到达的简单任务。目前，我们只为这个任务实现了Java语义。当流程执行到达接收任务时，流程状态将提交至持久化存储。这意味着流程将保持等待状态，直到引擎接收到特定的消息，触发流程穿过接收任务继续执行。
 
 ===== 图示
 
-A Receive Task is visualized as a task (rounded rectangle) with a message icon in the top left corner. The message is white (a black message icon would have send semantics)
+接收任务用左上角有一个消息图标的标准BPMN 2.0任务（圆角矩形）表示。消息图标是白色的（对应的黑色消息图标代表发送的含义）。
 
 image::images/bpmn.receive.task.png[align="center"]
 
@@ -4174,7 +4179,7 @@ image::images/bpmn.receive.task.png[align="center"]
 <receiveTask id="waitState" name="wait" />
 ----
 
-To continue a process instance that is currently waiting at such a Receive Task, the _runtimeService.trigger(executionId)_ must be called using the ID of the execution that arrived in the Receive Task. The following code snippet shows how this works in practice:
+要使流程实例从接收任务的等待状态中继续执行，需要使用到达接收任务的执行id，调用__runtimeService.signal(executionId)__。下面的代码片段展示了如何操作：
 
 [source,java,linenums]
 ----
@@ -4192,41 +4197,42 @@ runtimeService.trigger(execution.getId());
 [[bpmnShellTask]]
 
 
-==== Shell Task
+==== Shell任务
 
 [[bpmnShellTaskDescription]]
 
 
 ===== 描述
 
-The Shell task allows you to run shell scripts and commands. Note that the Shell task is *not* an 'official' task of BPMN 2.0 spec (and doesn't have a dedicated icon as a consequence).
+Shell任务（Shell task）可以运行Shell脚本与命令。请注意Shell任务**不是**BPMN 2.0规范的“官方”任务（因此也没有专用图标）。
 
 
 [[bpmnShellTaskUsage]]
 
 
-===== Defining a Shell task
+===== 定义Shell任务
 
-The Shell task is implemented as a dedicated <<bpmnJavaServiceTask,Service Task>> and is defined by setting _'shell'_ for the _type_ of the service task.
+Shell任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，将服务任务的__type__定义为__'shell'__进行设置。
 
 [source,xml,linenums]
 ----
 <serviceTask id="shellEcho" flowable:type="shell">
 ----
 
-The Shell task is configured by <<serviceTaskFieldInjection,field injection>>. All the values for these properties can contain EL expression, which are resolved at runtime during process execution. The following properties can be set:
+Shell任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数的值可以使用EL表达式，将在流程执行运行时解析。可以设置下列参数：
+
 
 [options="header"]
 |===============
-|Property|Required?|Type|Description|Default
-|command|yes|String|Shell command to execute.|
-|arg0-5|否|String|Parameter 0 to Parameter 5|
-|wait|否|true/false|Wait if necessary, until the shell process has terminated.|true
-|redirectError|否|true/false|Merge standard error with the standard output.|false
-|cleanEnv|否|true/false|Shell process does not inherit current environment.|false
-|outputVariable|否|String|Name of variable to hold the output|Output is not recorded.
-|errorCodeVariable|否|String|Name of variable to hold any result error code|Error level is not registered.
-|directory|否|String|Default directory of the shell process|Current directory
+|参数|必填?|类型|描述|默认值
+|command|是|String|要执行的Shell命令。|
+|arg0-5|否|String|参数0至参数5|
+|wait|否|true/false|是否等待Shell进程终止。|true
+|redirectError|否|true/false|是否将标准错误（standard error）并入标准输出（standard output）。|false
+|cleanEnv|否|true/false|是否避免Shell进程继承当前环境。|false
+|outputVariable|否|String|保存输出的变量名|不会记录输出。
+|errorCodeVariable|否|String|保存结果错误码的变量名|不会记录错误码。
+|directory|否|String|Shell进程的默认目录|当前目录
 
 |===============
 
@@ -4234,9 +4240,9 @@ The Shell task is configured by <<serviceTaskFieldInjection,field injection>>. A
 [[bpmnShellTaskExampleUsage]]
 
 
-===== 示例 usage
+===== 示例
 
-The following XML snippet shows an example of using the Shell Task. It runs the shell script "cmd /c echo EchoTest", waits for it to be terminated and puts the result in _resultVar_:
+下面的XML代码片段是使用Shell任务的例子。将会运行"cmd /c echo EchoTest" Shell脚本，等待其结束，并将其结果存入__resultVar__。
 
 [source,xml,linenums]
 ----
@@ -4413,7 +4419,7 @@ public class ExampleFieldInjectedExecutionListener implements ExecutionListener 
 }
 ----
 
-The class +ExampleFieldInjectedExecutionListener+ concatenates the two injected fields (one fixed an the other dynamic) and stores this in the process variable '++var++'.
+The class +ExampleFieldInjectedExecutionListener+ concatenates the two injected fields (one fixed an the other dynamic) and stores this in the process variable__++var++'.
 
 [source,java,linenums]
 ----
@@ -4785,7 +4791,7 @@ Sub-Processes have two major use cases:
 
 Using a Sub-Process does impose some constraints:
 
-* A Sub-Process can only have *one 'none start event'*, no other start event types are allowed. A Sub-Process must *at least have one 'end event'*. Note that the BPMN 2.0 specification allows the omission of the start and end events in a Sub-Process, but the current Flowable implementation does not support this.
+* A Sub-Process can only have *one__none start event'*, no other start event types are allowed. A Sub-Process must *at least have one__end event'*. Note that the BPMN 2.0 specification allows the omission of the start and end events in a Sub-Process, but the current Flowable implementation does not support this.
 * *Sequence flows cannot cross Sub-Process boundaries.*
 
 
@@ -4838,7 +4844,7 @@ A Sub-Process is defined by the _subProcess_ element. All activities, gateways, 
 
 ===== 描述
 
-The Event Sub-Process is new in BPMN 2.0. An Event Sub-Process is a sub-process that is triggered by an event. An Event Sub-Process can be added at the process level or at any sub-process level. The event used to trigger an event sub-process is configured using a start event. From this, it follows that 'none start events' are not supported for Event Sub-Processes. An Event Sub-Process might be triggered using events, such as message events, error events, signal events, timer events, or compensation events. The subscription to the start event is created when the scope (process instance or sub-process) hosting the Event Sub-Process is created. The subscription is removed when the scope is destroyed.
+The Event Sub-Process is new in BPMN 2.0. An Event Sub-Process is a sub-process that is triggered by an event. An Event Sub-Process can be added at the process level or at any sub-process level. The event used to trigger an event sub-process is configured using a start event. From this, it follows that__none start events__are not supported for Event Sub-Processes. An Event Sub-Process might be triggered using events, such as message events, error events, signal events, timer events, or compensation events. The subscription to the start event is created when the scope (process instance or sub-process) hosting the Event Sub-Process is created. The subscription is removed when the scope is destroyed.
 
 An Event Sub-Process may be interrupting or non-interrupting. An interrupting sub-process cancels any executions in the current scope. A non-interrupting Event Sub-Process spawns a new concurrent execution. While an interrupting Event Sub-Process can only be triggered once for each activation of the scope hosting it, a non-interrupting Event Sub-Process can be triggered multiple times. The fact of whether a sub-process is interrupting is configured using the start event triggering the Event Sub-Process.
 
@@ -5075,14 +5081,14 @@ It is possible to use expressions here as well:
 
 So, in the end z = y+5 = x+5+5.
 
-The callActivity element also supports setting the business key on the sub-process instance using a custom Flowable attribute extension. The 'businessKey' attribute can be used to set a custom business key value on the sub-process instance.
+The callActivity element also supports setting the business key on the sub-process instance using a custom Flowable attribute extension. The__businessKey__attribute can be used to set a custom business key value on the sub-process instance.
 ----
 <callActivity id="callSubProcess" calledElement="checkCreditProcess" flowable:businessKey="${myVariable}">
 ...
 </callActivity>
 ----
 
-Defining the 'inheritBusinessKey' attribute with a value of +true+ will set the business key value on the sub-process to the value of the business key as defined in the calling process.
+Defining the__inheritBusinessKey__attribute with a value of +true+ will set the business key value on the sub-process to the value of the business key as defined in the calling process.
 
 ----
 <callActivity id="callSubProcess" calledElement="checkCreditProcess" flowable:inheritBusinessKey="true">
@@ -5231,7 +5237,7 @@ How does Flowable address this problem? Flowable performs optimistic locking. Wh
 
 Is this a good solution? As we have seen, optimistic locking allows Flowable to prevent inconsistencies. It makes sure that we do not "stay stuck at the joining gateway", meaning: either all executions have passed the gateway, or there are jobs in the database making sure that we retry passing it. However, while this is a perfectly fine solution from the point of view of persistence and consistency, this might not always be desirable behavior at a higher level:
 
-* Flowable will retry the same job for a fixed maximum number of times only ('3' in the default configuration). After that, the job will still be present in the database but will not be retried actively anymore. That means that an external operator would need to trigger the job manually.
+* Flowable will retry the same job for a fixed maximum number of times only ('3__in the default configuration). After that, the job will still be present in the database but will not be retried actively anymore. That means that an external operator would need to trigger the job manually.
 * If a job has non-transactional side effects, these will not be rolled back by the failing transaction. For instance, if the "book concert tickets" service does not share the same transaction as Flowable, we might book multiple tickets if we retry the job.
 
 
@@ -5276,7 +5282,7 @@ By default, everyone is allowed to start a new process instance of deployed proc
   ...
 ----
 
-In the above XML excerpt, 'user(user3)' refers directly to the user 'user3', and 'group(group3)' to group 'group3'. No indicator will default to a group type. It is also possible to use attributes of the <process> tag, namely <flowable:candidateStarterUsers> and <flowable:candidateStarterGroups>. Here is an example:
+In the above XML excerpt,__user(user3)__refers directly to the user__user3', and__group(group3)__to group__group3'. No indicator will default to a group type. It is also possible to use attributes of the <process> tag, namely <flowable:candidateStarterUsers> and <flowable:candidateStarterGroups>. Here is an example:
 
 [source,xml,linenums]
 ----
@@ -5341,7 +5347,7 @@ BPMN provides the possibility to define data objects as part of a process or sub
 <dataObject id="dObj6" name="LongTest" itemSubjectRef="xsd:long"/>
 ----
 
-The data object definitions will be automatically converted to process variables using the 'name' attribute value as the name for the new variable. In addition to the definition of the data object, Flowable also provides an extension element to assign a default value to the variable. The following BPMN snippet provides an example:
+The data object definitions will be automatically converted to process variables using the__name__attribute value as the name for the new variable. In addition to the definition of the data object, Flowable also provides an extension element to assign a default value to the variable. The following BPMN snippet provides an example:
 
 [source,xml,linenums]
 ----
