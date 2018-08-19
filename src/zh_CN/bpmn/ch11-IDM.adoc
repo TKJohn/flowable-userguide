@@ -1,29 +1,27 @@
 [[IDM]]
 
-== Identity management
+== 身份管理
 
-Starting from Flowable V6, the identity management (IDM) component has been extracted from the flowable-engine module and the logic moved to several separate modules: flowable-idm-api, flowable-idm-engine, flowable-idm-spring and flowable-idm-engine-configurator. The main reason for separating the IDM logic was that it's not core to the Flowable engine and in a lot of cases when the Flowable engine is embedded in an application, the identity logic is not used or needed. 
+从Flowable V6起，身份管理（IDM IDentity Management）组件从Flowable引擎模块中抽出，并将其逻辑移至几个不同的模块：flowable-idm-api、flowable-idm-engine、flowable-idm-spring及flowable-idm-engine-configurator。分离IDM主要是因为它并不是Flowable引擎的核心，并且在很多将Flowable引擎嵌入应用的用例中，并不使用或需要这部分身份管理逻辑。
 
-By default, the IDM engine is initialized and started when the Flowable engine is started. This results in the same identity logic being executed and available in Flowable v5. The idm-engine manages its own database schema and the following entities:
+默认情况下，IDM引擎在Flowable引擎启动时初始化并启动。这样身份管理逻辑在Flowable V5中也可以使用。IDM引擎管理自己的数据库表结构及下列实体：
 
-* User and UserEntity, the user information.
-* Group and GroupEntity, the group information.
-* MembershipEntity, the memberships of users in groups
-* Privilege and PrivilegeEntity, a privilege definition (for example used for controlling access to the UI apps, such as the Flowable Modeler and Flowable Task app)
-* PrivilegeMappingEntity, linking a user and/or group to a privilege
-* Token and TokenEntity, an authentication token used by the UI apps  
+* User与UserEntity，用户信息。
+* Group与GroupEntity，组信息。
+* MembershipEntity，组中的用户成员。
+* Privilege与PrivilegeEntity，权限定义（例如在Flowable Modeler与Flowable Task应用中，用于控制应用界面的访问）。
+* PrivilegeMappingEntity，将用户及/或组与权限关联。
+* Token与TokenEntity，应用界面程序使用的认证令牌。
 
-Since the DB contains historic entities for past as well as ongoing instances, you might want to consider querying these tables in order to minimize access to the runtime process instance data, and that way keep the runtime execution performant.
+历史与当前进行中的流程实例都在数据库中保存历史实体，因此可以选择直接查询历史表，以减少对运行时流程实例数据的访问，并提高运行时执行的性能。
 
+[[_idm_engine_configuration]]
 
-[[IDM engine configuration]]
+=== IDM引擎配置
 
+默认情况下，IDM引擎使用++org.flowable.engine.impl.cfg.IdmEngineConfigurator++启动。这个配置器使用Flowable流程引擎配置中相同的数据源配置。这样使用身份管理就不需要进行额外的配置，就像在Flowable V5中一样。
 
-=== IDM engine configuration
-
-By default the Flowable engine is started with the +org.flowable.engine.impl.cfg.IdmEngineConfigurator+. This configurator uses the same datasource configuration as the Flowable process engine configuration. No additional configuration is needed to use the identity component as it was configured in Flowable v5.
-
-When no identity logic is needed in the Flowable engine the IDM engine can be disabled in the process engine configuration.
+如果Flowable引擎不需要身份管理，可以在流程引擎配置中禁用IDM引擎。
 
 [source,xml,linenums]
 ----
@@ -33,9 +31,9 @@ When no identity logic is needed in the Flowable engine the IDM engine can be di
 </bean>
 ----
 
-This means that no user and group queries can be used, and candidate groups in a task query can not be retrieved for a user.
+这意味着不能使用用户与组进行查询，也不能在任务查询中，按用户查询其所在的候选组。
 
-By default, the user passwords will be saved in plain text in the IDM database tables. To make sure that the passwords are encoded you can define a password encoder in the process engine configuration.
+默认情况下，用户的密码以明文保存在IDM数据库表中。可以在流程引擎配置中定义一个加密算法，以确保密码加密。
 
 [source,xml,linenums]
 ----
@@ -52,10 +50,9 @@ By default, the user passwords will be saved in plain text in the IDM database t
 </bean>
 ----
 
-In this example the ShaPasswordEncoder is used, but you can also use the org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder for example. When not using Spring you can also use the org.flowable.idm.engine.impl.authentication.ApacheDigester to encode the passwords.
+这里使用的是ShaPasswordEncoder，但也可以使用其他的加密算法，如org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder，不使用Spring的话也可以改用org.flowable.idm.engine.impl.authentication.ApacheDigester。
 
-The default IDM engine configurator can also be overridden to initialize the IDM Engine in a custom way. A good example is the LDAPConfigurator
-implementation which overrides the default IDM engine to use a LDAP server instead of the default IDM database tables. The +idmProcessEngineConfigurator+ property of the process engine configuration can be used to set a custom configurator like the LDAPConfigurator
+也可以覆盖默认的IDM引擎配置器，使用自定义方式初始化IDM引擎。LDAPConfigurator的实现就是一个很好的例子。它覆盖了默认的IDM引擎，使用LDAP服务代替了默认的IDM数据库表。流程引擎配置的++idmProcessEngineConfigurator++参数用于设置自定义的配置器，如LDAPConfigurator
 
 [source,xml,linenums]
 ----
@@ -64,19 +61,19 @@ implementation which overrides the default IDM engine to use a LDAP server inste
     <property name="idmProcessEngineConfigurator">
       <bean class="org.flowable.ldap.LDAPConfigurator">
 
-        <!-- Server connection params -->
+        <!-- 服务器连接参数 -->
         <property name="server" value="ldap://localhost" />
         <property name="port" value="33389" />
         <property name="user" value="uid=admin, ou=users, o=flowable" />
         <property name="password" value="pass" />
 
-        <!-- Query params -->
+        <!-- 查询参数 -->
         <property name="baseDn" value="o=flowable" />
         <property name="queryUserByUserId" value="(&(objectClass=inetOrgPerson)(uid={0}))" />
         <property name="queryUserByFullNameLike" value="(&(objectClass=inetOrgPerson)(|({0}=*{1}*)({2}=*{3}*)))" />
         <property name="queryGroupsForUser" value="(&(objectClass=groupOfUniqueNames)(uniqueMember={0}))" />
 
-        <!-- Attribute config -->
+        <!-- 参数配置 -->
         <property name="userIdAttribute" value="uid" />
         <property name="userFirstNameAttribute" value="cn" />
         <property name="userLastNameAttribute" value="sn" />
