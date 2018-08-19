@@ -342,7 +342,7 @@ asyncExecutorActivate这个参数使Flowable引擎在启动同时启动异步执
 [[mailServerConfiguration]]
 
 
-=== 配置邮件服务器
+=== 邮件服务器配置
 
 配置邮件服务器是可选的。Flowable支持在业务流程中发送电子邮件。发送电子邮件需要配置有效的SMTP邮件服务器。查看<<bpmnEmailTaskServerConfiguration, 电子邮件任务>>了解配置选项。
 
@@ -350,7 +350,7 @@ asyncExecutorActivate这个参数使Flowable引擎在启动同时启动异步执
 [[historyConfiguration]]
 
 
-=== 配置历史
+=== 历史配置
 
 历史存储的配置是可选的。你可以通过调整配置控制<<history, 历史功能>>。查看<<historyConfig, 配置历史章节>>了解更多细节。
 
@@ -363,7 +363,7 @@ asyncExecutorActivate这个参数使Flowable引擎在启动同时启动异步执
 [[asyncHistoryConfiguration]]
 
 
-=== 配置异步历史
+=== 异步历史配置
 
 [实验性] 从Flowable 6.1.0起，添加了异步历史功能。当启用异步历史时，历史数据将由历史任务执行器负责持久化，而不是与运行时执行持久化同步保存。
 查看<<asyncHistoryConfig, 配置异步历史章节>>了解更多细节。
@@ -385,7 +385,7 @@ asyncExecutorActivate这个参数使Flowable引擎在启动同时启动异步执
 [[processDefinitionCacheConfiguration]]
 
 
-=== 配置部署缓存
+=== 部署缓存配置
 
 鉴于流程定义信息不会改变，为了避免每次使用流程定义时都读取数据库，所有的流程定义都会（在解析后）被缓存。默认情况下，这个缓存没有限制。要限制流程定义缓存，加上如下的参数
 
