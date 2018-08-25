@@ -150,9 +150,9 @@ __org.flowable.engine.impl.db.PersistentObject__类重命名为__Entity__，与�
 在V5中，身份逻辑及表示流程引擎的必要部分。在V6中，这部分逻辑已经重构为独立的模块，名为__flowable-idm-engine__（其中IDM代表“身份管理(identity management)”）。相关的数据库表由这个引擎管理。为了保证兼容性，在启动流程引擎时，也会默认启用IDM引擎。可以在流程引擎配置中，将__disableIdmEngine__设置为__true__以禁用IDM引擎。如果禁用了IDM，就不会创建身份数据库表（以__ACT_ID__开头）。如果这些表已经存在，也可以删除。
 
 
-=== Camel终端改名为flowable
+=== Camel端点改名为flowable
 
-在使用Flowable Camel模块时，请确保使用flowable终端替代activiti终端。下面的Route作为简单的例子：
+在使用Flowable Camel模块时，请确保使用flowable端点替代activiti端点。下面的Route作为简单的例子：
 
 [source,java,linenums]
 ----
