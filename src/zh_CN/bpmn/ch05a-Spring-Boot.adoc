@@ -771,11 +771,11 @@ flowable.idm.ldap.user-base-dn= # 查找用户的DN。
 # Flowable Mail {sc-flowable-boot}/FlowableMailProperties.java[FlowableMailProperties]
 flowable.mail.server.default-from=flowable@localhost # 发送邮件时使用的默认发信人地址。
 flowable.mail.server.host=localhost # 邮件服务器。
-flowable.mail.server.password= # 邮件服务器的登陆密码。
+flowable.mail.server.password= # 邮件服务器的登录密码。
 flowable.mail.server.port=1025 # 邮件服务器的端口号。
 flowable.mail.server.use-ssl=false # 是否使用SSL/TLS加密SMTP传输连接（即SMTPS/POPS)。
 flowable.mail.server.use-tls=false # 使用或禁用STARTTLS加密。
-flowable.mail.server.username= # 邮件服务器的登陆用户名。如果为空，则不需要登录。
+flowable.mail.server.username= # 邮件服务器的登录用户名。如果为空，则不需要登录。
 
 # Actuator
 management.endpoint.flowable.cache.time-to-live=0ms # 缓存响应的最大时间。
@@ -830,7 +830,7 @@ management.endpoint.flowable.enabled=true # 是否启用flowable端点。
 |flowable.mail.server.username
 |flowable.mail-server-user-name
 |-
-|邮件服务器的登陆用户名。如果为空，则不需要登录。
+|邮件服务器的登录用户名。如果为空，则不需要登录。
 
 |flowable.process.definition-cache-limit
 |flowable.process-definitions.cache.max

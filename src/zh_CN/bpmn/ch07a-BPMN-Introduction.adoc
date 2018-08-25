@@ -262,8 +262,8 @@ TaskService taskService = processEngine.getTaskService();
 List<Task> tasks = taskService.createTaskQuery().taskCandidateGroup("accountancy").list();
 ----
 
-因为我们使用与演示配置中相同的数据库配置++ProcessEngine++，因此可以直接登入link:$$http://localhost:8080/flowable-idm/$$[Flowable IDM]。使用admin/test登入，创建两个新用户__kermit__与__fozzie__，并将__Access the workflow application(访问工作流应用)__权限授予他们。然后创建两个组，命名为__accountancy__与__management__，并将fozzie添加至accountancy组，将kermit添加至management组。
-然后以fozzie登入link:$$http://localhost:8080/flowable-task/$$[Flowable task]应用。选择Task应用，再选择其__Processes__页面，选择__'Monthly financial report （月度财务报告）'__，这样就可以启动我们的业务流程。
+因为我们使用与演示配置中相同的数据库配置++ProcessEngine++，因此可以直接登录link:$$http://localhost:8080/flowable-idm/$$[Flowable IDM]。使用admin/test登录，创建两个新用户__kermit__与__fozzie__，并将__Access the workflow application(访问工作流应用)__权限授予他们。然后创建两个组，命名为__accountancy__与__management__，并将fozzie添加至accountancy组，将kermit添加至management组。
+然后以fozzie登录link:$$http://localhost:8080/flowable-task/$$[Flowable task]应用。选择Task应用，再选择其__Processes__页面，选择__'Monthly financial report （月度财务报告）'__，这样就可以启动我们的业务流程。
 
 
 image::images/bpmn.financial.report.example.start.process.png[align="center"]

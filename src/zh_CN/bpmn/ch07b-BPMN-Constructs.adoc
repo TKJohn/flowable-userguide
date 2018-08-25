@@ -2976,7 +2976,7 @@ public class TestExecutionListener implements ExecutionListener {
 
 服务执行的返回值（仅对使用表达式的服务任务），可以通过为服务任务定义的__'flowable:resultVariable'__属性设置为流程变量。可以是已经存在的，或者新的流程变量。
 如果指定为已存在的流程变量，则流程变量的值会被服务执行的结果值覆盖。
-如果使用__`flowable:useLocalScopeForResultVariable'__，则会将结果值设置为局部变量。
+如果使用__'flowable:useLocalScopeForResultVariable'__，则会将结果值设置为局部变量。
 如果不指定结果变量名，则服务任务的结果值将被忽略。
 
 [source,xml,linenums]
