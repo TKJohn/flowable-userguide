@@ -3805,7 +3805,7 @@ Mule任务通过<<serviceTaskFieldInjection,字段注入>>配置。这些参数�
 [options="header"]
 |===============
 |参数|必填?|描述
-|endpointUrl|是|希望调用的Mule终端（endpoint）。
+|endpointUrl|是|希望调用的Mule端点（endpoint）。
 |language|是|计算payloadExpression字段所用的语言。
 |payloadExpression|是|消息载荷的表达式。
 |resultVariable|否|存储调用结果的变量名。
@@ -3910,13 +3910,13 @@ public class SimpleCamelCallRoute extends RouteBuilder {
 }
 ----
 
-路由只是记录消息体，不做更多事情。请注意from终端（endpoint）的格式，包含冒号分隔的三个部分：
+路由只是记录消息体，不做更多事情。请注意from端点（endpoint）的格式，包含冒号分隔的三个部分：
 
 
 [options="header"]
 |===============
-|终端URL部分|描述
-|flowable|指向引擎终端
+|端点URL部分|描述
+|flowable|指向引擎端点
 |SimpleCamelCallProcess|流程名
 |simpleCall|流程中Camel服务的名字
 
@@ -4072,7 +4072,7 @@ from("direct:start").to("flowable:process?var.return.exampleVar").to("mock:resul
 <receiveTask id="receiveAsyncPing" name="Wait State" />
 ----
 
-流程实例会等待，直到接收到来自Camel的信号。可以在Camel中向特定的Flowable终端发送消息，来为流程实例发送信号。
+流程实例会等待，直到接收到来自Camel的信号。可以在Camel中向特定的Flowable端点发送消息，来为流程实例发送信号。
 
 
 [source,java,linenums]

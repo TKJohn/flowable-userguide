@@ -779,7 +779,7 @@ Flowable Admin应用是Flowable项目提供的第四个UI应用。用于查询BP
 
 image:images/flowable_admin_configuration_screen.png[align="center"]
 
-每一个引擎都可以配置REST终端的基本认证。每个引擎需要单独配置，因为有可能会分开部署引擎，比如将DMN引擎与BPMN引擎部署在不同的服务器上。
+每一个引擎都可以配置REST端点的基本认证。每个引擎需要单独配置，因为有可能会分开部署引擎，比如将DMN引擎与BPMN引擎部署在不同的服务器上。
 
 如果配置正确，就可以选择__Process Engine(流程引擎)__来管理Flowable BPMN引擎。默认情况下，会显示Flowable BPMN引擎的部署情况。
 
