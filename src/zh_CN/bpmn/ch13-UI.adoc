@@ -227,7 +227,7 @@ java -Dloader.path=/location/to/your/driverfolder -jar flowable-idm.war
 |flowable.idm.ldap.base-dn
 |ldap.basedn
 |-
-|查询用户及组的基础DN（__专有名称 distinguished name__）。如果用户及组使用不同的基础DN，请改用__user-base-dn__及__group-base-dn__。
+|查询用户及组的基础DN（__标识名 distinguished name__）。如果用户及组使用不同的基础DN，请改用__user-base-dn__及__group-base-dn__。
 
 |flowable.idm.ldap.enabled
 |ldap.enabled
@@ -288,7 +288,7 @@ java -Dloader.path=/location/to/your/driverfolder -jar flowable-idm.war
 |ldap.cache.groupsize
 |-1
 |设置__org.flowable.ldap.LDAPGroupCache__缓存的尺寸。
-这是用户所在组的LRU缓存。用于避免每次需要查询用户所在组时都访问LDAP系统。。
+这是用户所在组的LRU缓存。避免每次需要查询用户所在组时都访问LDAP系统。
 若值小于0，则不会启用缓存。默认值为-1，所以不会进行缓存。
 请注意组缓存在__org.flowable.ldap.LDAPIdentityServiceImpl__中初始化。
 因此，自行实现__org.flowable.ldap.LDAPIdentityServiceImpl__时，请不要忘记添加组缓存功能。
@@ -308,7 +308,7 @@ java -Dloader.path=/location/to/your/driverfolder -jar flowable-idm.war
 |-
 |查询给定用户所在组所用的语句。
  比如：`(&(objectClass=groupOfUniqueNames)(uniqueMember={0}))`
- 返回LDAP中所有DN为__uniqueMember__，类为__groupOfUniqueNames__的对象。
+ 返回LDAP中所有__groupOfUniqueNames__类、DN为__uniqueMember__的对象。
  上例中，使用{@link java.text.MessageFormat}即__{0}__注入用户ID。
  如果不能通过简单的语句进行查询，可以改用 `org.flowable.ldap.LDAPQueryBuilder` ，进行定制化查询。
 
@@ -317,7 +317,7 @@ java -Dloader.path=/location/to/your/driverfolder -jar flowable-idm.war
 |-
 |通过全名查询用户所用的语句。
  比如：`(&(objectClass=inetOrgPerson)(\|({0}=**{1}**)({2}={3})))`
- 返回LDAP中所有姓或名匹配，类为__inetOrgPerson__的对象。
+ 返回LDAP中所有__inetOrgPerson__类、姓或名匹配的对象。
  注入到表达式中的值：{0} : 名字属性名 {1} : 查询文本 {2} : 姓属性名 {3} : 查询文本
  如果不能通过简单的语句进行查询，可以改用 `org.flowable.ldap.LDAPQueryBuilder`，进行定制化查询。
 
@@ -326,7 +326,7 @@ java -Dloader.path=/location/to/your/driverfolder -jar flowable-idm.war
 |-
 |通过ID查询用户所用的语句。
  比如：`(&(objectClass=inetOrgPerson)(uid={0}))`
- 返回LDAP中所有__uid__属性值匹配，类为__inetOrgPerson__的对象。
+ 返回LDAP中所有__inetOrgPerson__类、__uid__属性值匹配的对象。
  上例中，使用{@link java.text.MessageFormat}即__{0}__注入用户ID。
  如果不能通过简单的语句进行查询，可以改用 `org.flowable.ldap.LDAPQueryBuilder` ，进行定制化查询。
 
