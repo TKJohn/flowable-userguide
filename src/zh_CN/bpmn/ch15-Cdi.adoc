@@ -1,6 +1,6 @@
 [[cdiintegration]]
 
-== CDI集成
+== 集成CDI
 
 flowable-cdi模块结合了Flowable的可配置性及CDI(上下文和依赖注入, Contexts and Dependency Injection, J2EE)的可扩展性。flowable-cdi最突出的特点是：
 
