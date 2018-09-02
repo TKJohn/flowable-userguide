@@ -94,13 +94,13 @@ ProcessEngine processEngine = ProcessEngineConfiguration.createStandaloneInMemPr
 
 * *org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration*：流程引擎独立运行。Flowable自行处理事务。在默认情况下，数据库检查只在引擎启动时进行（如果Flowable表结构不存在或表结构版本不对，会抛出异常）。
 * *org.flowable.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration*：这是一个便于使用单元测试的类。Flowable自行处理事务。默认使用H2内存数据库。数据库会在引擎启动时创建，并在引擎关闭时删除。使用这个类时，很可能不需要更多的配置（除了使用任务执行器或邮件等功能时）。
-* *org.flowable.spring.SpringProcessEngineConfiguration*：在流程引擎处于Spring环境时使用。查看<<springintegration, Spring集成章节>>获得更多信息。
+* *org.flowable.spring.SpringProcessEngineConfiguration*：在流程引擎处于Spring环境时使用。查看<<springintegration, Spring集成>>章节了解更多信息。
 * *org.flowable.engine.impl.cfg.JtaProcessEngineConfiguration*：用于引擎独立运行，并使用JTA事务的情况。
 
 
 [[databaseConfiguration]]
 
-=== 数据库配置
+=== 配置数据库
 
 
 有两种方式配置Flowable引擎使用的数据库。第一种方式是定义数据库的JDBC参数：
@@ -152,7 +152,7 @@ ProcessEngine processEngine = ProcessEngineConfiguration.createStandaloneInMemPr
 
 无论使用JDBC还是数据源方式配置，都可以使用下列参数：
 
-* *databaseType*: 通常不需要专门设置这个参数，因为它可以从数据库连接信息中自动检测得出。只有在自动检测失败时才需要设置。可用值：{h2, mysql, oracle, postgres, mssql, db2}。这个选项会决定创建、删除与查询时使用的脚本。查看<<supporteddatabases, “支持的数据库”章节>>了解我们支持哪些类型的数据库。
+* *databaseType*: 通常不需要专门设置这个参数，因为它可以从数据库连接信息中自动检测得出。只有在自动检测失败时才需要设置。可用值：{h2, mysql, oracle, postgres, mssql, db2}。这个选项会决定创建、删除与查询时使用的脚本。查看<<supporteddatabases, “支持的数据库”>>章节了解我们支持哪些类型的数据库。
 * *databaseSchemaUpdate*: 用于设置流程引擎启动关闭时使用的数据库表结构控制策略。
 ** +false+ (默认): 当引擎启动时，检查数据库表结构的版本是否匹配库文件版本。版本不匹配时抛出异常。
 ** ++true++: 构建引擎时，检查并在需要时更新表结构。表结构不存在则会创建。
@@ -160,7 +160,7 @@ ProcessEngine processEngine = ProcessEngineConfiguration.createStandaloneInMemPr
 
 [[jndiDatasourceConfig]]
 
-=== JNDI数据源配置
+=== 配置JNDI数据源
 
 默认情况下，Flowable的数据库配置保存在每个web应用WEB-INF/classes文件夹下的db.properties文件中。有时这样并不合适，因为这需要用户修改Flowable源码中的db.properties文件并重新编译war包，或者在部署后解开war包并修改db.properties文件。
 
@@ -342,7 +342,7 @@ asyncExecutorActivate这个参数使Flowable引擎在启动同时启动异步执
 [[mailServerConfiguration]]
 
 
-=== 邮件服务器配置
+=== 配置邮件服务器
 
 配置邮件服务器是可选的。Flowable支持在业务流程中发送电子邮件。发送电子邮件需要配置有效的SMTP邮件服务器。查看<<bpmnEmailTaskServerConfiguration, 电子邮件任务>>了解配置选项。
 
@@ -350,9 +350,9 @@ asyncExecutorActivate这个参数使Flowable引擎在启动同时启动异步执
 [[historyConfiguration]]
 
 
-=== 历史配置
+=== 配置历史
 
-历史存储的配置是可选的。你可以通过调整配置控制<<history, 历史功能>>。查看<<historyConfig, 配置历史章节>>了解更多细节。
+历史存储的配置是可选的。你可以通过调整配置控制<<history, 历史功能>>。查看<<historyConfig, 配置历史>>章节了解更多细节。
 
 [source,xml,linenums]
 ----
@@ -363,10 +363,10 @@ asyncExecutorActivate这个参数使Flowable引擎在启动同时启动异步执
 [[asyncHistoryConfiguration]]
 
 
-=== 异步历史配置
+=== 配置异步历史
 
 [实验性] 从Flowable 6.1.0起，添加了异步历史功能。当启用异步历史时，历史数据将由历史任务执行器负责持久化，而不是与运行时执行持久化同步保存。
-查看<<asyncHistoryConfig, 配置异步历史章节>>了解更多细节。
+查看<<asyncHistoryConfig, 配置异步历史>>章节了解更多细节。
 
 [source,xml,linenums]
 ----
@@ -377,7 +377,7 @@ asyncExecutorActivate这个参数使Flowable引擎在启动同时启动异步执
 [[exposingConfigurationBeans]]
 
 
-=== 在表达式与脚本中暴露配置bean
+=== 配置在表达式与脚本中可用的bean
 
 默认情况下，所有通过++flowable.cfg.xml++或你自己的Spring配置文件声明的bean，都可以在表达式与脚本中使用。如果你希望限制配置文件中bean的可见性，可以使用流程引擎配置的++beans++参数。++ProcessEngineConfiguration++中的++beans++参数是一个map。当你配置这个参数时，只有在这个map中声明的bean可以在表达式与脚本中使用。bean会使用你在map中指定的名字暴露。
 
@@ -385,7 +385,7 @@ asyncExecutorActivate这个参数使Flowable引擎在启动同时启动异步执
 [[processDefinitionCacheConfiguration]]
 
 
-=== 部署缓存配置
+=== 配置部署缓存
 
 鉴于流程定义信息不会改变，为了避免每次使用流程定义时都读取数据库，所有的流程定义都会（在解析后）被缓存。默认情况下，这个缓存没有限制。要限制流程定义缓存，加上如下的参数
 
@@ -484,7 +484,7 @@ Flowable引擎中的事件机制可以让你在引擎中发生多种事件的时
 [[eventDispatcherListener]]
 
 
-==== 事件监听器实现
+==== 实现事件监听器
 
 对事件监听器的唯一要求，是要实现++org.flowable.engine.delegate.event.FlowableEventListener++接口。下面是一个监听器实现的例子，它将接收的所有事件打印至标准输出，并对作业执行相关的事件特别处理：
 
@@ -530,7 +530,7 @@ Flowable提供了少量基础实现，以简化常用的事件监听器使用场
 [[eventDispatcherConfiguration]]
 
 
-==== 配置与安装
+==== 配置与使用
 
 在流程引擎中配置的事件监听器会在流程引擎启动时生效，引擎重启后也会保持有效。
 

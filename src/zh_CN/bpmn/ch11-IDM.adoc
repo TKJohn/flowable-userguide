@@ -17,7 +17,7 @@
 
 [[_idm_engine_configuration]]
 
-=== IDM引擎配置
+=== 配置IDM引擎
 
 默认情况下，IDM引擎使用++org.flowable.engine.impl.cfg.IdmEngineConfigurator++启动。这个配置器使用Flowable流程引擎配置中相同的数据源配置。这样使用身份管理就不需要进行额外的配置，就像在Flowable V5中一样。
 
@@ -73,7 +73,7 @@
         <property name="queryUserByFullNameLike" value="(&(objectClass=inetOrgPerson)(|({0}=*{1}*)({2}=*{3}*)))" />
         <property name="queryGroupsForUser" value="(&(objectClass=groupOfUniqueNames)(uniqueMember={0}))" />
 
-        <!-- 参数配置 -->
+        <!-- 配置参数 -->
         <property name="userIdAttribute" value="uid" />
         <property name="userFirstNameAttribute" value="cn" />
         <property name="userLastNameAttribute" value="sn" />

@@ -118,7 +118,7 @@ image::images/financial.report.example.diagram.png[align="center"]
 这个业务流程的XML版本（__FinancialReportProcess.bpmn20.xml__）在下面展示。很容易认出流程的主要元素（点击链接可以跳转到BPMN 2.0结构的详细章节）：
 
 * <<bpmnNoneStartEvent,(空)开始事件>>是流程的__入口点（entry point）__。
-* <<bpmnUserTask,用户任务>>表示流程中的人工任务。请注意第一个任务分配给__accountancy__组，而第二个任务分配给__management__组。查看<<bpmnUserTaskAssignment,用户任务分配章节>>了解更多关于用户与组如何分配用户任务的信息。
+* <<bpmnUserTask,用户任务>>表示流程中的人工任务。请注意第一个任务分配给__accountancy__组，而第二个任务分配给__management__组。查看<<bpmnUserTaskAssignment,用户任务分配>>章节了解更多关于用户与组如何分配用户任务的信息。
 * 流程在到达<<bpmnNoneEndEvent,空结束事件>>时结束。
 * 各元素间通过<<bpmnSequenceFlow,顺序流>>链接。顺序流用++source++ 与++target++定义顺序流的__流向（direction）__。
 
@@ -182,7 +182,7 @@ image::images/financial.report.example.diagram.png[align="center"]
 * 流程定义将会存储在Flowable引擎配置的持久化数据库中。因此部署业务流程保证了引擎在重启后也能找到流程定义。
 * BPMN 2.0流程XML会解析为内存中的对象模型，供Flowable API使用。
 
-更多关于部署的信息可以在<<chDeployment,部署章节>>中找到。
+更多关于部署的信息可以在<<chDeployment,部署>>章节中找到。
 
 与该章节的描述一样，部署有很多种方式。其中一种是通过下面展示的API。请注意所有与Flowable引擎的交互都要通过它的__服务（services）__进行。
 

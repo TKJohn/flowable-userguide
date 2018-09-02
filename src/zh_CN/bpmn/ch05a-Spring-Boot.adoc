@@ -630,9 +630,9 @@ Flowable也提供了Spring Boot的 `InfoContributor` ：
 ----
 
 [[springBootFlowableProperties]]
-==== Flowable应用配置
+==== 配置Flowable应用
 
-Flowable自动配置用于控制Spring Boot的参数与配置。参见Spring Boot参考手册中的link:$$https://docs.spring.io/spring-boot/docs/current/reference/html/howto-properties-and-configuration.html$$[Properties and Configuration(参数与配置)]。
+Flowable会自动配置用于控制Spring Boot的参数与配置。参见Spring Boot参考手册中的link:$$https://docs.spring.io/spring-boot/docs/current/reference/html/howto-properties-and-configuration.html$$[Properties and Configuration(参数与配置)]。
 
 下面是Flowable Spring Boot支持的配置参数列表。
 
