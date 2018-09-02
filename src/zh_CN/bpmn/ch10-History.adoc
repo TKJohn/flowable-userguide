@@ -155,7 +155,7 @@ historyService.createHistoricTaskInstanceQuery()
 
 [[historyConfig]]
 
-=== 历史配置
+=== 配置历史
 
 可以使用org.flowable.engine.impl.history.HistoryLevel枚举（或在5.11之前的版本中，++ProcessEngineConfiguration++中定义的__HISTORY__常量），以编程方式配置历史级别：
 
@@ -192,7 +192,7 @@ ProcessEngine processEngine = ProcessEngineConfiguration
 
 [[asyncHistoryConfig]]
 
-=== 异步历史配置
+=== 配置异步历史
 
 [实验性] Flowable 6.1.0引入了异步历史，使用历史作业执行器异步地进行历史数据的持久化。
 

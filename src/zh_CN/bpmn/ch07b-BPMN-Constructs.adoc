@@ -2530,7 +2530,7 @@ image::images/bpmn.scripttask.png[align="center"]
 [[_security]]
 ===== 安全性
 
-当使用__javascript__作为脚本语言时，可以使用__“安全脚本（secure scripting）”__。参见<<advancedSecureScripting, 安全脚本章节>>。
+当使用__javascript__作为脚本语言时，可以使用__“安全脚本（secure scripting）”__。参见<<advancedSecureScripting, 安全脚本>>章节。
 
 
 [[bpmnJavaServiceTask]]
@@ -2578,7 +2578,7 @@ image::images/bpmn.java.service.task.png[align="center"]
 ----
 
 
-查看<<bpmnJavaServiceTaskImplementation,实现章节>>，了解使用这种类的更多信息。
+查看<<bpmnJavaServiceTaskImplementation,实现>>章节，了解使用这种类的更多信息。
 
 也可以使用解析为对象的表达式。该对象必须遵循的规则，与使用++flowable:class++创建的对象规则相同（查看<<bpmnJavaServiceTaskImplementation,更多>>）。
 
@@ -3429,7 +3429,7 @@ Flowable让你可以通过自动的邮件服务任务（email task），增强�
 [[bpmnEmailTaskServerConfiguration]]
 
 
-===== 邮件服务器配置
+===== 配置邮件服务器
 
 Flowable引擎使用支持SMTP的外部邮件服务器发送邮件。为了发送邮件，引擎需要了解如何连接邮件服务器。可以在__flowable.cfg.xml__配置文件中设置下面的参数：
 
@@ -3528,7 +3528,7 @@ Http任务（Http task）用于发出HTTP请求，增强了Flowable的集成能�
 [[bpmnHttpTaskClientConfiguration]]
 
 
-===== Http客户端配置
+===== 配置Http客户端
 
 Flowable使用可配置的Http客户端发出Http请求。如果不进行设置，会使用默认配置。
 
@@ -3602,7 +3602,7 @@ Http任务实现为特殊的<<bpmnJavaServiceTask,服务任务>>，将服务任�
 
 [[bpmnHttpTaskConfiguration]]
 
-===== Http任务配置
+===== 配置Http任务
 
 Http任务通过<<serviceTaskFieldInjection,字段注入>>配置。所有参数都可以配置为EL表达式，在运行时进行解析。可以设置下列参数：
 

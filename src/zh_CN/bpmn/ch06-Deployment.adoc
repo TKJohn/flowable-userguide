@@ -51,7 +51,7 @@ repositoryService.createDeployment()
 [[_using_spring_beans_from_a_process]]
 ==== 在流程中使用Spring bean
 
-在表达式或脚本中使用Spring bean时，执行该流程定义的引擎需要可以使用这些bean。可以简单直接地自行构建web应用，并按照<<springintegration,Spring集成章节>>的介绍在上下文中配置流程引擎。但也请牢记在心，如果使用Flowable task和rest web应用，就需要更新它的上下文配置。
+在表达式或脚本中使用Spring bean时，执行该流程定义的引擎需要可以使用这些bean。可以简单直接地自行构建web应用，并按照<<springintegration,集成Spring>>章节的介绍在上下文中配置流程引擎。但也请牢记在心，如果使用Flowable task和rest web应用，就需要更新它的上下文配置。
 
 [[_creating_a_single_app]]
 ==== 创建单独应用

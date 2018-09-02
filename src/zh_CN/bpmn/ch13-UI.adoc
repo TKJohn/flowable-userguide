@@ -79,7 +79,7 @@ java -Dloader.path=/location/to/your/driverfolder -jar flowable-idm.war
 参阅Spring Boot文档link:$$https://docs.spring.io/spring-boot/docs/current/reference/html/executable-jar.html#executable-jar-property-launcher-features$$[`PropertiesLauncher` 功能]介绍了解更多信息。
 
 [[_flowable_ui_applications_configurations]]
-=== Flowable UI应用配置
+=== 配置Flowable UI应用
 
 作为Spring Boot应用，Flowable UI应用可以使用Spring Boot提供的全部参数。
 参阅Spring Boot文档的link:$$https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html$$[显式配置]章节，了解如何进行自定义配置。
@@ -856,7 +856,7 @@ flowable.admin.app.server-config.process.app.password=test
 
 Flowable UI应用支持国际化(internationalization, i18n)。项目组维护英语版本。但也可以使用自己的翻译文件支持其他语言。
 
-link:$$https://github.com/angular-translate/angular-translate[Angular Translate]库会试着基于浏览器的语言代码，从（每一个UI应用的）__i18n__目录下载入对应的语言文件。如果无法加载匹配的语言文件，框架会退回使用英语版本。
+link:$$https://github.com/angular-translate/angular-translate$$[Angular Translate]库会试着基于浏览器的语言代码，从（每一个UI应用的）__i18n__目录下载入对应的语言文件。如果无法加载匹配的语言文件，框架会退回使用英语版本。
 
 也可以（在Angular应用配置中），将多个浏览器语言代码关联至某个翻译文件：
 

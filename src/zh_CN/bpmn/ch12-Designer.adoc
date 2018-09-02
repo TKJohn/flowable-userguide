@@ -149,7 +149,7 @@ image::images/designer.deployment.dir.png[align="center"]
 * 将你自己的形状/节点添加到已有或新建的抽屉
 * 禁用Flowable Designer提供的部分或全部BPMN 2.0默认形状，除了连线与选择工具
 
-要自定义画板，需要创建一个JAR文件，并将其加入每一个Flowable Designer的安装目录（后面介绍<<eclipseDesignerApplyingExtension,如何做>>）。这个JAR文件叫做__扩展（extension）__。通过编写扩展中包含的类，就能让Flowable Designer知道你需要自定义什么。要做到这个，你的类需要实现特定的接口。有一个集成类库，包含这些接口以及需要加入classpath的用于扩展的基类。
+要自定义画板，需要创建一个JAR文件，并将其加入每一个Flowable Designer的安装目录（后面介绍<<eclipseDesignerApplyingExtension,如何做>>）。这个JAR文件叫做__扩展（extension）__。通过编写扩展中包含的类，就能让Flowable Designer知道需要自定义的形状。为此需要实现特定的接口。Flowable提供了一个集成类库，包含这些接口以及用于扩展的基类。
 
 可以在下列地方找到代码示例：Flowable link:$$https://github.com/flowable/flowable-designer/tree/master/examples$$[源码]，++flowable-designer++仓库下的++examples/money-tasks++目录。
 

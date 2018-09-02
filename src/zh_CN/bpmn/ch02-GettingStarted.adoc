@@ -15,8 +15,8 @@ Flowable可以十分灵活地加入你的应用/服务/构架。可以将JAR形�
 下面的教程从设置与使用核心引擎的介绍开始。后续章节都建立在之前章节中获取的知识之上。
 
 * <<getting.started.command.line, 第一节>>展示了以最简单的方式运行Flowable的方法：只使用Java SE的标准Java main方法。这里也会介绍许多核心概念与API。
-* <<getting.started.rest, Flowable REST API章节>>展示了如何通过REST运行及使用相同的API。
-* <<getting.started.flowable.app, Flowable APP章节>>将介绍直接可用的Flowable UI示例的基本方法。
+* <<getting.started.rest, Flowable REST API>>章节展示了如何通过REST运行及使用相同的API。
+* <<getting.started.flowable.app, Flowable APP>>章节将介绍直接可用的Flowable UI示例的基本方法。
 
 [[_flowable_and_activiti]]
 === Flowable与Activiti
@@ -24,10 +24,10 @@ Flowable可以十分灵活地加入你的应用/服务/构架。可以将JAR形�
 Flowable是Activiti(Alfresco持有的注册商标)的fork。在下面的章节中，你会注意到包名，配置文件等等，都使用__flowable__。
 
 [[getting.started.command.line]]
-=== 构建一个命令行程序
+=== 构建命令行程序
 
 [[_creating_a_process_engine]]
-==== 创建一个流程引擎
+==== 创建流程引擎
 
 在这个初步教程中，将构建一个简单的例子，以展示如何创建一个Flowable流程引擎，介绍一些核心概念，并展示如何使用API。
 截图时使用的是Eclipse，但实际上可以使用任何IDE。我们使用Maven获取Flowable依赖及管理构建，但是类似的任何其它方法也都可以使用（Gradle，Ivy，等等）。
@@ -92,8 +92,8 @@ public class HolidayRequest {
 }
 ----
 
-首先要做的是初始化一个**ProcessEngine**流程引擎实例。这是一个线程安全的对象，因此通常只需要在一个应用中初始化一次。
-__ProcessEngine__由一个**ProcessEngineConfiguration**实例创建。该实例可以配置与调整流程引擎的设置。
+首先要做的是初始化**ProcessEngine**流程引擎实例。这是一个线程安全的对象，因此通常只需要在一个应用中初始化一次。
+__ProcessEngine__由**ProcessEngineConfiguration**实例创建。该实例可以配置与调整流程引擎的设置。
 通常使用一个配置XML文件创建__ProcessEngineConfiguration__，但是（像在这里做的一样）也可以编程方式创建它。
 __ProcessEngineConfiguration__所需的最小配置，是数据库JDBC连接：
 
@@ -123,7 +123,7 @@ public class HolidayRequest {
 
 在上面的代码中，第10行创建了一个__独立(standalone)__配置对象。这里的__'独立'__指的是引擎是完全独立创建及使用的（而不是在Spring环境中使用，这时需要使用__SpringProcessEngineConfiguration__类代替）。第11至14行中，传递了一个内存H2数据库实例的JDBC连接参数。
 重要：请注意这样的数据库在JVM重启后会消失。如果需要永久保存数据，需要切换为持久化数据库，并相应切换连接参数。
-第15行中，设置了一个__true__标志，确保在JDBC参数连接的数据库中，数据库表结构不存在时，会创建相应的表结构。
+第15行中，设置了__true__，确保在JDBC参数连接的数据库中，数据库表结构不存在时，会创建相应的表结构。
 另外，Flowable也提供了一组SQL文件，可用于手动创建所有表的数据库表结构。
 
 然后使用这个配置创建**ProcessEngine**对象（第17行）。
@@ -169,7 +169,7 @@ image::images/getting.started.console.logging2.png[align="center"]
 这样就得到了一个启动可用的流程引擎。接下来为它提供一个流程！
 
 [[_deploying_a_process_definition]]
-==== 部署一个流程定义
+==== 部署流程定义
 
 我们要构建的流程是一个非常简单的请假流程。Flowable引擎需要流程定义为BPMN 2.0格式，这是一个业界广泛接受的XML标准。
 在Flowable术语中，我们将其称为一个**流程定义(process definition)**。一个__流程定义__可以启动多个**流程实例(process instance)**。__流程定义__可以看做是重复执行流程的蓝图。
@@ -295,7 +295,7 @@ System.out.println("Found process definition : " + processDefinition.getName());
 ----
 
 [[_starting_a_process_instance]]
-==== 启动一个流程实例
+==== 启动流程实例
 
 现在已经在流程引擎中__部署__了流程定义，因此可以使用这个__流程定义__作为“蓝图”启动__流程实例__。
 
@@ -410,7 +410,7 @@ taskService.complete(task.getId(), variables);
 现在任务完成，并会在离开排他网关的两条路径中，基于'approved'流程变量选择一条。
 
 [[getting.started.delegate]]
-==== 编写一个JavaDelegate
+==== 实现JavaDelegate
 
 拼图还缺了一块：我们还没有实现申请通过后执行的自动逻辑。在BPMN 2.0 XML中，这是一个**服务任务(service task)**：
 
@@ -498,7 +498,7 @@ externalSystemCall took 1 milliseconds
 
 这一次，将使用Flowable REST API而不是Java API。你很快就会意识到REST API与Java API紧密关联。只要了解一个，就能很快学会另一个。
 
-可以在<<restApiChapter, REST API章节>>找到Flowable REST API的完整细节。
+可以在<<restApiChapter, REST API>>章节找到Flowable REST API的完整细节。
 
 [[_setting_up_the_rest_application]]
 ==== 安装REST应用
@@ -526,7 +526,7 @@ curl --user rest-admin:test http://localhost:8080/flowable-rest/service/manageme
 如果能获得正确的json响应，则说明REST API已经启动并在工作。
 
 [[_deploying_a_process_definition_2]]
-==== 部署一个流程定义
+==== 部署流程定义
 
 第一步是部署一个流程定义。使用REST API时，需要将一个.bpmn20.xml文件（或对于多个流程引擎，一个.zip文件）作为'multipart/formdata'上传：
 
@@ -543,7 +543,7 @@ curl --user rest-admin:test http://localhost:8080/flowable-rest/service/reposito
 这将返回当前引擎中部署的所有流程定义的列表。
 
 [[_start_a_process_instance]]
-==== 启动一个流程实例
+==== 启动流程实例
 
 使用REST API启动一个流程实例与使用Java API很像：提供__key__作为流程定义的标识，并使用一个map作为初始化流程变量：
 
@@ -558,7 +558,7 @@ curl --user rest-admin:test -H "Content-Type: application/json" -X POST -d '{ "p
 ----
 
 [[_task_list_and_completing_a_task]]
-==== 任务列表与完成一个任务
+==== 任务列表与完成任务
 
 当流程实例启动后，第一个任务会指派给'managers'组。要获取这个组的所有任务，可以通过REST API进行任务查询：
 
