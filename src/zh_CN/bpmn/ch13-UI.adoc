@@ -79,7 +79,7 @@ java -Dloader.path=/location/to/your/driverfolder -jar flowable-idm.war
 参阅Spring Boot文档link:$$https://docs.spring.io/spring-boot/docs/current/reference/html/executable-jar.html#executable-jar-property-launcher-features$$[`PropertiesLauncher` 功能]介绍了解更多信息。
 
 [[_flowable_ui_applications_configurations]]
-=== Flowable UI应用配置
+=== 配置Flowable UI应用
 
 作为Spring Boot应用，Flowable UI应用可以使用Spring Boot提供的全部参数。
 参阅Spring Boot文档的link:$$https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html$$[显式配置]章节，了解如何进行自定义配置。

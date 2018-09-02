@@ -7,7 +7,7 @@
 
 === 流程引擎API与服务
 
-引擎API是与Flowable交互的最常用手段。总入口点是++ProcessEngine++。像<<configuration, 配置章节>>中介绍的一样，ProcessEngine可以使用多种方式创建。使用ProcessEngine，可以获得各种提供工作流/BPM方法的服务。ProcessEngine与服务对象都是线程安全的，因此可以在服务器中保存并共用同一个引用。
+引擎API是与Flowable交互的最常用手段。总入口点是++ProcessEngine++。像<<configuration, 配置>>章节中介绍的一样，ProcessEngine可以使用多种方式创建。使用ProcessEngine，可以获得各种提供工作流/BPM方法的服务。ProcessEngine与服务对象都是线程安全的，因此可以在服务器中保存并共用同一个引用。
 
 
 image::images/api.services.png[align="center"]
@@ -445,6 +445,6 @@ ProcessEngines.getDefaultProcessEngine()
 ProcessEngines.getProcessEngine("myName");
 ----
 
-当然，就像<<configuration, 配置章节>>中介绍的，还可以使用各种不同的方式创建流程引擎。
+当然，就像<<configuration, 配置>>章节中介绍的，还可以使用各种不同的方式创建流程引擎。
 
 context-listener的++contextDestroyed++方法会调用++ProcessEngines.destroy()++。它会妥善关闭所有已初始化的流程引擎。

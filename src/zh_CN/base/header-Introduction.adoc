@@ -61,11 +61,11 @@ Flowable的发布包里包含了大部分源码，以JAR文件方式提供。Flo
 
 使用三个整数的形式标记版本：**MAJOR.MINOR.MICRO**。其中 **MAJOR**版本代表核心引擎的演进。**MINOR**版本代表新功能与新API。**MICRO**版本代表bug修复与改进。
 
-总的来说，Flowable希望在**MINOR**与**MICRO**版本中，对所有非内部实现类保持“源代码兼容性”。我们定义“内部兼容性”指应用仍然可以正确构建，且不改变语义。Flowable也希望在**MINOR**与**MICRO**版本中，保持“二进制兼容性”。我们定义”二进制兼容性“指新版本的Flowable可以直接替换老版本的Jar文件，仍然可以正常工作。
+总的来说，Flowable希望在**MINOR**与**MICRO**版本中，对所有非内部实现类保持“源代码兼容性”，即应用可以正确构建，且不改变语义。Flowable也希望在**MINOR**与**MICRO**版本中，保持“二进制兼容性”，即用新版本的Flowable直接替换老版本的Jar文件，仍然可以正常工作。
 
 如果在**MINOR**版本中修改了API，将保留原有版本，并使用__@Deprecated__注解。这种废弃的API将在两个**MINOR**版本之后移除。
 
-[[translate]]
+[[translator_info]]
 === 翻译说明
 
 由 link:$$https://github.com/TKJohn$$[TKJohn] 根据 link:$$https://github.com/flowable/flowable-engine/tree/flowable-6.3.0/docs/userguide$$[官方userguide源码] 翻译至简体中文，工程发布于 link:$$https://github.com/TKJohn/flowable-userguide$$[GitHub] ，任何意见建议欢迎提issue。
