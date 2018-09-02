@@ -1,2 +1,3 @@
 # flowable-userguide
-Merge flowable 6.0.1 user guide and translate into zh_CN.
+
+Flowable 6.3.0 BPMN user guide. Translate into zh_CN.

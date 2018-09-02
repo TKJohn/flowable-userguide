@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.5">
-<title>Flowable迁移手册：Flowable V5到Flowable V6</title>
+<meta name="generator" content="Asciidoctor 1.5.7.1">
+<title>Flowable迁移指导：Flowable V5到Flowable V6</title>
 <style>
 
 /* normalize.css */
@@ -17,7 +17,7 @@ button,hr,input{overflow:visible}audio,canvas,progress,video{display:inline-bloc
 .toc{overflow-y:auto}.toc>ul{overflow:hidden;position:relative}.toc-list{margin:0;padding-left:10px}a.toc-link{color:currentColor;height:100%}.is-collapsible{max-height:1000px;overflow:hidden;transition:all 300ms ease-in-out}.is-collapsed{max-height:0}.is-position-fixed{position:fixed !important;top:0}.is-active-link{font-weight:700}.toc-link::before{background-color:#f9f9fb;content:' ';display:inline-block;height:inherit;left:8px;margin-top:-1px;position:absolute;width:2px}.is-active-link::before{background-color:#54BC4B}
 
 
-/* Flowable Specific */
+/* Activiti Specific */
 
 body {
   color: #494d55;
@@ -88,7 +88,7 @@ html, body {
   overflow-x: auto;
 }
 
-h2, h3, h4 {
+h2, h3, h4, h5, h6 {
   color: #00345a;
 }
 
@@ -110,6 +110,23 @@ h3 {
   /*border-bottom: 1px solid #d7d7d7;*/
 }
 
+h4 {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+h5 {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+h6, h7 {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 .sect1, .sect2 {
   margin-bottom: 20px;
 }
@@ -119,7 +136,7 @@ h3 {
   clear: both;
 }
 
-.note, .listingblock{
+.note, .listingblock, .literalblock{
   padding-left: 8px;
   padding-right: 8px;
   margin-bottom: 14px;
@@ -228,89 +245,96 @@ a:hover {
   padding: 4px 0 4px 0;
 }
 
+
+div.sect5  p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+div.sect5  code {
+    font-family: "Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
+}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
-<script type="text/javascript">
-
-/*
- * Tocbot.min.js version 2.1.4
- */
-
- !function(e){function t(o){if(n[o])return n[o].exports;var i=n[o]={exports:{},id:o,loaded:!1};return e[o].call(i.exports,i,i.exports,t),i.loaded=!0,i.exports}var n={};return t.m=e,t.c=n,t.p="",t(0)}([/*!*************************!*\
-   !*** ./src/js/index.js ***!
-   \*************************/
- function(e,t,n){var o,i,r;(function(l){!function(n,l){i=[],o=l(n),r="function"==typeof o?o.apply(t,i):o,!(void 0!==r&&(e.exports=r))}("undefined"!=typeof l?l:this.window||this.global,function(e){"use strict";function t(){for(var e={},t=0;t<arguments.length;t++){var n=arguments[t];for(var o in n)h.call(n,o)&&(e[o]=n[o])}return e}function o(e,t,n){t||(t=250);var o,i;return function(){var r=n||this,l=+new Date,s=arguments;o&&l<o+t?(clearTimeout(i),i=setTimeout(function(){o=l,e.apply(r,s)},t)):(o=l,e.apply(r,s))}}var i,r,l,s=n(/*! smooth-scroll */1),c=n(/*! ./default-options.js */2),a={},u={},d=n(/*! ./build-html.js */3),f=n(/*! ./parse-content.js */4),m=(e.document,document.body,!!e.document.querySelector&&!!e.addEventListener),h=Object.prototype.hasOwnProperty;return u.destroy=function(){try{document.querySelector(a.tocSelector).innerHTML=""}catch(e){console.warn("Element not found: "+a.tocSelector)}document.removeEventListener("scroll",this._scrollListener,!1),document.removeEventListener("resize",this._scrollListener,!1),i&&document.removeEventListener("click",this._clickListener,!1),s&&s.destroy()},u.init=function(e){if(m&&(a=t(c,e||{}),this.options=a,this.state={},i=d(a),r=f(a),this._buildHtml=i,this._parseContent=r,u.destroy(),l=r.selectHeadings(a.contentSelector,a.headingSelector),null!==l)){var n=r.nestHeadingsArray(l),h=n.nest;return i.render(a.tocSelector,h),this._scrollListener=o(function(){i.updateToc(l)},a.throttleTimeout),this._scrollListener(),document.addEventListener("scroll",this._scrollListener,!1),document.addEventListener("resize",this._scrollListener,!1),this._clickListener=o(function(e){i.disableTocAnimation(e),i.updateToc(l)},a.throttleTimeout),document.addEventListener("click",this._clickListener,!1),s&&(this.smoothScroll=s.init(t(a.smoothScrollOptions,{callback:i.enableTocAnimation}))),this}},u.refresh=function(e){u.destroy(),u.init(e||this.options)},e.tocbot=u,u})}).call(t,function(){return this}())},/*!******************************************************!*\
-   !*** ./~/smooth-scroll/dist/js/smooth-scroll.min.js ***!
-   \******************************************************/
- function(e,t,n){var o,i,r;(function(n){/*! smooth-scroll v10.0.1 | (c) 2016 Chris Ferdinandi | MIT License | http://github.com/cferdinandi/smooth-scroll */
- !function(n,l){i=[],o=l(n),r="function"==typeof o?o.apply(t,i):o,!(void 0!==r&&(e.exports=r))}("undefined"!=typeof n?n:this.window||this.global,function(e){"use strict";var t,n,o,i,r,l,s,c={},a="querySelector"in document&&"addEventListener"in e,u={selector:"[data-scroll]",selectorHeader:null,speed:500,easing:"easeInOutCubic",offset:0,callback:function(){}},d=function(){var e={},t=!1,n=0,o=arguments.length;"[object Boolean]"===Object.prototype.toString.call(arguments[0])&&(t=arguments[0],n++);for(var i=function(n){for(var o in n)Object.prototype.hasOwnProperty.call(n,o)&&(t&&"[object Object]"===Object.prototype.toString.call(n[o])?e[o]=d(!0,e[o],n[o]):e[o]=n[o])};o>n;n++){var r=arguments[n];i(r)}return e},f=function(e){return Math.max(e.scrollHeight,e.offsetHeight,e.clientHeight)},m=function(e,t){var n,o,i=t.charAt(0),r="classList"in document.documentElement;for("["===i&&(t=t.substr(1,t.length-2),n=t.split("="),n.length>1&&(o=!0,n[1]=n[1].replace(/"/g,"").replace(/'/g,"")));e&&e!==document&&1===e.nodeType;e=e.parentNode){if("."===i)if(r){if(e.classList.contains(t.substr(1)))return e}else if(new RegExp("(^|\\s)"+t.substr(1)+"(\\s|$)").test(e.className))return e;if("#"===i&&e.id===t.substr(1))return e;if("["===i&&e.hasAttribute(n[0])){if(!o)return e;if(e.getAttribute(n[0])===n[1])return e}if(e.tagName.toLowerCase()===t)return e}return null},h=function(e){"#"===e.charAt(0)&&(e=e.substr(1));for(var t,n=String(e),o=n.length,i=-1,r="",l=n.charCodeAt(0);++i<o;){if(t=n.charCodeAt(i),0===t)throw new InvalidCharacterError("Invalid character: the input contains U+0000.");r+=t>=1&&31>=t||127==t||0===i&&t>=48&&57>=t||1===i&&t>=48&&57>=t&&45===l?"\\"+t.toString(16)+" ":t>=128||45===t||95===t||t>=48&&57>=t||t>=65&&90>=t||t>=97&&122>=t?n.charAt(i):"\\"+n.charAt(i)}return"#"+r},p=function(e,t){var n;return"easeInQuad"===e&&(n=t*t),"easeOutQuad"===e&&(n=t*(2-t)),"easeInOutQuad"===e&&(n=.5>t?2*t*t:-1+(4-2*t)*t),"easeInCubic"===e&&(n=t*t*t),"easeOutCubic"===e&&(n=--t*t*t+1),"easeInOutCubic"===e&&(n=.5>t?4*t*t*t:(t-1)*(2*t-2)*(2*t-2)+1),"easeInQuart"===e&&(n=t*t*t*t),"easeOutQuart"===e&&(n=1- --t*t*t*t),"easeInOutQuart"===e&&(n=.5>t?8*t*t*t*t:1-8*--t*t*t*t),"easeInQuint"===e&&(n=t*t*t*t*t),"easeOutQuint"===e&&(n=1+--t*t*t*t*t),"easeInOutQuint"===e&&(n=.5>t?16*t*t*t*t*t:1+16*--t*t*t*t*t),n||t},v=function(e,t,n){var o=0;if(e.offsetParent)do o+=e.offsetTop,e=e.offsetParent;while(e);return o=Math.max(o-t-n,0),Math.min(o,b()-g())},g=function(){return Math.max(document.documentElement.clientHeight,e.innerHeight||0)},b=function(){return Math.max(document.body.scrollHeight,document.documentElement.scrollHeight,document.body.offsetHeight,document.documentElement.offsetHeight,document.body.clientHeight,document.documentElement.clientHeight)},C=function(e){return e&&"object"==typeof JSON&&"function"==typeof JSON.parse?JSON.parse(e):{}},S=function(e){return e?f(e)+e.offsetTop:0},y=function(t,n,o){o||(t.focus(),document.activeElement.id!==t.id&&(t.setAttribute("tabindex","-1"),t.focus(),t.style.outline="none"),e.scrollTo(0,n))};c.animateScroll=function(n,o,l){var c=C(o?o.getAttribute("data-options"):null),a=d(t||u,l||{},c),f="[object Number]"===Object.prototype.toString.call(n),m=f||!n.tagName?null:n;if(f||m){var h=e.pageYOffset;a.selectorHeader&&!i&&(i=document.querySelector(a.selectorHeader)),r||(r=S(i));var g,x,N=f?n:v(m,r,parseInt(a.offset,10)),L=N-h,O=b(),E=0,A=function(t,i,r){var l=e.pageYOffset;(t==i||l==i||e.innerHeight+l>=O)&&(clearInterval(r),y(n,i,f),a.callback(n,o))},H=function(){E+=16,g=E/parseInt(a.speed,10),g=g>1?1:g,x=h+L*p(a.easing,g),e.scrollTo(0,Math.floor(x)),A(x,N,s)},T=function(){clearInterval(s),s=setInterval(H,16)};0===e.pageYOffset&&e.scrollTo(0,0),T()}};var x=function(t){e.location.hash,n&&(n.id=n.getAttribute("data-scroll-id"),c.animateScroll(n,o),n=null,o=null)},N=function(i){if(0===i.button&&!i.metaKey&&!i.ctrlKey&&(o=m(i.target,t.selector),o&&"a"===o.tagName.toLowerCase()&&o.hostname===e.location.hostname&&o.pathname===e.location.pathname&&/#/.test(o.href))){var r=h(o.hash);if("#"===r){i.preventDefault(),n=document.body;var l=n.id?n.id:"smooth-scroll-top";return n.setAttribute("data-scroll-id",l),n.id="",void(e.location.hash.substring(1)===l?x():e.location.hash=l)}n=document.querySelector(r),n&&(n.setAttribute("data-scroll-id",n.id),n.id="",o.hash===e.location.hash&&(i.preventDefault(),x()))}},L=function(e){l||(l=setTimeout(function(){l=null,r=S(i)},66))};return c.destroy=function(){t&&(document.removeEventListener("click",N,!1),e.removeEventListener("resize",L,!1),t=null,n=null,o=null,i=null,r=null,l=null,s=null)},c.init=function(n){a&&(c.destroy(),t=d(u,n||{}),i=t.selectorHeader?document.querySelector(t.selectorHeader):null,r=S(i),document.addEventListener("click",N,!1),e.addEventListener("hashchange",x,!1),i&&e.addEventListener("resize",L,!1))},c})}).call(t,function(){return this}())},/*!***********************************!*\
-   !*** ./src/js/default-options.js ***!
-   \***********************************/
- function(e,t){e.exports={tocSelector:".js-toc",contentSelector:".js-toc-content",headingSelector:"h1, h2, h3",ignoreSelector:".js-toc-ignore",linkClass:"toc-link",extraLinkClasses:"",activeLinkClass:"is-active-link",listClass:"toc-list",extraListClasses:"",isCollapsedClass:"is-collapsed",collapsibleClass:"is-collapsible",listItemClass:"toc-list-item",collapseDepth:0,smoothScrollOptions:{easing:"easeInOutCubic",offset:0,speed:300,updateURL:!0},headingsOffset:0,throttleTimeout:50,positionFixedSelector:null,positionFixedClass:"is-position-fixed",fixedSidebarOffset:"auto",includeHtml:!1}},/*!******************************!*\
-   !*** ./src/js/build-html.js ***!
-   \******************************/
- function(e,t){e.exports=function(e){function t(e,n){var r=n.appendChild(o(e));if(e.children.length){var l=i(e.isCollapsed);e.children.forEach(function(e){t(e,l)}),r.appendChild(l)}}function n(e,n){var o=!1,r=i(o);n.forEach(function(e){t(e,r)});var l=document.querySelector(e);if(null!==l)return l.firstChild&&l.removeChild(l.firstChild),l.appendChild(r)}function o(t){var n=document.createElement("li"),o=document.createElement("a");return e.listItemClass&&n.setAttribute("class",e.listItemClass),e.includeHtml&&t.childNodes.length?u.call(t.childNodes,function(e){o.appendChild(e.cloneNode(!0))}):o.textContent=t.textContent,o.setAttribute("data-scroll",""),o.setAttribute("href","#"+t.id),o.setAttribute("class",e.linkClass+h+"node-name--"+t.nodeName+h+e.extraLinkClasses),n.appendChild(o),n}function i(t){var n=document.createElement("ul"),o=e.listClass+h+e.extraListClasses;return t&&(o+=h+e.collapsibleClass,o+=h+e.isCollapsedClass),n.setAttribute("class",o),n}function r(){var t=document.documentElement.scrollTop||f.scrollTop,n=document.querySelector(e.positionFixedSelector);"auto"===e.fixedSidebarOffset&&(e.fixedSidebarOffset=document.querySelector(e.tocSelector).offsetTop),t>e.fixedSidebarOffset?n.className.indexOf(e.positionFixedClass)===-1&&(n.className+=h+e.positionFixedClass):n.className=n.className.split(h+e.positionFixedClass).join("")}function l(t){var n=document.documentElement.scrollTop||f.scrollTop;e.positionFixedSelector&&r();var o,i=t;if(m&&null!==document.querySelector(e.tocSelector)&&i.length>0){d.call(i,function(t,r){if(t.offsetTop>n+e.headingsOffset){var l=0===r?r:r-1;return o=i[l],!0}if(r===i.length-1)return o=i[i.length-1],!0});var l=document.querySelector(e.tocSelector).querySelectorAll("."+e.linkClass);u.call(l,function(t){t.className=t.className.split(h+e.activeLinkClass).join("")});var c=document.querySelector(e.tocSelector).querySelector("."+e.linkClass+".node-name--"+o.nodeName+'[href="#'+o.id+'"]');c.className+=h+e.activeLinkClass;var a=document.querySelector(e.tocSelector).querySelectorAll("."+e.listClass+"."+e.collapsibleClass);u.call(a,function(t){var n=h+e.isCollapsedClass;t.className.indexOf(n)===-1&&(t.className+=h+e.isCollapsedClass)}),c.nextSibling&&(c.nextSibling.className=c.nextSibling.className.split(h+e.isCollapsedClass).join("")),s(c.parentNode.parentNode)}}function s(t){return t.className.indexOf(e.collapsibleClass)!==-1?(t.className=t.className.split(h+e.isCollapsedClass).join(""),s(t.parentNode.parentNode)):t}function c(t){var n=t.target||t.srcElement;n.className.indexOf(e.linkClass)!==-1&&(m=!1)}function a(){m=!0}var u=[].forEach,d=[].some,f=document.body,m=!0,h=" ";return{enableTocAnimation:a,disableTocAnimation:c,render:n,updateToc:l}}},/*!*********************************!*\
-   !*** ./src/js/parse-content.js ***!
-   \*********************************/
- function(e,t){e.exports=function(e){function t(e){return e[e.length-1]}function n(e){return+e.nodeName.split("H").join("")}function o(t){var o={id:t.id,children:[],nodeName:t.nodeName,headingLevel:n(t),textContent:t.textContent.trim()};return e.includeHtml&&(o.childNodes=t.childNodes),o}function i(i,r){for(var l=o(i),s=n(i),c=r,a=t(c),u=a?a.headingLevel:0,d=s-u;d>0;)a=t(c),a&&void 0!==a.children&&(c=a.children),d--;return s>=e.collapseDepth&&(l.isCollapsed=!0),c.push(l),c}function r(t,n){var o=n;e.ignoreSelector&&(o=n.split(",").map(function(t){return t.trim()+":not("+e.ignoreSelector+")"}));try{return document.querySelector(t).querySelectorAll(o)}catch(i){return console.warn("Element not found: "+t),null}}function l(e){return s.call(e,function(e,t){var n=o(t);return i(n,e.nest),e},{nest:[]})}var s=[].reduce;return{nestHeadingsArray:l,selectHeadings:r}}}]);
- //# sourceMappingURL=tocbot.min.js.map
-
-</script>
-
-<script type="text/javascript">
-
-  var generateToc = function() {
-    var readyState = document.readyState;
-    if (readyState === 'interactive' || readyState == 'complete') {
-
-      var headerSize = 140;
-
-      var tocParentNode = document.createElement("div");
-      tocParentNode.setAttribute("id", "toc-parent");
-
-      var generatedTocNode = document.createElement("div");
-      generatedTocNode.setAttribute("id", "generated-toc");
-      tocParentNode.appendChild(generatedTocNode);
-
-      var contentNode = document.getElementById("content");
-      contentNode.parentNode.insertBefore(tocParentNode, contentNode);
-
-      var clearNode = document.createElement("div");
-      clearNode.setAttribute("class", "clear");
-      contentNode.parentNode.appendChild(clearNode);
-
-      tocbot.init({
-        tocSelector: '#generated-toc',
-        contentSelector: '#content',
-        headingSelector: 'h2, h3, h4',
-        headingsOffset: headerSize,
-        smoothScrollOptions: {
-          easing: 'easeInOutCubic',
-          offset: headerSize,
-          speed: 300, // animation duration.
-          updateURL: true
-        },
-        collapseDepth: 0
-      });
-
-    } else {
-      window.setTimeout(function(){
-        generateToc();
-      }, 50);
-    }
-
-  }
-  generateToc();
-
-</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+.listingblock .pygments .hll { background-color: #ffffcc }
+.listingblock .pygments, .listingblock .pygments code { background: #f8f8f8; }
+.listingblock .pygments .tok-c { color: #408080; font-style: italic } /* Comment */
+.listingblock .pygments .tok-err { border: 1px solid #FF0000 } /* Error */
+.listingblock .pygments .tok-k { color: #008000; font-weight: bold } /* Keyword */
+.listingblock .pygments .tok-o { color: #666666 } /* Operator */
+.listingblock .pygments .tok-ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.listingblock .pygments .tok-cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.listingblock .pygments .tok-cp { color: #BC7A00 } /* Comment.Preproc */
+.listingblock .pygments .tok-cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.listingblock .pygments .tok-c1 { color: #408080; font-style: italic } /* Comment.Single */
+.listingblock .pygments .tok-cs { color: #408080; font-style: italic } /* Comment.Special */
+.listingblock .pygments .tok-gd { color: #A00000 } /* Generic.Deleted */
+.listingblock .pygments .tok-ge { font-style: italic } /* Generic.Emph */
+.listingblock .pygments .tok-gr { color: #FF0000 } /* Generic.Error */
+.listingblock .pygments .tok-gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.listingblock .pygments .tok-gi { color: #00A000 } /* Generic.Inserted */
+.listingblock .pygments .tok-go { color: #888888 } /* Generic.Output */
+.listingblock .pygments .tok-gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.listingblock .pygments .tok-gs { font-weight: bold } /* Generic.Strong */
+.listingblock .pygments .tok-gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.listingblock .pygments .tok-gt { color: #0044DD } /* Generic.Traceback */
+.listingblock .pygments .tok-kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.listingblock .pygments .tok-kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.listingblock .pygments .tok-kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.listingblock .pygments .tok-kp { color: #008000 } /* Keyword.Pseudo */
+.listingblock .pygments .tok-kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.listingblock .pygments .tok-kt { color: #B00040 } /* Keyword.Type */
+.listingblock .pygments .tok-m { color: #666666 } /* Literal.Number */
+.listingblock .pygments .tok-s { color: #BA2121 } /* Literal.String */
+.listingblock .pygments .tok-na { color: #7D9029 } /* Name.Attribute */
+.listingblock .pygments .tok-nb { color: #008000 } /* Name.Builtin */
+.listingblock .pygments .tok-nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.listingblock .pygments .tok-no { color: #880000 } /* Name.Constant */
+.listingblock .pygments .tok-nd { color: #AA22FF } /* Name.Decorator */
+.listingblock .pygments .tok-ni { color: #999999; font-weight: bold } /* Name.Entity */
+.listingblock .pygments .tok-ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.listingblock .pygments .tok-nf { color: #0000FF } /* Name.Function */
+.listingblock .pygments .tok-nl { color: #A0A000 } /* Name.Label */
+.listingblock .pygments .tok-nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.listingblock .pygments .tok-nt { color: #008000; font-weight: bold } /* Name.Tag */
+.listingblock .pygments .tok-nv { color: #19177C } /* Name.Variable */
+.listingblock .pygments .tok-ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.listingblock .pygments .tok-w { color: #bbbbbb } /* Text.Whitespace */
+.listingblock .pygments .tok-mb { color: #666666 } /* Literal.Number.Bin */
+.listingblock .pygments .tok-mf { color: #666666 } /* Literal.Number.Float */
+.listingblock .pygments .tok-mh { color: #666666 } /* Literal.Number.Hex */
+.listingblock .pygments .tok-mi { color: #666666 } /* Literal.Number.Integer */
+.listingblock .pygments .tok-mo { color: #666666 } /* Literal.Number.Oct */
+.listingblock .pygments .tok-sa { color: #BA2121 } /* Literal.String.Affix */
+.listingblock .pygments .tok-sb { color: #BA2121 } /* Literal.String.Backtick */
+.listingblock .pygments .tok-sc { color: #BA2121 } /* Literal.String.Char */
+.listingblock .pygments .tok-dl { color: #BA2121 } /* Literal.String.Delimiter */
+.listingblock .pygments .tok-sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.listingblock .pygments .tok-s2 { color: #BA2121 } /* Literal.String.Double */
+.listingblock .pygments .tok-se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.listingblock .pygments .tok-sh { color: #BA2121 } /* Literal.String.Heredoc */
+.listingblock .pygments .tok-si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.listingblock .pygments .tok-sx { color: #008000 } /* Literal.String.Other */
+.listingblock .pygments .tok-sr { color: #BB6688 } /* Literal.String.Regex */
+.listingblock .pygments .tok-s1 { color: #BA2121 } /* Literal.String.Single */
+.listingblock .pygments .tok-ss { color: #19177C } /* Literal.String.Symbol */
+.listingblock .pygments .tok-bp { color: #008000 } /* Name.Builtin.Pseudo */
+.listingblock .pygments .tok-fm { color: #0000FF } /* Name.Function.Magic */
+.listingblock .pygments .tok-vc { color: #19177C } /* Name.Variable.Class */
+.listingblock .pygments .tok-vg { color: #19177C } /* Name.Variable.Global */
+.listingblock .pygments .tok-vi { color: #19177C } /* Name.Variable.Instance */
+.listingblock .pygments .tok-vm { color: #19177C } /* Name.Variable.Magic */
+.listingblock .pygments .tok-il { color: #666666 } /* Literal.Number.Integer.Long */
+</style>
 </head>
 <body class="book">
 <div id="header">
-<h1>Flowable迁移手册：Flowable V5到Flowable V6</h1>
+<h1>Flowable迁移指导：Flowable V5到Flowable V6</h1>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_介绍_introduction">1. 介绍 Introduction</h2>
+<h2 id="_简介">1. 简介</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>本手册介绍了从Flowable V5.x迁移至Flowable V6时需要注意的事项。</p>
@@ -318,7 +342,7 @@ a:hover {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_设计目标_design_goals">2. 设计目标 Design goals</h2>
+<h2 id="_设计目标">2. 设计目标</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>V6版本的设计目标是：</p>
@@ -342,18 +366,18 @@ a:hover {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_数据库迁移_database_migration">3. 数据库迁移 Database migration</h2>
+<h2 id="_数据库迁移">3. 数据库迁移</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>从V5至V6不需要数据库迁移：V5与V6的数据库表结构一致，只是多了一些表与列。所有Flowable V5生成的数据都可以保留在数据库中，甚至包括活动的、执行中的流程实例。在V6引擎第一次运行时，会对表结构进行自动升级（同V5版本中一样）。除了一些小的数据库结构改动外，主要的改动是将作业表分拆为作业表、定时器作业表、暂停作业表与死信作业表。还未到期的定时器作业将移至新的定时器作业表；用尽重试次数的作业将移至死信作业表；已暂停流程实例的作业将移至暂停作业表。</p>
+<p>从V5至V6不需要数据库迁移：V5与V6的数据库表结构基本一致，只是多了一些表与列。所有Flowable V5生成的数据都可以保留在数据库中，甚至包括活动的、执行中的流程实例。在V6引擎第一次运行时，会对表结构进行自动升级（同V5版本中一样）。除了一些小的数据库结构改动外，主要的改动是将作业表分拆为作业表、定时器作业表、暂停作业表与死信作业表。还未到期的定时器作业将移至新的定时器作业表；用尽重试次数的作业将移至死信作业表；已暂停流程实例的作业将移至暂停作业表。</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_概念变化_conceptual_changes">4. 概念变化 Conceptual changes</h2>
+<h2 id="_概念变化">4. 概念变化</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>称为Flowable V6的主要原因是完全重写了核心引擎。核心引擎执行的方式已经完全变化，将直接执行BPMN（在V5中使用中间模型）。同时，运行时执行的表现形式（<em>执行树</em>）也作了修改。总的来说，这些概念都大幅简化了，让执行更简单清晰，也让撰写自定义代码更容易更易懂。在V6中内嵌了一个V5引擎，在需要时可以保证完全的兼容性。</p>
+<p>称为Flowable V6的主要原因是完全重写了核心引擎。核心引擎执行的方式已经完全变化，将直接执行BPMN（在V5中使用的是中间模型）。同时，运行时执行的表现形式（<em>执行树</em>）也作了修改。总的来说，这些概念都大幅简化了，让执行更简单清晰，也让撰写自定义代码更容易更易懂。在V6中内嵌了一个V5引擎，在需要时可以保证完全的兼容性。</p>
 </div>
 <div class="paragraph">
 <p>我们将在之后的文章中详细介绍引擎内部的工作。</p>
@@ -361,13 +385,13 @@ a:hover {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_破坏性改动_breaking_changes">5. 破坏性改动 Breaking changes</h2>
+<h2 id="_破坏性改动">5. 破坏性改动</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>下列改动是破坏性改动（也就是说很可能导致编译错误）。</p>
 </div>
 <div class="sect2">
-<h3 id="_包重命名_org_activiti重命名为org_flowable">5.1. 包重命名：org.activiti重命名为org.flowable</h3>
+<h3 id="_包重命名org_activiti重命名为org_flowable">5.1. 包重命名：org.activiti重命名为org.flowable</h3>
 <div class="paragraph">
 <p>所有org.activiti包都已重命名为org.flowable。</p>
 </div>
@@ -387,7 +411,7 @@ a:hover {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_pvm类_pvm_classes">5.4. PVM类 PVM classes</h3>
+<h3 id="_pvm类">5.4. PVM类</h3>
 <div class="paragraph">
 <p>以前在org.activiti.engine.impl.pvm包（及其子包）下的所有类都已移除。这是因为<em>PVM</em> (流程虚拟机 Process Virtual Machine)模型已被替换为一个更简单更轻量的模型。</p>
 </div>
@@ -398,20 +422,27 @@ a:hover {
 <p>在V5中这些类大多用于获取流程定义中包含的信息。在V6中，所有流程定义的信息都可以通过<em>BpmnModel</em>获取。这是一个BPMN 2.0 XML流程定义的Java表现形式（并对特定操作及搜索进行了增强）。</p>
 </div>
 <div class="paragraph">
-<p>获取<em>BpmnModel</em>流程定义最快捷的方法是使用org.flowable.engine.impl.util.ProcessDefinitionUtil类：</p>
+<p>获取<em>BpmnModel</em>流程定义最快捷的方法是使用org.flowable.engine.RepositoryService服务：</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>// 整个模型 The whole model
-ProcessDefinitionUtil.getBpmnModel(String processDefinitionId);
-
-// 只有流程定义 Only the specific process definition
-ProcessDefinitionUtil.getProcess(String processDefinitionId);</pre>
+<pre>BpmnModel bpmnModel = repositoryService.getBpmnModel(myProcessDefinitionId);</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>使用org.flowable.engine.impl.context.Context类获取<em>RepositoryService</em>，JavaDelegate或ActivityBehavior实现类：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>RepositoryService repositoryService = Context.getProcessEngineConfiguration().getRepositoryService();</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>（请注意只有在上下文可用时才能如此操作，获取JavaDelegate和ActivityBehavior时也是这样）</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_delegateexecution代替activityexecution_activityexecution_is_replaced_by_delegateexecution">5.5. DelegateExecution代替ActivityExecution (ActivityExecution is replaced by DelegateExecution)</h3>
+<h3 id="_delegateexecution代替activityexecution">5.5. DelegateExecution代替ActivityExecution</h3>
 <div class="paragraph">
 <p>我们移除了ActivityExecution，并使用DelegateExecution类代替它。</p>
 </div>
@@ -420,7 +451,7 @@ ProcessDefinitionUtil.getProcess(String processDefinitionId);</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_移除engineservices_engineservices_removed">5.6. 移除EngineServices (EngineServices removed)</h3>
+<h3 id="_移除engineservices">5.6. 移除EngineServices</h3>
 <div class="paragraph">
 <p>移除了DelegateExecution中的getEngineServices方法，因为它已经没有实际作用，并导致在Flowable 6与内嵌的Flowable 5引擎中，DelegateExecution的使用不一致。</p>
 </div>
@@ -429,7 +460,7 @@ ProcessDefinitionUtil.getProcess(String processDefinitionId);</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_作业_定时器_暂停与死信作业_job_timer_suspended_and_dead_letter_jobs">5.7. 作业、定时器、暂停与死信作业 Job, timer, suspended and dead letter jobs</h3>
+<h3 id="_作业定时器暂停与死信作业">5.7. 作业、定时器、暂停与死信作业</h3>
 <div class="paragraph">
 <p>Flowable V5中只有一个作业表，导致查询需要执行的作业时，查询条件异常复杂。</p>
 </div>
@@ -460,7 +491,7 @@ ProcessDefinitionUtil.getProcess(String processDefinitionId);</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_向一个执行发信号_signaling_an_execution">5.8. 向一个执行发信号 Signaling an execution</h3>
+<h3 id="_向一个执行发信号">5.8. 向一个执行发信号</h3>
 <div class="paragraph">
 <p>在V5中，使用像是<em>runtimeService.signal(executionI);</em>这样的方法<em>向一个执行发信号</em>十分令人困惑。因为<em>信号(signal)</em>是一个BPMN 2.0概念和特性，它们的概念互相冲突。</p>
 </div>
@@ -468,17 +499,17 @@ ProcessDefinitionUtil.getProcess(String processDefinitionId);</pre>
 <p>在V6中，<em>signal()</em>方法更名为<em>trigger()</em>。</p>
 </div>
 <div class="paragraph">
-<p>同时，用于实现可以被外部触发的行为的接口<em>SignalableActivityBehavior</em>，也会改名为<em>TriggerableActivityBehavior</em>。</p>
+<p>同时，用于实现可以被外部触发的行为的接口<em>SignalableActivityBehavior</em>，改名为<em>TriggerableActivityBehavior</em>。</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_受控异常_checked_exceptions">5.9. 受控异常 Checked Exceptions</h3>
+<h3 id="_受检异常">5.9. 受检异常</h3>
 <div class="paragraph">
-<p>在V5中，<em>JavaDelegate</em>与<em>FlowableBehavior</em>之类的代理类在其签名中标示抛出<em>Exception</em>。像其他现代框架一样，在V6版本中已经移除了受控异常的使用。</p>
+<p>在V5中，<em>JavaDelegate</em>与<em>FlowableBehavior</em>之类的代理类在其签名中标示抛出<em>Exception</em>。像其他现代框架一样，在V6版本中已经不再使用受检异常。</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_代理类_delegate_classes">5.10. 代理类 Delegate classes</h3>
+<h3 id="_代理类">5.10. 代理类</h3>
 <div class="paragraph">
 <p><em>org.flowable.engine.impl.pvm.delegate.ActivityBehavior</em>的包变更为<em>org.flowable.engine.impl.delegate</em>。</p>
 </div>
@@ -496,11 +527,11 @@ ProcessDefinitionUtil.getProcess(String processDefinitionId);</pre>
 </ul>
 </div>
 <div class="paragraph">
-<p>它们已经用ExecutionEntityManager的调用代替了，可以通过Context.getCommandContext.getExecutionEntityManager()使用。</p>
+<p>而用ExecutionEntityManager的方法代替。可以通过Context.getCommandContext.getExecutionEntityManager()获取ExecutionEntityManager。</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_实体管理器_entitymanagers">5.11. 实体管理器 EntityManagers</h3>
+<h3 id="_实体管理器">5.11. 实体管理器</h3>
 <div class="paragraph">
 <p>在Flowable V5中，所有的实体管理器类（负责持久化，也包含一些逻辑）都没有接口。在V6中，所有的实体类都已经重命名为<em>Impl</em>后缀，并提供了不带后缀的接口。也就是说V5的实体管理器类名现在是相应的接口名。</p>
 </div>
@@ -522,7 +553,7 @@ ProcessDefinitionUtil.getProcess(String processDefinitionId);</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_持久化对象重命名为实体_persistentobject_renamed_to_entity">5.12. 持久化对象重命名为实体 PersistentObject renamed to Entity</h3>
+<h3 id="_持久化对象重命名为实体">5.12. 持久化对象重命名为实体</h3>
 <div class="paragraph">
 <p><em>org.flowable.engine.impl.db.PersistentObject</em>类重命名为<em>Entity</em>，与其他类保持一致（实体管理器类等等）。</p>
 </div>
@@ -531,32 +562,39 @@ ProcessDefinitionUtil.getProcess(String processDefinitionId);</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_身份逻辑与表的分离_separation_of_identity_logic_and_tables">5.13. 身份逻辑与表的分离 Separation of identity logic and tables</h3>
+<h3 id="_身份逻辑与表的分离">5.13. 身份逻辑与表的分离</h3>
 <div class="paragraph">
-<p>在V5中，身份逻辑及表示流程引擎的必要部分。在V6中，这部分逻辑已经重构为独立的模块，名为<em>flowable-idm-engine</em>（其中IDM代表“身份管理(identity management)”）。相关的数据库表由这个引擎管理。为了保证兼容性，在启动流程引擎时，IDM引擎默认启用。可以在流程引擎配置中，将<em>disableIdmEngine</em>设置为<em>true</em>，以禁用这个引擎。如果禁用了IDM，就不会创建身份数据库表（以<em>ACT_ID</em>开头）。如果已经存在这些表，也可以删除。</p>
+<p>在V5中，身份逻辑及表示流程引擎的必要部分。在V6中，这部分逻辑已经重构为独立的模块，名为<em>flowable-idm-engine</em>（其中IDM代表“身份管理(identity management)”）。相关的数据库表由这个引擎管理。为了保证兼容性，在启动流程引擎时，也会默认启用IDM引擎。可以在流程引擎配置中，将<em>disableIdmEngine</em>设置为<em>true</em>以禁用IDM引擎。如果禁用了IDM，就不会创建身份数据库表（以<em>ACT_ID</em>开头）。如果这些表已经存在，也可以删除。</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_camel终端改名为flowable_camel_endpoint_renamed_to_flowable">5.14. Camel终端改名为flowable (Camel endpoint renamed to flowable)</h3>
+<h3 id="_camel端点改名为flowable">5.14. Camel端点改名为flowable</h3>
 <div class="paragraph">
-<p>在使用Flowable Camel模块时，请确保使用flowable终端替代activiti终端。下面的Route作为简单的例子：</p>
+<p>在使用Flowable Camel模块时，请确保使用flowable端点替代activiti端点。下面的Route作为简单的例子：</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">public class SimpleCamelCallRoute extends RouteBuilder {
+<pre class="pygments highlight"><code data-lang="java"><table class="pyhltable"><tr><td class="linenos"><div class="linenodiv">1
+2
+3
+4
+5
+6
+7</div></td><td class="code"><span></span><span class="tok-kd">public</span> <span class="tok-kd">class</span> <span class="tok-nc">SimpleCamelCallRoute</span> <span class="tok-kd">extends</span> <span class="tok-n">RouteBuilder</span> <span class="tok-o">{</span>
 
-  @Override
-  public void configure() throws Exception {
-    from("flowable:SimpleCamelCallProcess:simpleCall").to("log:org.flowable.camel.examples.SimpleCamelCall");
-  }
-}</code></pre>
+  <span class="tok-nd">@Override</span>
+  <span class="tok-kd">public</span> <span class="tok-kt">void</span> <span class="tok-nf">configure</span><span class="tok-o">()</span> <span class="tok-kd">throws</span> <span class="tok-n">Exception</span> <span class="tok-o">{</span>
+    <span class="tok-n">from</span><span class="tok-o">(</span><span class="tok-s">&quot;flowable:SimpleCamelCallProcess:simpleCall&quot;</span><span class="tok-o">).</span><span class="tok-na">to</span><span class="tok-o">(</span><span class="tok-s">&quot;log:org.flowable.camel.examples.SimpleCamelCall&quot;</span><span class="tok-o">);</span>
+  <span class="tok-o">}</span>
+<span class="tok-o">}</span>
+</td></tr></table></code></pre>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_v5兼容性_v5_compatibility">6. V5兼容性 V5 compatibility</h2>
+<h2 id="_v5兼容性">6. V5兼容性</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>在迁移至Flowable V6时（基本上就是替换classpath中的JAR包），所有当前的部署与流程定义都将<em>标记</em>为<em>V5版本</em>的工件。在很多地方（完成一个任务，启动一个新流程实例，指派任务等等）引擎都会检查相关的流程定义是否<em>标记为V5版本</em>。若是，则将其执行代理至<em>内嵌的微型V5引擎</em>。</p>
@@ -576,7 +614,7 @@ ProcessDefinitionUtil.getProcess(String processDefinitionId);</pre>
 <p><strong>并且</strong>在classpath中添加<strong>flowable5-compatibility</strong>（手动或通过Maven之类的依赖管理机制）。</p>
 </div>
 <div class="paragraph">
-<p>如果在特殊的场景下，默认的实现<em>org.flowable.compatibility.DefaultFlowable5CompatibilityHandler</em>不满足要求，可以创建自定义的实现。可以将引擎配置中的<em>flowable5CompatibilityHandlerFactory</em>参数设置为创建类的全限定类名。这个工厂类需要构造用于处理V5与V6桥接的类实例。</p>
+<p>如果默认的实现<em>org.flowable.compatibility.DefaultFlowable5CompatibilityHandler</em>不满足要求，也可以创建自定义的实现。可以将引擎配置中的<em>flowable5CompatibilityHandlerFactory</em>参数设置为所创建类的全限定类名。这个工厂类构造用于处理V5与V6桥接的类实例。</p>
 </div>
 <div class="paragraph">
 <p>要让一个V5流程定义使用V6引擎运行，只需要重新部署它即可。新的流程实例将会在<em>V6模式</em>下运行，而之前的流程实例仍然在<em>V5模式</em>下运行。</p>
